@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@aave/protocol-js": "^4.0.2",
+    "ethers": "^5.4.6"
+  }
+}

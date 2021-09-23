@@ -1,0 +1,85 @@
+$classname: 'button';
+
+.#{$classname} {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background-color: transparent;
+  color: inherit;
+  border: none;
+  padding: 0;
+  border-radius: $rem-base / 4;
+  cursor: pointer;
+
+  &__bar--outer {
+    width: 100%;
+    height: $rem-base / 2;
+    bottom: -($rem-base / 2);
+    left: 0;
+    position: absolute;
+  }
+
+  &__bar--inner {   
+    background: white;
+    width: 100%;
+    height: 100%;
+    transform: scale3d(1,1,1);
+		transform-origin: left;
+    transition: transform $easing2 $duration-medium;
+  }
+
+  &__item {
+    border: solid 2px;
+    padding: ($rem-base * 2) ($rem-base * 3);
+    display: flex;
+    align-items: center;
+  }
+
+  &__icon {
+    border-left: none;
+  }
+
+  &:hover {
+    .#{$classname}__item {
+      text-decoration: underline;
+    }
+
+    .#{$classname}__bar--inner {
+      transform: scale3d(0,1,1);
+			transform-origin: right;
+    }
+  }
+
+  &--text-link {
+    margin: 0 ($rem-base * 4);
+
+    .#{$classname}__bar--inner {
+      transform: scale3d(0,1,1);
+      transform-origin: right;
+    }
+
+    .#{$classname}__item {
+      border: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    
+    &:hover {
+      .#{$classname}__item {
+        text-decoration: none;
+      }
+
+      .#{$classname}__bar--inner {
+        transform: scale3d(1,1,1);
+        transform-origin: left;
+      }
+    }
+  }
+
+  .active & {
+    .#{$classname}__bar--inner {
+      transform: scale3d(1,1,1);
+      transition: none;
+    } 
+  }
+}

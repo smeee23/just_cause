@@ -1,0 +1,57 @@
+$classname: 'header-bar';
+
+.#{$classname} {
+  position: fixed;
+  top: 0;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  height: 12 * $rem-base;
+
+  background: linear-gradient(180deg, $brand-black -30%, transparent);
+
+  h2, h3, h4, h5, h6 {
+    height: 2.25 * $rem-base;
+  }
+
+  .logo {
+    margin-right: 1 * $rem-base;
+  }
+
+  nav {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    a {
+      text-decoration: none;
+    }
+
+    p {
+      &:not(:last-child) {
+        margin-right: 4 * $rem-base;
+      }
+    }
+
+    *:first-child .button {
+      margin-right: 0;
+    }
+
+    *:first-child.active .button__bar--inner {
+      background: $brand-red;
+    }
+
+    *:nth-child(2).active .button__bar--inner {
+      background: $brand-yellow;
+    }
+  }
+
+  @media screen and (max-width: $bp-medium) {
+    nav p {
+      display: none;
+    }
+  }
+}

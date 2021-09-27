@@ -3,6 +3,10 @@ import Matter from "matter-js";
 import MatterAttractors from "matter-attractors";
 
 class Shapes extends Component {
+    componentWillUnmount() {
+        // Todo remove event listeners
+    }
+
     componentDidMount() {
         const Engine = Matter.Engine,
             Render = Matter.Render,
@@ -77,22 +81,24 @@ class Shapes extends Component {
 
         World.add(engine.world, this.attractor);
     
-        this.stack = Composites.stack(-120, -120, 6, 6, 32, 32, (x, y, i, j) => {
+        this.stack = Composites.stack(-200, -200, 6, 6, 32, 32, (x, y, i, j) => {
             const options = {
                 render: { 
                     strokeStyle: palette[paletteKeys[(i + j) % paletteKeys.length]] + 'FF', 
                     lineWidth: 4, 
                     fillStyle: 'transparent'
                 },
-                chamfer: 50
+                chamfer: 16
             }
 
             const shape = shapes[shapesKeys[(i + j) % shapesKeys.length]]
 
-            if (shape.sides == null) {
-                return Bodies.rectangle(x, y, shape.width, shape.height, options);
-            } else {
-                return Bodies.polygon(x, y, shape.sides, shape.size, options);
+            if (j <= 1 || j >= 4) {
+                if (shape.sides == null) {
+                    return Bodies.rectangle(x, y, shape.width, shape.height, options);
+                } else {
+                    return Bodies.polygon(x, y, shape.sides, shape.size, options);
+                }
             }
         });
 

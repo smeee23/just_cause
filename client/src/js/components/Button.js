@@ -1,14 +1,19 @@
 import React, {Component} from "react"
+import classNames from 'classnames'
 
 import Icon from "./Icon";
 
 class Button extends Component {
-
 	render() {
 		const { text, icon, href, callback } = this.props;
 
+    const classnames = classNames({
+      "button": true,
+      "button--icon-only": !text
+    })
+
 		return (
-      <button className="button" href={href} onClick={() => callback}>
+      <button className={classnames} href={href} onClick={() => callback}>
         { text ? (
           <div className="button__item">
             <p className="mb0">{ text }</p>

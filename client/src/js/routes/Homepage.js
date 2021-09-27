@@ -41,10 +41,10 @@ class Homepage extends Component {
 								<h2>Find us elsewhere</h2>
 							</div>
 							<div className="grid__item--col-6 grid__item--col-12-medium">
-								<p className="lh1">
-									<a href="" target="_blank">Facebook</a> /&nbsp;
-									<a href="" target="_blank">Instagram</a> /&nbsp; 
-									<a href="" target="_blank">Twitter</a>
+								<p className="lh1 mb0">
+									<a href="google.com" target="_blank">Facebook</a> /&nbsp;
+									<a href="google.com" target="_blank">Instagram</a> /&nbsp;
+									<a href="google.com" target="_blank">Twitter</a>
 								</p>
 							</div>
 						</div>

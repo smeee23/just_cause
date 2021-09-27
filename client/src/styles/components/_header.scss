@@ -1,6 +1,6 @@
-$classname: 'header-bar';
+$baseclass: 'app-bar';
 
-.#{$classname} {
+.#{$baseclass} {
   position: fixed;
   top: 0;
   width: 100%;
@@ -18,6 +18,11 @@ $classname: 'header-bar';
 
   .logo {
     margin-right: 1 * $rem-base;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
   }
 
   nav {
@@ -50,7 +55,7 @@ $classname: 'header-bar';
   }
 
   @media screen and (max-width: $bp-medium) {
-    nav p {
+    nav > a {
       display: none;
     }
   }

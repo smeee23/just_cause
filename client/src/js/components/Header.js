@@ -1,4 +1,5 @@
-import React, {Component} from "react"
+import React, {Component} from "react";
+import { connect } from "react-redux"
 
 import Logo from "./Logo";
 import Button from "./Button";
@@ -6,11 +7,12 @@ import TextLink from "./TextLink";
 import { NavLink } from 'react-router-dom'
 
 class Header extends Component {
-
 	render() {
+    const { isMobile } = this.props;
+
 		return (
-      <header className="header-bar horizontal-padding">
-        <NavLink exact to={"/"} className="tdn" style={{'display': 'flex', 'alignItems': 'center'}}>
+      <header className="app-bar horizontal-padding">
+        <NavLink exact to={"/"} className="app-bar__left tdn">
           <Logo/>
           <h2 className="mb0">JustCause</h2>
         </NavLink>
@@ -21,11 +23,15 @@ class Header extends Component {
           <NavLink exact to={"/"}>
             <TextLink text="How it works"/>
           </NavLink>
-          <Button text={"Connect"} icon={"wallet"}/>
+          <Button text={isMobile ? null : "Connect"} icon={"wallet"}/>
         </nav>
       </header>
 		);
 	}
 }
 
-export default Header
+const mapStateToProps = state => ({
+	isMobile: state.isMobile,
+})
+
+export default connect(mapStateToProps)(Header)

@@ -14,7 +14,7 @@ class Icon extends Component {
 
 		const { name, size, color, strokeWidth, isMobile } = this.props;
 
-		const adjustedSize = isMobile ? size * 0.75 : size;
+		const adjustedSize = isMobile ? size * 1 : size;
 
 		return (
 			<svg 

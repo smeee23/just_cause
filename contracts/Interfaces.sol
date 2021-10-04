@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.6.12;
+pragma solidity 0.8.9;
 pragma experimental ABIEncoderV2;
 
 import { DataTypes } from "./Libraries.sol";
@@ -589,7 +589,7 @@ interface IStableDebtToken {
     uint256 avgStableRate,
     uint256 newTotalSupply
   );
-  
+
   /**
    * @dev delegates borrowing power to a user on the specific debt token
    * @param delegatee the address receiving the delegated borrowing power
@@ -598,7 +598,7 @@ interface IStableDebtToken {
    * force a delegator HF to go below 1)
    **/
   function approveDelegation(address delegatee, uint256 amount) external;
-  
+
   /**
    * @dev returns the borrow allowance of the user
    * @param fromUser The user to giving allowance

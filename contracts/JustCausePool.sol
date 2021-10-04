@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.6.12;
+pragma solidity 0.8.9;
 
 import { IERC20, ILendingPool, IProtocolDataProvider, IStableDebtToken, ILendingPoolAddressesProvider} from './Interfaces.sol';
 import { SafeERC20 } from './Libraries.sol';
@@ -11,12 +11,12 @@ import { SafeERC20 } from './Libraries.sol';
  * It is not production ready (!). User permissions and user accounting of loans should be implemented.
  * See @dev comments
  */
- 
+
 contract JustCausePool {
     //using SafeERC20 for IERC20;
-    
+
     uint256 public totalDeposits;
-    mapping(address => uint256) public deposits; 
+    mapping(address => uint256) public deposits;
     ILendingPoolAddressesProvider provider;
     IProtocolDataProvider dataProvider; // Kovan
     address private kovanDAI;
@@ -24,14 +24,14 @@ contract JustCausePool {
     IERC20 daiToken;
     uint256 amount;
     address lendingPoolAddr;
-    
+
     event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
     event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
     event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, uint256 assetBalance, address aTokenAddress);
     event BalanceOf(address FROM, uint256 AMOUNT, uint256 BALANCE);
     event GetLPAddress(address addr);
     event SeeAllowance(uint256 allowance);
-    
+
     event Test(uint256 test);
     address owner;
 
@@ -46,13 +46,13 @@ contract JustCausePool {
         amount = 50 * 1e18;
         daiToken = IERC20(kovanDAI);
     }
-    
+
     function transferIn(/*address asset, uint256 amount*/) public {
         //emit BalanceOf(msg.sender, amount, daiToken.balanceOf(msg.sender));
         daiToken.transferFrom(msg.sender, address(this), amount);
         emit GetLPAddress(lendingPoolAddr);
     }
-    
+
     function deposit(/*address asset, uint256 amount*/) public {
             daiToken.approve(address(lendingPool), amount);
             emit SeeAllowance(daiToken.allowance(address(this), address(lendingPool)));
@@ -61,14 +61,14 @@ contract JustCausePool {
             totalDeposits += amount;
             emit Deposit(address(daiToken), msg.sender, amount, totalDeposits);
     }
-    
+
     /**
      * Repay an uncollaterised loan
      * @param amount The amount to repay
      * @param asset The asset to be repaid
-     * 
+     *
      * User calling this function must have approved this contract with an allowance to transfer the tokens
-     * 
+     *
      * You should keep internal accounting of borrowers, if your contract will have multiple borrowers
      */
     /*function repayBorrower(uint256 amount, address asset) public {
@@ -76,11 +76,11 @@ contract JustCausePool {
         IERC20(asset).safeApprove(address(lendingPool), amount);
         lendingPool.repay(asset, amount, 1, address(this));
     }*/
-    
+
     /**
      * Withdraw all of a collateral as the underlying asset, if no outstanding loans delegated
-     * 
-     * 
+     *
+     *
      * Add permissions to this call, e.g. only the owner should be able to withdraw the collateral!
      */
     function withdraw(/*address asset, uint256 amount*/) public {
@@ -90,7 +90,7 @@ contract JustCausePool {
         totalDeposits -= amount;
         emit Withdraw(address(daiToken), msg.sender, amount, totalDeposits);
     }
-    
+
     function withdrawDonations() public{
         //(address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(address(daiToken));
         //uint256 assetBalance = IERC20(aTokenAddress).balanceOf(address(this));
@@ -99,5 +99,5 @@ contract JustCausePool {
         uint256 interestEarned = assetBalance - totalDeposits;
         lendingPool.withdraw(address(daiToken), interestEarned, owner);
         emit WithdrawDonations(address(daiToken), owner, interestEarned, totalDeposits, assetBalance, testATokenAddress);
-    } 
+    }
 }

@@ -16,9 +16,9 @@ module.exports = {
     },
     ganache_local: {
       provider: () => {
-        let provider = new HDWalletProvider({mnemonic: key, 
-                              providerOrUrl:"http://127.0.0.1:8545", 
-                              addressIndex: AccountIndex, 
+        let provider = new HDWalletProvider({mnemonic: key,
+                              providerOrUrl:"http://127.0.0.1:8545",
+                              addressIndex: AccountIndex,
                               chainId: "*"
                             });
                             return provider;
@@ -27,9 +27,9 @@ module.exports = {
     },
     goerli_infura: {
       provider: () => {
-        let provider = new HDWalletProvider({mnemonic: key, 
-                              providerOrUrl:"https://goerli.infura.io/v3/3381ca9f51e140798058a9be57fc78ad", 
-                              addressIndex: AccountIndex, 
+        let provider = new HDWalletProvider({mnemonic: key,
+                              providerOrUrl:"https://goerli.infura.io/v3/3381ca9f51e140798058a9be57fc78ad",
+                              addressIndex: AccountIndex,
                               chainId : 5
                             });
                             return provider;
@@ -39,9 +39,9 @@ module.exports = {
 
     kovan_infura: {
       provider: () => {
-        let provider = new HDWalletProvider({mnemonic: key, 
-                              providerOrUrl:"https://kovan.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e", 
-                              addressIndex: AccountIndex, 
+        let provider = new HDWalletProvider({mnemonic: key,
+                              providerOrUrl:"https://kovan.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
+                              addressIndex: AccountIndex,
                               chainId : 42
                             });
                             return provider;
@@ -51,7 +51,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: "0.8.0"
+      version: "^0.8.0"
     }
   }
 };

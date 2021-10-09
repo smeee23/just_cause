@@ -10,11 +10,11 @@ class Homepage extends Component {
 		window.scrollTo(0,0);
 	}
 
-	render() {
-		const callbackExample = () => {
-			console.log('clicked')
-		}
+	callbackExample = () => {
+		console.log('clicked');
+	}
 
+	render() {
 		return (
 			<Fragment>
 				<Shapes/>
@@ -22,7 +22,7 @@ class Homepage extends Component {
 				<article>
 					<section className="page-section page-section--center horizontal-padding">
 						<h1>Donate interest earned in crypto to good causes with JustCause.</h1>
-						<Button text="Connect Wallet" icon="wallet" callback={callbackExample}/>
+						<Button text="Connect Wallet" icon="wallet" callback={this.callbackExample}/>
 					</section>
 					<section className="page-section horizontal-padding">
 						<h2>How it works</h2>

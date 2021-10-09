@@ -14,13 +14,13 @@ class Shapes extends Component {
             Composites = Matter.Composites,
             Bodies = Matter.Bodies,
             World = Matter.World;
-    
+
         Matter.use(MatterAttractors);
 
         const engine = Engine.create({
             positionIterations: 8
         });
-    
+
         const palette = {
             brandRed: '#CE3232',
             brandYellow: '#E0C723',
@@ -30,14 +30,13 @@ class Shapes extends Component {
         }
 
         const shapes = {
-            polygon1: { sides: 0, size: 200 },
-            polygon2: { sides: 5, size: 150 },
-            polygon3: { sides: 6, size: 175 },
-            rectangle2: { width: 175, height: 175 },
-            polygon4: { sides: 7, size: 175 },
-            rectangle3: { width: 175, height: 200 },
+            polygon1: { sides: 0, size: 100 },
+            rectangle1: { width: 175, height: 175 },
+            polygon2: { sides: 5, size: 155 },
+            polygon3: { sides: 6, size: 150 },
+            polygon4: { sides: 8, size: 175 },
+            rectangle2: { width: 200, height: 100 },
             polygon5: { sides: 0, size: 150 },
-            rectangle4: { width: 225, height: 175 }
         }
 
         const paletteKeys = Object.keys(palette);
@@ -80,32 +79,31 @@ class Shapes extends Component {
         Matter.Body.scale(this.attractor, 1.25, 0.75);
 
         World.add(engine.world, this.attractor);
-    
-        this.stack = Composites.stack(-200, -200, 6, 6, 32, 32, (x, y, i, j) => {
+
+        this.stack = Composites.stack(-264, -264, 6, 4, 64, 64, (x, y, i, j) => {
             const options = {
-                render: { 
-                    strokeStyle: palette[paletteKeys[(i + j) % paletteKeys.length]] + 'FF', 
-                    lineWidth: 4, 
+                render: {
+                    strokeStyle: palette[paletteKeys[(i + j) % paletteKeys.length]] + 'FF',
+                    lineWidth: 2,
                     fillStyle: 'transparent'
                 },
-                chamfer: 16
+                chamfer: 32
             }
 
             const shape = shapes[shapesKeys[(i + j) % shapesKeys.length]]
 
-            if (j <= 1 || j >= 4) {
-                if (shape.sides == null) {
-                    return Bodies.rectangle(x, y, shape.width, shape.height, options);
-                } else {
-                    return Bodies.polygon(x, y, shape.sides, shape.size, options);
-                }
+
+            if (shape.sides == null) {
+                return Bodies.rectangle(x, y, shape.width, shape.height, options);
+            } else {
+                return Bodies.polygon(x, y, shape.sides, shape.size, options);
             }
         });
 
         World.add(engine.world, this.stack);
-            
+
         Runner.run(engine);
-    
+
         Render.run(render);
 
         document.addEventListener('mousedown', (e) => {
@@ -136,13 +134,13 @@ class Shapes extends Component {
 
         const floor = Bodies.rectangle(this.docWidth / 2, this.docHeight + wallThickness, this.docWidth, 2 * wallThickness, { isStatic: true });
         const ceiling = Bodies.rectangle(-wallThickness, this.docHeight + wallThickness, this.docWidth, 2 * wallThickness, { isStatic: true });
-        
+
         const leftWall = Bodies.rectangle(-wallThickness, this.docHeight / 2, wallThickness * 2, this.docHeight, { isStatic: true });
         const rightWall = Bodies.rectangle(this.docWidth + wallThickness, this.docHeight / 2, wallThickness * 2, this.docHeight, { isStatic: true });
 
         World.add(engine.world, [ floor, ceiling, leftWall, rightWall ]);
     }
-    
+
     render() {
         return <div ref="scene" className="shapes"/>
     }

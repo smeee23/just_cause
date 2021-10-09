@@ -20,7 +20,7 @@ $baseclass: 'button';
     position: absolute;
   }
 
-  &__bar--inner {   
+  &__bar--inner {
     background: white;
     width: 100%;
     height: 100%;
@@ -70,7 +70,7 @@ $baseclass: 'button';
       padding-left: 0;
       padding-right: 0;
     }
-    
+
     &:hover {
       .#{$baseclass}__item {
         text-decoration: none;
@@ -87,6 +87,6 @@ $baseclass: 'button';
     .#{$baseclass}__bar--inner {
       transform: scale3d(1,1,1);
       transition: none;
-    } 
+    }
   }
 }

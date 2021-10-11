@@ -2,8 +2,33 @@ import React, {Component} from "react"
 
 import Icon from "./Icon";
 
+import Button from '../components/Button'
+
 class Card extends Component {
 
+  componentDidMount() {
+		window.scrollTo(0,0);
+	}
+
+	approve = () => {
+		console.log('approve clicked');
+	}
+
+	deploy = () => {
+		console.log('deploy clicked');
+	}
+
+	deposit = () => {
+		console.log('deposit clicked');
+	}
+
+	withdrawDeposit = () => {
+		console.log('withdraw deposit clicked');
+	}
+
+	claim = () => {
+		console.log('claim interest clicked');
+	}
 	render() {
 		const { title } = this.props;
 

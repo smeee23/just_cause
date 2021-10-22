@@ -37,6 +37,15 @@ module.exports = {
       network_id: "5"
     },
 
+    matic: {
+      provider: () => new HDWalletProvider(key, "https://rpc-mumbai.maticvigil.com/v1/ab8d4c928665996f2b06bde26505d24135aaae19"),
+      network_id: 80001,
+      gas: 6000000,           // Gas sent with each transaction (default: ~6700000)
+      gasPrice: 3000000000,  // 3 gwei (in wei) (default: 100 gwei)
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
     kovan_infura: {
       provider: () => {
         let provider = new HDWalletProvider({mnemonic: key,

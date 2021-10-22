@@ -681,3 +681,21 @@ interface IStableDebtToken {
    **/
   function principalBalanceOf(address user) external view returns (uint256);
 }
+
+interface IPoolTracker {
+
+  event AddVerifiedPools(address addressToAdd);
+  event AddDeposit(address _userAddr, address _pool);
+  event WithdrawDeposit(address _userAddr, address _pool);
+  event OwnerAddress(address _owner, address _pool);
+  event MessageSentBy(address sentBy);
+
+
+  function addDeposit(address _userAddr, address _pool) external;
+  function withdrawDeposit(address _userAddr, address _pool) external;
+  function addVerifiedPools(address _pool, address _owner, string memory _name) external;
+  function getVerifiedPools() external view returns(address [] memory);
+  function getUserDeposits(address _userAddr) external view returns(address[] memory);
+  function getUserOwned(address _userAddr) external view returns(address[] memory);
+  function getAddressFromName(string memory name) external view returns(address);
+}

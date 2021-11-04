@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import { IERC20, ILendingPool, ILendingPoolAddressesProvider, IPoolTracker} from './Interfaces.sol';
+import { IERC20, ILendingPool, ILendingPoolAddressesProvider, IPoolTracker, IProtocolDataProvider} from './Interfaces.sol';
 import { SafeERC20 } from './Libraries.sol';
 
 /**
@@ -15,26 +15,35 @@ import { SafeERC20 } from './Libraries.sol';
 contract JustCausePool {
     //using SafeERC20 for IERC20;
     mapping(address => mapping(address => uint256)) private depositors;
-    mapping(address => uint256) public totalDeposits;
+    mapping(address => uint256) private totalDeposits;
+    mapping(address => uint256) private interestWithdrawn;
+
     //mapping(address => mapping(address => uint256)) public deposits;
     IPoolTracker poolTracker;
-    ILendingPoolAddressesProvider provider;
+    //ILendingPoolAddressesProvider provider;
     //address private kovanDAI;v
-    ILendingPool lendingPool;
+    //ILendingPool lendingPool;
+
+    ILendingPoolAddressesProvider provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
+    address lendingPoolAddr = provider.getLendingPool();
+    ILendingPool lendingPool = ILendingPool(lendingPoolAddr); // Kovan
+    IProtocolDataProvider constant dataProvider = IProtocolDataProvider(address(0x744C1aaA95232EeF8A9994C4E0b3a89659D9AB79)); // Kovan
+    address aTokenAddressDai = address(0xdCf0aF9e59C002FA3AA091a46196b37530FD48a8);
+
     //IERC20 daiToken;
     //uint256 amount;
-    address lendingPoolAddr;
+    //address lendingPoolAddr;
     address[] acceptedTokens;
 
     event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
-    event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
-    event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, uint256 assetBalance, address aTokenAddress);
+    event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 userDeposits, uint256 donation);
+    event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
     event BalanceOf(address FROM, uint256 AMOUNT, uint256 BALANCE);
     event GetLPAddress(address addr);
     event SeeAllowance(uint256 allowance);
     event GetPoolTracker(address test);
     address owner;
-    address reciever;
+    address receiver;
     string name;
 
     modifier onlyAllowedTokens(address _tokenAddr){
@@ -49,19 +58,21 @@ contract JustCausePool {
         _;
     }
 
-    modifier enoughFunds(address _userAddr, address _tokenAddr, uint256 _amount) {
+    modifier enoughFunds(address _userAddr, address _tokenAddr, uint256 _amount, uint256 _donation) {
+        require(_amount > 0, "amount must exceed 0");
         require(depositors[_userAddr][_tokenAddr]  >= _amount, "no funds deposited for selected token");
+        require(_amount >= _donation, "donation cannot exceed deposit amount");
         _;
     }
 
-    modifier onlyReciever(address _requestAddr){
-        require(reciever == _requestAddr, "you are not the current reciever for this pool");
+    modifier onlyReceiver(address _requestAddr){
+        require(receiver == _requestAddr, "you are not the current reciever for this pool");
         _;
     }
 
-    constructor (address[] memory _acceptedTokens, string memory _name, address _poolTrackerAddr) {
+    constructor (address[] memory _acceptedTokens, string memory _name, address _poolTrackerAddr, address _receiver) {
         owner = msg.sender;
-        reciever = msg.sender;
+        receiver = _receiver;
         name = _name;
         provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
         lendingPoolAddr = provider.getLendingPool();
@@ -73,7 +84,7 @@ contract JustCausePool {
         poolTracker.addVerifiedPools(address(this), owner, _name);
     }
 
-    function deposit(address _assetAddress, uint256 _amount) public {
+    function deposit(address _assetAddress, uint256 _amount) onlyAllowedTokens(_assetAddress) public {
         IERC20 token = IERC20(_assetAddress);
         require(token.allowance(msg.sender, address(this)) >= _amount, "sender not approved");
         token.transferFrom(msg.sender, address(this), _amount);
@@ -86,12 +97,23 @@ contract JustCausePool {
         emit Deposit(address(token), msg.sender, _amount, totalDeposits[_assetAddress]);
     }
 
-    function withdraw(address _assetAddress, uint256 _amount) enoughFunds(msg.sender, _assetAddress, _amount) public {
-        lendingPool.withdraw(_assetAddress, _amount, msg.sender);
-        poolTracker.withdrawDeposit(msg.sender, address(this));
+    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation) enoughFunds(msg.sender, _assetAddress, _amount, _donation) public {
+        if(_donation != 0){
+            uint256 newAmount = _amount - _donation;
+            lendingPool.withdraw(_assetAddress, _donation, receiver);
+            if(newAmount != 0)
+                lendingPool.withdraw(_assetAddress, newAmount, msg.sender);
+        }
+        else{
+            lendingPool.withdraw(_assetAddress, _amount, msg.sender);
+        }
         depositors[msg.sender][_assetAddress] -= _amount;
         totalDeposits[_assetAddress] -= _amount;
-        emit Withdraw(_assetAddress, msg.sender, _amount, totalDeposits[_assetAddress]);
+
+        if(depositors[msg.sender][_assetAddress] == 0){
+            poolTracker.withdrawDeposit(msg.sender, address(this));
+        }
+        emit Withdraw(_assetAddress, msg.sender, _amount, depositors[msg.sender][_assetAddress], _donation);
     }
 
     function getUserBalance(address _userAddr, address _token) external view returns(uint256){
@@ -108,6 +130,23 @@ contract JustCausePool {
 
     function getName() external view returns(string memory){
         return name;
+    }
+
+    function getUnclaimedInterest(address _assetAddress) external view returns (uint256){
+        uint256 aTokenBalance = IERC20(aTokenAddressDai).balanceOf(address(this));
+        return aTokenBalance - totalDeposits[_assetAddress];
+    }
+
+    function getClaimedInterest(address _assetAddress) external view returns (uint256){
+        return interestWithdrawn[_assetAddress];
+    }
+
+    function getATokenBalance() external view returns (uint256){
+        return IERC20(aTokenAddressDai).balanceOf(address(this));
+    }
+
+    function getRecipient() external view returns(address){
+        return receiver;
     }
 
     /**
@@ -132,13 +171,15 @@ contract JustCausePool {
      * Add permissions to this call, e.g. only the owner should be able to withdraw the collateral!
      */
 
-    /*function withdrawDonations() public{
+    function withdrawDonations(address _assetAddress) onlyAllowedTokens(_assetAddress) public{
         //(address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(address(daiToken));
         //uint256 assetBalance = IERC20(aTokenAddress).balanceOf(address(this));
-        address testATokenAddress = address(0xdCf0aF9e59C002FA3AA091a46196b37530FD48a8);
-        uint256 assetBalance = IERC20(testATokenAddress).balanceOf(address(this));
-        uint256 interestEarned = assetBalance - totalDeposits;
-        lendingPool.withdraw(address(daiToken), interestEarned, owner);
-        emit WithdrawDonations(address(daiToken), owner, interestEarned, totalDeposits, assetBalance, testATokenAddress);
-    }*/
+        //uint256 assetBalance = IERC20(_assetAddress).balanceOf(address(this));
+
+        uint256 aTokenBalance = IERC20(aTokenAddressDai).balanceOf(address(this));
+        uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
+        interestWithdrawn[_assetAddress] += interestEarned;
+        lendingPool.withdraw(_assetAddress, interestEarned, owner);
+        emit WithdrawDonations(_assetAddress, owner, interestEarned, totalDeposits[_assetAddress], aTokenAddressDai);
+    }
 }

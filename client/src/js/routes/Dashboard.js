@@ -72,8 +72,9 @@ class Dashboard extends Component {
 
 			let acceptedTokens = await JCPoolInstance.methods.getAcceptedTokens().call();
 			let name = await JCPoolInstance.methods.getName().call();
-			let interest = await JCPoolInstance.methods.getUnclaimedInterest(this.state.daiAddress).call();
+			let unclaimedInterest = await JCPoolInstance.methods.getUnclaimedInterest(this.state.daiAddress).call();
 			let receiver = await JCPoolInstance.methods.getRecipient().call();
+			let claimedInterest = await JCPoolInstance.methods.getClaimedInterest(this.state.daiAddress).call();
 
 			console.log("pool address:", JCPoolInstance.options.address)
 			console.log("accepted tokens:", acceptedTokens);
@@ -88,7 +89,8 @@ class Dashboard extends Component {
 
 			poolInfo.push({
 							receiver: receiver,
-							interest: interest,
+							unclaimedInterest: unclaimedInterest,
+							claimedInterest: claimedInterest,
 							name: name,
 							address: poolTracker[i],
 							acceptedTokens: acceptedTokens,
@@ -100,7 +102,7 @@ class Dashboard extends Component {
 		console.log("pool tracker", poolTracker);
 		this.setState({poolTracker: poolTracker, poolInfo: poolInfo});
 	}
-	approve = async(erc20Instance, address, activeAccount) => {
+	approve = async(erc20Instance, address, activeAccount, amountInGwei) => {
 		console.log('approve clicked');
 		const parameter = {
 			from: activeAccount ,
@@ -108,7 +110,7 @@ class Dashboard extends Component {
 			gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('30', 'gwei'))
 			};
 
-		let results_1 = await erc20Instance.methods.approve(address, this.web3.utils.toWei('300000000000', 'gwei')).send(parameter, (err, transactionHash) => {
+		let results_1 = await erc20Instance.methods.approve(address, amountInGwei).send(parameter, (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			});
 		console.log("approve", results_1);
@@ -131,7 +133,7 @@ class Dashboard extends Component {
 		if(parseInt(amountInGwei) > parseInt(allowance)){
 			alert("must approve token to deposit");
 			console.log("approve test", parseInt(amountInGwei), parseInt(allowance), (parseInt(amountInGwei) > parseInt(this.getAllowance(erc20Instance, address, activeAccount))))
-			this.approve(erc20Instance, address, activeAccount);
+			this.approve(erc20Instance, address, activeAccount, amountInGwei);
 		}
 		else{
 			console.log("else");
@@ -157,9 +159,9 @@ class Dashboard extends Component {
 	withdrawDeposit = async(address) => {
 		console.log('withdraw deposit clicked');
 		const amount = prompt("enter amount to withdraw");
+		const donateAmount = prompt("enter amount to donate if desired");
 		const amountInGwei = this.web3.utils.toWei(amount, 'ether');
 		const activeAccount = this.web3.currentProvider.selectedAddress;
-		const donateAmount = '0';
 		const donateAmountInGwei = this.web3.utils.toWei(donateAmount, 'ether');
 
 		const parameter = {
@@ -214,7 +216,8 @@ class Dashboard extends Component {
 								<Card
 									key={pt.address}
 									title={pt.name}
-									interest={pt.interest}
+									unclaimedInterest={pt.unclaimedInterest}
+									claimedInterest={pt.claimedInterest}
 									receiver={pt.receiver}
 									totalDeposits={pt.totalDeposits}
 									address={pt.address}

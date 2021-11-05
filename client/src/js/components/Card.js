@@ -26,8 +26,20 @@ class Card extends Component {
 	withdrawDeposit = () => {
 		console.log('withdraw deposit clicked');
 	}
+
+	precise = (x) => {
+		//return Number.parseFloat(x).toPrecision(4);
+		return Number.parseFloat(x).toPrecision(6);
+	}
+
 	render() {
-		const { title, address, userBalance, totalDeposits, onDeposit, onWithdrawDeposit, onClaim, interest, receiver } = this.props;
+		const { title, address, userBalance, totalDeposits, onDeposit, onWithdrawDeposit, onClaim, unclaimedInterest, claimedInterest, receiver } = this.props;
+
+		let formatUserBalance = parseFloat(userBalance) / 1000000000000000000;
+		let formatTotalDeposits = parseFloat(totalDeposits) / 1000000000000000000;
+		let formatUnclaimedInterest = parseFloat(unclaimedInterest) / 1000000000000000000;
+		let formatClaimedInterest = parseFloat(claimedInterest) / 1000000000000000000;
+
 
 		return (
       <div className="card">
@@ -35,14 +47,15 @@ class Card extends Component {
           <h3 className="mb0"><Logo/>{ title }</h3>
           <div className="card__header--right">
 		  	<p className="mb0">{"address: "+address.slice(0, 6) + "..."+address.slice(-4)}</p>
-			<p className="mb0">{"your balance: "+userBalance}</p>
-			<p className="mb0">{"total deposits: "+totalDeposits}</p>
-			<p className="mb0">{"receiver: "+receiver}</p>
+			<p className="mb0">{"your balance: "+this.precise(formatUserBalance)}</p>
+			<p className="mb0">{"total deposits: "+this.precise(formatTotalDeposits)}</p>
+			<p className="mb0">{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
             <p className="mb0">Join this pool</p>
 			<Button text="Contribute" callback={() => onDeposit(address)}/>
 			<Icon name={"plus"} size={32}/>
 			<Button text="Withdraw Deposit" callback={() => onWithdrawDeposit(address)}/>
-			<p className="mb0">{"unclaimed donation: "+interest}</p>
+			<p className="mb0">{"claimed donation: "+this.precise(formatClaimedInterest)}</p>
+			<p className="mb0">{"unclaimed donation: "+this.precise(formatUnclaimedInterest)}</p>
 			<Button text="Claim Interest" callback={() => onClaim(address)}/>
           </div>
         </div>

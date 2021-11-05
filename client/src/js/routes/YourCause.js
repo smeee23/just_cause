@@ -86,12 +86,15 @@ class YourCause extends Component {
 	deploy = async() => {
 		const activeAccount = this.web3.currentProvider.selectedAddress;
 		const poolName = prompt("Enter pool name:");
+		//const receiver = prompt("Enter the address to recieve the interest");
 		const payload = {data: JCPool.bytecode,
 						arguments: [
 							[this.state.daiAddress],
 							poolName,
-							this.poolTrackerAddress
-						]};
+							this.poolTrackerAddress,
+							'0xEf0Edb12952a6Bb6c83b7C29defec62e9292bE46'
+							]
+						};
 		const parameter = {
 			from: activeAccount,
 			gas: this.web3.utils.toHex(3000000),

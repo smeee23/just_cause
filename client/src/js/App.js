@@ -1,6 +1,7 @@
 import React, { Component } from "react"
-import { connect } from "react-redux";
+import { connect } from "react-redux"
 import { ConnectedRouter } from 'connected-react-router'
+import { createBrowserHistory } from 'history'
 
 import routes from './routes'
 import { detectMobile } from "./actions/mobile"
@@ -9,16 +10,16 @@ import { detectMobile } from "./actions/mobile"
 
 class App extends Component {
 
-  	componentDidMount = async() => {
-		try{
+	componentDidMount = async() => {
+		try {
 			window.addEventListener('resize', this.props.detectMobile);
 		}
 		catch (error) {
-		// Catch any errors for any of the above operations.
-		alert(
-			`Failed to load web3, accounts, or contract. Check console for details.`,
-		);
-		console.error(error);
+			// Catch any errors for any of the above operations.
+			alert(
+				`Failed to load web3, accounts, or contract. Check console for details.`,
+			);
+			console.error(error);
 		}
 	}
 
@@ -27,31 +28,17 @@ class App extends Component {
 	}
 
 	render() {
-		const { history } = this.props;
-		/*const listItems = this.state.poolInfo.map((pt) =>
-							<Card
-								key={pt.address}
-								title="test charity"
-								address={pt.address}
-								userBalance={pt.activeUserBalance}
-								onApprove = {this.approve}
-								onDeposit = {this.deposit}
-								onWithdrawDeposit = {this.withdrawDeposit}
-								onClaim = {this.claim}
-							/>
-						  );*/
+		let history;
+		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+			history = this.props.history;
+		} else {
+			history = createBrowserHistory({ basename: '/just_cause' })
+		}
 
-		/*return(
-			<React.Fragment>
-			<Button text="Deploy" icon="wallet" callback={this.deploy}/>
-			{listItems}
-			</React.Fragment>
-		)*/
 		return (
     	<ConnectedRouter history={history}>
         	{ routes }
-      	</ConnectedRouter>
-
+			</ConnectedRouter>
 		)
 	}
 }

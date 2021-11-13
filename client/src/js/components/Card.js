@@ -48,7 +48,7 @@ class Card extends Component {
 	}
 
 	render() {
-		const { title, address, userBalance, totalDeposits, onDeposit, onWithdrawDeposit, onClaim, unclaimedInterest, claimedInterest, receiver } = this.props;
+		const { title, idx, address, userBalance, totalDeposits, onDeposit, onWithdrawDeposit, onClaim, unclaimedInterest, claimedInterest, receiver } = this.props;
 
 		let formatUserBalance = parseFloat(userBalance) / 1000000000000000000;
 		let formatTotalDeposits = parseFloat(totalDeposits) / 1000000000000000000;
@@ -63,7 +63,7 @@ class Card extends Component {
 			{ "name": "poolShape5", "color": palette("brand-green")},
 		]
 
-		const randomPoolIcon = poolIcons[Math.floor(Math.random()*poolIcons.length)];
+		const randomPoolIcon = poolIcons[idx % poolIcons.length];
 
 		const classnames = classNames({
       "card": true,
@@ -79,18 +79,22 @@ class Card extends Component {
 					</h3>
           <div className="card__header--right">
 						<p className="mb0">{"your balance: " + this.precise(formatUserBalance) + ","}</p>
-						<p className="mb0">{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
+						<p className="mb0">{"total deposits: "+this.precise(formatTotalDeposits)}</p>
 						<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
           </div>
         </div>
 				<div className="card__body">
-						<p className="mb0">{"total deposits: "+this.precise(formatTotalDeposits)}</p>
-						<p className="mb0">{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
-						<Button text="Contribute" callback={() => onDeposit(address)}/>
-						<Button text="Withdraw Deposit" callback={() => onWithdrawDeposit(address)}/>
-						<p className="mb0">{"claimed donation: "+this.precise(formatClaimedInterest)}</p>
-						<p className="mb0">{"unclaimed donation: "+this.precise(formatUnclaimedInterest)}</p>
-						<Button text="Claim Interest" callback={() => onClaim(address)}/>
+						<div className="card__body__column">
+							<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
+							<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
+							<Button text="Contribute" callback={() => onDeposit(address)}/>
+							<Button text="Withdraw Deposit" callback={() => onWithdrawDeposit(address)}/>
+						</div>
+						<div className="card__body__column">
+							<p>{"claimed donation: "+this.precise(formatClaimedInterest)}</p>
+							<p>{"unclaimed donation: "+this.precise(formatUnclaimedInterest)}</p>
+							<Button text="Claim Interest" callback={() => onClaim(address)}/>
+						</div>
           </div>
         <div className="card__bar"/>
       </div>

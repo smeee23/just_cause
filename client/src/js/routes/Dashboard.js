@@ -211,27 +211,29 @@ class Dashboard extends Component {
 	}
 
 	render() {
-		const listItems = this.state.poolInfo.map((pt) =>
-								<Card
-									key={pt.address}
-									title={pt.name}
-									unclaimedInterest={pt.unclaimedInterest}
-									claimedInterest={pt.claimedInterest}
-									receiver={pt.receiver}
-									totalDeposits={pt.totalDeposits}
-									address={pt.address}
-									userBalance={pt.activeUserBalance}
-									onApprove = {this.approve}
-									onDeposit = {this.deposit}
-									onWithdrawDeposit = {this.withdrawDeposit}
-									onClaim = {this.claim}
-								/>
-							);
+		const listItems = this.state.poolInfo.map((pt, i) =>
+			<Card
+				key={pt.address}
+				title={pt.name}
+				idx={i}
+				unclaimedInterest={pt.unclaimedInterest}
+				claimedInterest={pt.claimedInterest}
+				receiver={pt.receiver}
+				totalDeposits={pt.totalDeposits}
+				address={pt.address}
+				userBalance={pt.activeUserBalance}
+				onApprove = {this.approve}
+				onDeposit = {this.deposit}
+				onWithdrawDeposit = {this.withdrawDeposit}
+				onClaim = {this.claim}
+			/>
+		);
+
 		return (
 			<Fragment>
 				<article>
 					<section className="page-section page-section--center horizontal-padding bw0">
-					{listItems}
+						{listItems}
 					</section>
 				</article>
 			</Fragment>

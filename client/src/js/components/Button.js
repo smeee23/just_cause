@@ -17,7 +17,7 @@ class Button extends Component {
       <button className={classnames} href={href} onClick={callback}>
         <div className="button__items">
           { text ? (
-            <div className="button__item">
+            <div className="button__item button__text">
               <p className="mb0">{ text }</p>
             </div>
           ) : null }

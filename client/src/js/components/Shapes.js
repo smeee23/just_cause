@@ -84,7 +84,7 @@ class Shapes extends Component {
             const options = {
                 render: {
                     strokeStyle: palette[paletteKeys[(i + j) % paletteKeys.length]] + 'FF',
-                    lineWidth: 2,
+                    lineWidth: 4,
                     fillStyle: 'transparent'
                 },
                 chamfer: 32

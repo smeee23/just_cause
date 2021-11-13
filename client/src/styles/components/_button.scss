@@ -52,20 +52,22 @@ $baseclass: 'button';
   }
 
   &--lg {
-    padding: ($rem-base * 2);
-    border: solid 2px;
-    border-radius: 50%;
-
     .#{$baseclass}__items {
       flex-direction: column-reverse;
+      align-items: center;
     }
 
     .#{$baseclass}__icon {
-      padding-bottom: 0;
+      border-radius: 50%;
+      border-left-style: solid;
+      padding: ($rem-base * 5);
+    }
+
+    .#{$baseclass}__text {
+      border: none;
     }
 
     .#{$baseclass}__item {
-      border: none;
       justify-content: center;
     }
 

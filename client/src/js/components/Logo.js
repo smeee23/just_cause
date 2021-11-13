@@ -4,7 +4,7 @@ class Logo extends Component {
 
 	render() {
 		return (
-            <svg className="logo" width="21px" height="21px" viewBox="0 0 21 21">
+            <svg className="logo" width="24px" height="24px" viewBox="0 0 21 21">
                 <defs>
                     <circle id="path-1" cx="10.5" cy="10.5" r="9.5"></circle>
                 </defs>

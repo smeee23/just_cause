@@ -5,38 +5,67 @@ $baseclass: 'card';
   width: 100%;
   margin-bottom: 3 * $rem-base;
 
-  &__header, &__bar {
+  &__header, &__bar, &__body {
     border-radius: 8px;
+  }
+
+  &__header, &__body {
+    padding: (3 * $rem-base) (4 * $rem-base);
+    border: solid 3px;
+    border-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: (3 * $rem-base) (4 * $rem-base);
     min-height: (10 * $rem-base);
-    border: solid 3px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+  }
+
+  &__body {
+    padding-top: 0;
+    padding-bottom: 0;
+    border-top: 0;
+    border-radius: 0;
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 0;
+    transition: max-height $duration-short $easing1;
+    overflow: hidden;
   }
 
   &__header--right {
     display: flex;
+    justify-content: flex-end;
+    flex: 1;
 
     > * {
-      margin-left: px-to-rem($rem-base * 2);
+      margin-left: px-to-rem($rem-base * 3);
     }
   }
 
   &__bar {
-    position: absolute;
-    bottom: -0.5 * $rem-base;
-    left: 0;
-    height: 0.5 * $rem-base;
+    height: $rem-base;
     width: 100%;
     background: $brand-white;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+  }
+
+  &__open-button {
+    transition: transform $easing1 $duration-short;
+    cursor: pointer;
+  }
+
+  &--open {
+    .#{$baseclass}__body {
+      max-height: 500px;
+    }
+    .#{$baseclass}__open-button {
+      transform: rotate(135deg);
+    }
   }
 
   @media screen and (max-width: $bp-medium) {

@@ -6,7 +6,6 @@ import Card from '../components/Card';
 import getWeb3 from "../../getWeb3";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
-import Shapes from '../components/Shapes';
 
 class YourCause extends Component {
     state = {

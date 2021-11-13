@@ -5,25 +5,28 @@ import Icon from "./Icon";
 
 class Button extends Component {
 	render() {
-		const { text, icon, href, callback } = this.props;
+		const { text, icon, href, callback, lg } = this.props;
 
     const classnames = classNames({
       "button": true,
-      "button--icon-only": !text
+      "button--icon-only": !text,
+      "button--lg": lg
     })
 
 		return (
       <button className={classnames} href={href} onClick={callback}>
-        { text ? (
-          <div className="button__item">
-            <p className="mb0">{ text }</p>
-          </div>
-        ) : null }
-        { icon ? (
-          <div className="button__item button__icon">
-            <Icon name={icon} size={32}/>
-          </div>
-        ) : null }
+        <div className="button__items">
+          { text ? (
+            <div className="button__item">
+              <p className="mb0">{ text }</p>
+            </div>
+          ) : null }
+          { icon ? (
+            <div className="button__item button__icon">
+              <Icon name={icon} size={lg ? 64 : 32}/>
+            </div>
+          ) : null }
+        </div>
         <div className="button__bar--outer">
           <div className="button__bar--inner"/>
         </div>

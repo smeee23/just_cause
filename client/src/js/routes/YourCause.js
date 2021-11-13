@@ -135,10 +135,9 @@ class YourCause extends Component {
 							);
         return (
             <Fragment>
-				<Shapes/>
                 <article>
                     <section className="page-section page-section--center horizontal-padding bw0">
-                        <Button text="Deploy" icon="wallet" callback={this.deploy}/>
+                        <Button icon="plus" text="Add Pool" lg callback={this.deploy}/>
                     </section>
                     <section>
                         {listItems}

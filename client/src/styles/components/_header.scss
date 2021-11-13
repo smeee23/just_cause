@@ -35,12 +35,6 @@ $baseclass: 'app-bar';
       text-decoration: none;
     }
 
-    // p {
-    //   &:not(:last-child) {
-    //     margin-right: 4 * $rem-base;
-    //   }
-    // }
-
     > * {
       .button {
         margin-left: 0;

@@ -8,7 +8,6 @@ import getWeb3 from "../../getWeb3";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
-import Shapes from '../components/Shapes';
 import { getPoolInfo } from '../func/functions.js';
 
 class Dashboard extends Component {
@@ -230,7 +229,6 @@ class Dashboard extends Component {
 							);
 		return (
 			<Fragment>
-				<Shapes/>
 				<article>
 					<section className="page-section page-section--center horizontal-padding bw0">
 					{listItems}

@@ -50,9 +50,7 @@ class Card extends Component {
 			<p className="mb0">{"your balance: "+this.precise(formatUserBalance)}</p>
 			<p className="mb0">{"total deposits: "+this.precise(formatTotalDeposits)}</p>
 			<p className="mb0">{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
-            <p className="mb0">Join this pool</p>
 			<Button text="Contribute" callback={() => onDeposit(address)}/>
-			<Icon name={"plus"} size={32}/>
 			<Button text="Withdraw Deposit" callback={() => onWithdrawDeposit(address)}/>
 			<p className="mb0">{"claimed donation: "+this.precise(formatClaimedInterest)}</p>
 			<p className="mb0">{"unclaimed donation: "+this.precise(formatUnclaimedInterest)}</p>

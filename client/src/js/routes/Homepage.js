@@ -1,17 +1,17 @@
 import React, {Component} from "react"
 import { Fragment } from "react";
 
+import { connect } from "react-redux";
+
 import Button from '../components/Button'
 import Footer from "../components/Footer";
 import Shapes from '../components/Shapes'
 
+import { updateDaiAddress } from "../actions/daiAddress";
+
 class Homepage extends Component {
 	componentDidMount() {
 		window.scrollTo(0,0);
-	}
-
-	callbackExample = () => {
-		console.log('clicked');
 	}
 
 	render() {
@@ -22,7 +22,7 @@ class Homepage extends Component {
 				<article>
 					<section className="page-section page-section--center horizontal-padding">
 						<h1>Donate interest earned in crypto to good causes with JustCause.</h1>
-						<Button text="Connect Wallet" icon="wallet" callback={this.callbackExample}/>
+						<Button text={ this.props.daiAddress } icon="wallet" callback={ () => this.props.updateDaiAddress('Updated Address') }/>
 					</section>
 					<section className="page-section horizontal-padding">
 						<h2>How it works</h2>
@@ -55,4 +55,12 @@ class Homepage extends Component {
 	}
 }
 
-export default Homepage
+const mapStateToProps = state => ({
+	daiAddress: state.daiAddress,
+})
+
+const mapDispatchToProps = dispatch => ({
+	updateDaiAddress: (s) => dispatch(updateDaiAddress(s)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Homepage)

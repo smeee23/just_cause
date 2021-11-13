@@ -3,7 +3,7 @@ $baseclass: 'button';
 .#{$baseclass} {
   position: relative;
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
   background-color: transparent;
   color: inherit;
   border: none;
@@ -12,12 +12,17 @@ $baseclass: 'button';
   cursor: pointer;
   outline: none;
 
+  &__items {
+    display: flex;
+    align-items: stretch;
+  }
+
   &__bar--outer {
     width: 100%;
     height: $rem-base / 2;
-    bottom: -($rem-base / 2);
-    left: 0;
-    position: absolute;
+    // bottom: -($rem-base / 2);
+    // left: 0;
+    // position: absolute;
   }
 
   &__bar--inner {
@@ -43,6 +48,29 @@ $baseclass: 'button';
   &--icon-only {
     .#{$baseclass}__icon {
       border-left-style: solid;
+    }
+  }
+
+  &--lg {
+    padding: ($rem-base * 2);
+    border: solid 2px;
+    border-radius: 50%;
+
+    .#{$baseclass}__items {
+      flex-direction: column-reverse;
+    }
+
+    .#{$baseclass}__icon {
+      padding-bottom: 0;
+    }
+
+    .#{$baseclass}__item {
+      border: none;
+      justify-content: center;
+    }
+
+    .#{$baseclass}__bar--outer {
+      display: none;
     }
   }
 

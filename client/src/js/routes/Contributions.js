@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Fragment } from "react";
 
-import Button from '../components/Button';
+//import Button from '../components/Button';
 import Card from '../components/Card';
 import getWeb3 from "../../getWeb3";
 import JCPool from "../../contracts/JustCausePool.json";

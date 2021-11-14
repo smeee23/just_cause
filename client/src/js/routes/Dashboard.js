@@ -2,13 +2,13 @@ import React, {Component} from "react"
 import { Fragment } from "react";
 
 import Card from '../components/Card'
-import Button from '../components/Button'
+//git stash import Button from '../components/Button'
 
 import getWeb3 from "../../getWeb3";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
-import { getPoolInfo } from '../func/functions.js';
+//import { getPoolInfo } from '../func/functions.js';
 
 class Dashboard extends Component {
 	state = {

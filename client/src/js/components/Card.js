@@ -49,10 +49,9 @@ class Card extends Component {
 	}
 
 	render() {
-		const { title, idx, address, userBalance, totalDeposits, onDeposit, onWithdrawDeposit, onClaim, unclaimedInterest, claimedInterest, receiver } = this.props;
-		//const { title, address, userBalance, acceptedTokenInfo, totalDeposits, onDeposit, acceptedTokens, onWithdrawDeposit, onClaim, unclaimedInterest, claimedInterest, receiver } = this.props;
+		const { title, idx, address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo, acceptedTokens } = this.props;
 
-		console.log('acceptedtokenInfo', acceptedTokenInfo[1].address);
+		console.log('acceptedtokenInfo', acceptedTokenInfo);
 
 		const poolIcons = [
 			{ "name": "poolShape1", "color": palette("brand-red")},
@@ -78,6 +77,12 @@ class Card extends Component {
 								<Button text="Claim Interest" callback={() => onClaim(address, item.address)}/>
 							</p>
 		);*/
+
+		const formatUserBalance = acceptedTokenInfo[0].userBalance
+		const formatTotalDeposits = acceptedTokenInfo[0].totalDeposits
+		const formatClaimedInterest = acceptedTokenInfo[0].claimedInterest
+		const formatUnclaimedInterest = acceptedTokenInfo[0].unclaimedInterest
+
 
 		return (
       <div className={classnames}>

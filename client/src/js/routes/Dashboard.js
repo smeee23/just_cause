@@ -2,12 +2,13 @@ import React, {Component} from "react"
 import { Fragment } from "react";
 
 import Card from '../components/Card'
-//git stash import Button from '../components/Button'
+import Button from '../components/Button'
 
 import getWeb3 from "../../getWeb3";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
+import { kovanTokenMap } from "../func/tokenMaps.js";
 //import { getPoolInfo } from '../func/functions.js';
 
 class Dashboard extends Component {
@@ -284,18 +285,17 @@ class Dashboard extends Component {
 				key={pt.address}
 				title={pt.name}
 				idx={i}
-				unclaimedInterest={pt.unclaimedInterest}
-				claimedInterest={pt.claimedInterest}
 				receiver={pt.receiver}
-				totalDeposits={pt.totalDeposits}
 				address={pt.address}
-				userBalance={pt.activeUserBalance}
+				acceptedTokenInfo={pt.acceptedTokenInfo}
 				onApprove = {this.approve}
 				onDeposit = {this.deposit}
 				onWithdrawDeposit = {this.withdrawDeposit}
 				onClaim = {this.claim}
 			/>
 		);
+
+		console.log(this.state.poolInfo)
 
 		return (
 			<Fragment>

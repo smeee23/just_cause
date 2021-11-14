@@ -1,5 +1,6 @@
 import React, {Component} from "react"
 import classNames from "classnames";
+import { Fragment } from "react";
 
 import Icon from "./Icon";
 import palette from "../utils/palette";
@@ -49,11 +50,9 @@ class Card extends Component {
 
 	render() {
 		const { title, idx, address, userBalance, totalDeposits, onDeposit, onWithdrawDeposit, onClaim, unclaimedInterest, claimedInterest, receiver } = this.props;
+		//const { title, address, userBalance, acceptedTokenInfo, totalDeposits, onDeposit, acceptedTokens, onWithdrawDeposit, onClaim, unclaimedInterest, claimedInterest, receiver } = this.props;
 
-		let formatUserBalance = parseFloat(userBalance) / 1000000000000000000;
-		let formatTotalDeposits = parseFloat(totalDeposits) / 1000000000000000000;
-		let formatUnclaimedInterest = parseFloat(unclaimedInterest) / 1000000000000000000;
-		let formatClaimedInterest = parseFloat(claimedInterest) / 1000000000000000000;
+		console.log('acceptedtokenInfo', acceptedTokenInfo[1].address);
 
 		const poolIcons = [
 			{ "name": "poolShape1", "color": palette("brand-red")},
@@ -69,6 +68,16 @@ class Card extends Component {
       "card": true,
       "card--open": this.state.open,
     })
+		/*const listItems = acceptedTokenInfo.map((item) =>
+							<p className="card__header--right" key={item.acceptedTokenString}>
+								token: {item.acceptedTokenString} token address: {item.address.slice(0, 6) + "..."+item.address.slice(-4)} total deposits: {parseFloat(item.totalDeposits) / 1000000000000000000} user balance:
+								{(parseFloat(item.userBalance) / 1000000000000000000)} decimals: {item.decimals}
+								<Button text="Contribute" callback={() => onDeposit(address, item.address)}/>
+								<Button text="Withdraw Deposit" callback={() => onWithdrawDeposit(address, item.address)}/>
+								  unclaimed donation {(parseFloat(item.unclaimedInterest) / 1000000000000000000)} claimed donation {(parseFloat(item.claimedInterest) / 1000000000000000000)}
+								<Button text="Claim Interest" callback={() => onClaim(address, item.address)}/>
+							</p>
+		);*/
 
 		return (
       <div className={classnames}>

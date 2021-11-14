@@ -27,8 +27,7 @@ contract JustCausePool {
     ILendingPoolAddressesProvider provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
     address lendingPoolAddr = provider.getLendingPool();
     ILendingPool lendingPool = ILendingPool(lendingPoolAddr); // Kovan
-    IProtocolDataProvider constant dataProvider = IProtocolDataProvider(address(0x744C1aaA95232EeF8A9994C4E0b3a89659D9AB79)); // Kovan
-    address aTokenAddressDai = address(0xdCf0aF9e59C002FA3AA091a46196b37530FD48a8);
+    IProtocolDataProvider constant dataProvider = IProtocolDataProvider(address(0x3c73A5E5785cAC854D468F727c606C07488a29D6)); // Kovan
 
     //IERC20 daiToken;
     //uint256 amount;
@@ -132,8 +131,14 @@ contract JustCausePool {
         return name;
     }
 
+    function getATokenAddress(address _assetAddress) external view returns(address){
+        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
+        return aTokenAddress;
+    }
+
     function getUnclaimedInterest(address _assetAddress) external view returns (uint256){
-        uint256 aTokenBalance = IERC20(aTokenAddressDai).balanceOf(address(this));
+        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
+        uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         return aTokenBalance - totalDeposits[_assetAddress];
     }
 
@@ -141,8 +146,9 @@ contract JustCausePool {
         return interestWithdrawn[_assetAddress];
     }
 
-    function getATokenBalance() external view returns (uint256){
-        return IERC20(aTokenAddressDai).balanceOf(address(this));
+    function getATokenBalance(address _assetAddress) external view returns (uint256){
+        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
+        return IERC20(aTokenAddress).balanceOf(address(this));
     }
 
     function getRecipient() external view returns(address){
@@ -172,14 +178,12 @@ contract JustCausePool {
      */
 
     function withdrawDonations(address _assetAddress) onlyAllowedTokens(_assetAddress) public{
-        //(address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(address(daiToken));
-        //uint256 assetBalance = IERC20(aTokenAddress).balanceOf(address(this));
-        //uint256 assetBalance = IERC20(_assetAddress).balanceOf(address(this));
+        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
 
-        uint256 aTokenBalance = IERC20(aTokenAddressDai).balanceOf(address(this));
+        uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
         interestWithdrawn[_assetAddress] += interestEarned;
         lendingPool.withdraw(_assetAddress, interestEarned, owner);
-        emit WithdrawDonations(_assetAddress, owner, interestEarned, totalDeposits[_assetAddress], aTokenAddressDai);
+        emit WithdrawDonations(_assetAddress, owner, interestEarned, totalDeposits[_assetAddress], aTokenAddress);
     }
 }

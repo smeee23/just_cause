@@ -12,7 +12,7 @@ import ERC20Instance from "../../contracts/IERC20.json";
 
 class Dashboard extends Component {
 	state = {
-		daiAddress: '0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD',
+		tokenMap: {},
 		poolTracker: [],
 		poolInfo: [],
 	};
@@ -28,7 +28,12 @@ class Dashboard extends Component {
 
 		this.networkId = await this.web3.eth.net.getId();
 
-		console.log(this.networkId);
+		console.log("network ID", typeof this.networkId);
+
+		if(this.networkId === 42){
+			this.setState({tokenMap: kovanTokenMap});
+			console.log("tokenMap", Object.keys(kovanTokenMap));
+		}
 
 		this.PoolTrackerInstance = new this.web3.eth.Contract(
 			PoolTracker.abi,
@@ -43,9 +48,10 @@ class Dashboard extends Component {
 			this.setState({contractName: loadedContractName});
 		}*/
 		this.setPoolTracker();
-		let poolTracker = this.state.poolTracker;
-		let poolInfo = this.state.poolInfo;
-		this.setState({poolInfo, poolTracker});
+		//let poolTracker = this.state.poolTracker;
+		//let poolInfo = this.state.poolInfo;
+		//this.setState({poolInfo, poolTracker});
+		console.log("component did mount", this.state.poolInfo);
 		}
 		catch (error) {
 			// Catch any errors for any of the above operations.
@@ -56,7 +62,9 @@ class Dashboard extends Component {
 		}
 	}
 
-
+	componentDidUpdate = () => {
+		console.log('component did update');
+	}
 	setPoolTracker = async() => {
 		const activeAccount = this.web3.currentProvider.selectedAddress;
 		let poolTracker = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
@@ -71,36 +79,84 @@ class Dashboard extends Component {
 
 			let acceptedTokens = await JCPoolInstance.methods.getAcceptedTokens().call();
 			let name = await JCPoolInstance.methods.getName().call();
-			let unclaimedInterest = await JCPoolInstance.methods.getUnclaimedInterest(this.state.daiAddress).call();
 			let receiver = await JCPoolInstance.methods.getRecipient().call();
-			let claimedInterest = await JCPoolInstance.methods.getClaimedInterest(this.state.daiAddress).call();
 
 			console.log("pool address:", JCPoolInstance.options.address)
 			console.log("accepted tokens:", acceptedTokens);
-			let totalDeposits = [];
-			let activeUserBalance = [];
+			let acceptedTokenStrings = [];
+			let acceptedTokenInfo = [];
+			console.log('acceptedTokens', acceptedTokens)
 			for(let j = 0; j < acceptedTokens.length; j++){
-				totalDeposits.push(await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call());
-				activeUserBalance.push(await JCPoolInstance.methods.getUserBalance(activeAccount, acceptedTokens[j]).call());
-				console.log("total deposits for", acceptedTokens[j], " :", totalDeposits);
-				console.log(activeAccount, "balance:", activeUserBalance);
+				const tokenString = Object.keys(this.state.tokenMap).find(key => this.state.tokenMap[key].address === acceptedTokens[j]);
+				acceptedTokenInfo.push({
+					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
+					'userBalance': await JCPoolInstance.methods.getUserBalance(activeAccount, acceptedTokens[j]).call(),
+					'unclaimedInterest': await JCPoolInstance.methods.getUnclaimedInterest(acceptedTokens[j]).call(),
+					'claimedInterest': await JCPoolInstance.methods.getClaimedInterest(acceptedTokens[j]).call(),
+					'aTokenAddress': await JCPoolInstance.methods.getATokenAddress(acceptedTokens[j]).call(),
+					'acceptedTokenString': tokenString,
+					'decimals': this.state.tokenMap[tokenString].decimals,
+					'address': acceptedTokens[j],
+				});
+				acceptedTokenStrings.push(tokenString);
 			}
-
 			poolInfo.push({
 							receiver: receiver,
-							unclaimedInterest: unclaimedInterest,
-							claimedInterest: claimedInterest,
 							name: name,
 							address: poolTracker[i],
-							acceptedTokens: acceptedTokens,
-							totalDeposits: totalDeposits,
-							activeUserBalance: activeUserBalance,
-							});
+							acceptedTokens: acceptedTokenStrings,
+							acceptedTokenInfo: acceptedTokenInfo,
+			});
 		}
+
 		console.log("pool info", poolInfo);
 		console.log("pool tracker", poolTracker);
 		this.setState({poolTracker: poolTracker, poolInfo: poolInfo});
 	}
+
+	deploy = async() => {
+		const activeAccount = this.web3.currentProvider.selectedAddress;
+		const poolName = prompt("Enter pool name:");
+		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)");
+		acceptedTokens = acceptedTokens.split(" ");
+		console.log("acceptedTokens", acceptedTokens, this.state.tokenMap);
+		let tokenAddrs = [];
+		for(let i = 0; i < acceptedTokens.length; i++){
+			tokenAddrs.push(this.state.tokenMap[acceptedTokens[i]].address);
+		}
+		console.log(tokenAddrs);
+		const receiver = prompt("Enter the address to recieve the interest");
+		console.log("receiver", receiver, typeof receiver);
+		const payload = {data: JCPool.bytecode,
+						arguments: [
+							tokenAddrs,
+							poolName,
+							this.poolTrackerAddress,
+							receiver
+						]
+		};
+		const parameter = {
+			from: activeAccount,
+			gas: this.web3.utils.toHex(3000000),
+			gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('30', 'gwei'))
+		};
+
+		console.log(payload.arguments)
+		let JCPoolInstance = await new this.web3.eth.Contract(JCPool.abi).deploy(payload).send(parameter, (err, transactionHash) => {
+			console.log('Transaction Hash :', transactionHash);
+			});
+			/*.on('confirmation', () => {}).then((newContractInstance) => {
+			console.log('Deployed Contract Address : ', newContractInstance.options.address);
+			this.setState({contractAddress: newContractInstance.options.address});
+			});*/
+
+
+		/*console.log("deployed", JCPoolInstance.options.address);*/
+		//console.log("events", JCPoolInstance);
+
+		this.setPoolTracker();
+	}
+
 	approve = async(erc20Instance, address, activeAccount, amountInGwei) => {
 		console.log('approve clicked');
 		const parameter = {
@@ -121,18 +177,30 @@ class Dashboard extends Component {
 		return allowance;
 	}
 
-	deposit = async(address) => {
-		console.log('deposit clicked');
-		const amount = prompt("enter amount to deposit");
-		const amountInGwei = this.web3.utils.toWei(amount, 'ether');
-		const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi,this.state.daiAddress);
+	getWalletBalance = async(tokenAddress) => {
 		const activeAccount = this.web3.currentProvider.selectedAddress;
-		console.log("amountInGwei", amountInGwei, typeof amountInGwei);
+		const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, tokenAddress);
+		const balance = await erc20Instance.methods.balanceOf(activeAccount).call();
+		return balance;
+	}
+
+	getAmountBase = (amount, decimals) => {
+		return (amount*10**decimals).toString();
+	}
+	deposit = async(address, tokenAddress) => {
+		console.log('deposit clicked');
+		const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, tokenAddress);
+		const tokenString = Object.keys(this.state.tokenMap).find(key => this.state.tokenMap[key].address === tokenAddress);
+		console.log('tokenString:', tokenString, this.state.tokenMap[tokenString].decimals);
+		const amount = prompt("enter amount to deposit");
+		const amountInBase = this.web3.utils.toWei(amount, 'ether');//this.getAmountBase(amount, this.state.tokenMap[tokenString].decimals);
+		const activeAccount = this.web3.currentProvider.selectedAddress;
+		console.log("amountInGwei", amountInBase, typeof amountInBase);
 		const allowance = await this.getAllowance(erc20Instance, address, activeAccount)
-		if(parseInt(amountInGwei) > parseInt(allowance)){
+		if(parseInt(amountInBase) > parseInt(allowance)){
 			alert("must approve token to deposit");
-			console.log("approve test", parseInt(amountInGwei), parseInt(allowance), (parseInt(amountInGwei) > parseInt(this.getAllowance(erc20Instance, address, activeAccount))))
-			this.approve(erc20Instance, address, activeAccount, amountInGwei);
+			console.log("approve test", parseInt(amountInBase), parseInt(allowance), (parseInt(amountInBase) > parseInt(this.getAllowance(erc20Instance, address, activeAccount))))
+			this.approve(erc20Instance, address, activeAccount, amountInBase);
 		}
 		else{
 			console.log("else");
@@ -149,13 +217,13 @@ class Dashboard extends Component {
 		);
 
 		console.log(JCPoolInstance.options.address);
-		let result = await JCPoolInstance.methods.deposit(this.state.daiAddress, amountInGwei).send(parameter, (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.deposit(tokenAddress, amountInBase).send(parameter, (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 		console.log('deposit result ' + result);
 	}
 
-	withdrawDeposit = async(address) => {
+	withdrawDeposit = async(address, tokenAddress) => {
 		console.log('withdraw deposit clicked');
 		const amount = prompt("enter amount to withdraw");
 		const donateAmount = prompt("enter amount to donate if desired");
@@ -181,7 +249,7 @@ class Dashboard extends Component {
 		console.log('withdraw result ' + result[0]);
 	}
 
-	claim = async(address) => {
+	claim = async(address, assetAddress) => {
 		console.log('claim interest clicked', address);
 		const activeAccount = this.web3.currentProvider.selectedAddress;
 		const parameter = {
@@ -194,7 +262,7 @@ class Dashboard extends Component {
 			JCPool.abi,
 			address,
 		);
-		let result = await JCPoolInstance.methods.withdrawDonations(this.state.daiAddress).send(parameter , (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 
@@ -232,6 +300,9 @@ class Dashboard extends Component {
 		return (
 			<Fragment>
 				<article>
+				<section className="page-section page-section--center horizontal-padding bw0">
+                        <Button text="Deploy" icon="wallet" callback={this.deploy}/>
+				</section>
 					<section className="page-section page-section--center horizontal-padding bw0">
 						{listItems}
 					</section>

@@ -89,6 +89,7 @@ class Dashboard extends Component {
 			console.log('acceptedTokens', acceptedTokens)
 			for(let j = 0; j < acceptedTokens.length; j++){
 				const tokenString = Object.keys(this.state.tokenMap).find(key => this.state.tokenMap[key].address === acceptedTokens[j]);
+				console.log("tokenString", tokenString);
 				acceptedTokenInfo.push({
 					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
 					'userBalance': await JCPoolInstance.methods.getUserBalance(activeAccount, acceptedTokens[j]).call(),

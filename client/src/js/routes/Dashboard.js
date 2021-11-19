@@ -1,22 +1,16 @@
 import React, {Component} from "react"
 import { Fragment } from "react";
 
+import { connect } from "react-redux";
+
 import Card from '../components/Card'
 import Button from '../components/Button'
 
 import getWeb3 from "../../getWeb3";
 import JCPool from "../../contracts/JustCausePool.json";
-import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
-import { kovanTokenMap } from "../func/tokenMaps.js";
-//import { getPoolInfo } from '../func/functions.js';
 
 class Dashboard extends Component {
-	state = {
-		tokenMap: {},
-		poolTracker: [],
-		poolInfo: [],
-	};
 	componentDidMount = async () => {
 		try{
 		window.scrollTo(0,0);
@@ -30,29 +24,6 @@ class Dashboard extends Component {
 		this.networkId = await this.web3.eth.net.getId();
 
 		console.log("network ID", typeof this.networkId);
-
-		if(this.networkId === 42){
-			this.setState({tokenMap: kovanTokenMap});
-			console.log("tokenMap", Object.keys(kovanTokenMap));
-		}
-
-		this.PoolTrackerInstance = new this.web3.eth.Contract(
-			PoolTracker.abi,
-			PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address,
-		);
-
-		this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
-		console.log("Pool Tracker Address:", this.poolTrackerAddress);
-
-		/*const loadedContractName = localStorage.getItem('contractName')
-		if(loadedContractName){
-			this.setState({contractName: loadedContractName});
-		}*/
-		this.setPoolTracker();
-		//let poolTracker = this.state.poolTracker;
-		//let poolInfo = this.state.poolInfo;
-		//this.setState({poolInfo, poolTracker});
-		console.log("component did mount", this.state.poolInfo);
 		}
 		catch (error) {
 			// Catch any errors for any of the above operations.
@@ -65,55 +36,6 @@ class Dashboard extends Component {
 
 	componentDidUpdate = () => {
 		console.log('component did update');
-	}
-	setPoolTracker = async() => {
-		const activeAccount = this.web3.currentProvider.selectedAddress;
-		let poolTracker = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
-
-		//let poolInfo = getPoolInfo(poolTracker, activeAccount, this.web3);
-		let poolInfo = [];
-		for(let i=0; i < poolTracker.length; i++){
-			let JCPoolInstance = new this.web3.eth.Contract(
-				JCPool.abi,
-				poolTracker[i],
-			);
-
-			let acceptedTokens = await JCPoolInstance.methods.getAcceptedTokens().call();
-			let name = await JCPoolInstance.methods.getName().call();
-			let receiver = await JCPoolInstance.methods.getRecipient().call();
-
-			console.log("pool address:", JCPoolInstance.options.address)
-			console.log("accepted tokens:", acceptedTokens);
-			let acceptedTokenStrings = [];
-			let acceptedTokenInfo = [];
-			console.log('acceptedTokens', acceptedTokens)
-			for(let j = 0; j < acceptedTokens.length; j++){
-				const tokenString = Object.keys(this.state.tokenMap).find(key => this.state.tokenMap[key].address === acceptedTokens[j]);
-				console.log("tokenString", tokenString);
-				acceptedTokenInfo.push({
-					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
-					'userBalance': await JCPoolInstance.methods.getUserBalance(activeAccount, acceptedTokens[j]).call(),
-					'unclaimedInterest': await JCPoolInstance.methods.getUnclaimedInterest(acceptedTokens[j]).call(),
-					'claimedInterest': await JCPoolInstance.methods.getClaimedInterest(acceptedTokens[j]).call(),
-					'aTokenAddress': await JCPoolInstance.methods.getATokenAddress(acceptedTokens[j]).call(),
-					'acceptedTokenString': tokenString,
-					'decimals': this.state.tokenMap[tokenString].decimals,
-					'address': acceptedTokens[j],
-				});
-				acceptedTokenStrings.push(tokenString);
-			}
-			poolInfo.push({
-							receiver: receiver,
-							name: name,
-							address: poolTracker[i],
-							acceptedTokens: acceptedTokenStrings,
-							acceptedTokenInfo: acceptedTokenInfo,
-			});
-		}
-
-		console.log("pool info", poolInfo);
-		console.log("pool tracker", poolTracker);
-		this.setState({poolTracker: poolTracker, poolInfo: poolInfo});
 	}
 
 	deploy = async() => {
@@ -144,7 +66,7 @@ class Dashboard extends Component {
 		};
 
 		console.log(payload.arguments)
-		let JCPoolInstance = await new this.web3.eth.Contract(JCPool.abi).deploy(payload).send(parameter, (err, transactionHash) => {
+		await new this.web3.eth.Contract(JCPool.abi).deploy(payload).send(parameter, (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			});
 			/*.on('confirmation', () => {}).then((newContractInstance) => {
@@ -271,33 +193,34 @@ class Dashboard extends Component {
 		console.log('claim result', result);
 	}
 
-	stringifyPoolTracker = () => {
-		let poolTrackerString = ""
-		for(let i = 0; i < this.state.poolTracker.length; i++){
-			poolTrackerString = poolTrackerString + '\n' + this.state.poolTracker[i];
+	createCardInfo = () => {
+		if(this.props.verifiedPoolInfo === "No Verified Pools") return
+		let cardHolder = [];
+		for(let i = 0; i < this.props.verifiedPoolInfo.length; i++){
+			console.log('a', (this.props.verifiedPoolInfo[i].name));
+			const item = this.props.verifiedPoolInfo[i];
+			cardHolder.push(
+				<Card
+					key={item.address}
+					title={item.name}
+					idx={i}
+					receiver={item.receiver}
+					address={item.address}
+					acceptedTokenInfo={item.acceptedTokenInfo}
+					onApprove = {this.approve}
+					onDeposit = {this.deposit}
+					onWithdrawDeposit = {this.withdrawDeposit}
+					onClaim = {this.claim}
+				/>
+			);
 		}
-		console.log("pool tracker string", poolTrackerString);
-		this.setState({poolTrackerString: poolTrackerString});
+		return cardHolder;
 	}
 
 	render() {
-		const listItems = this.state.poolInfo.map((pt, i) =>
-			<Card
-				key={pt.address}
-				title={pt.name}
-				idx={i}
-				receiver={pt.receiver}
-				address={pt.address}
-				acceptedTokenInfo={pt.acceptedTokenInfo}
-				onApprove = {this.approve}
-				onDeposit = {this.deposit}
-				onWithdrawDeposit = {this.withdrawDeposit}
-				onClaim = {this.claim}
-			/>
-		);
 
-		console.log(this.state.poolInfo)
-
+		console.log("*********verifiedPoolInfo:", this.props.verifiedPoolInfo);
+		const cardHolder = this.createCardInfo();
 		return (
 			<Fragment>
 				<article>
@@ -305,7 +228,7 @@ class Dashboard extends Component {
                         <Button text="Deploy" icon="wallet" callback={this.deploy}/>
 				</section>
 					<section className="page-section page-section--center horizontal-padding bw0">
-						{listItems}
+						{cardHolder}
 					</section>
 				</article>
 			</Fragment>
@@ -313,4 +236,16 @@ class Dashboard extends Component {
 	}
 }
 
-export default Dashboard
+const mapStateToProps = state => ({
+	daiAddress: state.daiAddress,
+	activeAccount: state.activeAccount,
+	tokenMap: state.tokenMap,
+	verifiedPoolAddrs: state.verifiedPoolAddrs,
+	verifiedPoolInfo: state.verifiedPoolInfo,
+})
+
+const mapDispatchToProps = dispatch => ({
+
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

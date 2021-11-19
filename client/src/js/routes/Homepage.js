@@ -14,7 +14,29 @@ class Homepage extends Component {
 		window.scrollTo(0,0);
 	}
 
+	printTokenMap = () => {
+		let acceptedTokens = Object.keys(this.props.tokenMap);
+		console.log('tokenMapProp');
+		for(let i = 0; i < acceptedTokens.length; i++){
+			const key = acceptedTokens[i];
+			const address =  this.props.tokenMap[key] && this.props.tokenMap[key].address;
+			const decimals = this.props.tokenMap[key] && this.props.tokenMap[key].decimals;
+			console.log(i, key, address, decimals);
+		}
+	}
+
+	printVerifiedPoolAddrs = () => {
+		console.log("verifiedPoolAddrs:", this.props.verifiedPoolAddrs);
+	}
+
+	printVerifiedPoolInfo = () => {
+		console.log("*********verifiedPoolInfo:", this.props.verifiedPoolInfo);
+	}
+
 	render() {
+		this.printTokenMap();
+		this.printVerifiedPoolAddrs();
+		this.printVerifiedPoolInfo();
 		return (
 			<Fragment>
 				<Shapes/>
@@ -23,6 +45,7 @@ class Homepage extends Component {
 					<section className="page-section page-section--center horizontal-padding">
 						<h1>Donate interest earned in crypto to good causes with JustCause.</h1>
 						<Button text={ this.props.daiAddress } icon="wallet" callback={ () => this.props.updateDaiAddress('Updated Address') }/>
+						<Button text={ "connected: "+this.props.activeAccount} icon="wallet"/>
 					</section>
 					<section className="page-section horizontal-padding">
 						<h2>How it works</h2>
@@ -57,6 +80,10 @@ class Homepage extends Component {
 
 const mapStateToProps = state => ({
 	daiAddress: state.daiAddress,
+	activeAccount: state.activeAccount,
+	tokenMap: state.tokenMap,
+	verifiedPoolAddrs: state.verifiedPoolAddrs,
+	verifiedPoolInfo: state.verifiedPoolInfo,
 })
 
 const mapDispatchToProps = dispatch => ({

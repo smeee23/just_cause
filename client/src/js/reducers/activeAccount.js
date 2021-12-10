@@ -1,4 +1,4 @@
-const activeAccountReducer = (state = 'No Address', action) => {
+const activeAccountReducer = (state = null, action) => {
 	//console.log("active account reducer called", action.type)
 	switch (action.type) {
 		case 'UPDATE_ACTIVE_ACCOUNT':

@@ -7,6 +7,8 @@ import activeAccountReducer from './activeAccount'
 import tokenMapReducer from './tokenMap'
 import verifiedPoolAddrsReducer from './verifiedPoolAddrs'
 import verifiedPoolInfoReducer from './verifiedPoolInfo'
+import ownerPoolAddrsReducer from './ownerPoolAddrs'
+import ownerPoolInfoReducer from './ownerPoolInfo'
 
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
@@ -15,6 +17,8 @@ const rootReducer = (history) => combineReducers({
 	tokenMap: tokenMapReducer,
 	verifiedPoolAddrs: verifiedPoolAddrsReducer,
 	verifiedPoolInfo: verifiedPoolInfoReducer,
+	ownerPoolAddrs: ownerPoolAddrsReducer,
+	ownerPoolInfo: ownerPoolInfoReducer,
 	router: connectRouter(history),
 })
 

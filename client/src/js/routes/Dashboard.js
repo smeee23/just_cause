@@ -11,19 +11,20 @@ import JCPool from "../../contracts/JustCausePool.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 
 class Dashboard extends Component {
+
 	componentDidMount = async () => {
 		try{
 		window.scrollTo(0,0);
 		// Get network provider and web3 instance.
-		this.web3 = await getWeb3();
-
+		//web3 = await getWeb3();
+		//console.log('************web3', web3, getWeb3());
 		// Use web3 to get the user's accounts.
-		this.accounts = await this.web3.eth.getAccounts();
-		console.log(this.accounts);
+		//this.accounts = await web3.eth.getAccounts();
+		//console.log(this.accounts);
 
-		this.networkId = await this.web3.eth.net.getId();
+		//this.networkId = await web3.eth.net.getId();
 
-		console.log("network ID", typeof this.networkId);
+		//console.log("network ID", typeof this.networkId);
 		}
 		catch (error) {
 			// Catch any errors for any of the above operations.
@@ -39,7 +40,8 @@ class Dashboard extends Component {
 	}
 
 	deploy = async() => {
-		const activeAccount = this.web3.currentProvider.selectedAddress;
+		const web3 = await getWeb3();
+		const activeAccount = web3.currentProvider.selectedAddress;
 		const poolName = prompt("Enter pool name:");
 		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)");
 		acceptedTokens = acceptedTokens.split(" ");
@@ -61,12 +63,12 @@ class Dashboard extends Component {
 		};
 		const parameter = {
 			from: activeAccount,
-			gas: this.web3.utils.toHex(3000000),
-			gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('30', 'gwei'))
+			gas: web3.utils.toHex(3000000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 		};
 
 		console.log(payload.arguments)
-		await new this.web3.eth.Contract(JCPool.abi).deploy(payload).send(parameter, (err, transactionHash) => {
+		await new web3.eth.Contract(JCPool.abi).deploy(payload).send(parameter, (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			});
 			/*.on('confirmation', () => {}).then((newContractInstance) => {
@@ -82,11 +84,12 @@ class Dashboard extends Component {
 	}
 
 	approve = async(erc20Instance, address, activeAccount, amountInGwei) => {
+		const web3 = await getWeb3();
 		console.log('approve clicked');
 		const parameter = {
 			from: activeAccount ,
-			gas: this.web3.utils.toHex(1000000),
-			gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('30', 'gwei'))
+			gas: web3.utils.toHex(1000000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 			};
 
 		let results_1 = await erc20Instance.methods.approve(address, amountInGwei).send(parameter, (err, transactionHash) => {
@@ -102,40 +105,46 @@ class Dashboard extends Component {
 	}
 
 	getWalletBalance = async(tokenAddress) => {
-		const activeAccount = this.web3.currentProvider.selectedAddress;
-		const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, tokenAddress);
+		const web3 = await getWeb3();
+		const activeAccount = web3.currentProvider.selectedAddress;
+		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 		const balance = await erc20Instance.methods.balanceOf(activeAccount).call();
 		return balance;
 	}
 
 	getAmountBase = (amount, decimals) => {
+		console.log('amount in base', amount*10**decimals);
 		return (amount*10**decimals).toString();
 	}
+	
 	deposit = async(address, tokenAddress) => {
 		console.log('deposit clicked');
-		const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, tokenAddress);
-		const tokenString = Object.keys(this.state.tokenMap).find(key => this.state.tokenMap[key].address === tokenAddress);
-		console.log('tokenString:', tokenString, this.state.tokenMap[tokenString].decimals);
+		const web3 = await getWeb3();
+		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
+		console.log('token map', this.props.tokenMap);
+		const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === tokenAddress);
+		console.log('tokenString:', tokenString, this.props.tokenMap[tokenString].decimals);
 		const amount = prompt("enter amount to deposit");
-		const amountInBase = this.web3.utils.toWei(amount, 'ether');//this.getAmountBase(amount, this.state.tokenMap[tokenString].decimals);
-		const activeAccount = this.web3.currentProvider.selectedAddress;
-		console.log("amountInGwei", amountInBase, typeof amountInBase);
+		const amountInBase = this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
+		const activeAccount = web3.currentProvider.selectedAddress;
+		console.log("amountInGwei", amountInBase);
+		console.log(this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals));
 		const allowance = await this.getAllowance(erc20Instance, address, activeAccount)
 		if(parseInt(amountInBase) > parseInt(allowance)){
 			alert("must approve token to deposit");
 			console.log("approve test", parseInt(amountInBase), parseInt(allowance), (parseInt(amountInBase) > parseInt(this.getAllowance(erc20Instance, address, activeAccount))))
-			this.approve(erc20Instance, address, activeAccount, amountInBase);
+			await this.approve(erc20Instance, address, activeAccount, amountInBase);
 		}
 		else{
 			console.log("else");
 		}
 		const parameter = {
 			from: activeAccount,
-			gas: this.web3.utils.toHex(1000000),
-			gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('30', 'gwei'))
+			gas: web3.utils.toHex(1000000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 		};
 
-		let JCPoolInstance = new this.web3.eth.Contract(
+		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			address,
 		);
@@ -149,25 +158,27 @@ class Dashboard extends Component {
 
 	withdrawDeposit = async(address, tokenAddress) => {
 		console.log('withdraw deposit clicked');
+		const web3 = await getWeb3();
+		const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === tokenAddress);
 		const amount = prompt("enter amount to withdraw");
 		const donateAmount = prompt("enter amount to donate if desired");
-		const amountInGwei = this.web3.utils.toWei(amount, 'ether');
-		const activeAccount = this.web3.currentProvider.selectedAddress;
-		const donateAmountInGwei = this.web3.utils.toWei(donateAmount, 'ether');
+		const amountInBase = this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
+		const activeAccount = web3.currentProvider.selectedAddress;
+		const donateAmountInGwei = this.getAmountBase(donateAmount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(donateAmount, 'ether');
 
 		const parameter = {
 			from: activeAccount,
-			gas: this.web3.utils.toHex(1000000),
-			gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('30', 'gwei'))
+			gas: web3.utils.toHex(1000000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 		};
 
-		let JCPoolInstance = new this.web3.eth.Contract(
+		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			address,
 		);
 
 		console.log(JCPoolInstance.options.address, address);
-		let result = await JCPoolInstance.methods.withdraw(this.state.daiAddress, amountInGwei, donateAmountInGwei).send(parameter , (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.withdraw(tokenAddress, amountInBase, donateAmountInGwei).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 		console.log('withdraw result ' + result[0]);
@@ -175,14 +186,15 @@ class Dashboard extends Component {
 
 	claim = async(address, assetAddress) => {
 		console.log('claim interest clicked', address);
-		const activeAccount = this.web3.currentProvider.selectedAddress;
+		const web3 = await getWeb3();
+		const activeAccount = web3.currentProvider.selectedAddress;
 		const parameter = {
 			from: activeAccount,
-			gas: this.web3.utils.toHex(1000000),
-			gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('30', 'gwei'))
+			gas: web3.utils.toHex(1000000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 		};
 
-		let JCPoolInstance = new this.web3.eth.Contract(
+		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			address,
 		);

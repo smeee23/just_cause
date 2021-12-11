@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import Card from '../components/Card'
 import Button from '../components/Button'
 
-import getWeb3 from "../../getWeb3";
+import getWeb3 from "../../getWeb3NotOnLoad.js";
 import JCPool from "../../contracts/JustCausePool.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 
@@ -41,23 +41,24 @@ class YourCause extends Component {
 
 	deploy = async() => {
 		const web3 = await getWeb3();
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = this.props.activeAccount;//await web3.currentProvider.selectedAddress;
 		const poolName = prompt("Enter pool name:");
 		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)");
 		acceptedTokens = acceptedTokens.split(" ");
-		console.log("acceptedTokens", acceptedTokens, this.state.tokenMap);
+		console.log("acceptedTokens", acceptedTokens, this.props.tokenMap);
 		let tokenAddrs = [];
 		for(let i = 0; i < acceptedTokens.length; i++){
-			tokenAddrs.push(this.state.tokenMap[acceptedTokens[i]].address);
+			tokenAddrs.push(this.props.tokenMap[acceptedTokens[i]].address);
 		}
-		console.log(tokenAddrs);
+		console.log('poolTrackerAddress', this.props.poolTrackerAddress);
 		const receiver = prompt("Enter the address to recieve the interest");
 		console.log("receiver", receiver, typeof receiver);
+		console.log("token addresses", tokenAddrs);
 		const payload = {data: JCPool.bytecode,
 						arguments: [
 							tokenAddrs,
 							poolName,
-							this.poolTrackerAddress,
+							this.props.poolTrackerAddress,
 							receiver
 						]
 		};
@@ -80,7 +81,9 @@ class YourCause extends Component {
 		/*console.log("deployed", JCPoolInstance.options.address);*/
 		//console.log("events", JCPoolInstance);
 
-		this.setPoolTracker();
+		//this.setPoolTracker();
+
+		//this.setPoolState(activeAccount);
 	}
 
 	approve = async(erc20Instance, address, activeAccount, amountInGwei) => {
@@ -106,7 +109,7 @@ class YourCause extends Component {
 
 	getWalletBalance = async(tokenAddress) => {
 		const web3 = await getWeb3();
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = await web3.currentProvider.selectedAddress;
 		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 		const balance = await erc20Instance.methods.balanceOf(activeAccount).call();
 		return balance;
@@ -126,7 +129,7 @@ class YourCause extends Component {
 		console.log('tokenString:', tokenString, this.props.tokenMap[tokenString].decimals);
 		const amount = prompt("enter amount to deposit");
 		const amountInBase = this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = await web3.currentProvider.selectedAddress;
 		console.log("amountInGwei", amountInBase);
 		console.log(this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals));
 		const allowance = await this.getAllowance(erc20Instance, address, activeAccount)
@@ -163,7 +166,7 @@ class YourCause extends Component {
 		const amount = prompt("enter amount to withdraw");
 		const donateAmount = prompt("enter amount to donate if desired");
 		const amountInBase = this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = await web3.currentProvider.selectedAddress;
 		const donateAmountInGwei = this.getAmountBase(donateAmount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(donateAmount, 'ether');
 
 		const parameter = {
@@ -187,7 +190,7 @@ class YourCause extends Component {
 	claim = async(address, assetAddress) => {
 		console.log('claim interest clicked', address);
 		const web3 = await getWeb3();
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = await web3.currentProvider.selectedAddress;
 		const parameter = {
 			from: activeAccount,
 			gas: web3.utils.toHex(1000000),
@@ -230,14 +233,12 @@ class YourCause extends Component {
 	}
 
 	render() {
-
-		console.log("*********ownerPoolInfo:", this.props.ownerPoolInfo);
 		const cardHolder = this.createCardInfo();
 		return (
 			<Fragment>
 				<article>
 				<section className="page-section page-section--center horizontal-padding bw0">
-                        <Button text="Deploy" icon="wallet" callback={this.deploy}/>
+					<Button icon="plus" text="Add Pool" lg callback={this.deploy}/>
 				</section>
 					<section className="page-section page-section--center horizontal-padding bw0">
 						{cardHolder}
@@ -254,6 +255,7 @@ const mapStateToProps = state => ({
 	tokenMap: state.tokenMap,
 	ownerPoolAddrs: state.ownerPoolAddrs,
 	ownerPoolInfo: state.ownerPoolInfo,
+	poolTrackerAddress: state.poolTrackerAddress,
 })
 
 const mapDispatchToProps = dispatch => ({

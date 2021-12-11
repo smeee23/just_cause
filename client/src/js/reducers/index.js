@@ -9,6 +9,7 @@ import verifiedPoolAddrsReducer from './verifiedPoolAddrs'
 import verifiedPoolInfoReducer from './verifiedPoolInfo'
 import ownerPoolAddrsReducer from './ownerPoolAddrs'
 import ownerPoolInfoReducer from './ownerPoolInfo'
+import poolTrackerAddressReducer from './poolTrackerAddress'
 
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
@@ -19,6 +20,7 @@ const rootReducer = (history) => combineReducers({
 	verifiedPoolInfo: verifiedPoolInfoReducer,
 	ownerPoolAddrs: ownerPoolAddrsReducer,
 	ownerPoolInfo: ownerPoolInfoReducer,
+	poolTrackerAddress: poolTrackerAddressReducer,
 	router: connectRouter(history),
 })
 

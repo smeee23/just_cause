@@ -11,8 +11,9 @@ import { updateVerifiedPoolAddrs } from "./actions/verifiedPoolAddrs"
 import { updateVerifiedPoolInfo } from "./actions/verifiedPoolInfo"
 import { updateOwnerPoolAddrs } from "./actions/ownerPoolAddrs"
 import { updateOwnerPoolInfo } from "./actions/ownerPoolInfo"
+import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 
-import getWeb3OnLoad from "../getWeb3NotOnLoad";
+import getWeb3NotOnLoad from "../getWeb3NotOnLoad";
 import getWeb3 from "../getWeb3";
 import JCPool from "../contracts/JustCausePool.json";
 import PoolTracker from "../contracts/PoolTracker.json";
@@ -29,8 +30,14 @@ class App extends Component {
 			console.log('app.js componentDidMount called');
 			this.web3 = await getWeb3();
 			this.accounts = await this.web3.eth.getAccounts();
-			console.log(this.accounts);
+			let activeAccount = await this.web3.currentProvider.selectedAddress;
+			/*if(!activeAccount){
+				console.log('accounts' , this.accounts, this.accounts[0]);
+				activeAccount = this.accounts[0];
+			}*/
+			console.log('accounts', activeAccount);
 
+			activeAccount = this.accounts[0];
 			this.networkId = await this.web3.eth.net.getId();
 
 			console.log("network ID", this.networkId);
@@ -45,8 +52,9 @@ class App extends Component {
 
 			const tokenMap = this.getTokenMapFromNetwork();
 			this.setTokenMapState(tokenMap);
-			this.setActiveAccountState();
-			this.setPoolState();
+			this.setActiveAccountState(activeAccount);
+			this.setPoolState(activeAccount);
+			this.setPoolTrackAddress(this.poolTrackerAddress);
 		}
 		catch (error) {
 			// Catch any errors for any of the above operations.
@@ -61,8 +69,11 @@ class App extends Component {
 		window.removeEventListener('resize', this.props.detectMobile);
 	}
 
-	setActiveAccountState = () => {
-		const activeAccount = this.web3.currentProvider.selectedAddress;
+	setPoolTrackAddress = (poolTrackerAddress) => {
+		this.props.updatePoolTrackerAddress(poolTrackerAddress);
+	}
+
+	setActiveAccountState = (activeAccount) => {
 		console.log('activeAccount', activeAccount);
 		this.props.updateActiveAccount(activeAccount);
 	}
@@ -74,8 +85,7 @@ class App extends Component {
 	setTokenMapState = (tokenMap) => {
 		this.props.updateTokenMap(tokenMap);
 	}
-	setPoolState = async() => {
-		const activeAccount = this.web3.currentProvider.selectedAddress;
+	setPoolState = async(activeAccount) => {
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
 		const ownerPools = await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
 		const userDepositPools = await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
@@ -170,6 +180,7 @@ const mapDispatchToProps = dispatch => ({
 	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
 	updateOwnerPoolAddrs: (addrsArray) => dispatch(updateOwnerPoolAddrs(addrsArray)),
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
+	updatePoolTrackerAddress: (s) => dispatch(updatePoolTrackerAddress(s)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

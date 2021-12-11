@@ -4,9 +4,8 @@ import { Fragment } from "react";
 import { connect } from "react-redux";
 
 import Card from '../components/Card'
-import Button from '../components/Button'
 
-import getWeb3 from "../../getWeb3";
+import getWeb3 from "../../getWeb3NotOnLoad.js";
 import JCPool from "../../contracts/JustCausePool.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 
@@ -14,22 +13,12 @@ class Dashboard extends Component {
 
 	componentDidMount = async () => {
 		try{
-		window.scrollTo(0,0);
-		// Get network provider and web3 instance.
-		//web3 = await getWeb3();
-		//console.log('************web3', web3, getWeb3());
-		// Use web3 to get the user's accounts.
-		//this.accounts = await web3.eth.getAccounts();
-		//console.log(this.accounts);
-
-		//this.networkId = await web3.eth.net.getId();
-
-		//console.log("network ID", typeof this.networkId);
+			window.scrollTo(0,0);
 		}
 		catch (error) {
 			// Catch any errors for any of the above operations.
 			alert(
-				`Failed to load web3, accounts, or contract. Check console for details.`,
+				error,
 			);
 			console.error(error);
 		}
@@ -37,50 +26,6 @@ class Dashboard extends Component {
 
 	componentDidUpdate = () => {
 		console.log('component did update');
-	}
-
-	deploy = async() => {
-		const web3 = await getWeb3();
-		const activeAccount = web3.currentProvider.selectedAddress;
-		const poolName = prompt("Enter pool name:");
-		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)");
-		acceptedTokens = acceptedTokens.split(" ");
-		console.log("acceptedTokens", acceptedTokens, this.state.tokenMap);
-		let tokenAddrs = [];
-		for(let i = 0; i < acceptedTokens.length; i++){
-			tokenAddrs.push(this.state.tokenMap[acceptedTokens[i]].address);
-		}
-		console.log(tokenAddrs);
-		const receiver = prompt("Enter the address to recieve the interest");
-		console.log("receiver", receiver, typeof receiver);
-		const payload = {data: JCPool.bytecode,
-						arguments: [
-							tokenAddrs,
-							poolName,
-							this.poolTrackerAddress,
-							receiver
-						]
-		};
-		const parameter = {
-			from: activeAccount,
-			gas: web3.utils.toHex(3000000),
-			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
-		};
-
-		console.log(payload.arguments)
-		await new web3.eth.Contract(JCPool.abi).deploy(payload).send(parameter, (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash);
-			});
-			/*.on('confirmation', () => {}).then((newContractInstance) => {
-			console.log('Deployed Contract Address : ', newContractInstance.options.address);
-			this.setState({contractAddress: newContractInstance.options.address});
-			});*/
-
-
-		/*console.log("deployed", JCPoolInstance.options.address);*/
-		//console.log("events", JCPoolInstance);
-
-		this.setPoolTracker();
 	}
 
 	approve = async(erc20Instance, address, activeAccount, amountInGwei) => {
@@ -106,7 +51,7 @@ class Dashboard extends Component {
 
 	getWalletBalance = async(tokenAddress) => {
 		const web3 = await getWeb3();
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = this.props.activeAccount;//await web3.currentProvider.selectedAddress;
 		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 		const balance = await erc20Instance.methods.balanceOf(activeAccount).call();
 		return balance;
@@ -116,7 +61,7 @@ class Dashboard extends Component {
 		console.log('amount in base', amount*10**decimals);
 		return (amount*10**decimals).toString();
 	}
-	
+
 	deposit = async(address, tokenAddress) => {
 		console.log('deposit clicked');
 		const web3 = await getWeb3();
@@ -126,9 +71,10 @@ class Dashboard extends Component {
 		console.log('tokenString:', tokenString, this.props.tokenMap[tokenString].decimals);
 		const amount = prompt("enter amount to deposit");
 		const amountInBase = this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = this.props.activeAccount;//this.props.activeAccount;
 		console.log("amountInGwei", amountInBase);
 		console.log(this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals));
+		console.log('address', address, 'activeAccount', activeAccount)
 		const allowance = await this.getAllowance(erc20Instance, address, activeAccount)
 		if(parseInt(amountInBase) > parseInt(allowance)){
 			alert("must approve token to deposit");
@@ -163,7 +109,7 @@ class Dashboard extends Component {
 		const amount = prompt("enter amount to withdraw");
 		const donateAmount = prompt("enter amount to donate if desired");
 		const amountInBase = this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = this.props.activeAccount;//await web3.currentProvider.selectedAddress;
 		const donateAmountInGwei = this.getAmountBase(donateAmount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(donateAmount, 'ether');
 
 		const parameter = {
@@ -187,7 +133,7 @@ class Dashboard extends Component {
 	claim = async(address, assetAddress) => {
 		console.log('claim interest clicked', address);
 		const web3 = await getWeb3();
-		const activeAccount = web3.currentProvider.selectedAddress;
+		const activeAccount = this.props.activeAccount;//await web3.currentProvider.selectedAddress;
 		const parameter = {
 			from: activeAccount,
 			gas: web3.utils.toHex(1000000),
@@ -236,9 +182,6 @@ class Dashboard extends Component {
 		return (
 			<Fragment>
 				<article>
-				<section className="page-section page-section--center horizontal-padding bw0">
-                        <Button text="Deploy" icon="wallet" callback={this.deploy}/>
-				</section>
 					<section className="page-section page-section--center horizontal-padding bw0">
 						{cardHolder}
 					</section>
@@ -254,6 +197,7 @@ const mapStateToProps = state => ({
 	tokenMap: state.tokenMap,
 	verifiedPoolAddrs: state.verifiedPoolAddrs,
 	verifiedPoolInfo: state.verifiedPoolInfo,
+	poolTrackerAddress: state.poolTrackerAddress,
 })
 
 const mapDispatchToProps = dispatch => ({

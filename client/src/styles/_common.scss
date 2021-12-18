@@ -2,24 +2,21 @@
 	box-sizing: border-box;
 }
 
-html {
-	background: $brand-black;
-}
-
-
-body {
+html, body, input, textarea {
 	background: $brand-black;
 	color: $brand-white;
+}
 
+body {
 	-webkit-overflow-scrolling: touch;
 
 	-webkit-touch-callout: none;
-	-webkit-user-select: none; 
-	-moz-user-select: none;    
-	-ms-user-select: none;     
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 
 	-o-user-select: none;
-	user-select: none;  
+	user-select: none;
 }
 
 ul {
@@ -31,7 +28,7 @@ ul {
 }
 
 a {
-	color: $brand-white;  
+	color: $brand-white;
 	text-decoration: underline;
 	outline: none;
 
@@ -68,7 +65,7 @@ iframe {
 
 *::-webkit-scrollbar {
 	width: 0px;
-	background: transparent; 
+	background: transparent;
 }
 
 .disabled {

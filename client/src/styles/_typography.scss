@@ -77,6 +77,20 @@ h3 {
 	letter-spacing: $letter-spacing-sm;
 }
 
+h4 {
+	font-size: px-to-rem(24px);
+	line-height: 1;
+	margin-bottom: 16px;
+	letter-spacing: $letter-spacing-sm;
+}
+
+h5 {
+	font-size: px-to-rem(18px);
+	line-height: 1;
+	margin-bottom: 8px;
+	font-family: $font-body;
+}
+
 p {
 	line-height: $goldenRatio;
 	margin-bottom: 24px;

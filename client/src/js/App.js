@@ -11,9 +11,11 @@ import { updateVerifiedPoolAddrs } from "./actions/verifiedPoolAddrs"
 import { updateVerifiedPoolInfo } from "./actions/verifiedPoolInfo"
 import { updateOwnerPoolAddrs } from "./actions/ownerPoolAddrs"
 import { updateOwnerPoolInfo } from "./actions/ownerPoolInfo"
+import { updateUserDepositPoolAddrs } from "./actions/userDepositPoolAddrs"
+import { updateUserDepositPoolInfo } from "./actions/userDepositPoolInfo"
 import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 
-import getWeb3NotOnLoad from "../getWeb3NotOnLoad";
+//import getWeb3NotOnLoad from "../getWeb3NotOnLoad";
 import getWeb3 from "../getWeb3";
 import JCPool from "../contracts/JustCausePool.json";
 import PoolTracker from "../contracts/PoolTracker.json";
@@ -31,13 +33,13 @@ class App extends Component {
 			this.web3 = await getWeb3();
 			this.accounts = await this.web3.eth.getAccounts();
 			let activeAccount = await this.web3.currentProvider.selectedAddress;
-			/*if(!activeAccount){
+			if(!activeAccount){
 				console.log('accounts' , this.accounts, this.accounts[0]);
 				activeAccount = this.accounts[0];
-			}*/
-			console.log('accounts', activeAccount);
+			}
+			console.log('activeAccount', activeAccount);
 
-			activeAccount = this.accounts[0];
+			//activeAccount = this.accounts[0];
 			this.networkId = await this.web3.eth.net.getId();
 
 			console.log("network ID", this.networkId);
@@ -92,7 +94,7 @@ class App extends Component {
 
 		this.props.updateVerifiedPoolAddrs(verifiedPools);
 		this.props.updateOwnerPoolAddrs(ownerPools);
-		//this.props.updateUserDepositPoolAddrs(userDepositPools);
+		this.props.updateUserDepositPoolAddrs(userDepositPools);
 
 		const verifiedPoolInfo = await this.getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), activeAccount);
 		const ownerPoolInfo = await this.getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), activeAccount);
@@ -103,7 +105,7 @@ class App extends Component {
 
 		this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
 		this.props.updateOwnerPoolInfo(ownerPoolInfo);
-		//this.props.updateUserDepositPoolInfo(verifiedPoolInfo);
+		this.props.updateUserDepositPoolInfo(verifiedPoolInfo);
 	}
 
 	getPoolInfo = async(poolTracker, tokenMap, activeAccount) => {
@@ -179,6 +181,8 @@ const mapDispatchToProps = dispatch => ({
 	updateVerifiedPoolAddrs: (addrsArray) => dispatch(updateVerifiedPoolAddrs(addrsArray)),
 	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
 	updateOwnerPoolAddrs: (addrsArray) => dispatch(updateOwnerPoolAddrs(addrsArray)),
+	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
+	updateUserDepositPoolAddrs: (addrsArray) => dispatch(updateUserDepositPoolAddrs(addrsArray)),
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 	updatePoolTrackerAddress: (s) => dispatch(updatePoolTrackerAddress(s)),
 })

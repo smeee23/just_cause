@@ -44,6 +44,7 @@ class YourCause extends Component {
 		const activeAccount = this.props.activeAccount;//await web3.currentProvider.selectedAddress;
 		const poolName = prompt("Enter pool name:");
 		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)");
+		const about = prompt("Type a short summary of your cause");
 		acceptedTokens = acceptedTokens.split(" ");
 		console.log("acceptedTokens", acceptedTokens, this.props.tokenMap);
 		let tokenAddrs = [];
@@ -58,6 +59,7 @@ class YourCause extends Component {
 						arguments: [
 							tokenAddrs,
 							poolName,
+							about,
 							this.props.poolTrackerAddress,
 							receiver
 						]

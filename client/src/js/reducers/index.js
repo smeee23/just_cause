@@ -9,6 +9,8 @@ import verifiedPoolAddrsReducer from './verifiedPoolAddrs'
 import verifiedPoolInfoReducer from './verifiedPoolInfo'
 import ownerPoolAddrsReducer from './ownerPoolAddrs'
 import ownerPoolInfoReducer from './ownerPoolInfo'
+import userDepositPoolAddrsReducer from './userDepositPoolAddrs'
+import userDepositPoolInfoReducer from './userDepositPoolInfo'
 import poolTrackerAddressReducer from './poolTrackerAddress'
 
 const rootReducer = (history) => combineReducers({
@@ -20,6 +22,8 @@ const rootReducer = (history) => combineReducers({
 	verifiedPoolInfo: verifiedPoolInfoReducer,
 	ownerPoolAddrs: ownerPoolAddrsReducer,
 	ownerPoolInfo: ownerPoolInfoReducer,
+	userDepositPoolAddrs: userDepositPoolAddrsReducer,
+	userDepositPoolInfo: userDepositPoolInfoReducer,
 	poolTrackerAddress: poolTrackerAddressReducer,
 	router: connectRouter(history),
 })

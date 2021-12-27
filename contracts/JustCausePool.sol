@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
 import { IERC20, ILendingPool, ILendingPoolAddressesProvider, IPoolTracker, IProtocolDataProvider} from './Interfaces.sol';
@@ -44,6 +44,7 @@ contract JustCausePool {
     address owner;
     address receiver;
     string name;
+    string about;
 
     modifier onlyAllowedTokens(address _tokenAddr){
         bool isAccepted;
@@ -69,18 +70,25 @@ contract JustCausePool {
         _;
     }
 
-    constructor (address[] memory _acceptedTokens, string memory _name, address _poolTrackerAddr, address _receiver) {
-        owner = msg.sender;
-        receiver = _receiver;
-        name = _name;
-        provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
-        lendingPoolAddr = provider.getLendingPool();
-        lendingPool = ILendingPool(lendingPoolAddr); // Kovan
-        acceptedTokens = _acceptedTokens;
+    modifier strLength(string memory _str, uint8 _limit ){
+        bytes memory strBytes = bytes(_str);
+        require(strBytes.length < _limit, "string over character limit");
+        _;
+    }
 
-        poolTracker = IPoolTracker(address(_poolTrackerAddr));
-        emit GetPoolTracker(poolTracker.getAddressFromName(name));
-        poolTracker.addVerifiedPools(address(this), owner, _name);
+    constructor (address[] memory _acceptedTokens, string memory _name, string memory _about, address _poolTrackerAddr, address _receiver) strLength(_name, 30) strLength(_about, 200) {
+            owner = msg.sender;
+            receiver = _receiver;
+            name = _name;
+            about = _about;
+            provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
+            lendingPoolAddr = provider.getLendingPool();
+            lendingPool = ILendingPool(lendingPoolAddr); // Kovan
+            acceptedTokens = _acceptedTokens;
+
+            poolTracker = IPoolTracker(address(_poolTrackerAddr));
+            emit GetPoolTracker(poolTracker.getAddressFromName(name));
+            poolTracker.addVerifiedPools(address(this), owner, _name);
     }
 
     function deposit(address _assetAddress, uint256 _amount) onlyAllowedTokens(_assetAddress) public {
@@ -90,9 +98,13 @@ contract JustCausePool {
         address poolAddr = address(lendingPool);
         token.approve(poolAddr, _amount);
         lendingPool.deposit(address(token), _amount, address(this), 0);
-        depositors[msg.sender][_assetAddress] += _amount;
-        poolTracker.addDeposit(msg.sender, address(this));
+        uint256 depositAmount = depositors[msg.sender][_assetAddress];
+        if(depositAmount == 0){
+            poolTracker.addDeposit(msg.sender, address(this));
+        }
+        depositAmount += _amount;
         totalDeposits[_assetAddress] += _amount;
+        depositors[msg.sender][_assetAddress] = depositAmount;
         emit Deposit(address(token), msg.sender, _amount, totalDeposits[_assetAddress]);
     }
 
@@ -129,6 +141,10 @@ contract JustCausePool {
 
     function getName() external view returns(string memory){
         return name;
+    }
+
+    function getAbout() external view returns(string memory){
+        return about;
     }
 
     function getATokenAddress(address _assetAddress) external view returns(address){

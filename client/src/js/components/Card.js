@@ -77,7 +77,7 @@ class Card extends Component {
 	}
 
 	render() {
-		const { title, idx, address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo} = this.props;
+		const { title, about, idx, address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo} = this.props;
 
 		console.log('acceptedtokenInfo', acceptedTokenInfo);
 
@@ -115,10 +115,14 @@ class Card extends Component {
 								{ title }
 							</h3>
 				<div className="card__header--right">
+					<p className="mb0">{ about }</p>
+					<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
+				</div>
+				{/*<div className="card__header--right">
 								<p className="mb0">{"your balance: " + formatUserBalance + ","}</p>
 								<p className="mb0">{"total deposits: "+formatTotalDeposits}</p>
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
-				</div>
+				</div>*/}
 				</div>
 						<div className="card__body">
 								{tokenInfo}

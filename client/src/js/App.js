@@ -105,7 +105,7 @@ class App extends Component {
 
 		this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
 		this.props.updateOwnerPoolInfo(ownerPoolInfo);
-		this.props.updateUserDepositPoolInfo(verifiedPoolInfo);
+		this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
 	}
 
 	getPoolInfo = async(poolTracker, tokenMap, activeAccount) => {
@@ -119,6 +119,7 @@ class App extends Component {
 			let acceptedTokens = await JCPoolInstance.methods.getAcceptedTokens().call();
 			let name = await JCPoolInstance.methods.getName().call();
 			let receiver = await JCPoolInstance.methods.getRecipient().call();
+			let about = await JCPoolInstance.methods.getAbout().call();
 
 			console.log("pool address:", JCPoolInstance.options.address)
 			console.log("accepted tokens:", acceptedTokens);
@@ -127,7 +128,9 @@ class App extends Component {
 			console.log('acceptedTokens', acceptedTokens)
 			for(let j = 0; j < acceptedTokens.length; j++){
 				const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
-				console.log("tokenString", tokenString);
+				console.log("tokenString", tokenString, acceptedTokens[j]);
+				//const byteCode = await JCPoolInstance.methods.getByteCode().call();
+				//console.log("byte code", byteCode);
 				acceptedTokenInfo.push({
 					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
 					'userBalance': await JCPoolInstance.methods.getUserBalance(activeAccount, acceptedTokens[j]).call(),
@@ -143,6 +146,7 @@ class App extends Component {
 			poolInfo.push({
 							receiver: receiver,
 							name: name,
+							about: about,
 							address: poolTracker[i],
 							acceptedTokens: acceptedTokenStrings,
 							acceptedTokenInfo: acceptedTokenInfo,

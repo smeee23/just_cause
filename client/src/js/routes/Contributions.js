@@ -4,7 +4,6 @@ import { Fragment } from "react";
 import { connect } from "react-redux";
 
 import Card from '../components/Card'
-import Button from '../components/Button'
 
 import getWeb3 from "../../getWeb3NotOnLoad.js";
 import JCPool from "../../contracts/JustCausePool.json";
@@ -134,7 +133,7 @@ class Contributions extends Component {
 		);
 
 		console.log(JCPoolInstance.options.address, address);
-		let result = await JCPoolInstance.methods.withdraw(tokenAddress, amountInBase, donateAmountInGwei).send(parameter , (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.withdraw(tokenAddress, amountInBase, donateAmountInGwei, false).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 		console.log('withdraw result ' + result[0]);
@@ -154,7 +153,7 @@ class Contributions extends Component {
 			JCPool.abi,
 			address,
 		);
-		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress).send(parameter , (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress, false).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 
@@ -175,6 +174,7 @@ class Contributions extends Component {
 					receiver={item.receiver}
 					address={item.address}
 					acceptedTokenInfo={item.acceptedTokenInfo}
+					about={item.about}
 					onApprove = {this.approve}
 					onDeposit = {this.deposit}
 					onWithdrawDeposit = {this.withdrawDeposit}

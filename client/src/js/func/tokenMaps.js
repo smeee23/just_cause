@@ -16,7 +16,7 @@ export const kovanTokenMap = {
                        USDC: {address:"0xe22da380ee6B445bb8273C81944ADEB6E8450422",decimals: 6},
                        USDT: {address:"0x13512979ADE267AB5100878E2e0f485B568328a4",decimals: 6},
                        WBTC: {address:"0xD1B98B6607330172f1D991521145A22BCe793277",decimals: 8},
-                       WETH: {address:"0xd0A1E359811322d97991E03f863a0C30C2cF029C",decimals: 18},
+                       ETH: {address:"0xd0A1E359811322d97991E03f863a0C30C2cF029C",decimals: 18},
                        YFI: {address:"0xb7c325266ec274fEb1354021D27FA3E3379D840d",decimals: 18},
                        ZRX: {address:"0xD0d76886cF8D952ca26177EB7CfDf83bad08C00C",decimals: 18},
                        UNI: {address:"0x075A36BA8846C6B6F53644fDd3bf17E5151789DC",decimals: 18},

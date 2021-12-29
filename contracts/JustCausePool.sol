@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
-import { IERC20, ILendingPool, ILendingPoolAddressesProvider, IPoolTracker, IProtocolDataProvider} from './Interfaces.sol';
+import { IERC20, ILendingPool, ILendingPoolAddressesProvider, IPoolTracker, IProtocolDataProvider, IWETHGateway} from './Interfaces.sol';
 import { SafeERC20 } from './Libraries.sol';
 
 /**
@@ -28,6 +28,7 @@ contract JustCausePool {
     address lendingPoolAddr = provider.getLendingPool();
     ILendingPool lendingPool = ILendingPool(lendingPoolAddr); // Kovan
     IProtocolDataProvider constant dataProvider = IProtocolDataProvider(address(0x3c73A5E5785cAC854D468F727c606C07488a29D6)); // Kovan
+    IWETHGateway constant wethGateway = IWETHGateway(address(0xA61ca04DF33B72b235a8A28CfB535bb7A5271B70));
 
     //IERC20 daiToken;
     //uint256 amount;
@@ -98,25 +99,43 @@ contract JustCausePool {
         address poolAddr = address(lendingPool);
         token.approve(poolAddr, _amount);
         lendingPool.deposit(address(token), _amount, address(this), 0);
-        uint256 depositAmount = depositors[msg.sender][_assetAddress];
-        if(depositAmount == 0){
-            poolTracker.addDeposit(msg.sender, address(this));
-        }
-        depositAmount += _amount;
-        totalDeposits[_assetAddress] += _amount;
-        depositors[msg.sender][_assetAddress] = depositAmount;
-        emit Deposit(address(token), msg.sender, _amount, totalDeposits[_assetAddress]);
+        tallyDeposit(_amount, _assetAddress);
     }
 
-    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation) enoughFunds(msg.sender, _assetAddress, _amount, _donation) public {
+    function depositETH(address _wethAddress) public payable {
+        address poolAddr = address(lendingPool);
+        wethGateway.depositETH{value: msg.value}(poolAddr, address(this), 0);
+        tallyDeposit(msg.value, _wethAddress);
+    }
+
+    function tallyDeposit(uint256 _amount, address _assetAddress) internal {
+        uint256 depositedAmount = depositors[msg.sender][_assetAddress];
+        if(depositedAmount == 0){
+            poolTracker.addDeposit(msg.sender, address(this));
+        }
+        depositedAmount += _amount;
+        totalDeposits[_assetAddress] += _amount;
+        depositors[msg.sender][_assetAddress] = depositedAmount;
+    }
+
+    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation, bool _isETH) enoughFunds(msg.sender, _assetAddress, _amount, _donation) public {
+        address poolAddr = address(lendingPool);
         if(_donation != 0){
             uint256 newAmount = _amount - _donation;
             lendingPool.withdraw(_assetAddress, _donation, receiver);
-            if(newAmount != 0)
-                lendingPool.withdraw(_assetAddress, newAmount, msg.sender);
+            if(newAmount != 0){
+                if(!_isETH)
+                    lendingPool.withdraw(_assetAddress, newAmount, msg.sender);
+                else
+                    wethGateway.withdrawETH(poolAddr, newAmount, msg.sender);
+            }
         }
         else{
-            lendingPool.withdraw(_assetAddress, _amount, msg.sender);
+            if(!_isETH)
+                lendingPool.withdraw(_assetAddress, _amount, msg.sender);
+            else
+                wethGateway.withdrawETH(poolAddr, _amount, msg.sender);
+
         }
         depositors[msg.sender][_assetAddress] -= _amount;
         totalDeposits[_assetAddress] -= _amount;
@@ -126,6 +145,24 @@ contract JustCausePool {
         }
         emit Withdraw(_assetAddress, msg.sender, _amount, depositors[msg.sender][_assetAddress], _donation);
     }
+
+    function withdrawDonations(address _assetAddress, bool _isETH) onlyAllowedTokens(_assetAddress) public{
+        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
+
+        uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
+        uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
+        interestWithdrawn[_assetAddress] += interestEarned;
+        if(!_isETH){
+            lendingPool.withdraw(_assetAddress, interestEarned, receiver);
+        }
+        else{
+            address poolAddr = address(lendingPool);
+            wethGateway.withdrawETH(poolAddr, interestEarned, receiver);
+        }
+        emit WithdrawDonations(_assetAddress, receiver, interestEarned, totalDeposits[_assetAddress], aTokenAddress);
+    }
+
+
 
     function getUserBalance(address _userAddr, address _token) external view returns(uint256){
         return depositors[_userAddr][_token];
@@ -154,8 +191,8 @@ contract JustCausePool {
 
     function getUnclaimedInterest(address _assetAddress) external view returns (uint256){
         (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
-        uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
-        return aTokenBalance - totalDeposits[_assetAddress];
+            uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
+            return aTokenBalance - totalDeposits[_assetAddress];
     }
 
     function getClaimedInterest(address _assetAddress) external view returns (uint256){
@@ -171,35 +208,7 @@ contract JustCausePool {
         return receiver;
     }
 
-    /**
-     * Repay an uncollaterised loan
-     * @param amount The amount to repay
-     * @param asset The asset to be repaid
-     *
-     * User calling this function must have approved this contract with an allowance to transfer the tokens
-     *
-     * You should keep internal accounting of borrowers, if your contract will have multiple borrowers
-     */
-    /*function repayBorrower(uint256 amount, address asset) public {
-        IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
-        IERC20(asset).safeApprove(address(lendingPool), amount);
-        lendingPool.repay(asset, amount, 1, address(this));
-    }*/
-
-    /**
-     * Withdraw all of a collateral as the underlying asset, if no outstanding loans delegated
-     *
-     *
-     * Add permissions to this call, e.g. only the owner should be able to withdraw the collateral!
-     */
-
-    function withdrawDonations(address _assetAddress) onlyAllowedTokens(_assetAddress) public{
-        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
-
-        uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
-        uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
-        interestWithdrawn[_assetAddress] += interestEarned;
-        lendingPool.withdraw(_assetAddress, interestEarned, owner);
-        emit WithdrawDonations(_assetAddress, owner, interestEarned, totalDeposits[_assetAddress], aTokenAddress);
+    function getByteCode() external view returns(bytes memory) {
+        return address(this).code;
     }
 }

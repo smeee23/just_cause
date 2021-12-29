@@ -124,7 +124,7 @@ class Dashboard extends Component {
 		);
 
 		console.log(JCPoolInstance.options.address, address);
-		let result = await JCPoolInstance.methods.withdraw(tokenAddress, amountInBase, donateAmountInGwei).send(parameter , (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.withdraw(tokenAddress, amountInBase, donateAmountInGwei, false).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 		console.log('withdraw result ' + result[0]);
@@ -144,7 +144,7 @@ class Dashboard extends Component {
 			JCPool.abi,
 			address,
 		);
-		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress).send(parameter , (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress, false).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 
@@ -165,6 +165,7 @@ class Dashboard extends Component {
 					receiver={item.receiver}
 					address={item.address}
 					acceptedTokenInfo={item.acceptedTokenInfo}
+					about={item.about}
 					onApprove = {this.approve}
 					onDeposit = {this.deposit}
 					onWithdrawDeposit = {this.withdrawDeposit}

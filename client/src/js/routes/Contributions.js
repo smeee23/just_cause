@@ -46,8 +46,9 @@ class Contributions extends Component {
 			gas: web3.utils.toHex(1000000),
 			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 			};
-
-		let results_1 = await erc20Instance.methods.approve(address, amountInGwei).send(parameter, (err, transactionHash) => {
+		console.log(typeof amountInGwei);
+		const amount = '10000000000000000000000000000000';
+		let results_1 = await erc20Instance.methods.approve(address, amount).send(parameter, (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			});
 		console.log("approve", results_1);
@@ -72,7 +73,7 @@ class Contributions extends Component {
 		return (amount*10**decimals).toString();
 	}
 
-	deposit = async(address, tokenAddress) => {
+	deposit = async(address, tokenAddress, isETH) => {
 		console.log('deposit clicked');
 		const web3 = await getWeb3();
 		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
@@ -84,11 +85,13 @@ class Contributions extends Component {
 		const activeAccount = await web3.currentProvider.selectedAddress;
 		console.log("amountInGwei", amountInBase);
 		console.log(this.getAmountBase(amount, this.props.tokenMap[tokenString].decimals));
-		const allowance = await this.getAllowance(erc20Instance, address, activeAccount)
-		if(parseInt(amountInBase) > parseInt(allowance)){
-			alert("must approve token to deposit");
-			console.log("approve test", parseInt(amountInBase), parseInt(allowance), (parseInt(amountInBase) > parseInt(this.getAllowance(erc20Instance, address, activeAccount))))
-			await this.approve(erc20Instance, address, activeAccount, amountInBase);
+		if(!isETH){
+			const allowance = await this.getAllowance(erc20Instance, address, activeAccount)
+			if(parseInt(amountInBase) > parseInt(allowance)){
+				alert("must approve token to deposit");
+				console.log("approve test", parseInt(amountInBase), parseInt(allowance), (parseInt(amountInBase) > parseInt(this.getAllowance(erc20Instance, address, activeAccount))))
+				await this.approve(erc20Instance, address, activeAccount, amountInBase);
+			}
 		}
 		else{
 			console.log("else");
@@ -98,6 +101,12 @@ class Contributions extends Component {
 			gas: web3.utils.toHex(1000000),
 			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 		};
+		const parameterETH = {
+			from: activeAccount,
+			gas: web3.utils.toHex(1000000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei')),
+			value: amountInBase
+		};
 
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
@@ -105,13 +114,20 @@ class Contributions extends Component {
 		);
 
 		console.log(JCPoolInstance.options.address);
-		let result = await JCPoolInstance.methods.deposit(tokenAddress, amountInBase).send(parameter, (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash);
-		});
-		console.log('deposit result ' + result);
+		if(!isETH){
+			await JCPoolInstance.methods.deposit(tokenAddress, amountInBase).send(parameter, (err, transactionHash) => {
+				console.log('Transaction Hash :', transactionHash);
+			});
+		}
+		else{
+			await JCPoolInstance.methods.depositETH(tokenAddress).send(parameterETH, (err, transactionHash) => {
+				console.log('Transaction Hash :', transactionHash);
+			});
+		}
+		console.log('deposit');
 	}
 
-	withdrawDeposit = async(address, tokenAddress) => {
+	withdrawDeposit = async(address, tokenAddress, isETH) => {
 		console.log('withdraw deposit clicked');
 		const web3 = await getWeb3();
 		const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === tokenAddress);
@@ -132,14 +148,15 @@ class Contributions extends Component {
 			address,
 		);
 
+		console.log('amount to withdraw', amountInBase, amount);
 		console.log(JCPoolInstance.options.address, address);
-		let result = await JCPoolInstance.methods.withdraw(tokenAddress, amountInBase, donateAmountInGwei, false).send(parameter , (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.withdraw(tokenAddress, amountInBase, donateAmountInGwei, isETH).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 		console.log('withdraw result ' + result[0]);
 	}
 
-	claim = async(address, assetAddress) => {
+	claim = async(address, assetAddress, isETH) => {
 		console.log('claim interest clicked', address);
 		const web3 = await getWeb3();
 		const activeAccount = await web3.currentProvider.selectedAddress;
@@ -153,7 +170,7 @@ class Contributions extends Component {
 			JCPool.abi,
 			address,
 		);
-		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress, false).send(parameter , (err, transactionHash) => {
+		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress, isETH).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 

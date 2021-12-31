@@ -1,31 +1,55 @@
-import React, {Component} from "react"
-import { Fragment } from "react";
-
-import { connect } from "react-redux";
-
-import Card from '../components/Card'
-
-import getWeb3 from "../../getWeb3NotOnLoad.js";
+import getWeb3 from "../../getWeb3";
 import JCPool from "../../contracts/JustCausePool.json";
+import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 
-class Dashboard extends Component {
-
-	componentDidMount = async () => {
-		try{
-			window.scrollTo(0,0);
+deploy = async() => {
+		const web3 = await getWeb3();
+		const activeAccount = this.props.activeAccount;//await web3.currentProvider.selectedAddress;
+		const poolName = prompt("Enter pool name:");
+		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)");
+		const about = prompt("Type a short summary of your cause");
+		acceptedTokens = acceptedTokens.split(" ");
+		console.log("acceptedTokens", acceptedTokens, this.props.tokenMap);
+		let tokenAddrs = [];
+		for(let i = 0; i < acceptedTokens.length; i++){
+			tokenAddrs.push(this.props.tokenMap[acceptedTokens[i]].address);
 		}
-		catch (error) {
-			// Catch any errors for any of the above operations.
-			alert(
-				error,
-			);
-			console.error(error);
-		}
-	}
+		console.log('poolTrackerAddress', this.props.poolTrackerAddress);
+		const receiver = prompt("Enter the address to recieve the interest");
+		console.log("receiver", receiver, typeof receiver);
+		console.log("token addresses", tokenAddrs);
+		const payload = {data: JCPool.bytecode,
+						arguments: [
+							tokenAddrs,
+							poolName,
+							about,
+							this.props.poolTrackerAddress,
+							receiver
+						]
+		};
+		const parameter = {
+			from: activeAccount,
+			gas: web3.utils.toHex(3200000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+		};
 
-	componentDidUpdate = () => {
-		console.log('component did update');
+		console.log(payload.arguments)
+		await new web3.eth.Contract(JCPool.abi).deploy(payload).send(parameter, (err, transactionHash) => {
+			console.log('Transaction Hash :', transactionHash);
+			});
+			/*.on('confirmation', () => {}).then((newContractInstance) => {
+			console.log('Deployed Contract Address : ', newContractInstance.options.address);
+			this.setState({contractAddress: newContractInstance.options.address});
+			});*/
+
+
+		/*console.log("deployed", JCPoolInstance.options.address);*/
+		//console.log("events", JCPoolInstance);
+
+		//this.setPoolTracker();
+
+		//this.setPoolState(activeAccount);
 	}
 
 	approve = async(erc20Instance, address, activeAccount, amountInGwei) => {
@@ -167,58 +191,4 @@ class Dashboard extends Component {
 		console.log('claim result', result);
 	}
 
-	createCardInfo = () => {
-		if(this.props.verifiedPoolInfo === "No Verified Pools") return
-		let cardHolder = [];
-		for(let i = 0; i < this.props.verifiedPoolInfo.length; i++){
-			console.log('a', (this.props.verifiedPoolInfo[i].name));
-			const item = this.props.verifiedPoolInfo[i];
-			cardHolder.push(
-				<Card
-					key={item.address}
-					title={item.name}
-					idx={i}
-					receiver={item.receiver}
-					address={item.address}
-					acceptedTokenInfo={item.acceptedTokenInfo}
-					about={item.about}
-					onApprove = {this.approve}
-					onDeposit = {this.deposit}
-					onWithdrawDeposit = {this.withdrawDeposit}
-					onClaim = {this.claim}
-				/>
-			);
-		}
-		return cardHolder;
-	}
-
-	render() {
-
-		console.log("*********verifiedPoolInfo:", this.props.verifiedPoolInfo);
-		const cardHolder = this.createCardInfo();
-		return (
-			<Fragment>
-				<article>
-					<section className="page-section page-section--center horizontal-padding bw0">
-						{cardHolder}
-					</section>
-				</article>
-			</Fragment>
-		);
-	}
-}
-
-const mapStateToProps = state => ({
-	daiAddress: state.daiAddress,
-	activeAccount: state.activeAccount,
-	tokenMap: state.tokenMap,
-	verifiedPoolAddrs: state.verifiedPoolAddrs,
-	verifiedPoolInfo: state.verifiedPoolInfo,
-	poolTrackerAddress: state.poolTrackerAddress,
-})
-
-const mapDispatchToProps = dispatch => ({
-
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
+    export default {deploy, deposit, claim, withdrawDonations};

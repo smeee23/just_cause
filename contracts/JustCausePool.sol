@@ -13,26 +13,17 @@ import { SafeERC20 } from './Libraries.sol';
  */
 
 contract JustCausePool {
-    //using SafeERC20 for IERC20;
     mapping(address => mapping(address => uint256)) private depositors;
     mapping(address => uint256) private totalDeposits;
     mapping(address => uint256) private interestWithdrawn;
 
-    //mapping(address => mapping(address => uint256)) public deposits;
     IPoolTracker poolTracker;
-    //ILendingPoolAddressesProvider provider;
-    //address private kovanDAI;v
-    //ILendingPool lendingPool;
 
-    ILendingPoolAddressesProvider provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
-    address lendingPoolAddr = provider.getLendingPool();
-    ILendingPool lendingPool = ILendingPool(lendingPoolAddr); // Kovan
+    ILendingPoolAddressesProvider provider;
+    ILendingPool lendingPool;
     IProtocolDataProvider constant dataProvider = IProtocolDataProvider(address(0x3c73A5E5785cAC854D468F727c606C07488a29D6)); // Kovan
-    IWETHGateway constant wethGateway = IWETHGateway(address(0xA61ca04DF33B72b235a8A28CfB535bb7A5271B70));
+    IWETHGateway constant wethGateway = IWETHGateway(address(0xA61ca04DF33B72b235a8A28CfB535bb7A5271B70)); //Kovan
 
-    //IERC20 daiToken;
-    //uint256 amount;
-    //address lendingPoolAddr;
     address[] acceptedTokens;
 
     event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
@@ -62,7 +53,7 @@ contract JustCausePool {
     modifier enoughFunds(address _userAddr, address _tokenAddr, uint256 _amount, uint256 _donation) {
         require(_amount > 0, "amount must exceed 0");
         require(depositors[_userAddr][_tokenAddr]  >= _amount, "no funds deposited for selected token");
-        require(_amount >= _donation, "donation cannot exceed deposit amount");
+        require(_amount >= _donation, "donation cannot exceed withdrawal amount");
         _;
     }
 
@@ -83,7 +74,7 @@ contract JustCausePool {
             name = _name;
             about = _about;
             provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
-            lendingPoolAddr = provider.getLendingPool();
+            address lendingPoolAddr = provider.getLendingPool();
             lendingPool = ILendingPool(lendingPoolAddr); // Kovan
             acceptedTokens = _acceptedTokens;
 
@@ -118,25 +109,17 @@ contract JustCausePool {
         depositors[msg.sender][_assetAddress] = depositedAmount;
     }
 
-    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation, bool _isETH) enoughFunds(msg.sender, _assetAddress, _amount, _donation) public {
+    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation) enoughFunds(msg.sender, _assetAddress, _amount, _donation) public {
         address poolAddr = address(lendingPool);
         if(_donation != 0){
             uint256 newAmount = _amount - _donation;
             lendingPool.withdraw(_assetAddress, _donation, receiver);
-            if(newAmount != 0){
-                if(!_isETH)
-                    lendingPool.withdraw(_assetAddress, newAmount, msg.sender);
-                else
-                    wethGateway.withdrawETH(poolAddr, newAmount, msg.sender);
-            }
+            if(newAmount != 0)
+                lendingPool.withdraw(_assetAddress, newAmount, msg.sender);
         }
-        else{
-            if(!_isETH)
-                lendingPool.withdraw(_assetAddress, _amount, msg.sender);
-            else
-                wethGateway.withdrawETH(poolAddr, _amount, msg.sender);
+        else
+            lendingPool.withdraw(_assetAddress, _amount, msg.sender);
 
-        }
         depositors[msg.sender][_assetAddress] -= _amount;
         totalDeposits[_assetAddress] -= _amount;
 
@@ -152,17 +135,9 @@ contract JustCausePool {
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
         interestWithdrawn[_assetAddress] += interestEarned;
-        if(!_isETH){
-            lendingPool.withdraw(_assetAddress, interestEarned, receiver);
-        }
-        else{
-            address poolAddr = address(lendingPool);
-            wethGateway.withdrawETH(poolAddr, interestEarned, receiver);
-        }
+        lendingPool.withdraw(_assetAddress, interestEarned, receiver);
         emit WithdrawDonations(_assetAddress, receiver, interestEarned, totalDeposits[_assetAddress], aTokenAddress);
     }
-
-
 
     function getUserBalance(address _userAddr, address _token) external view returns(uint256){
         return depositors[_userAddr][_token];

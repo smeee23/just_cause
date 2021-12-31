@@ -5,7 +5,9 @@ import classNames from "classnames";
 import Icon from "./Icon";
 import palette from "../utils/palette";
 
-import Button from '../components/Button'
+import Button from '../components/Button';
+
+//import {deposit, claim, withdrawDonations} from '../func/contractInteractions';
 
 class Card extends Component {
 
@@ -21,25 +23,36 @@ class Card extends Component {
 		window.scrollTo(0,0);
 	}
 
-	approve = () => {
-		console.log('approve clicked');
-	}
-
-	deploy = () => {
-		console.log('deploy clicked');
-	}
-
-	deposit = () => {
+	/*onDeposit = async(poolAddress, address, isETH) => {
 		console.log('deposit clicked');
-	}
+		await deposit(poolAddress, address, isETH);
+	}*/
 
 	withdrawDeposit = () => {
 		console.log('withdraw deposit clicked');
 	}
 
+	toFixed = (x) => {
+		if (Math.abs(x) < 1.0) {
+		  var e = parseInt(x.toString().split('e-')[1]);
+		  if (e) {
+			  x *= Math.pow(10,e-1);
+			  x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+		  }
+		} else {
+		  var e = parseInt(x.toString().split('+')[1]);
+		  if (e > 20) {
+			  e -= 20;
+			  x /= Math.pow(10,e);
+			  x += (new Array(e+1)).join('0');
+		  }
+		}
+		return x;
+	  }
+
 	precise = (x, decimals) => {
-		//return Number.parseFloat(x).toPrecision(4);
-		return (Number.parseFloat(x).toPrecision(6) / (10**decimals));
+		let number = (Number.parseFloat(x).toPrecision(6) / (10**decimals));
+		return this.toFixed(number);
 	}
 
 	toggleCardOpen = () => {
@@ -53,6 +66,8 @@ class Card extends Component {
 		let infoHolder = [];
 		for(let i = 0; i < acceptedTokenInfo.length; i++){
 			const item = acceptedTokenInfo[i];
+			const isETH = (item.acceptedTokenString === 'ETH') ? true : false;
+			console.log('isETH', isETH)
 			infoHolder.push(
 				<div className="card__body" key={item.acceptedTokenString}>
 					<div className="card__body__column">
@@ -62,7 +77,7 @@ class Card extends Component {
 						<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
 						<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
 						<p>{"total balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
-						<Button text="Contribute" callback={() => onDeposit(address, item.address)}/>
+						<Button text="Contribute" callback={() => onDeposit(address, item.address, isETH)}/>
 						<Button text="Withdraw Deposit" callback={() => onWithdrawDeposit(address, item.address)}/>
 					</div>
 					<div className="card__body__column">
@@ -73,7 +88,7 @@ class Card extends Component {
           		</div>
 			);
 		}
-		return infoHolder;
+		return infoHolder, buttonHolder;
 	}
 
 	render() {
@@ -116,13 +131,12 @@ class Card extends Component {
 							</h3>
 				<div className="card__header--right">
 					<p className="mb0">{ about }</p>
-					<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
-				{/*<div className="card__header--right">
+				<div className="card__header--right">
 								<p className="mb0">{"your balance: " + formatUserBalance + ","}</p>
 								<p className="mb0">{"total deposits: "+formatTotalDeposits}</p>
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
-				</div>*/}
+				</div>
 				</div>
 						<div className="card__body">
 								{tokenInfo}

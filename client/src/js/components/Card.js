@@ -154,9 +154,6 @@ class Card extends Component {
 				</div>
 						<div className="card__body">
 								{tokenButtons}
-						</div>
-						<p></p>
-						<div className="card__body">
 								{tokenInfo}
 						</div>
 				<div className="card__bar"/>

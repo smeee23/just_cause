@@ -15,7 +15,8 @@ class Card extends Component {
 		super(props);
 
 		this.state = {
-			open: false
+			open: false,
+			selectedTokenIndex: 0
 		}
 	}
 
@@ -61,34 +62,46 @@ class Card extends Component {
 		})
 	}
 
+	setSelectedToken = (index) => {
+		this.setState({
+			selectedTokenIndex: index
+		});
+		console.log('setSelectedToken', index);
+	}
+
+	createTokenButtons = (acceptedTokenInfo) => {
+		if (!acceptedTokenInfo) return 'no data';
+		let buttonHolder = [];
+		for(let i = 0; i < acceptedTokenInfo.length; i++){
+			const tokenName = acceptedTokenInfo[i].acceptedTokenString;
+			buttonHolder.push(<Button text={tokenName} key={i} callback={() => this.setSelectedToken(i)}/>)
+		}
+		return buttonHolder;
+	}
+
 	createTokenInfo = (address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo) => {
 		if (!acceptedTokenInfo) return 'no data';
-		let infoHolder = [];
-		for(let i = 0; i < acceptedTokenInfo.length; i++){
-			const item = acceptedTokenInfo[i];
-			const isETH = (item.acceptedTokenString === 'ETH') ? true : false;
-			console.log('isETH', isETH)
-			infoHolder.push(
-				<div className="card__body" key={item.acceptedTokenString}>
-					<div className="card__body__column">
+		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
+		const isETH = (item.acceptedTokenString === 'ETH') ? true : false;
+		const tokenInfo =
+			<div className="card__body" key={item.acceptedTokenString}>
+				<div className="card__body__column">
 
-					<h3 className="mb0">{ item.acceptedTokenString }</h3>
-						<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
-						<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
-						<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
-						<p>{"total balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
-						<Button text="Contribute" callback={() => onDeposit(address, item.address, isETH)}/>
-						<Button text="Withdraw Deposit" callback={() => onWithdrawDeposit(address, item.address)}/>
-					</div>
-					<div className="card__body__column">
-						<p>{"claimed donation: "+this.precise(item.claimedInterest, item.decimals)}</p>
-						<p>{"unclaimed donation: "+this.precise(item.unclaimedInterest, item.decimals)}</p>
-						<Button text="Claim Interest" callback={() => onClaim(address, item.address)}/>
-					</div>
-          		</div>
-			);
-		}
-		return infoHolder;
+				<h3 className="mb0">{ item.acceptedTokenString }</h3>
+					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
+					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
+					<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
+					<p>{"total balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
+					<Button text="Contribute" callback={() => onDeposit(address, item.address, isETH)}/>
+					<Button text="Withdraw Deposit" callback={() => onWithdrawDeposit(address, item.address)}/>
+				</div>
+				<div className="card__body__column">
+					<p>{"claimed donation: "+this.precise(item.claimedInterest, item.decimals)}</p>
+					<p>{"unclaimed donation: "+this.precise(item.unclaimedInterest, item.decimals)}</p>
+					<Button text="Claim Interest" callback={() => onClaim(address, item.address)}/>
+				</div>
+			</div>
+		return tokenInfo;
 	}
 
 	render() {
@@ -111,7 +124,7 @@ class Card extends Component {
 			"card--open": this.state.open,
 		})
 
-		let tokenInfo = [];
+		//let tokenInfo = [];
 
 		let formatUserBalance = 0;
 		let formatTotalDeposits = 0;
@@ -120,7 +133,8 @@ class Card extends Component {
 			formatTotalDeposits = this.precise(acceptedTokenInfo[0].totalDeposits, acceptedTokenInfo[0].decimals);
 		}
 
-		tokenInfo = this.createTokenInfo(address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo);
+		let tokenButtons = this.createTokenButtons(acceptedTokenInfo);
+		let tokenInfo = this.createTokenInfo(address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo);
 
 		return (
 			<div className={classnames}>
@@ -138,6 +152,10 @@ class Card extends Component {
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
 				</div>
+						<div className="card__body">
+								{tokenButtons}
+						</div>
+						<p></p>
 						<div className="card__body">
 								{tokenInfo}
 						</div>

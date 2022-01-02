@@ -90,7 +90,8 @@ class App extends Component {
 	setPoolState = async(activeAccount) => {
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
 		const ownerPools = await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
-		const userDepositPools = await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		let userDepositPools = await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		userDepositPools = [...new Set(userDepositPools)];
 
 		this.props.updateVerifiedPoolAddrs(verifiedPools);
 		this.props.updateOwnerPoolAddrs(ownerPools);

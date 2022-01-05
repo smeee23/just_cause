@@ -8,6 +8,35 @@ import { NavLink } from 'react-router-dom'
 import Takeover from "./Takeover";
 
 class Header extends Component {
+
+  isMetaMaskInstalled = () => {
+		//Have to check the ethereum binding on the window object to see if it's installed
+		const { ethereum } = window;
+		return Boolean(ethereum && ethereum.isMetaMask);
+	}
+
+	connectToWeb3 = async() => {
+		if(this.isMetaMaskInstalled()){
+			try {
+				// Will open the MetaMask UI
+				// You should disable this button while the request is pending!
+				const { ethereum } = window;
+				let request = await ethereum.request({ method: 'eth_requestAccounts' });
+				console.log('request', request);
+			}
+			catch (error) {
+				console.error(error);
+			}
+		}
+	}
+
+  displayAddress = (address) => {
+    if(address === 'Connect')
+      return address;
+
+    return address.slice(0, 6) + "..."+address.slice(-4);
+  }
+
 	render() {
     const { isMobile } = this.props;
 
@@ -36,9 +65,10 @@ class Header extends Component {
           <Logo/>
           <h2 className="mb0">JustCause</h2>
         </NavLink>
+
         <nav className="app-bar__items">
           { nav }
-          <Button text={isMobile ? null : "Connect"} icon={"wallet"}/>
+          <Button text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
         </nav>
       </header>
 		);
@@ -47,6 +77,7 @@ class Header extends Component {
 
 const mapStateToProps = state => ({
 	isMobile: state.isMobile,
+  activeAccount: state.activeAccount,
 })
 
 export default connect(mapStateToProps)(Header)

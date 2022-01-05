@@ -58,10 +58,11 @@ class App extends Component {
 			this.setPoolState(activeAccount);
 			this.setPoolTrackAddress(this.poolTrackerAddress);
 		}
+
 		catch (error) {
 			// Catch any errors for any of the above operations.
 			alert(
-				`Failed to load web3, accounts, or contract. Check console for details.`,
+				`Failed to load web3, accounts, or contract. Check console for details. If not connected to site please select the Connect Button`,
 			);
 			console.error(error);
 		}
@@ -69,6 +70,27 @@ class App extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener('resize', this.props.detectMobile);
+	}
+
+	isMetaMaskInstalled = () => {
+		//Have to check the ethereum binding on the window object to see if it's installed
+		const { ethereum } = window;
+		return Boolean(ethereum && ethereum.isMetaMask);
+	}
+
+	connectToWeb3 = async() => {
+		if(this.isMetaMaskInstalled()){
+			try {
+				// Will open the MetaMask UI
+				// You should disable this button while the request is pending!
+				const { ethereum } = window;
+				let request = await ethereum.request({ method: 'eth_requestAccounts' });
+				console.log('request', request);
+			}
+			catch (error) {
+				console.error(error);
+			}
+		}
 	}
 
 	setPoolTrackAddress = (poolTrackerAddress) => {
@@ -87,10 +109,20 @@ class App extends Component {
 	setTokenMapState = (tokenMap) => {
 		this.props.updateTokenMap(tokenMap);
 	}
+
 	setPoolState = async(activeAccount) => {
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
 		const ownerPools = await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
 		let userDepositPools = await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+
+		let isHashMatch = true;
+		for(let i = 0; i < verifiedPools.length; i++){
+			const isMatch = await this.PoolTrackerInstance.methods.checkByteCode(verifiedPools[i]).call();
+			if(!isMatch){
+				isHashMatch = false;
+			}
+		}
+		console.log('isHashMatch', isHashMatch);
 		userDepositPools = [...new Set(userDepositPools)];
 
 		this.props.updateVerifiedPoolAddrs(verifiedPools);
@@ -121,7 +153,9 @@ class App extends Component {
 			let name = await JCPoolInstance.methods.getName().call();
 			let receiver = await JCPoolInstance.methods.getRecipient().call();
 			let about = await JCPoolInstance.methods.getAbout().call();
+			const hashByteCode = await JCPoolInstance.methods.getHashByteCode().call();
 
+			console.log('hashByteCode', hashByteCode);
 			console.log("pool address:", JCPoolInstance.options.address)
 			console.log("accepted tokens:", acceptedTokens);
 			let acceptedTokenStrings = [];
@@ -130,8 +164,6 @@ class App extends Component {
 			for(let j = 0; j < acceptedTokens.length; j++){
 				const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
 				console.log("tokenString", tokenString, acceptedTokens[j]);
-				//const byteCode = await JCPoolInstance.methods.getByteCode().call();
-				//console.log("byte code", byteCode);
 				acceptedTokenInfo.push({
 					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
 					'userBalance': await JCPoolInstance.methods.getUserBalance(activeAccount, acceptedTokens[j]).call(),

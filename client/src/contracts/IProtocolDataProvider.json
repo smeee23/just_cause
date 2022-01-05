@@ -300,7 +300,7 @@
     "absolutePath": "project:/contracts/Interfaces.sol",
     "exportedSymbols": {
       "DataTypes": [
-        1887
+        1828
       ],
       "IERC20": [
         79
@@ -354,7 +354,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 963,
-        "sourceUnit": 2295,
+        "sourceUnit": 2236,
         "src": "95:44:0",
         "symbolAliases": [
           {
@@ -7963,7 +7963,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_ReserveConfigurationMap_$1879_memory_ptr",
+                    "typeIdentifier": "t_struct$_ReserveConfigurationMap_$1820_memory_ptr",
                     "typeString": "struct DataTypes.ReserveConfigurationMap"
                   },
                   "typeName": {
@@ -7973,13 +7973,13 @@
                       "id": 635,
                       "name": "DataTypes.ReserveConfigurationMap",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 1879,
+                      "referencedDeclaration": 1820,
                       "src": "21473:33:0"
                     },
-                    "referencedDeclaration": 1879,
+                    "referencedDeclaration": 1820,
                     "src": "21473:33:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_ReserveConfigurationMap_$1879_storage_ptr",
+                      "typeIdentifier": "t_struct$_ReserveConfigurationMap_$1820_storage_ptr",
                       "typeString": "struct DataTypes.ReserveConfigurationMap"
                     }
                   },
@@ -8060,7 +8060,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_UserConfigurationMap_$1882_memory_ptr",
+                    "typeIdentifier": "t_struct$_UserConfigurationMap_$1823_memory_ptr",
                     "typeString": "struct DataTypes.UserConfigurationMap"
                   },
                   "typeName": {
@@ -8070,13 +8070,13 @@
                       "id": 644,
                       "name": "DataTypes.UserConfigurationMap",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 1882,
+                      "referencedDeclaration": 1823,
                       "src": "21760:30:0"
                     },
-                    "referencedDeclaration": 1882,
+                    "referencedDeclaration": 1823,
                     "src": "21760:30:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_UserConfigurationMap_$1882_storage_ptr",
+                      "typeIdentifier": "t_struct$_UserConfigurationMap_$1823_storage_ptr",
                       "typeString": "struct DataTypes.UserConfigurationMap"
                     }
                   },
@@ -8337,7 +8337,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_ReserveData_$1876_memory_ptr",
+                    "typeIdentifier": "t_struct$_ReserveData_$1817_memory_ptr",
                     "typeString": "struct DataTypes.ReserveData"
                   },
                   "typeName": {
@@ -8347,13 +8347,13 @@
                       "id": 669,
                       "name": "DataTypes.ReserveData",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 1876,
+                      "referencedDeclaration": 1817,
                       "src": "22621:21:0"
                     },
-                    "referencedDeclaration": 1876,
+                    "referencedDeclaration": 1817,
                     "src": "22621:21:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_ReserveData_$1876_storage_ptr",
+                      "typeIdentifier": "t_struct$_ReserveData_$1817_storage_ptr",
                       "typeString": "struct DataTypes.ReserveData"
                     }
                   },
@@ -11817,7 +11817,7 @@
     "absolutePath": "project:/contracts/Interfaces.sol",
     "exportedSymbols": {
       "DataTypes": [
-        1887
+        1828
       ],
       "IERC20": [
         79
@@ -11871,7 +11871,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 963,
-        "sourceUnit": 2295,
+        "sourceUnit": 2236,
         "src": "95:44:0",
         "symbolAliases": [
           {
@@ -19480,7 +19480,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_ReserveConfigurationMap_$1879_memory_ptr",
+                    "typeIdentifier": "t_struct$_ReserveConfigurationMap_$1820_memory_ptr",
                     "typeString": "struct DataTypes.ReserveConfigurationMap"
                   },
                   "typeName": {
@@ -19490,13 +19490,13 @@
                       "id": 635,
                       "name": "DataTypes.ReserveConfigurationMap",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 1879,
+                      "referencedDeclaration": 1820,
                       "src": "21473:33:0"
                     },
-                    "referencedDeclaration": 1879,
+                    "referencedDeclaration": 1820,
                     "src": "21473:33:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_ReserveConfigurationMap_$1879_storage_ptr",
+                      "typeIdentifier": "t_struct$_ReserveConfigurationMap_$1820_storage_ptr",
                       "typeString": "struct DataTypes.ReserveConfigurationMap"
                     }
                   },
@@ -19577,7 +19577,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_UserConfigurationMap_$1882_memory_ptr",
+                    "typeIdentifier": "t_struct$_UserConfigurationMap_$1823_memory_ptr",
                     "typeString": "struct DataTypes.UserConfigurationMap"
                   },
                   "typeName": {
@@ -19587,13 +19587,13 @@
                       "id": 644,
                       "name": "DataTypes.UserConfigurationMap",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 1882,
+                      "referencedDeclaration": 1823,
                       "src": "21760:30:0"
                     },
-                    "referencedDeclaration": 1882,
+                    "referencedDeclaration": 1823,
                     "src": "21760:30:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_UserConfigurationMap_$1882_storage_ptr",
+                      "typeIdentifier": "t_struct$_UserConfigurationMap_$1823_storage_ptr",
                       "typeString": "struct DataTypes.UserConfigurationMap"
                     }
                   },
@@ -19854,7 +19854,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_ReserveData_$1876_memory_ptr",
+                    "typeIdentifier": "t_struct$_ReserveData_$1817_memory_ptr",
                     "typeString": "struct DataTypes.ReserveData"
                   },
                   "typeName": {
@@ -19864,13 +19864,13 @@
                       "id": 669,
                       "name": "DataTypes.ReserveData",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 1876,
+                      "referencedDeclaration": 1817,
                       "src": "22621:21:0"
                     },
-                    "referencedDeclaration": 1876,
+                    "referencedDeclaration": 1817,
                     "src": "22621:21:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_ReserveData_$1876_storage_ptr",
+                      "typeIdentifier": "t_struct$_ReserveData_$1817_storage_ptr",
                       "typeString": "struct DataTypes.ReserveData"
                     }
                   },
@@ -23336,7 +23336,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-28T02:44:02.902Z",
+  "updatedAt": "2022-01-05T15:45:51.549Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

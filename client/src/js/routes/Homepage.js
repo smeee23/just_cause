@@ -3,7 +3,6 @@ import { Fragment } from "react";
 
 import { connect } from "react-redux";
 
-import Button from '../components/Button'
 import Footer from "../components/Footer";
 import Shapes from '../components/Shapes'
 
@@ -44,8 +43,6 @@ class Homepage extends Component {
 				<article>
 					<section className="page-section page-section--center horizontal-padding">
 						<h1>Donate interest earned in crypto to good causes with JustCause.</h1>
-						<Button text={ this.props.daiAddress } icon="wallet" callback={ () => this.props.updateDaiAddress('Updated Address') }/>
-						<Button text={ "connected: "+this.props.activeAccount} icon="wallet"/>
 					</section>
 					<section className="page-section horizontal-padding">
 						<h2>How it works</h2>
@@ -79,8 +76,6 @@ class Homepage extends Component {
 }
 
 const mapStateToProps = state => ({
-	daiAddress: state.daiAddress,
-	activeAccount: state.activeAccount,
 	tokenMap: state.tokenMap,
 	verifiedPoolAddrs: state.verifiedPoolAddrs,
 	verifiedPoolInfo: state.verifiedPoolInfo,

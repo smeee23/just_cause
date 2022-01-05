@@ -186,4 +186,8 @@ contract JustCausePool {
     function getByteCode() external view returns(bytes memory) {
         return address(this).code;
     }
+
+    function getHashByteCode() public view returns(bytes32) {
+        return keccak256(abi.encodePacked(address(this).code));
+    }
 }

@@ -17,6 +17,12 @@ contract PoolTracker {
 
     event MessageSentBy(address sentBy);
 
+    modifier onlyVerifiedByteCode(address pool) {
+        bytes32 v1ByteCodeHash = 0x69e8ff0e7c2b29468c452ea99c81161f9d6137447623140dc2714549e6014d96;
+        require(keccak256(abi.encodePacked(pool.code)) == v1ByteCodeHash, "byteCode not recognized");
+        _;
+    }
+
     modifier onlyPools(address _pool){
         require(isPool[_pool], "this function must be called from a pool");
         _;
@@ -64,5 +70,14 @@ contract PoolTracker {
 
     function getAddressFromName(string memory name) external view returns(address){
         return address(this);//names[name];
+    }
+
+    function checkByteCode(address pool) external view returns(bool) {
+        bytes32 v1ByteCodeHash = 0x69e8ff0e7c2b29468c452ea99c81161f9d6137447623140dc2714549e6014d96;
+        bool hashMatch = true;
+        if(keccak256(abi.encodePacked(pool.code)) != v1ByteCodeHash){
+            hashMatch = false;
+        }
+        return hashMatch;
     }
 }

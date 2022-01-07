@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { connect } from "react-redux"
 import { ConnectedRouter } from 'connected-react-router'
 import { createBrowserHistory } from 'history'
+import { createHashHistory } from 'history'
 
 import routes from './routes'
 import { detectMobile } from "./actions/mobile"
@@ -15,11 +16,9 @@ import { updateUserDepositPoolAddrs } from "./actions/userDepositPoolAddrs"
 import { updateUserDepositPoolInfo } from "./actions/userDepositPoolInfo"
 import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 
-//import getWeb3NotOnLoad from "../getWeb3NotOnLoad";
 import getWeb3 from "../getWeb3";
 import JCPool from "../contracts/JustCausePool.json";
 import PoolTracker from "../contracts/PoolTracker.json";
-//import ERC20Instance from "../contracts/IERC20.json";
 import { kovanTokenMap } from "./func/tokenMaps.js";
 
 //import { load } from "dotenv";
@@ -82,7 +81,7 @@ class App extends Component {
 		if(this.isMetaMaskInstalled()){
 			try {
 				// Will open the MetaMask UI
-				// You should disable this button while the request is pending!
+				// (You should disable this button while the request is pending)
 				const { ethereum } = window;
 				let request = await ethereum.request({ method: 'eth_requestAccounts' });
 				console.log('request', request);
@@ -196,7 +195,7 @@ class App extends Component {
 		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
 			history = this.props.history;
 		} else {
-			history = createBrowserHistory({ basename: '/just_cause' })
+			history = createHashHistory({ basename: '/just_cause' })
 		}
 
 		return (

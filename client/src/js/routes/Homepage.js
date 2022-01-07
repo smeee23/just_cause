@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { connect } from "react-redux";
 
 import Footer from "../components/Footer";
-import Shapes from '../components/Shapes'
+import Shapes from '../components/Shapes';
 
 import { updateDaiAddress } from "../actions/daiAddress";
 

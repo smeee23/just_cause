@@ -9,6 +9,13 @@ import palette from "../utils/palette";
 
 import Button from '../components/Button';
 
+import DaiLogo from "./cryptoLogos/DaiLogo";
+import WbtcLogo from "./cryptoLogos/WbtcLogo";
+import UsdcLogo from "./cryptoLogos/UsdcLogo";
+import TetherLogo from "./cryptoLogos/TetherLogo";
+import EthLogo from "./cryptoLogos/EthLogo";
+import AaveLogo from "./cryptoLogos/AaveLogo";
+
 import getWeb3 from "../../getWeb3NotOnLoad.js";
 import JCPool from "../../contracts/JustCausePool.json";
 import ERC20Instance from "../../contracts/IERC20.json";
@@ -219,15 +226,14 @@ class Card extends Component {
 		return buttonHolder;
 	}
 
-	createTokenInfo = (address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo) => {
+	createTokenInfo = (address, receiver, acceptedTokenInfo) => {
 		if (!acceptedTokenInfo) return 'no data';
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
 		const isETH = (item.acceptedTokenString === 'ETH') ? true : false;
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
 				<div className="card__body__column">
-
-				<h3 className="mb0">{ item.acceptedTokenString }</h3>
+				<h3 className="mb0">{item.acceptedTokenString }</h3>
 					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
 					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
 					<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
@@ -244,8 +250,35 @@ class Card extends Component {
 		return tokenInfo;
 	}
 
+	displayLogo = (acceptedTokenString) => {
+		let logo = 'test';
+		if(acceptedTokenString === 'ETH'){
+			logo = <EthLogo/>;
+		}
+		else if (acceptedTokenString === 'TUSD'){
+			logo = <TetherLogo/>;
+		}
+		else if (acceptedTokenString === 'USDC'){
+			logo = <UsdcLogo/>;
+		}
+		else if (acceptedTokenString === 'WBTC'){
+			logo = <WbtcLogo/>;
+		}
+		else if (acceptedTokenString === 'WBTC'){
+			logo = <WbtcLogo/>;
+		}
+		else if (acceptedTokenString === 'DAI'){
+			logo = <DaiLogo/>;
+		}
+		else if (acceptedTokenString === 'AAVE'){
+			logo = <AaveLogo lg />;
+		}
+
+		return logo;
+	}
+
 	render() {
-		const { title, about, idx, address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo} = this.props;
+		const { title, about, idx, address, receiver, acceptedTokenInfo} = this.props;
 
 		console.log('acceptedtokenInfo', acceptedTokenInfo);
 
@@ -274,7 +307,7 @@ class Card extends Component {
 		}
 
 		let tokenButtons = this.createTokenButtons(acceptedTokenInfo);
-		let tokenInfo = this.createTokenInfo(address, onDeposit, onWithdrawDeposit, onClaim, receiver, acceptedTokenInfo);
+		let tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo);
 
 		return (
 			<div className={classnames}>

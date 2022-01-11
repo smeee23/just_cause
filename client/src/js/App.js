@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { ConnectedRouter } from 'connected-react-router'
-import { createBrowserHistory } from 'history'
+//import { createBrowserHistory } from 'history'
 import { createHashHistory } from 'history'
 
 import routes from './routes'
@@ -17,9 +17,9 @@ import { updateUserDepositPoolInfo } from "./actions/userDepositPoolInfo"
 import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 
 import getWeb3 from "../getWeb3";
-import JCPool from "../contracts/JustCausePool.json";
 import PoolTracker from "../contracts/PoolTracker.json";
 import { kovanTokenMap } from "./func/tokenMaps.js";
+import {getPoolInfo} from './func/contractInteractions';
 
 //import { load } from "dotenv";
 
@@ -110,9 +110,11 @@ class App extends Component {
 	}
 
 	setPoolState = async(activeAccount) => {
+		//const { verifiedPools, ownerPools, userDepositPools, verifiedPoolInfo, ownerPoolInfo, userDepositPoolInfo } = getPoolStateFromChain(activeAccount, this.getTokenMapFromNetwork, this.networkId);
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
 		const ownerPools = await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
 		let userDepositPools = await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		userDepositPools = [...new Set(userDepositPools)];
 
 		let isHashMatch = true;
 		for(let i = 0; i < verifiedPools.length; i++){
@@ -122,72 +124,22 @@ class App extends Component {
 			}
 		}
 		console.log('isHashMatch', isHashMatch);
-		userDepositPools = [...new Set(userDepositPools)];
+
+		const verifiedPoolInfo = await getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), activeAccount);
+		const ownerPoolInfo = await getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), activeAccount);
+		const userDepositPoolInfo = await getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), activeAccount);
+
+		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
+		console.log('---------ownerPoolInfo--------', ownerPoolInfo);
+		console.log('---------userDepositPoolInfo--------', userDepositPoolInfo);
 
 		this.props.updateVerifiedPoolAddrs(verifiedPools);
 		this.props.updateOwnerPoolAddrs(ownerPools);
 		this.props.updateUserDepositPoolAddrs(userDepositPools);
 
-		const verifiedPoolInfo = await this.getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), activeAccount);
-		const ownerPoolInfo = await this.getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), activeAccount);
-		const userDepositPoolInfo = await this.getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), activeAccount);
-		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
-		console.log('---------ownerPoolInfo--------', ownerPoolInfo);
-		console.log('---------userDepositPoolInfo--------', userDepositPoolInfo);
-
 		this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
 		this.props.updateOwnerPoolInfo(ownerPoolInfo);
 		this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
-	}
-
-	getPoolInfo = async(poolTracker, tokenMap, activeAccount) => {
-		let poolInfo = [];
-		for(let i=0; i < poolTracker.length; i++){
-			let JCPoolInstance = new this.web3.eth.Contract(
-				JCPool.abi,
-				poolTracker[i],
-			);
-
-			let acceptedTokens = await JCPoolInstance.methods.getAcceptedTokens().call();
-			let name = await JCPoolInstance.methods.getName().call();
-			let receiver = await JCPoolInstance.methods.getRecipient().call();
-			let about = await JCPoolInstance.methods.getAbout().call();
-			const hashByteCode = await JCPoolInstance.methods.getHashByteCode().call();
-
-			console.log('hashByteCode', hashByteCode);
-			console.log("pool address:", JCPoolInstance.options.address)
-			console.log("accepted tokens:", acceptedTokens);
-			let acceptedTokenStrings = [];
-			let acceptedTokenInfo = [];
-			console.log('acceptedTokens', acceptedTokens)
-			for(let j = 0; j < acceptedTokens.length; j++){
-				const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
-				console.log("tokenString", tokenString, acceptedTokens[j]);
-				acceptedTokenInfo.push({
-					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
-					'userBalance': await JCPoolInstance.methods.getUserBalance(activeAccount, acceptedTokens[j]).call(),
-					'unclaimedInterest': await JCPoolInstance.methods.getUnclaimedInterest(acceptedTokens[j]).call(),
-					'claimedInterest': await JCPoolInstance.methods.getClaimedInterest(acceptedTokens[j]).call(),
-					'aTokenAddress': await JCPoolInstance.methods.getATokenAddress(acceptedTokens[j]).call(),
-					'acceptedTokenString': tokenString,
-					'decimals': tokenMap[tokenString].decimals,
-					'address': acceptedTokens[j],
-				});
-				acceptedTokenStrings.push(tokenString);
-			}
-			poolInfo.push({
-							receiver: receiver,
-							name: name,
-							about: about,
-							address: poolTracker[i],
-							acceptedTokens: acceptedTokenStrings,
-							acceptedTokenInfo: acceptedTokenInfo,
-			});
-		}
-
-		console.log("pool info", poolInfo);
-		console.log("pool tracker", poolTracker);
-		return poolInfo;
 	}
 
 	render() {

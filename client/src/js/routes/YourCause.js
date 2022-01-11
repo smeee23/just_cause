@@ -6,8 +6,7 @@ import { connect } from "react-redux";
 import Card from '../components/Card'
 import Button from '../components/Button'
 
-import getWeb3 from "../../getWeb3NotOnLoad.js";
-import JCPool from "../../contracts/JustCausePool.json";
+import {deploy} from '../func/contractInteractions';
 
 class YourCause extends Component {
 
@@ -36,55 +35,6 @@ class YourCause extends Component {
 
 	componentDidUpdate = () => {
 		console.log('component did update');
-	}
-
-	deploy = async() => {
-		const web3 = await getWeb3();
-		const activeAccount = this.props.activeAccount;//await web3.currentProvider.selectedAddress;
-		const poolName = prompt("Enter pool name:");
-		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)");
-		const about = prompt("Type a short summary of your cause");
-		acceptedTokens = acceptedTokens.split(" ");
-		console.log("acceptedTokens", acceptedTokens, this.props.tokenMap);
-		let tokenAddrs = [];
-		for(let i = 0; i < acceptedTokens.length; i++){
-			tokenAddrs.push(this.props.tokenMap[acceptedTokens[i]].address);
-		}
-		console.log('poolTrackerAddress', this.props.poolTrackerAddress);
-		const receiver = prompt("Enter the address to recieve the interest");
-		console.log("receiver", receiver, typeof receiver);
-		console.log("token addresses", tokenAddrs);
-		const payload = {data: JCPool.bytecode,
-						arguments: [
-							tokenAddrs,
-							poolName,
-							about,
-							this.props.poolTrackerAddress,
-							receiver
-						]
-		};
-		const parameter = {
-			from: activeAccount,
-			gas: web3.utils.toHex(3200000),
-			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
-		};
-
-		console.log(payload.arguments)
-		await new web3.eth.Contract(JCPool.abi).deploy(payload).send(parameter, (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash);
-			});
-			/*.on('confirmation', () => {}).then((newContractInstance) => {
-			console.log('Deployed Contract Address : ', newContractInstance.options.address);
-			this.setState({contractAddress: newContractInstance.options.address});
-			});*/
-
-
-		/*console.log("deployed", JCPoolInstance.options.address);*/
-		//console.log("events", JCPoolInstance);
-
-		//this.setPoolTracker();
-
-		//this.setPoolState(activeAccount);
 	}
 
 	createCardInfo = () => {
@@ -118,7 +68,8 @@ class YourCause extends Component {
 			<Fragment>
 				<article>
 				<section className="page-section page-section--center horizontal-padding bw0">
-					<Button icon="plus" text="Add Pool" lg callback={this.deploy}/>
+					<Button icon="plus" text="Add Pool" lg callback={async() => await deploy(this.props.tokenMap,
+																							 this.props.poolTrackerAddress)}/>
 				</section>
 					<section className="page-section page-section--center horizontal-padding bw0">
 						{cardHolder}

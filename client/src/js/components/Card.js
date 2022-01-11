@@ -16,10 +16,7 @@ import TetherLogo from "./cryptoLogos/TetherLogo";
 import EthLogo from "./cryptoLogos/EthLogo";
 import AaveLogo from "./cryptoLogos/AaveLogo";
 
-import getWeb3 from "../../getWeb3NotOnLoad.js";
-import JCPool from "../../contracts/JustCausePool.json";
-import ERC20Instance from "../../contracts/IERC20.json";
-import {deposit, withdrawDeposit} from '../func/contractInteractions';
+import {deposit, withdrawDeposit, claim} from '../func/contractInteractions';
 
 class Card extends Component {
 
@@ -34,67 +31,6 @@ class Card extends Component {
 
   componentDidMount() {
 		window.scrollTo(0,0);
-	}
-
-	/*onDeposit = async(poolAddress, address, isETH) => {
-		console.log('deposit clicked');
-		await deposit(poolAddress, address, isETH);
-	}*/
-
-	approve = async(erc20Instance, address, activeAccount, amountInGwei) => {
-		const web3 = await getWeb3();
-		console.log('approve clicked');
-		const parameter = {
-			from: activeAccount ,
-			gas: web3.utils.toHex(1000000),
-			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
-			};
-		console.log(typeof amountInGwei);
-		const amount = '10000000000000000000000000000000';
-		let results_1 = await erc20Instance.methods.approve(address, amount).send(parameter, (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash);
-			});
-		console.log("approve", results_1);
-	}
-
-	getAllowance = async(erc20Instance, address, activeAccount) => {
-		const allowance = await erc20Instance.methods.allowance(activeAccount, address).call();
-		console.log("allowance", allowance, typeof allowance);
-		return allowance;
-	}
-
-	getWalletBalance = async(tokenAddress) => {
-		const web3 = await getWeb3();
-		const activeAccount = await web3.currentProvider.selectedAddress;
-		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
-		const balance = await erc20Instance.methods.balanceOf(activeAccount).call();
-		return balance;
-	}
-
-	getAmountBase = (amount, decimals) => {
-		console.log('amount in base', amount*10**decimals);
-		return (amount*10**decimals).toString();
-	}
-
-	claim = async(address, assetAddress) => {
-		console.log('claim interest clicked', address);
-		const web3 = await getWeb3();
-		const activeAccount = await web3.currentProvider.selectedAddress;
-		const parameter = {
-			from: activeAccount,
-			gas: web3.utils.toHex(1000000),
-			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
-		};
-
-		let JCPoolInstance = new web3.eth.Contract(
-			JCPool.abi,
-			address,
-		);
-		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress, false).send(parameter , (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash);
-		});
-
-		console.log('claim result', result);
 	}
 
 	toFixed = (x) => {
@@ -150,7 +86,7 @@ class Card extends Component {
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
 				<div className="card__body__column">
-				<h3 className="mb0">{item.acceptedTokenString }</h3>
+				<h3 className="mb0">{item.acceptedTokenString } { this.displayLogo(item.acceptedTokenString)}</h3>
 					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
 					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
 					<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
@@ -161,7 +97,7 @@ class Card extends Component {
 				<div className="card__body__column">
 					<p>{"claimed donation: "+this.precise(item.claimedInterest, item.decimals)}</p>
 					<p>{"unclaimed donation: "+this.precise(item.unclaimedInterest, item.decimals)}</p>
-					<Button text="Claim Interest" callback={() => this.claim(address, item.address)}/>
+					<Button text="Claim Interest" callback={async() => await claim(address, item.address)}/>
 				</div>
 			</div>
 		return tokenInfo;

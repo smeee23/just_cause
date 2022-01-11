@@ -108,14 +108,11 @@ class Card extends Component {
 		if(acceptedTokenString === 'ETH'){
 			logo = <EthLogo/>;
 		}
-		else if (acceptedTokenString === 'TUSD'){
+		else if (acceptedTokenString === 'USDT'){
 			logo = <TetherLogo/>;
 		}
 		else if (acceptedTokenString === 'USDC'){
 			logo = <UsdcLogo/>;
-		}
-		else if (acceptedTokenString === 'WBTC'){
-			logo = <WbtcLogo/>;
 		}
 		else if (acceptedTokenString === 'WBTC'){
 			logo = <WbtcLogo/>;

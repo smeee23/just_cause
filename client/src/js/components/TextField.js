@@ -9,7 +9,8 @@ class TextField extends Component {
 
     this.state = {
       focused: false,
-      completed: false
+      completed: this.props.value,
+      value: this.props.value ? this.props.value :  ''
     }
   }
 
@@ -40,12 +41,19 @@ class TextField extends Component {
     })
   }
 
+  updateValue = (e) => {
+    this.setState({
+      value: e.target.value
+    });
+  }
+
 	render() {
-		const { label, placeholder } = this.props;
+		const { label, placeholder, id } = this.props;
 
     const classnames = classNames({
       "textfield": true,
-      "textfield--focused": this.state.focused || this.state.completed,
+      "textfield--focused": this.state.focused,
+      "textfield--completed": this.state.completed,
     })
 
 		return (
@@ -53,7 +61,11 @@ class TextField extends Component {
         <div className="textfield__box">
           <Icon name={"pencil"} size={32}/>
           <label className="textfield__label">{label}</label>
-            <input className="textfield__input" placeholder={placeholder} ref="input"/>
+          <input ref="input" className="textfield__input" id={id}
+          placeholder={placeholder}
+          value={this.state.value}
+          onChange={this.updateValue}
+          />
         </div>
         <div className="textfield__bar"/>
       </div>

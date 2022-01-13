@@ -20,9 +20,6 @@ $baseclass: 'button';
   &__bar--outer {
     width: 100%;
     height: $rem-base / 2;
-    // bottom: -($rem-base / 2);
-    // left: 0;
-    // position: absolute;
   }
 
   &__bar--inner {
@@ -87,6 +84,11 @@ $baseclass: 'button';
     }
   }
 
+  &--disabled {
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
   &--text-link {
     margin: 0 ($rem-base * 4);
 
@@ -118,5 +120,11 @@ $baseclass: 'button';
       transform: scale3d(1,1,1);
       transition: none;
     }
+  }
+}
+
+.#{$white-theme-baseclass} {
+  .#{$baseclass}__bar--inner {
+    background: $brand-black;
   }
 }

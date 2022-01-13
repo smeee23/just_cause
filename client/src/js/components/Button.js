@@ -5,12 +5,13 @@ import Icon from "./Icon";
 
 class Button extends Component {
 	render() {
-		const { text, icon, href, callback, lg } = this.props;
+		const { text, icon, href, callback, disabled, lg } = this.props;
 
     const classnames = classNames({
       "button": true,
       "button--icon-only": !text,
-      "button--lg": lg
+      "button--lg": lg,
+      "button--disabled": disabled,
     })
 
 		return (

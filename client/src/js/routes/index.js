@@ -7,6 +7,8 @@ import YourCause from './YourCause'
 import Contributions from './Contributions'
 
 import Header from '../components/Header'
+import { Modal } from '../components/Modal'
+import NewPoolModal from '../components/modals/NewPoolModal'
 
 const routes = (
 	<main>
@@ -17,6 +19,9 @@ const routes = (
 			<Route exact path={"/contributions"} component={Contributions}/>
 		</Switch>
 		<Header/>
+		<Modal>
+			<NewPoolModal/>
+		</Modal>
 	</main>
 )
 

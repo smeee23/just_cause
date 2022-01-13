@@ -3,7 +3,7 @@ $baseclass: 'textfield';
 .#{$baseclass} {
   display: flex;
   flex-direction: column;
-  margin-bottom: 2 * $rem-base;
+  margin-bottom: 4 * $rem-base;
 
   &__input {
     background: none;
@@ -42,7 +42,8 @@ $baseclass: 'textfield';
     margin: (1 * $rem-base);
   }
 
-  &--focused {
+  &--focused,
+  &--completed {
     .#{$baseclass}__label {
       transform: translate3d(0,-50%,0) scale3d(0.8,0.8,0.8);
     }
@@ -52,5 +53,11 @@ $baseclass: 'textfield';
     .icon {
       opacity: 0;
     }
+  }
+}
+
+.#{$white-theme-baseclass} {
+  .#{$baseclass}__bar {
+    background: $brand-black;
   }
 }

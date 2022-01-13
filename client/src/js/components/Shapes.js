@@ -83,9 +83,10 @@ class Shapes extends Component {
         this.stack = Composites.stack(-264, -264, 6, 4, 64, 64, (x, y, i, j) => {
             const options = {
                 render: {
-                    strokeStyle: palette[paletteKeys[(i + j) % paletteKeys.length]] + 'FF',
-                    lineWidth: 4,
-                    fillStyle: 'transparent'
+                    // strokeStyle: palette[paletteKeys[(i + j) % paletteKeys.length]] + 'FF',
+                    // lineWidth: 4,
+                    // fillStyle: 'transparent'
+                    fillStyle: palette[paletteKeys[(i + j) % paletteKeys.length]] + 'FF',
                 },
                 chamfer: 32
             }

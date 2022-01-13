@@ -1,3 +1,5 @@
+$white-theme-baseclass: "theme--white";
+
 * {
 	box-sizing: border-box;
 }
@@ -117,9 +119,24 @@ section {
 	}
 }
 
+.icon {
+	stroke: $brand-white;
+}
 
 h1, h2, h3, h4, p, blockquote {
 	span {
 		display: inline-block;
+	}
+}
+
+.#{$white-theme-baseclass} {
+	background: $brand-white;
+
+	&, & input {
+		color: $brand-black;
+	}
+
+	.icon {
+		stroke: $brand-black;
 	}
 }

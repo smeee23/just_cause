@@ -9,6 +9,7 @@ contract PoolTracker {
     mapping(address => address[]) private owners;
     mapping(string => address) private names;
     address[] private verifiedPools;
+    bytes32[] validByteCodeHashes;
 
     event AddVerifiedPools(address addressToAdd);
     event AddDeposit(address _userAddr, address _pool);
@@ -28,6 +29,9 @@ contract PoolTracker {
         _;
     }
 
+    function addValidByteCodeHash(bytes32 _hash) public {
+        validByteCodeHashes.push(_hash);
+    }
     function addDeposit(address _userAddr, address _pool) onlyPools(msg.sender) external {
         depositors[_userAddr].push(_pool);
         emit AddDeposit(_userAddr, _pool);
@@ -73,10 +77,13 @@ contract PoolTracker {
     }
 
     function checkByteCode(address pool) external view returns(bool) {
-        bytes32 v1ByteCodeHash = 0x69e8ff0e7c2b29468c452ea99c81161f9d6137447623140dc2714549e6014d96;
-        bool hashMatch = true;
-        if(keccak256(abi.encodePacked(pool.code)) != v1ByteCodeHash){
-            hashMatch = false;
+        bool hashMatch = false;
+        bytes32[] memory validHashes = validByteCodeHashes;
+
+        for(uint8 i = 0; i < validHashes.length; i++){
+            if(keccak256(abi.encodePacked(pool.code)) == validHashes[i]){
+                hashMatch = true;
+            }
         }
         return hashMatch;
     }

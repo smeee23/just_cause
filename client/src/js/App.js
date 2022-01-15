@@ -18,8 +18,10 @@ import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 
 import getWeb3 from "../getWeb3";
 import PoolTracker from "../contracts/PoolTracker.json";
+import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.json";
 import { kovanTokenMap } from "./func/tokenMaps.js";
-import {getPoolInfo} from './func/contractInteractions';
+import {getPoolInfo} from './func/contractInteractions.js';
+import {getPriceFromMessari} from './func/messariPriceFeeds.js'
 
 //import { load } from "dotenv";
 
@@ -36,12 +38,14 @@ class App extends Component {
 				console.log('accounts' , this.accounts, this.accounts[0]);
 				activeAccount = this.accounts[0];
 			}
-			console.log('activeAccount', activeAccount);
 
 			//activeAccount = this.accounts[0];
 			this.networkId = await this.web3.eth.net.getId();
 
-			console.log("network ID", this.networkId);
+			this.AaveProtocolDataProviderInstance = new this.web3.eth.Contract(
+				ProtocolDataProvider.abi,
+				ProtocolDataProvider.networks[this.networkId] && ProtocolDataProvider.networks[this.networkId].address,
+			);
 
 			this.PoolTrackerInstance = new this.web3.eth.Contract(
 				PoolTracker.abi,
@@ -56,6 +60,9 @@ class App extends Component {
 			this.setActiveAccountState(activeAccount);
 			this.setPoolState(activeAccount);
 			this.setPoolTrackAddress(this.poolTrackerAddress);
+
+			let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
+			console.log('aave protocol data response', results);
 		}
 
 		catch (error) {
@@ -92,6 +99,11 @@ class App extends Component {
 		}
 	}
 
+	getAaveData = async() => {
+		let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
+		console.log('aave protocol data response', results);
+	}
+
 	setPoolTrackAddress = (poolTrackerAddress) => {
 		this.props.updatePoolTrackerAddress(poolTrackerAddress);
 	}
@@ -105,8 +117,31 @@ class App extends Component {
 			return kovanTokenMap;
 		}
 	}
-	setTokenMapState = (tokenMap) => {
+	setTokenMapState = async(tokenMap) => {
+		console.log('token Map keys', Object.keys(tokenMap));
+
+		let acceptedTokens = Object.keys(tokenMap);
+		for(let i = 0; i < acceptedTokens.length; i++){
+			const key = acceptedTokens[i];
+			const address =  tokenMap[key] && tokenMap[key].address;
+			const aaveTokenInfo = await this.AaveProtocolDataProviderInstance.methods.getReserveData(address).call();
+			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.liquidityRate).toPrecision(4);
+			console.log(key, tokenMap[key] && tokenMap[key].apiKey, address);
+			let result = JSON.parse(await getPriceFromMessari(tokenMap[key] && tokenMap[key].apiKey));
+			result = result.data.market_data.price_usd;
+			tokenMap[key]['priceUSD'] = result;
+			console.log('api response:', result);
+		}
+		console.log('updated tokenMap', tokenMap, typeof tokenMap);
 		this.props.updateTokenMap(tokenMap);
+	}
+
+	calculateAPY = (liquidityRate) => {
+		const RAY = 10**27;
+		const SECONDS_PER_YEAR = 31536000;
+		const depositAPR = liquidityRate/RAY;
+		//return 1+ (depositAPR / SECONDS_PER_YEAR);
+		return (((1 + (depositAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1)*100;
 	}
 
 	setPoolState = async(activeAccount) => {

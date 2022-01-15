@@ -33,9 +33,9 @@ class Homepage extends Component {
 	}
 
 	render() {
-		this.printTokenMap();
+		/*this.printTokenMap();
 		this.printVerifiedPoolAddrs();
-		this.printVerifiedPoolInfo();
+		this.printVerifiedPoolInfo();*/
 		return (
 			<Fragment>
 				<Shapes/>

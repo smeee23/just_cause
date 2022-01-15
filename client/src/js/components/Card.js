@@ -81,7 +81,9 @@ class Card extends Component {
 
 	createTokenInfo = (address, receiver, acceptedTokenInfo) => {
 		if (!acceptedTokenInfo) return 'no data';
+
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
+
 		const isETH = (item.acceptedTokenString === 'ETH') ? true : false;
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
@@ -89,18 +91,55 @@ class Card extends Component {
 				<h3 className="mb0">{item.acceptedTokenString } { this.displayLogo(item.acceptedTokenString)}</h3>
 					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
 					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
-					<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
-					<p>{"total balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
 					<Button text="Contribute" callback={async() => await deposit(address, item.address, isETH, this.props.tokenMap)}/>
 					<Button text="Withdraw Deposit" callback={async() => await withdrawDeposit(address, item.address,  this.props.tokenMap)}/>
 				</div>
 				<div className="card__body__column">
+					<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
+					<p>{"total balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
+					<p>{"deposit APY: "+ item.depositAPY + '%'}</p>
 					<p>{"claimed donation: "+this.precise(item.claimedInterest, item.decimals)}</p>
 					<p>{"unclaimed donation: "+this.precise(item.unclaimedInterest, item.decimals)}</p>
 					<Button text="Claim Interest" callback={async() => await claim(address, item.address)}/>
 				</div>
 			</div>
 		return tokenInfo;
+	}
+
+	getTotalBalancesInUSD = (acceptedTokenInfo) => {
+		if (!acceptedTokenInfo) return 'no data';
+
+		let totalBalance = 0.0;
+
+		for(let i = 0; i < acceptedTokenInfo.length; i++){
+			const item = acceptedTokenInfo[i];
+			const tokenString = item.acceptedTokenString;
+			const priceUSD = this.props.tokenMap[tokenString] && this.props.tokenMap[tokenString].priceUSD;
+			const totalDeposits = this.precise(item.totalDeposits, item.decimals);
+			totalBalance += totalDeposits * priceUSD;
+		}
+
+		totalBalance = totalBalance.toFixed(2);
+
+		return totalBalance;
+	}
+
+	getUserBalancesInUSD = (acceptedTokenInfo) => {
+		if (!acceptedTokenInfo) return 'no data';
+
+		let userBalance = 0.0;
+
+		for(let i = 0; i < acceptedTokenInfo.length; i++){
+			const item = acceptedTokenInfo[i];
+			const tokenString = item.acceptedTokenString;
+			const priceUSD = this.props.tokenMap[tokenString] && this.props.tokenMap[tokenString].priceUSD;
+			const userDeposits = this.precise(item.userBalance, item.decimals);
+			userBalance += userDeposits * priceUSD;
+		}
+
+		userBalance = userBalance.toFixed(2);
+
+		return userBalance;
 	}
 
 	displayLogo = (acceptedTokenString) => {
@@ -147,17 +186,10 @@ class Card extends Component {
 			"card--open": this.state.open,
 		})
 
-		//let tokenInfo = [];
-
-		let formatUserBalance = 0;
-		let formatTotalDeposits = 0;
-		if(acceptedTokenInfo){
-			formatUserBalance = this.precise(acceptedTokenInfo[0].userBalance, acceptedTokenInfo[0].decimals);
-			formatTotalDeposits = this.precise(acceptedTokenInfo[0].totalDeposits, acceptedTokenInfo[0].decimals);
-		}
-
-		let tokenButtons = this.createTokenButtons(acceptedTokenInfo);
-		let tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo);
+		const userBalance = this.getUserBalancesInUSD(acceptedTokenInfo);
+		const totalBalance = this.getTotalBalancesInUSD(acceptedTokenInfo);
+		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
+		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo);
 
 		return (
 			<div className={classnames}>
@@ -170,8 +202,8 @@ class Card extends Component {
 					<p className="mb0">{ about }</p>
 				</div>
 				<div className="card__header--right">
-								<p className="mb0">{"your balance: " + formatUserBalance + ","}</p>
-								<p className="mb0">{"total deposits: "+formatTotalDeposits}</p>
+								<p className="mb0">{"your contribution: $" + userBalance}</p>
+								<p className="mb0">{"total contribution: $"+ totalBalance}</p>
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
 				</div>

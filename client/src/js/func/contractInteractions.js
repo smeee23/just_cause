@@ -3,7 +3,7 @@ import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 
-	const approve = async(erc20Instance, address, activeAccount, amountInGwei) => {
+	const approve = async(erc20Instance, address, activeAccount, amountInGwei, decimals) => {
 		const web3 = await getWeb3();
 		console.log('approve clicked');
 		const parameter = {
@@ -12,7 +12,9 @@ import ERC20Instance from "../../contracts/IERC20.json";
 			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 			};
 		console.log(typeof amountInGwei);
+
 		const amount = '10000000000000000000000000000000';
+
 		let results_1 = await erc20Instance.methods.approve(address, amount).send(parameter, (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			});
@@ -55,7 +57,7 @@ import ERC20Instance from "../../contracts/IERC20.json";
 			if(parseInt(amountInBase) > parseInt(allowance)){
 				alert("must approve token to deposit");
 				console.log("approve test", parseInt(amountInBase), parseInt(allowance), (parseInt(amountInBase) > parseInt(getAllowance(erc20Instance, address, activeAccount))))
-				await approve(erc20Instance, address, activeAccount, amountInBase);
+				await approve(erc20Instance, address, activeAccount, amountInBase, tokenMap[tokenString].decimals);
 			}
 		}
 		else{
@@ -244,10 +246,13 @@ import ERC20Instance from "../../contracts/IERC20.json";
 					'aTokenAddress': await JCPoolInstance.methods.getATokenAddress(acceptedTokens[j]).call(),
 					'acceptedTokenString': tokenString,
 					'decimals': tokenMap[tokenString].decimals,
+					'depositAPY': tokenMap[tokenString].depositAPY,
 					'address': acceptedTokens[j],
 				});
+				console.log('contractData', await JCPoolInstance.methods.getAaveContractData(acceptedTokens[j]).call());
 				acceptedTokenStrings.push(tokenString);
 			}
+
 			poolInfo.push({
 							receiver: receiver,
 							name: name,
@@ -257,9 +262,6 @@ import ERC20Instance from "../../contracts/IERC20.json";
 							acceptedTokenInfo: acceptedTokenInfo,
 			});
 		}
-
-		console.log("pool info", poolInfo);
-		console.log("pool tracker", poolTracker);
 		return poolInfo;
 	}
 

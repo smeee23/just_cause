@@ -193,9 +193,10 @@ contract JustCausePool {
 
     function getAaveContractData(address _asset) public view returns(uint256 currentATokenBalance, uint256 liquidityRate,
                                                                      uint40 stableRateLastUpdated, bool usageAsCollateralEnabled){
-        (uint256 currentATokenBalance,,,,,, uint256 liquidityRate, uint40 stableRateLastUpdated, bool usageAsCollateralEnabled) =
+        (currentATokenBalance,,,,,, liquidityRate, stableRateLastUpdated, usageAsCollateralEnabled) =
                                                                     dataProvider.getUserReserveData(_asset, address(this));
     }
+
     function getAaveGeneralData(address _asset) public view returns(uint256 availableLiquidity, uint256 liquidityRate,
                                                                     uint256 liquidityIndex, uint40 lastUpdateTimestamp){
         (availableLiquidity,,, liquidityRate,,,, liquidityIndex,, lastUpdateTimestamp) =

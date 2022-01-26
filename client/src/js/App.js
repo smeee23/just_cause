@@ -18,6 +18,7 @@ import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 
 import getWeb3 from "../getWeb3";
 import PoolTracker from "../contracts/PoolTracker.json";
+import JustCauseERC721 from "../contracts/JustCauseERC721.json"
 import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.json";
 import { kovanTokenMap } from "./func/tokenMaps.js";
 import {getPoolInfo} from './func/contractInteractions.js';
@@ -54,6 +55,7 @@ class App extends Component {
 
 			this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
 			console.log("Pool Tracker Address:", this.poolTrackerAddress);
+			console.log("ERC721Address", await this.PoolTrackerInstance.methods.getERC721Address().call());
 
 			const tokenMap = this.getTokenMapFromNetwork();
 			this.setTokenMapState(tokenMap);

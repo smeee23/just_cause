@@ -249,7 +249,6 @@ import ERC20Instance from "../../contracts/IERC20.json";
 					'depositAPY': tokenMap[tokenString].depositAPY,
 					'address': acceptedTokens[j],
 				});
-				console.log('contractData', await JCPoolInstance.methods.getAaveContractData(acceptedTokens[j]).call());
 				acceptedTokenStrings.push(tokenString);
 			}
 

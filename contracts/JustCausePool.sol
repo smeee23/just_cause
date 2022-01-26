@@ -101,9 +101,10 @@ contract JustCausePool {
 
     function tallyDeposit(uint256 _amount, address _assetAddress) internal {
         uint256 depositedAmount = depositors[msg.sender][_assetAddress];
-        if(depositedAmount == 0){
-            poolTracker.addDeposit(msg.sender, address(this));
-        }
+         uint256 liquidityIndex = getAaveLiquidityIndex(_assetAddress);
+        //if(depositedAmount == 0){
+            poolTracker.addDeposit(msg.sender, _amount, liquidityIndex, block.timestamp, _assetAddress);
+        //}
         depositedAmount += _amount;
         totalDeposits[_assetAddress] += _amount;
         depositors[msg.sender][_assetAddress] = depositedAmount;
@@ -123,9 +124,9 @@ contract JustCausePool {
         depositors[msg.sender][_assetAddress] -= _amount;
         totalDeposits[_assetAddress] -= _amount;
 
-        if(depositors[msg.sender][_assetAddress] == 0){
-            poolTracker.withdrawDeposit(msg.sender, address(this));
-        }
+        //if(depositors[msg.sender][_assetAddress] == 0){
+            poolTracker.withdrawDeposit(msg.sender, _amount, block.timestamp, _assetAddress);
+        //}
         emit Withdraw(_assetAddress, msg.sender, _amount, depositors[msg.sender][_assetAddress], _donation);
     }
 
@@ -191,15 +192,7 @@ contract JustCausePool {
         return keccak256(abi.encodePacked(address(this).code));
     }
 
-    function getAaveContractData(address _asset) public view returns(uint256 currentATokenBalance, uint256 liquidityRate,
-                                                                     uint40 stableRateLastUpdated, bool usageAsCollateralEnabled){
-        (currentATokenBalance,,,,,, liquidityRate, stableRateLastUpdated, usageAsCollateralEnabled) =
-                                                                    dataProvider.getUserReserveData(_asset, address(this));
-    }
-
-    function getAaveGeneralData(address _asset) public view returns(uint256 availableLiquidity, uint256 liquidityRate,
-                                                                    uint256 liquidityIndex, uint40 lastUpdateTimestamp){
-        (availableLiquidity,,, liquidityRate,,,, liquidityIndex,, lastUpdateTimestamp) =
-                                                                    dataProvider.getReserveData(_asset);
+    function getAaveLiquidityIndex(address _asset) public view returns(uint256 liquidityIndex){
+        (,,,,,,,liquidityIndex,,) = dataProvider.getReserveData(_asset);
     }
 }

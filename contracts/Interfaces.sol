@@ -691,8 +691,8 @@ interface IPoolTracker {
   event MessageSentBy(address sentBy);
 
 
-  function addDeposit(address _userAddr, address _pool) external;
-  function withdrawDeposit(address _userAddr, address _pool) external;
+  function addDeposit(address _userAddr, uint256 _amount, uint256 _liquidityIndex, uint256 _timeStamp, address _asset) external;
+  function withdrawDeposit(address _userAddr,  uint256 _amount, uint256 _timeStamp, address _asset) external;
   function addVerifiedPools(address _pool, address _owner, string memory _name) external;
   function getVerifiedPools() external view returns(address [] memory);
   function getUserDeposits(address _userAddr) external view returns(address[] memory);
@@ -756,16 +756,6 @@ interface IERC721 is IERC165 {
      */
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
-    struct Deposit {
-        uint256 amount;
-        uint256 liquidityIndex;
-        uint256 timeStamp;
-        address pool;
-        address asset;
-    }
-
-    function createItem(address _tokenOwner, uint256 _amount, uint256 _liquidityIndex, uint256 _timeStamp, address _asset) external returns (uint256);
-    function getDeposit(uint256 tokenId) external view returns (string memory);
     /**
      * @dev Returns the number of tokens in ``owner``'s account.
      */
@@ -882,4 +872,18 @@ interface IERC721 is IERC165 {
         uint256 tokenId,
         bytes calldata data
     ) external;
+}
+
+interface IJustCauseERC721 is IERC721 {
+    struct Deposit {
+        uint256 amount;
+        uint256 liquidityIndex;
+        uint256 timeStamp;
+        address pool;
+        address asset;
+    }
+
+    function addFunds(address _tokenOwner, uint256 _amount, uint256 _liquidityIndex, uint256 _timeStamp, address _pool, address _asset) external returns (uint256);
+    function withdrawFunds(address _tokenOwner, uint256 _amount, uint256 _timeStamp, address _pool, address _asset) external returns (uint256);
+    function getDeposit(uint256 tokenId) external view returns (uint256 amount, uint256 liquidityIndex, uint256 timeStamp, address pool, address asset);
 }

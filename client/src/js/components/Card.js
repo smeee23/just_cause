@@ -98,8 +98,8 @@ class Card extends Component {
 			<div className="card__body" key={item.acceptedTokenString}>
 				<div className="card__body__column">
 				<h3 className="mb0">{item.acceptedTokenString } { this.displayLogo(item.acceptedTokenString)}</h3>
-					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
-					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
+					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)+' '}</p>
+					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)+' '}</p>
 					<Button text="Contribute" callback={async() => await deposit(address, item.address, isETH, this.props.tokenMap, this.props.poolTrackerAddress)}/>
 					<Button text="Withdraw Deposit" callback={async() => await withdrawDeposit(address, item.address,  this.props.tokenMap, this.props.poolTrackerAddress)}/>
 				</div>

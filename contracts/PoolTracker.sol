@@ -15,8 +15,8 @@ contract PoolTracker {
 
     //contract addresses will point to bool if they exist
     mapping(address => bool) private isPool;
-    mapping(address => address[]) private depositors;
-    mapping(address => address[]) private owners;
+    //mapping(address => address[]) private depositors;
+    //mapping(address => address[]) private owners;
     mapping(string => address) private names;
     address[] private verifiedPools;
     bytes32[] validByteCodeHashes;
@@ -52,10 +52,10 @@ contract PoolTracker {
         /*
         NEED TO CHECK IF FIRST DEPOSIT BEFORE ADDING TO DEPOSITORS
         */
-        depositors[msg.sender].push(_pool);
+        //depositors[msg.sender].push(_pool);
 
-        if(isETH) IJustCausePool(_pool).depositETH{value: msg.value}(_asset, msg.sender);
-        else IJustCausePool(_pool).deposit(_asset, _amount, msg.sender);
+        if(isETH) IJustCausePool(_pool).depositETH{value: msg.value}(_asset);
+        else IJustCausePool(_pool).deposit(_asset, _amount , msg.sender);
 
         uint256 _liquidityIndex = IJustCausePool(_pool).getAaveLiquidityIndex(_asset);
         jCDepositorERC721.addFunds(msg.sender, _amount, _liquidityIndex, block.timestamp,  _pool, _asset);
@@ -68,13 +68,13 @@ contract PoolTracker {
         /*
         NEED TO CHECK IF BALANCE IS 0 BEFORE REMOVAL
         */
-        for(uint8 i = 0; i < depositors[msg.sender].length -1; i++){
+        /*for(uint8 i = 0; i < depositors[msg.sender].length -1; i++){
             if(depositors[msg.sender][i] == _pool){
                 depositors[msg.sender][i] = depositors[msg.sender][depositors[msg.sender].length - 1];
                 break;
             }
         }
-        depositors[msg.sender].pop();
+        depositors[msg.sender].pop();*/
 
         IJustCausePool(_pool).withdraw(_asset, _amount, _donation, msg.sender);
         jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
@@ -109,7 +109,7 @@ contract PoolTracker {
         jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, child);
         names[_name] =  child;
         verifiedPools.push(child);
-        owners[msg.sender].push(child);
+        //owners[msg.sender].push(child);
         isPool[child] = true;
     }
 
@@ -125,9 +125,9 @@ contract PoolTracker {
         return verifiedPools;
     }
 
-    function getUserDeposits(address _userAddr) external view returns(address[] memory){
+    /*function getUserDeposits(address _userAddr) external view returns(address[] memory){
         return depositors[_userAddr];
-    }
+    }*/
 
     /*function getUserDeposits(address _userAddr) external view returns(address[] memory){
         uint256 numDeposits = jCDepositorERC721.balanceOf(_userAddr);
@@ -140,9 +140,9 @@ contract PoolTracker {
         return poolList;
     }*/
 
-    function getUserOwned(address _userAddr) external view returns(address[] memory){
+    /*function getUserOwned(address _userAddr) external view returns(address[] memory){
         return owners[_userAddr];
-    }
+    }*/
 
     function getAddressFromName(string memory _name) external view returns(address){
         return names[_name];

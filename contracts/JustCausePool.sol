@@ -13,12 +13,10 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
  */
 
 contract JustCausePool is Initializable {
-    mapping(address => mapping(address => uint256)) private depositors;
+    //mapping(address => mapping(address => uint256)) private depositors;
     mapping(address => uint256) private totalDeposits;
     mapping(address => uint256) private interestWithdrawn;
     bool public isBase;
-
-    //IPoolTracker poolTracker;
 
     ILendingPoolAddressesProvider provider;
     ILendingPool lendingPool;
@@ -28,7 +26,7 @@ contract JustCausePool is Initializable {
     address[] acceptedTokens;
 
     event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
-    event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 userDeposits, uint256 donation);
+    event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 donation);
     event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
 
     address receiver;
@@ -50,7 +48,7 @@ contract JustCausePool is Initializable {
 
     modifier enoughFunds(address _userAddr, address _tokenAddr, uint256 _amount, uint256 _donation) {
         require(_amount > 0, "amount must exceed 0");
-        require(depositors[_userAddr][_tokenAddr]  >= _amount, "no funds deposited for selected token");
+        //require(depositors[_userAddr][_tokenAddr]  >= _amount, "no funds deposited for selected token");
         require(_amount >= _donation, "donation cannot exceed withdrawal amount");
         _;
     }
@@ -103,16 +101,18 @@ contract JustCausePool is Initializable {
         address poolAddr = address(lendingPool);
         token.approve(poolAddr, _amount);
         lendingPool.deposit(address(token), _amount, address(this), 0);
-        tallyDeposit(_amount, _assetAddress, _depositor);
+        totalDeposits[_assetAddress] += _amount;
+        //tallyDeposit(_amount, _assetAddress, _depositor);
     }
 
-    function depositETH(address _wethAddress, address _depositor) onlyMaster(msg.sender) public payable {
+    function depositETH(address _wethAddress /*, address _depositor*/) onlyMaster(msg.sender) public payable {
         address poolAddr = address(lendingPool);
         wethGateway.depositETH{value: msg.value}(poolAddr, address(this), 0);
-        tallyDeposit(msg.value, _wethAddress, _depositor);
+        totalDeposits[_wethAddress] += msg.value;
+        //tallyDeposit(msg.value, _wethAddress, _depositor);
     }
 
-    function tallyDeposit(uint256 _amount, address _assetAddress, address _depositor) internal {
+    /*function tallyDeposit(uint256 _amount, address _assetAddress, address _depositor) internal {
         uint256 depositedAmount = depositors[_depositor][_assetAddress];
         //uint256 liquidityIndex = getAaveLiquidityIndex(_assetAddress);
         //if(depositedAmount == 0){
@@ -121,7 +121,7 @@ contract JustCausePool is Initializable {
         depositedAmount += _amount;
         totalDeposits[_assetAddress] += _amount;
         depositors[_depositor][_assetAddress] = depositedAmount;
-    }
+    }*/
 
     function withdraw(address _assetAddress, uint256 _amount, uint256 _donation, address _depositor) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount, _donation) public {
         //address poolAddr = address(lendingPool);
@@ -134,13 +134,13 @@ contract JustCausePool is Initializable {
         else
             lendingPool.withdraw(_assetAddress, _amount, _depositor);
 
-        depositors[_depositor][_assetAddress] -= _amount;
+        //depositors[_depositor][_assetAddress] -= _amount;
         totalDeposits[_assetAddress] -= _amount;
 
         //if(depositors[_depositor][_assetAddress] == 0){
             //poolTracker.withdrawDeposit(_depositor, _amount, block.timestamp, _assetAddress);
         //}
-        emit Withdraw(_assetAddress, _depositor, _amount, depositors[_depositor][_assetAddress], _donation);
+        emit Withdraw(_assetAddress, _depositor, _amount, _donation);
     }
 
     function withdrawDonations(address _assetAddress) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) public{
@@ -153,9 +153,9 @@ contract JustCausePool is Initializable {
         emit WithdrawDonations(_assetAddress, receiver, interestEarned, totalDeposits[_assetAddress], aTokenAddress);
     }
 
-    function getUserBalance(address _userAddr, address _token) external view returns(uint256){
+    /*function getUserBalance(address _userAddr, address _token) external view returns(uint256){
         return depositors[_userAddr][_token];
-    }
+    }*/
 
     function getTotalDeposits(address _token) external view returns(uint256){
         return totalDeposits[_token];

@@ -219,11 +219,10 @@ import ERC20Instance from "../../contracts/IERC20.json";
 			const hashByteCode = await JCPoolInstance.methods.getHashByteCode().call();
 
 			console.log('hashByteCode', hashByteCode);
-			console.log("pool address:", JCPoolInstance.options.address)
+			console.log("pool address:", JCPoolInstance.options.address);
 			console.log("accepted tokens:", acceptedTokens);
 			let acceptedTokenStrings = [];
 			let acceptedTokenInfo = [];
-			console.log('acceptedTokens', acceptedTokens);
 
 			for(let j = 0; j < acceptedTokens.length; j++){
 				const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);

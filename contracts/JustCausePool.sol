@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
-import { IERC20, ILendingPool, ILendingPoolAddressesProvider, IPoolTracker, IProtocolDataProvider, IWETHGateway} from './Interfaces.sol';
+import { IERC20, ILendingPool, ILendingPoolAddressesProvider, IProtocolDataProvider, IWETHGateway} from './Interfaces.sol';
 import { SafeERC20 } from './Libraries.sol';
-
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 /**
  * This is a proof of concept starter contract, showing how uncollaterised loans are possible
  * using Aave v2 credit delegation.
@@ -12,12 +12,13 @@ import { SafeERC20 } from './Libraries.sol';
  * See @dev comments
  */
 
-contract JustCausePool {
+contract JustCausePool is Initializable {
     mapping(address => mapping(address => uint256)) private depositors;
     mapping(address => uint256) private totalDeposits;
     mapping(address => uint256) private interestWithdrawn;
+    bool public isBase;
 
-    IPoolTracker poolTracker;
+    //IPoolTracker poolTracker;
 
     ILendingPoolAddressesProvider provider;
     ILendingPool lendingPool;
@@ -29,12 +30,9 @@ contract JustCausePool {
     event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
     event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 userDeposits, uint256 donation);
     event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
-    event BalanceOf(address FROM, uint256 AMOUNT, uint256 BALANCE);
-    event GetLPAddress(address addr);
-    event SeeAllowance(uint256 allowance);
-    event GetPoolTracker(address test);
-    address owner;
+
     address receiver;
+    address master;
     string name;
     string about;
 
@@ -57,8 +55,13 @@ contract JustCausePool {
         _;
     }
 
-    modifier onlyReceiver(address _requestAddr){
-        require(receiver == _requestAddr, "you are not the current reciever for this pool");
+    modifier onlyReceiver(address _sender){
+        require(receiver == _sender, "you are not the current reciever for this pool");
+        _;
+    }
+
+    modifier onlyMaster(address _sender){
+        require(master == _sender, "you are not the owner");
         _;
     }
 
@@ -68,69 +71,79 @@ contract JustCausePool {
         _;
     }
 
-    constructor (address[] memory _acceptedTokens, string memory _name, string memory _about, address _poolTrackerAddr, address _receiver) strLength(_name, 30) strLength(_about, 200) {
-            owner = msg.sender;
-            receiver = _receiver;
-            name = _name;
-            about = _about;
-            provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
-            address lendingPoolAddr = provider.getLendingPool();
-            lendingPool = ILendingPool(lendingPoolAddr); // Kovan
-            acceptedTokens = _acceptedTokens;
-
-            poolTracker = IPoolTracker(address(_poolTrackerAddr));
-            emit GetPoolTracker(poolTracker.getAddressFromName(name));
-            poolTracker.addVerifiedPools(address(this), owner, _name);
+    constructor () {
+        isBase = true;
     }
 
-    function deposit(address _assetAddress, uint256 _amount) onlyAllowedTokens(_assetAddress) public {
+    function initialize(
+        address[] memory _acceptedTokens,
+        string memory _name,
+        string memory _about,
+        address _receiver)
+
+    strLength(_name, 30) strLength(_about, 200) initializer() external {
+
+        require(isBase == false, "Cannot initialize base");
+        require(receiver == address(0), "Initialize already called");
+
+        receiver = _receiver;
+        master = msg.sender;
+        name = _name;
+        about = _about;
+        provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
+        address lendingPoolAddr = provider.getLendingPool();
+        lendingPool = ILendingPool(lendingPoolAddr); // Kovan
+        acceptedTokens = _acceptedTokens;
+    }
+
+    function deposit(address _assetAddress, uint256 _amount, address _depositor) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) public {
         IERC20 token = IERC20(_assetAddress);
-        require(token.allowance(msg.sender, address(this)) >= _amount, "sender not approved");
-        token.transferFrom(msg.sender, address(this), _amount);
+        require(token.allowance(_depositor, address(this)) >= _amount, "sender not approved");
+        token.transferFrom(_depositor, address(this), _amount);
         address poolAddr = address(lendingPool);
         token.approve(poolAddr, _amount);
         lendingPool.deposit(address(token), _amount, address(this), 0);
-        tallyDeposit(_amount, _assetAddress);
+        tallyDeposit(_amount, _assetAddress, _depositor);
     }
 
-    function depositETH(address _wethAddress) public payable {
+    function depositETH(address _wethAddress, address _depositor) onlyMaster(msg.sender) public payable {
         address poolAddr = address(lendingPool);
         wethGateway.depositETH{value: msg.value}(poolAddr, address(this), 0);
-        tallyDeposit(msg.value, _wethAddress);
+        tallyDeposit(msg.value, _wethAddress, _depositor);
     }
 
-    function tallyDeposit(uint256 _amount, address _assetAddress) internal {
-        uint256 depositedAmount = depositors[msg.sender][_assetAddress];
-         uint256 liquidityIndex = getAaveLiquidityIndex(_assetAddress);
+    function tallyDeposit(uint256 _amount, address _assetAddress, address _depositor) internal {
+        uint256 depositedAmount = depositors[_depositor][_assetAddress];
+        //uint256 liquidityIndex = getAaveLiquidityIndex(_assetAddress);
         //if(depositedAmount == 0){
-            poolTracker.addDeposit(msg.sender, _amount, liquidityIndex, block.timestamp, _assetAddress);
+            //poolTracker.addDeposit(_depositor, _amount, liquidityIndex, block.timestamp, _assetAddress);
         //}
         depositedAmount += _amount;
         totalDeposits[_assetAddress] += _amount;
-        depositors[msg.sender][_assetAddress] = depositedAmount;
+        depositors[_depositor][_assetAddress] = depositedAmount;
     }
 
-    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation) enoughFunds(msg.sender, _assetAddress, _amount, _donation) public {
-        address poolAddr = address(lendingPool);
+    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation, address _depositor) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount, _donation) public {
+        //address poolAddr = address(lendingPool);
         if(_donation != 0){
             uint256 newAmount = _amount - _donation;
             lendingPool.withdraw(_assetAddress, _donation, receiver);
             if(newAmount != 0)
-                lendingPool.withdraw(_assetAddress, newAmount, msg.sender);
+                lendingPool.withdraw(_assetAddress, newAmount, _depositor);
         }
         else
-            lendingPool.withdraw(_assetAddress, _amount, msg.sender);
+            lendingPool.withdraw(_assetAddress, _amount, _depositor);
 
-        depositors[msg.sender][_assetAddress] -= _amount;
+        depositors[_depositor][_assetAddress] -= _amount;
         totalDeposits[_assetAddress] -= _amount;
 
-        //if(depositors[msg.sender][_assetAddress] == 0){
-            poolTracker.withdrawDeposit(msg.sender, _amount, block.timestamp, _assetAddress);
+        //if(depositors[_depositor][_assetAddress] == 0){
+            //poolTracker.withdrawDeposit(_depositor, _amount, block.timestamp, _assetAddress);
         //}
-        emit Withdraw(_assetAddress, msg.sender, _amount, depositors[msg.sender][_assetAddress], _donation);
+        emit Withdraw(_assetAddress, _depositor, _amount, depositors[_depositor][_assetAddress], _donation);
     }
 
-    function withdrawDonations(address _assetAddress, bool _isETH) onlyAllowedTokens(_assetAddress) public{
+    function withdrawDonations(address _assetAddress) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) public{
         (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
 
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));

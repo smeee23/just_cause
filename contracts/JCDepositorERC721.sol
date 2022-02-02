@@ -5,14 +5,15 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract JustCauseERC721 is ERC721Enumerable, Ownable {
+contract JCDepositorERC721 is ERC721Enumerable, Ownable {
     //using Counters for Counters.Counter;
     //Counters.Counter private _tokenIndexes;
 
     struct Deposit {
         uint256 balance;
-        uint256 liquidityIndex;
+        uint256 totalDeposits;
         uint256 timeStamp;
+        uint256 liquidityIndex;
         address pool;
         address asset;
     }
@@ -20,7 +21,7 @@ contract JustCauseERC721 is ERC721Enumerable, Ownable {
     //key = keccak hash of depositor, pool and asset addresses
     mapping (uint256 => Deposit) deposits;
 
-    constructor() ERC721("JustCause Pool Token", "JCPT_TEST1") {
+    constructor() ERC721("JCP Depositor Token", "JCPT_TEST_D1") {
 
     }
 
@@ -30,10 +31,10 @@ contract JustCauseERC721 is ERC721Enumerable, Ownable {
         uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, _pool, _asset)));
         if(_exists(tokenId)){
             deposits[tokenId].balance += _amount;
+            deposits[tokenId].totalDeposits += _amount;
         }
         else{
-            deposits[tokenId] = Deposit(_amount, _liquidityIndex, _timeStamp, _pool, _asset);
-            //owners[_tokenOwner].push(tokenId);
+            deposits[tokenId] = Deposit(_amount, _amount, _timeStamp, _liquidityIndex, _pool, _asset);
             _mint(_tokenOwner, tokenId);
         }
         //_setTokenURI(tokenId, tokenURI);
@@ -41,26 +42,23 @@ contract JustCauseERC721 is ERC721Enumerable, Ownable {
         return tokenId;
     }
 
-    function withdrawFunds(address _tokenOwner, uint256 _amount, uint256 _timeStamp, address _pool, address _asset) onlyOwner public returns (uint256) {
+    function withdrawFunds(address _tokenOwner, uint256 _amount, address _pool, address _asset) onlyOwner public returns (uint256) {
         uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, _pool, _asset)));
         require(_exists(tokenId), "tokenId doesn't exist");
+
         uint256 balance = deposits[tokenId].balance;
+        require(balance >= _amount, "insufficient balance");
         balance -= _amount;
-        if(balance == 0){
-            delete deposits[tokenId];
-            _burn(tokenId);
-        }
+        /*if(balance == 0){
+            //delete deposits[tokenId];
+            //_burn(tokenId);
+        }*/
         //_setTokenURI(tokenId, tokenURI);
         deposits[tokenId].balance = balance;
         return tokenId;
     }
 
-    function getDeposit(uint256 _tokenId) public view returns (uint256 balance, uint256 liquidityIndex, uint256 timeStamp, address pool, address asset) {
-        Deposit memory deposit = deposits[_tokenId];
-        balance = deposit.balance;
-        liquidityIndex = deposit.liquidityIndex;
-        timeStamp = deposit.timeStamp;
-        pool = deposit.pool;
-        asset = deposit.asset;
+    function getDepositInfo(uint256 _tokenId) public view returns (Deposit memory){ //uint256 balace, uint256 totalDeposits, uint256 timeStamp, uint256 liquidityIndex, address pool, address asset) {
+        return deposits[_tokenId];
     }
 }

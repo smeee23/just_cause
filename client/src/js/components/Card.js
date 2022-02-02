@@ -56,6 +56,15 @@ class Card extends Component {
 		return this.toFixed(number);
 	}
 
+	getAPY = (depositAPY) => {
+		if(depositAPY){
+			return depositAPY + '%';
+		}
+		else{
+			return "N/A";
+		}
+	}
+
 	toggleCardOpen = () => {
 		this.setState({
 			open: !this.state.open
@@ -91,16 +100,16 @@ class Card extends Component {
 				<h3 className="mb0">{item.acceptedTokenString } { this.displayLogo(item.acceptedTokenString)}</h3>
 					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)}</p>
 					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)}</p>
-					<Button text="Contribute" callback={async() => await deposit(address, item.address, isETH, this.props.tokenMap)}/>
-					<Button text="Withdraw Deposit" callback={async() => await withdrawDeposit(address, item.address,  this.props.tokenMap)}/>
+					<Button text="Contribute" callback={async() => await deposit(address, item.address, isETH, this.props.tokenMap, this.props.poolTrackerAddress)}/>
+					<Button text="Withdraw Deposit" callback={async() => await withdrawDeposit(address, item.address,  this.props.tokenMap, this.props.poolTrackerAddress)}/>
 				</div>
 				<div className="card__body__column">
 					<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
 					<p>{"total balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
-					<p>{"deposit APY: "+ item.depositAPY + '%'}</p>
+					<p>{"deposit APY: "+ this.getAPY(item.depositAPY)}</p>
 					<p>{"claimed donation: "+this.precise(item.claimedInterest, item.decimals)}</p>
 					<p>{"unclaimed donation: "+this.precise(item.unclaimedInterest, item.decimals)}</p>
-					<Button text="Claim Interest" callback={async() => await claim(address, item.address)}/>
+					<Button text="Claim Interest" callback={async() => await claim(address, item.address, this.props.poolTrackerAddress)}/>
 				</div>
 			</div>
 		return tokenInfo;

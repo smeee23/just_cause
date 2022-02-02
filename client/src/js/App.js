@@ -18,7 +18,8 @@ import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 
 import getWeb3 from "../getWeb3";
 import PoolTracker from "../contracts/PoolTracker.json";
-import JustCauseERC721 from "../contracts/JustCauseERC721.json"
+import JCDepositorERC721 from "../contracts/JCDepositorERC721.json";
+import JCOwnerERC721 from "../contracts/JCOwnerERC721.json";
 import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.json";
 import { kovanTokenMap } from "./func/tokenMaps.js";
 import {getPoolInfo} from './func/contractInteractions.js';
@@ -54,8 +55,6 @@ class App extends Component {
 			);
 
 			this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
-			console.log("Pool Tracker Address:", this.poolTrackerAddress);
-			console.log("ERC721Address", await this.PoolTrackerInstance.methods.getERC721Address().call());
 
 			const tokenMap = this.getTokenMapFromNetwork();
 			this.setTokenMapState(tokenMap);
@@ -146,13 +145,62 @@ class App extends Component {
 		return (((1 + (depositAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1)*100;
 	}
 
+	getOwnerAddress = async(activeAccount) => {
+		let userOwnedPools = [];
+		const ERCAddr = await this.PoolTrackerInstance.methods.getOwnerERC721Address().call();
+		const ERCInstance = new this.web3.eth.Contract(
+			JCOwnerERC721.abi,
+			ERCAddr,
+		);
+
+		let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
+
+		for(let i = 0; i < balance; i++){
+			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
+			console.log('tokenId:', tokenId);
+			const ownerInfo = await ERCInstance.methods.getCreation(tokenId).call();
+			console.log('pool:', ownerInfo);
+			userOwnedPools.push(ownerInfo.pool);
+		}
+
+		return userOwnedPools;
+	}
+
+	getDepostorAddress = async(activeAccount) => {
+		let userDepositPools = [];
+		let userBalancePools = {};
+		const ERCAddr = await this.PoolTrackerInstance.methods.getDepositorERC721Address().call();
+		const ERCInstance = new this.web3.eth.Contract(
+			JCDepositorERC721.abi,
+			ERCAddr,
+		);
+
+		let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
+		console.log('balanceOf:', balance);
+
+		for(let i = 0; i < balance; i++){
+			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
+			console.log('tokenId:', tokenId);
+			const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
+			console.log('pool:', depositInfo);
+			if(depositInfo.balance > 0){
+				userDepositPools.push(depositInfo.pool);
+				userBalancePools[depositInfo.pool+depositInfo.asset] = depositInfo.balance;
+			}
+		}
+
+		return {'depositPools':[...new Set(userDepositPools)], 'balances':userBalancePools};
+	}
+
 	setPoolState = async(activeAccount) => {
 		//const { verifiedPools, ownerPools, userDepositPools, verifiedPoolInfo, ownerPoolInfo, userDepositPoolInfo } = getPoolStateFromChain(activeAccount, this.getTokenMapFromNetwork, this.networkId);
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
-		const ownerPools = await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
-		let userDepositPools = await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
-		userDepositPools = [...new Set(userDepositPools)];
+		const ownerPools = await this.getOwnerAddress(activeAccount); //await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
+		const depositBalancePools = await this.getDepostorAddress(activeAccount); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		const userDepositPools = depositBalancePools.depositPools;
+		const userBalancePools = depositBalancePools.balances;
 
+		console.log('userBalancePools', userBalancePools);
 		let isHashMatch = true;
 		for(let i = 0; i < verifiedPools.length; i++){
 			const isMatch = await this.PoolTrackerInstance.methods.checkByteCode(verifiedPools[i]).call();
@@ -162,9 +210,9 @@ class App extends Component {
 		}
 		console.log('isHashMatch', isHashMatch);
 
-		const verifiedPoolInfo = await getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), activeAccount);
-		const ownerPoolInfo = await getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), activeAccount);
-		const userDepositPoolInfo = await getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), activeAccount);
+		const verifiedPoolInfo = await getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), activeAccount, userBalancePools);
+		const ownerPoolInfo = await getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), activeAccount, userBalancePools);
+		const userDepositPoolInfo = await getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), activeAccount, userBalancePools);
 
 		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
 		console.log('---------ownerPoolInfo--------', ownerPoolInfo);

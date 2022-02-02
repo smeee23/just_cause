@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import { IJustCauseERC721 } from './Interfaces.sol';
-import { JustCauseERC721 } from './JustCauseERC721.sol';
+import { IJustCausePool } from './Interfaces.sol';
+import { JCDepositorERC721 } from './JCDepositorERC721.sol';
+import { JCOwnerERC721 } from './JCOwnerERC721.sol';
+import { JustCausePool } from './JustCausePool.sol';
 
 contract PoolTracker {
 
-    //IJustCauseERC721 constant justCauseERC721 = IJustCauseERC721(address(0x92C20FD55EA32d98EAfE443ee82bf861988e299B)); //kovan
-    JustCauseERC721 justCauseERC721;
+    address baseJCPoolAddr;
+    JustCausePool baseJCPool;
+    JCDepositorERC721 jCDepositorERC721;
+    JCOwnerERC721 jCOwnerERC721;
 
     //contract addresses will point to bool if they exist
     mapping(address => bool) private isPool;
@@ -22,8 +26,6 @@ contract PoolTracker {
     event WithdrawDeposit(address _userAddr, address _pool);
     event OwnerAddress(address _owner, address _pool);
 
-    event MessageSentBy(address sentBy);
-
     modifier onlyVerifiedByteCode(address pool) {
         bytes32 v1ByteCodeHash = 0x69e8ff0e7c2b29468c452ea99c81161f9d6137447623140dc2714549e6014d96;
         require(keccak256(abi.encodePacked(pool.code)) == v1ByteCodeHash, "byteCode not recognized");
@@ -36,46 +38,89 @@ contract PoolTracker {
     }
 
     constructor () {
-        justCauseERC721 = new JustCauseERC721();
+        jCDepositorERC721 = new JCDepositorERC721();
+        jCOwnerERC721 = new JCOwnerERC721();
+        baseJCPool = new JustCausePool();
     }
 
     function addValidByteCodeHash(bytes32 _hash) public {
         validByteCodeHashes.push(_hash);
     }
 
-    function addDeposit(address _userAddr, uint256 _amount, uint256 _liquidityIndex, uint256 _timeStamp, address _asset) onlyPools(msg.sender) external {
-        depositors[_userAddr].push(msg.sender);
-        justCauseERC721.addFunds(_userAddr, _amount, _liquidityIndex, _timeStamp,  msg.sender, _asset);
-        emit AddDeposit(_userAddr, msg.sender);
-        emit MessageSentBy(msg.sender);
+    function addDeposit(uint256 _amount, address _asset, address _pool, bool isETH) onlyPools(_pool) external payable {
+
+        /*
+        NEED TO CHECK IF FIRST DEPOSIT BEFORE ADDING TO DEPOSITORS
+        */
+        depositors[msg.sender].push(_pool);
+
+        if(isETH) IJustCausePool(_pool).depositETH{value: msg.value}(_asset, msg.sender);
+        else IJustCausePool(_pool).deposit(_asset, _amount, msg.sender);
+
+        uint256 _liquidityIndex = IJustCausePool(_pool).getAaveLiquidityIndex(_asset);
+        jCDepositorERC721.addFunds(msg.sender, _amount, _liquidityIndex, block.timestamp,  _pool, _asset);
+
+        emit AddDeposit(msg.sender, _pool);
     }
 
-    function withdrawDeposit(address _userAddr,  uint256 _amount, uint256 _timeStamp, address _asset) onlyPools(msg.sender) external {
-        for(uint8 i = 0; i < depositors[_userAddr].length -1; i++){
-            if(depositors[_userAddr][i] == msg.sender){
-                depositors[_userAddr][i] = depositors[_userAddr][depositors[_userAddr].length - 1];
+    function withdrawDeposit(uint256 _amount, uint256 _donation, address _asset, address _pool) onlyPools(_pool) external {
+
+        /*
+        NEED TO CHECK IF BALANCE IS 0 BEFORE REMOVAL
+        */
+        for(uint8 i = 0; i < depositors[msg.sender].length -1; i++){
+            if(depositors[msg.sender][i] == _pool){
+                depositors[msg.sender][i] = depositors[msg.sender][depositors[msg.sender].length - 1];
                 break;
             }
         }
-        depositors[_userAddr].pop();
-        justCauseERC721.withdrawFunds(_userAddr, _amount, _timeStamp, msg.sender, _asset);
-        emit WithdrawDeposit(_userAddr, msg.sender);
-        emit MessageSentBy(msg.sender);
+        depositors[msg.sender].pop();
+
+        IJustCausePool(_pool).withdraw(_asset, _amount, _donation, msg.sender);
+        jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
+
+        emit WithdrawDeposit(msg.sender, _pool);
     }
 
-    function addVerifiedPools(address _pool, address _owner, string memory _name) external {
+    function claimInterest(address _asset, address _pool) onlyPools(_pool) external {
+        IJustCausePool(_pool).withdrawDonations(_asset);
+    }
+
+    /**
+     * @dev Deploys and returns the address of a clone that mimics the behaviour of `implementation`.
+     *
+     * This function uses the create opcode, which should never revert.
+     */
+    function clone(address basePool) internal returns (address instance) {
+        assembly {
+            let ptr := mload(0x40)
+            mstore(ptr, 0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000000000000000000000)
+            mstore(add(ptr, 0x14), shl(0x60, basePool))
+            mstore(add(ptr, 0x28), 0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000)
+            instance := create(0, ptr, 0x37)
+        }
+        require(instance != address(0), "ERC1167: create failed");
+    }
+
+    function createJCPoolClone(address[] memory _acceptedTokens, string memory _name, string memory _about, address _receiver) external {
         require(names[_name] == address(0), "pool with name already exists");
-        names[_name] =  _pool;
-        verifiedPools.push( _pool);
-        owners[_owner].push( _pool);
-        isPool[_pool] = true;
-        //emit AddVerifiedPools(_pool);
-        //emit MessageSentBy(msg.sender);
+        address child = clone(address(baseJCPool));
+        IJustCausePool(child).initialize(_acceptedTokens, _name, _about, _receiver);
+        jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, child);
+        names[_name] =  child;
+        verifiedPools.push(child);
+        owners[msg.sender].push(child);
+        isPool[child] = true;
     }
 
-    function getERC721Address() public view returns(address){
-        return address(justCauseERC721);
+    function getDepositorERC721Address() public view returns(address){
+        return address(jCDepositorERC721);
     }
+
+    function getOwnerERC721Address() public view returns(address){
+        return address(jCOwnerERC721);
+    }
+
     function getVerifiedPools() public view returns(address [] memory){
         return verifiedPools;
     }
@@ -84,12 +129,23 @@ contract PoolTracker {
         return depositors[_userAddr];
     }
 
+    /*function getUserDeposits(address _userAddr) external view returns(address[] memory){
+        uint256 numDeposits = jCDepositorERC721.balanceOf(_userAddr);
+        address[] memory poolList;
+        for(uint8 i = 0; i < numDeposits; i++){
+            uint256 tokenId = jCDepositorERC721.tokenOfOwnerByIndex(_userAddr, i);
+            (,,,, address pool,) = jCDepositorERC721.getDeposit(tokenId);
+            poolList[i] = pool;
+        }
+        return poolList;
+    }*/
+
     function getUserOwned(address _userAddr) external view returns(address[] memory){
         return owners[_userAddr];
     }
 
-    function getAddressFromName(string memory name) external view returns(address){
-        return address(this);//names[name];
+    function getAddressFromName(string memory _name) external view returns(address){
+        return names[_name];
     }
 
     function checkByteCode(address _pool) external view returns(bool) {

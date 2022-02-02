@@ -682,7 +682,7 @@ interface IStableDebtToken {
   function principalBalanceOf(address user) external view returns (uint256);
 }
 
-interface IPoolTracker {
+/*interface IPoolTracker {
 
   event AddVerifiedPools(address addressToAdd);
   event AddDeposit(address _userAddr, address _pool);
@@ -698,7 +698,7 @@ interface IPoolTracker {
   function getUserDeposits(address _userAddr) external view returns(address[] memory);
   function getUserOwned(address _userAddr) external view returns(address[] memory);
   function getAddressFromName(string memory name) external view returns(address);
-}
+}*/
 
 interface IWETHGateway {
   function depositETH(
@@ -874,16 +874,28 @@ interface IERC721 is IERC165 {
     ) external;
 }
 
-interface IJustCauseERC721 is IERC721 {
-    struct Deposit {
-        uint256 amount;
-        uint256 liquidityIndex;
-        uint256 timeStamp;
-        address pool;
-        address asset;
-    }
+interface IJustCausePool {
+    event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
+    event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 userDeposits, uint256 donation);
+    event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
 
-    function addFunds(address _tokenOwner, uint256 _amount, uint256 _liquidityIndex, uint256 _timeStamp, address _pool, address _asset) external returns (uint256);
-    function withdrawFunds(address _tokenOwner, uint256 _amount, uint256 _timeStamp, address _pool, address _asset) external returns (uint256);
-    function getDeposit(uint256 tokenId) external view returns (uint256 amount, uint256 liquidityIndex, uint256 timeStamp, address pool, address asset);
+    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, address _receiver) external;
+    function deposit(address _assetAddress, uint256 _amount, address _depositor) external;
+    function depositETH(address _wethAddress, address _depositor) external payable;
+    function tallyDeposit(uint256 _amount, address _assetAddress) external;
+    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation, address _depositor) external;
+    function withdrawDonations(address _assetAddress) external;
+    function getUserBalance(address _userAddr, address _token) external view returns(uint256);
+    function getTotalDeposits(address _token) external view returns(uint256);
+    function getAcceptedTokens() external view returns(address[] memory);
+    function getName() external view returns(string memory);
+    function getAbout() external view returns(string memory);
+    function getATokenAddress(address _assetAddress) external view returns(address);
+    function getUnclaimedInterest(address _assetAddress) external view returns (uint256);
+    function getClaimedInterest(address _assetAddress) external view returns (uint256);
+    function getATokenBalance(address _assetAddress) external view returns (uint256);
+    function getRecipient() external view returns(address);
+    function getByteCode() external view returns(bytes memory);
+    function getHashByteCode() external view returns(bytes32);
+    function getAaveLiquidityIndex(address _asset) external view returns(uint256 liquidityIndex);
 }

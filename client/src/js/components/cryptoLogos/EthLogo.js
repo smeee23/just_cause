@@ -1,13 +1,22 @@
 import React, {Component} from "react"
 
 class DaiLogo extends Component {
-
 	render() {
 		return (
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" preserveAspectRatio="xMidYMid" viewBox="0 0 256 417"><path fill="#343434" d="M127.96 0l-2.79 9.5v275.67l2.79 2.79 127.96-75.64z"/><path fill="#8C8C8C" d="M127.96 0L0 212.32l127.96 75.64v-133.8z"/><path fill="#3C3C3B" d="M127.96 312.19l-1.57 1.92v98.2l1.57 4.6L256 236.59z"/><path fill="#8C8C8C" d="M127.96 416.91V312.19L0 236.59z"/><path fill="#141414" d="M127.96 287.96l127.96-75.64-127.96-58.16z"/><path fill="#393939" d="M0 212.32l127.96 75.64v-133.8z"/></svg>
-
+            <svg width="22px" height="22px" viewBox="0 0 22 22">
+                <g id="icons/crypto/eth" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+                    <g id="eth-logo" transform="translate(4.000000, 0.000000)" fillRule="nonzero">
+                        <polygon id="Path" fill="#343434" points="6.74648741 0 6.59902039 0.500906085 6.59902039 15.0347538 6.74648741 15.1818767 13.4928028 11.1940723"></polygon>
+                        <polygon id="Path" fill="#8C8C8C" points="6.74648741 0 0 11.1940723 6.74648741 15.1818767 6.74648741 8.12754967"></polygon>
+                        <polygon id="Path" fill="#3C3C3B" points="6.74648741 16.4591786 6.66337589 16.5605299 6.66337589 21.7377066 6.74648741 21.9803303 13.4969325 12.4734391"></polygon>
+                        <polygon id="Path" fill="#8C8C8C" points="6.74648741 21.9803303 6.74648741 16.4591786 0 12.4734391"></polygon>
+                        <polygon id="Path" fill="#141414" points="6.74648741 15.1818767 13.4928028 11.1940723 6.74648741 8.12754967"></polygon>
+                        <polygon id="Path" fill="#393939" points="0 11.1940723 6.74648741 15.1818767 6.74648741 8.12754967"></polygon>
+                    </g>
+                </g>
+            </svg>
         );
-        }
+    }
 }
 
 export default DaiLogo

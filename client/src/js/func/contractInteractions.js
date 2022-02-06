@@ -2,6 +2,7 @@ import getWeb3 from "../../getWeb3NotOnLoad";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
+import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 
 	const approve = async(erc20Instance, address, activeAccount, amountInGwei, decimals) => {
 		const web3 = await getWeb3();
@@ -40,6 +41,20 @@ import ERC20Instance from "../../contracts/IERC20.json";
 		return (amount*10**decimals).toString();
 	}
 
+	const getBalance = async(tokenAddress, decimals, tokenString, activeAccount) => {
+		if(tokenString !== 'ETH'){
+			let balance = await getWalletBalance(tokenAddress);
+			balance = balance / 10**decimals;
+			return Number.parseFloat(balance).toPrecision(6);
+		}
+		else{
+			const web3 = await getWeb3()
+			let balance = await web3.eth.getBalance(activeAccount);
+			balance = await web3.utils.fromWei(balance, "ether");
+			return Number.parseFloat(balance).toPrecision(6);
+		}
+	}
+
 	export const deposit = async(poolAddress, tokenAddress, isETH, tokenMap, poolTrackerAddress) => {
 		console.log('deposit clicked');
 		const web3 = await getWeb3();
@@ -47,9 +62,10 @@ import ERC20Instance from "../../contracts/IERC20.json";
 		console.log('token map', tokenMap);
 		const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 		console.log('tokenString:', tokenString, tokenMap[tokenString].decimals);
-		const amount = prompt("enter amount to deposit");
-		const amountInBase = getAmountBase(amount, tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
 		const activeAccount = await web3.currentProvider.selectedAddress;
+		const balance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount);
+		const amount = prompt("enter amount to deposit, max:", balance);
+		const amountInBase = getAmountBase(amount, tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
 		console.log("amountInGwei", amountInBase);
 		console.log(getAmountBase(amount, tokenMap[tokenString].decimals));
 		let parameter = {};
@@ -89,11 +105,15 @@ import ERC20Instance from "../../contracts/IERC20.json";
 		console.log('deposit');
 	}
 
-	export const withdrawDeposit = async(poolAddress, tokenAddress, tokenMap, poolTrackerAddress) => {
+	export const withdrawDeposit = async(poolAddress, tokenAddress, tokenMap, poolTrackerAddress, userBalance) => {
 		console.log('withdraw deposit clicked');
 		const web3 = await getWeb3();
 		const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
-		const amount = prompt("enter amount to withdraw");
+
+		let balance = userBalance / 10**tokenMap[tokenString].decimals;
+		balance = Number.parseFloat(balance).toPrecision(6);
+
+		const amount = prompt("enter amount to withdraw, pool balance:", balance);
 		const donateAmount = prompt("enter amount to donate if desired");
 		const amountInBase = getAmountBase(amount, tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
 		const activeAccount = await web3.currentProvider.selectedAddress;
@@ -114,7 +134,7 @@ import ERC20Instance from "../../contracts/IERC20.json";
 		let result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, donateAmountInGwei, tokenAddress, poolAddress).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
-		console.log('withdrawDeposit result', result)
+		console.log('withdrawDeposit result', result);
 	}
 
 	export const claim = async(address, assetAddress, poolTrackerAddress) => {
@@ -151,7 +171,7 @@ import ERC20Instance from "../../contracts/IERC20.json";
 			tokenAddrs.push(tokenMap[acceptedTokens[i]].address);
 		}
 		console.log('poolTrackerAddress', poolTrackerAddress);
-		const receiver = prompt("Enter the address to recieve the interest");
+		const receiver = prompt("Enter the address to recieve the interest", activeAccount);
 		console.log("receiver", receiver, typeof receiver);
 		console.log("token addresses", tokenAddrs);
 		const parameter = {
@@ -203,7 +223,8 @@ import ERC20Instance from "../../contracts/IERC20.json";
 		return { verifiedPools, ownerPools, userDepositPools, verifiedPoolInfo, ownerPoolInfo, userDepositPoolInfo };
 	}*/
 
-	export const getPoolInfo = async(poolTracker, tokenMap, activeAccount, userBalancePools) => {
+
+	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools) => {
 		const web3 = await getWeb3();
 		let poolInfo = [];
 		for(let i=0; i < poolTracker.length; i++){
@@ -226,12 +247,15 @@ import ERC20Instance from "../../contracts/IERC20.json";
 
 			for(let j = 0; j < acceptedTokens.length; j++){
 				const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
-				let balance = userBalancePools[poolTracker[i]+acceptedTokens[j]];
-				balance = (balance) ? balance : 0;
-				console.log("tokenString", tokenString, acceptedTokens[j]);
+				//let {balance, amountScaled} = userBalancePools[poolTracker[i]+acceptedTokens[j]];
+				let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];
+				const balance = (balances) ? balances[0] : 0;
+				const amountScaled = (balances) ? balances[1] : 0;
+				if(balances) console.log("balances", balances);
 				acceptedTokenInfo.push({
 					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
 					'userBalance':  balance,
+					'amountScaled':  amountScaled,
 					'unclaimedInterest': await JCPoolInstance.methods.getUnclaimedInterest(acceptedTokens[j]).call(),
 					'claimedInterest': await JCPoolInstance.methods.getClaimedInterest(acceptedTokens[j]).call(),
 					'aTokenAddress': await JCPoolInstance.methods.getATokenAddress(acceptedTokens[j]).call(),
@@ -253,6 +277,74 @@ import ERC20Instance from "../../contracts/IERC20.json";
 			});
 		}
 		return poolInfo;
+	}
+
+	export const searchPools = async(poolTrackerAddress, activeAccount, tokenMap) => {
+		const web3 = await getWeb3();
+		let searchAddr = prompt("Enter pool address or name to search for pool (must be exact match):");
+
+		const PoolTrackerInstance = new web3.eth.Contract(
+			PoolTracker.abi,
+			poolTrackerAddress,
+		);
+
+		if(!web3.utils.isAddress(searchAddr)){
+			searchAddr = await PoolTrackerInstance.methods.getAddressFromName(searchAddr).call();
+		}
+
+		if(searchAddr !== '0x0000000000000000000000000000000000000000'){
+			const found = await PoolTrackerInstance.methods.checkPool(searchAddr).call();
+			console.log('searchResult', found);
+			if(found){
+				const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
+				const userBalancePools = depositBalancePools.balances;
+				const resultPool = await getPoolInfo([searchAddr], tokenMap, userBalancePools);
+				console.log('searchResult', resultPool);
+				return resultPool
+			}
+			else{
+				alert('Pool not found, double check address or name');
+			}
+		}
+		else{
+			alert('Pool not found, double check address or name');
+		}
+		return []
+	}
+
+	export const getDepositorAddress = async(activeAccount, poolTrackerAddress) => {
+		const web3 = await getWeb3();
+		let userDepositPools = [];
+		let userBalancePools = {};
+
+		const PoolTrackerInstance = new web3.eth.Contract(
+			PoolTracker.abi,
+			poolTrackerAddress,
+		);
+		console.log('poolTrackerAddress', poolTrackerAddress);
+		const ERCAddr = await PoolTrackerInstance.methods.getDepositorERC721Address().call();
+		const ERCInstance = new web3.eth.Contract(
+			JCDepositorERC721.abi,
+			ERCAddr,
+		);
+
+		let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
+		console.log('balanceOf:', balance);
+
+		for(let i = 0; i < balance; i++){
+			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
+			console.log('tokenId:', tokenId);
+			const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
+			console.log('pool:', depositInfo);
+			if(depositInfo.balance > 0){
+				console.log('depositInfo', depositInfo);
+				userDepositPools.push(depositInfo.pool);
+				userBalancePools[depositInfo.pool+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled];
+				//userBalancePools[depositInfo.pool+depositInfo.asset] = depositInfo.balance;
+			}
+		}
+
+		return {'depositPools':[...new Set(userDepositPools)], 'balances':userBalancePools};
 	}
 
 	export const getVerifiedPools = async(networkId) => {

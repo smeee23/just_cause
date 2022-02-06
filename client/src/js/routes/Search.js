@@ -6,9 +6,9 @@ import { connect } from "react-redux";
 import Card from '../components/Card'
 import Button from '../components/Button'
 
-import {deploy} from '../func/contractInteractions';
+import {searchPools} from '../func/contractInteractions';
 
-class YourCause extends Component {
+class Search extends Component {
 
 	constructor(props) {
 		super(props);
@@ -24,6 +24,14 @@ class YourCause extends Component {
 
 	componentDidUpdate = () => {
 		console.log('component did update');
+	}
+
+	setSearchResults = async() => {
+		let results = await searchPools(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap);
+		console.log('results', results);
+		this.setState({
+			searchResults: this.createCardInfo(results)
+		});
 	}
 
 	createCardInfo = (poolInfo) => {
@@ -48,15 +56,14 @@ class YourCause extends Component {
 	}
 
 	render() {
-		const cardHolder = this.createCardInfo(this.props.ownerPoolInfo);
 		return (
 			<Fragment>
 				<article>
 				<section className="page-section page-section--center horizontal-padding bw0">
-					<Button icon="plus" text="Add Pool" lg callback={async() => await deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/>
+					<Button icon="plus" text="Search" lg callback={async() => await this.setSearchResults(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap)}/>
 				</section>
 					<section className="page-section page-section--center horizontal-padding bw0">
-						{cardHolder}
+						{this.state.searchResults}
 					</section>
 				</article>
 			</Fragment>
@@ -77,4 +84,4 @@ const mapDispatchToProps = dispatch => ({
 
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(YourCause)
+export default connect(mapStateToProps, mapDispatchToProps)(Search)

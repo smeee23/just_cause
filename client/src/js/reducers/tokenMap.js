@@ -1,4 +1,4 @@
-const tokenMapReducer = (state = 'No Map Available', action) => {
+const tokenMapReducer = (state = '', action) => {
 	switch (action.type) {
 		case 'UPDATE_TOKEN_MAP':
 			return action.value

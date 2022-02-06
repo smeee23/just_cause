@@ -65,6 +65,18 @@ class Card extends Component {
 		}
 	}
 
+	displayWithdraw = (item, address) => {
+	if(item.userBalance > 0){
+		return <Button text="Withdraw Deposit" callback={async() => await withdrawDeposit(address, item.address,  this.props.tokenMap, this.props.poolTrackerAddress, item.userBalance)}/>
+		}
+	}
+
+	displayClaim = (item, address) => {
+		if(item.unclaimedInterest > 0){
+			return <Button text="Claim Interest" callback={async() => await claim(address, item.address, this.props.poolTrackerAddress)}/>
+		}
+	}
+
 	toggleCardOpen = () => {
 		this.setState({
 			open: !this.state.open
@@ -90,6 +102,7 @@ class Card extends Component {
 
 	createTokenInfo = (address, receiver, acceptedTokenInfo) => {
 		if (!acceptedTokenInfo) return 'no data';
+		if (!this.props.tokenMap) return 'no token data';
 
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
 
@@ -100,16 +113,18 @@ class Card extends Component {
 				<h3 className="mb0">{item.acceptedTokenString } { this.displayLogo(item.acceptedTokenString)}</h3>
 					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)+' '}</p>
 					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)+' '}</p>
-					<Button text="Contribute" callback={async() => await deposit(address, item.address, isETH, this.props.tokenMap, this.props.poolTrackerAddress)}/>
-					<Button text="Withdraw Deposit" callback={async() => await withdrawDeposit(address, item.address,  this.props.tokenMap, this.props.poolTrackerAddress)}/>
+					<Button text="Contribute" disabled={true} callback={async() => await deposit(address, item.address, isETH, this.props.tokenMap, this.props.poolTrackerAddress)}/>
+					{this.displayWithdraw(item, address)}
 				</div>
 				<div className="card__body__column">
 					<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
 					<p>{"total balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
 					<p>{"deposit APY: "+ this.getAPY(item.depositAPY)}</p>
+					<p>{"amount scaled: "+ item.amountScaled}</p>
+					<p>{"liq index: "+ this.props.tokenMap[item.acceptedTokenString].liquidityIndex}</p>
 					<p>{"claimed donation: "+this.precise(item.claimedInterest, item.decimals)}</p>
 					<p>{"unclaimed donation: "+this.precise(item.unclaimedInterest, item.decimals)}</p>
-					<Button text="Claim Interest" callback={async() => await claim(address, item.address, this.props.poolTrackerAddress)}/>
+					{this.displayClaim(item, address)}
 				</div>
 			</div>
 		return tokenInfo;
@@ -152,7 +167,7 @@ class Card extends Component {
 	}
 
 	displayLogo = (acceptedTokenString) => {
-		let logo = 'test';
+		let logo = '';
 		if(acceptedTokenString === 'ETH'){
 			logo = <EthLogo/>;
 		}
@@ -169,7 +184,7 @@ class Card extends Component {
 			logo = <DaiLogo/>;
 		}
 		else if (acceptedTokenString === 'AAVE'){
-			logo = <AaveLogo lg />;
+			logo = <AaveLogo/>;
 		}
 
 		return logo;

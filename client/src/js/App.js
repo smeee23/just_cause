@@ -22,7 +22,7 @@ import JCDepositorERC721 from "../contracts/JCDepositorERC721.json";
 import JCOwnerERC721 from "../contracts/JCOwnerERC721.json";
 import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.json";
 import { kovanTokenMap } from "./func/tokenMaps.js";
-import {getPoolInfo} from './func/contractInteractions.js';
+import {getPoolInfo, getDepositorAddress} from './func/contractInteractions.js';
 import {getPriceFromMessari} from './func/messariPriceFeeds.js'
 
 //import { load } from "dotenv";
@@ -126,12 +126,14 @@ class App extends Component {
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
 			const aaveTokenInfo = await this.AaveProtocolDataProviderInstance.methods.getReserveData(address).call();
+			//console.log('aaveTokenInfo', aaveTokenInfo);
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.liquidityRate).toPrecision(4);
-			console.log(key, tokenMap[key] && tokenMap[key].apiKey, address);
+			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
+			//console.log(key, tokenMap[key] && tokenMap[key].apiKey, address);
 			let result = JSON.parse(await getPriceFromMessari(tokenMap[key] && tokenMap[key].apiKey));
 			result = result.data.market_data.price_usd;
 			tokenMap[key]['priceUSD'] = result;
-			console.log('api response:', result);
+			//console.log('api response:', result);
 		}
 		console.log('updated tokenMap', tokenMap, typeof tokenMap);
 		this.props.updateTokenMap(tokenMap);
@@ -166,37 +168,11 @@ class App extends Component {
 		return userOwnedPools;
 	}
 
-	getDepostorAddress = async(activeAccount) => {
-		let userDepositPools = [];
-		let userBalancePools = {};
-		const ERCAddr = await this.PoolTrackerInstance.methods.getDepositorERC721Address().call();
-		const ERCInstance = new this.web3.eth.Contract(
-			JCDepositorERC721.abi,
-			ERCAddr,
-		);
-
-		let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
-		console.log('balanceOf:', balance);
-
-		for(let i = 0; i < balance; i++){
-			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
-			console.log('tokenId:', tokenId);
-			const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
-			console.log('pool:', depositInfo);
-			if(depositInfo.balance > 0){
-				userDepositPools.push(depositInfo.pool);
-				userBalancePools[depositInfo.pool+depositInfo.asset] = depositInfo.balance;
-			}
-		}
-
-		return {'depositPools':[...new Set(userDepositPools)], 'balances':userBalancePools};
-	}
-
 	setPoolState = async(activeAccount) => {
 		//const { verifiedPools, ownerPools, userDepositPools, verifiedPoolInfo, ownerPoolInfo, userDepositPoolInfo } = getPoolStateFromChain(activeAccount, this.getTokenMapFromNetwork, this.networkId);
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
 		const ownerPools = await this.getOwnerAddress(activeAccount); //await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
-		const depositBalancePools = await this.getDepostorAddress(activeAccount); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
 		const userDepositPools = depositBalancePools.depositPools;
 		const userBalancePools = depositBalancePools.balances;
 
@@ -210,9 +186,9 @@ class App extends Component {
 		}
 		console.log('isHashMatch', isHashMatch);
 
-		const verifiedPoolInfo = await getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), activeAccount, userBalancePools);
-		const ownerPoolInfo = await getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), activeAccount, userBalancePools);
-		const userDepositPoolInfo = await getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), activeAccount, userBalancePools);
+		const verifiedPoolInfo = await getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), userBalancePools);
+		const ownerPoolInfo = await getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), userBalancePools);
+		const userDepositPoolInfo = await getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), userBalancePools);
 
 		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
 		console.log('---------ownerPoolInfo--------', ownerPoolInfo);

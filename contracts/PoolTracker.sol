@@ -77,7 +77,8 @@ contract PoolTracker {
         depositors[msg.sender].pop();*/
 
         IJustCausePool(_pool).withdraw(_asset, _amount, _donation, msg.sender);
-        jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
+        uint256 _liquidityIndex = IJustCausePool(_pool).getAaveLiquidityIndex(_asset);
+        jCDepositorERC721.withdrawFunds(msg.sender, _amount, _liquidityIndex, _pool, _asset);
 
         emit WithdrawDeposit(msg.sender, _pool);
     }
@@ -123,6 +124,10 @@ contract PoolTracker {
 
     function getVerifiedPools() public view returns(address [] memory){
         return verifiedPools;
+    }
+
+    function checkPool(address _pool) public view returns(bool){
+        return isPool[_pool];
     }
 
     /*function getUserDeposits(address _userAddr) external view returns(address[] memory){

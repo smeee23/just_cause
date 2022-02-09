@@ -23,7 +23,7 @@ contract PoolTracker {
 
     event AddVerifiedPools(address addressToAdd);
     event AddDeposit(address _userAddr, address _pool);
-    event WithdrawDeposit(address _userAddr, address _pool);
+    event WithdrawDeposit(address _userAddr, address _pool, uint256 amount, uint256 oldAmountScaled, uint256 newAmountScaled, uint256 oldLiquidityIndex, uint256 liquidityIndex);
     event OwnerAddress(address _owner, address _pool);
 
     modifier onlyVerifiedByteCode(address pool) {
@@ -63,7 +63,7 @@ contract PoolTracker {
         emit AddDeposit(msg.sender, _pool);
     }
 
-    function withdrawDeposit(uint256 _amount, uint256 _donation, address _asset, address _pool) onlyPools(_pool) external {
+    function withdrawDeposit(uint256 _amount, address _asset, address _pool) onlyPools(_pool) external {
 
         /*
         NEED TO CHECK IF BALANCE IS 0 BEFORE REMOVAL
@@ -76,15 +76,16 @@ contract PoolTracker {
         }
         depositors[msg.sender].pop();*/
 
-        IJustCausePool(_pool).withdraw(_asset, _amount, _donation, msg.sender);
+        IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender);
         uint256 _liquidityIndex = IJustCausePool(_pool).getAaveLiquidityIndex(_asset);
-        jCDepositorERC721.withdrawFunds(msg.sender, _amount, _liquidityIndex, _pool, _asset);
+        (uint256 amount, uint256 oldAmountScaled, uint256 newAmountScaled, uint256 oldLiquidityIndex, uint256 liquidityIndex) = jCDepositorERC721.withdrawFunds(msg.sender, _amount, _liquidityIndex, _pool, _asset);
 
-        emit WithdrawDeposit(msg.sender, _pool);
+        emit WithdrawDeposit(msg.sender, _pool, amount, oldAmountScaled, newAmountScaled, oldLiquidityIndex, liquidityIndex);
     }
 
     function claimInterest(address _asset, address _pool) onlyPools(_pool) external {
         IJustCausePool(_pool).withdrawDonations(_asset);
+        
     }
 
     /**
@@ -114,12 +115,20 @@ contract PoolTracker {
         isPool[child] = true;
     }
 
+    function getReserveNormalizedIncome(address _asset, address _pool) external view returns(uint256){
+        return IJustCausePool(_pool).getReserveNormalizedIncome(_asset);
+    }
+
     function getDepositorERC721Address() public view returns(address){
         return address(jCDepositorERC721);
     }
 
     function getOwnerERC721Address() public view returns(address){
         return address(jCOwnerERC721);
+    }
+
+    function getBaseJCPoolAddress() public view returns(address){
+        return address(baseJCPool);
     }
 
     function getVerifiedPools() public view returns(address [] memory){

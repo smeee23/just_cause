@@ -11,11 +11,10 @@ contract JCDepositorERC721 is ERC721Enumerable, Ownable {
         uint256 totalDeposits;
         uint256 amountScaled;
         uint256 timeStamp;
-        uint256 liquidityIndex;
+        uint256 interestEarned;
         address pool;
         address asset;
     }
-
     //key = keccak hash of depositor, pool and asset addresses
     mapping (uint256 => Deposit) deposits;
 
@@ -41,7 +40,9 @@ contract JCDepositorERC721 is ERC721Enumerable, Ownable {
         return tokenId;
     }
 
-    function withdrawFunds(address _tokenOwner, uint256 _amount, uint256 _liquidityIndex, address _pool, address _asset) onlyOwner public returns (uint256) {
+    //event Withdraw(uint256 amount, uint256 oldAmountScaled, uint256 newAmountScaled, uint256 oldLiquidityIndex, uint256 liquidityIndex);
+    function withdrawFunds(address _tokenOwner, uint256 _amount, uint256 _liquidityIndex, address _pool, address _asset) onlyOwner
+                        public returns (uint256, uint256, uint256, uint256, uint256) {
         uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, _pool, _asset)));
         require(_exists(tokenId), "tokenId doesn't exist");
 
@@ -54,14 +55,18 @@ contract JCDepositorERC721 is ERC721Enumerable, Ownable {
         }*/
         //_setTokenURI(tokenId, tokenURI);
         deposits[tokenId].balance = balance;
+        uint256 oldAmountScaled = deposits[tokenId].amountScaled;
         deposits[tokenId].amountScaled -= rayDiv(_amount, _liquidityIndex);
-        return tokenId;
+        return(_amount, oldAmountScaled, deposits[tokenId].amountScaled , deposits[tokenId].liquidityIndex, _liquidityIndex);
     }
 
     function getDepositInfo(uint256 _tokenId) public view returns (Deposit memory){ //uint256 balace, uint256 totalDeposits, uint256 timeStamp, uint256 liquidityIndex, address pool, address asset) {
         return deposits[_tokenId];
     }
 
+    function getATokenAmount(uint256 _tokenId, uint256 _reserveNormalizedIncome) external view returns(uint256){
+        return rayMul(deposits[_tokenId].amountScaled, _reserveNormalizedIncome);
+    }
     /**
    * @dev Divides two ray, rounding half up to the nearest ray
    * @param a Ray
@@ -69,12 +74,30 @@ contract JCDepositorERC721 is ERC721Enumerable, Ownable {
    * @return The result of a/b, in ray
    **/
     function rayDiv(uint256 a, uint256 b) internal pure returns (uint256) {
-    require(b != 0, 'division by 0');
-    uint256 halfB = b / 2;
+        require(b != 0, 'division by 0');
+        uint256 halfB = b / 2;
+
+        uint256 ray = 1e27;
+        require(a <= (type(uint256).max - halfB) / ray, 'multiplication overflow');
+
+        return (a * ray + halfB) / b;
+    }
+
+   /**
+   * @dev Multiplies two ray, rounding half up to the nearest ray
+   * @param a Ray
+   * @param b Ray
+   * @return The result of a*b, in ray
+   **/
+  function rayMul(uint256 a, uint256 b) internal pure returns (uint256) {
+    if (a == 0 || b == 0) {
+      return 0;
+    }
 
     uint256 ray = 1e27;
-    require(a <= (type(uint256).max - halfB) / ray, 'multiplication overflow');
+    uint256 halfRAY = ray / 2;
+    require(a <= (type(uint256).max - halfRAY) / b, 'multiplication overflow');
 
-    return (a * ray + halfB) / b;
+    return (a * b + halfRAY) / ray;
   }
 }

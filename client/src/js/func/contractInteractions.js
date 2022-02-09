@@ -114,10 +114,10 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 		balance = Number.parseFloat(balance).toPrecision(6);
 
 		const amount = prompt("enter amount to withdraw, pool balance:", balance);
-		const donateAmount = prompt("enter amount to donate if desired");
+		//const donateAmount = prompt("enter amount to donate if desired");
 		const amountInBase = getAmountBase(amount, tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
 		const activeAccount = await web3.currentProvider.selectedAddress;
-		const donateAmountInGwei = getAmountBase(donateAmount, tokenMap[tokenString].decimals);//web3.utils.toWei(donateAmount, 'ether');
+		//const donateAmountInGwei = getAmountBase(donateAmount, tokenMap[tokenString].decimals);//web3.utils.toWei(donateAmount, 'ether');
 
 		const parameter = {
 			from: activeAccount,
@@ -131,8 +131,9 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 		);
 
 		console.log('amount to withdraw', amountInBase, amount);
-		let result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, donateAmountInGwei, tokenAddress, poolAddress).send(parameter , (err, transactionHash) => {
+		let result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
+
 		});
 		console.log('withdrawDeposit result', result);
 	}
@@ -147,11 +148,12 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 		};
 
-		let JCPoolInstance = new web3.eth.Contract(
-			JCPool.abi,
-			address,
+		let PoolTrackerInstance = new web3.eth.Contract(
+			PoolTracker.abi,
+			poolTrackerAddress,
 		);
-		let result = await JCPoolInstance.methods.withdrawDonations(assetAddress, false).send(parameter , (err, transactionHash) => {
+
+		let result = await PoolTrackerInstance.methods.claimInterest(assetAddress, address).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 		});
 
@@ -162,8 +164,8 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 		const web3 = await getWeb3();
 		const activeAccount = await web3.currentProvider.selectedAddress;
 		const poolName = prompt("Enter pool name:");
-		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)");
-		const about = prompt("Type a short summary of your cause");
+		let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)", 'ETH DAI USDC');
+		const about = prompt("Type a short summary of your cause", 'This is a test pool');
 		acceptedTokens = acceptedTokens.split(" ");
 		console.log("acceptedTokens", acceptedTokens, tokenMap);
 		let tokenAddrs = [];
@@ -258,12 +260,15 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 					'amountScaled':  amountScaled,
 					'unclaimedInterest': await JCPoolInstance.methods.getUnclaimedInterest(acceptedTokens[j]).call(),
 					'claimedInterest': await JCPoolInstance.methods.getClaimedInterest(acceptedTokens[j]).call(),
+					'reserveNormalizedIncome': await JCPoolInstance.methods.getReserveNormalizedIncome(acceptedTokens[j]).call(),
 					'aTokenAddress': await JCPoolInstance.methods.getATokenAddress(acceptedTokens[j]).call(),
+					'liquidityIndex': await JCPoolInstance.methods.getAaveLiquidityIndex(acceptedTokens[j]).call(),
 					'acceptedTokenString': tokenString,
 					'decimals': tokenMap[tokenString].decimals,
 					'depositAPY': tokenMap[tokenString].depositAPY,
 					'address': acceptedTokens[j],
 				});
+				console.log('reserveNormalizedIncome', await JCPoolInstance.methods.getReserveNormalizedIncome(acceptedTokens[j]).call());
 				acceptedTokenStrings.push(tokenString);
 			}
 
@@ -329,19 +334,19 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 		);
 
 		let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
-		console.log('balanceOf:', balance);
+		console.log('ERCAddr:', ERCAddr);
 
 		for(let i = 0; i < balance; i++){
 			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
 			console.log('tokenId:', tokenId);
 			const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
 			console.log('pool:', depositInfo);
-			if(depositInfo.balance > 0){
+			//if(depositInfo.balance > 0){
 				console.log('depositInfo', depositInfo);
 				userDepositPools.push(depositInfo.pool);
-				userBalancePools[depositInfo.pool+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled];
+				userBalancePools[depositInfo.pool+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled, depositInfo.timeStamp, depositInfo.pool, depositInfo.asset];
 				//userBalancePools[depositInfo.pool+depositInfo.asset] = depositInfo.balance;
-			}
+			//}
 		}
 
 		return {'depositPools':[...new Set(userDepositPools)], 'balances':userBalancePools};

@@ -25,7 +25,8 @@ class Card extends Component {
 
 		this.state = {
 			open: false,
-			selectedTokenIndex: 0
+			selectedTokenIndex: 0,
+			tokenButtons: []
 		}
 	}
 
@@ -56,6 +57,17 @@ class Card extends Component {
 		return this.toFixed(number);
 	}
 
+	rayMul = (a, b) => {
+		if (a === 0 || b === 0) {
+		  return 0;
+		}
+
+		const ray = 1e27;
+		const halfRAY = ray / 2;
+		return (a * b + halfRAY) / ray;
+	  }
+
+
 	getAPY = (depositAPY) => {
 		if(depositAPY){
 			return depositAPY + '%';
@@ -83,9 +95,9 @@ class Card extends Component {
 		})
 	}
 
-	setSelectedToken = (index) => {
+	setSelectedToken = (index, button) => {
 		this.setState({
-			selectedTokenIndex: index
+			selectedTokenIndex: index,
 		});
 		console.log('setSelectedToken', index);
 	}
@@ -95,7 +107,9 @@ class Card extends Component {
 		let buttonHolder = [];
 		for(let i = 0; i < acceptedTokenInfo.length; i++){
 			const tokenName = acceptedTokenInfo[i].acceptedTokenString;
-			buttonHolder.push(<Button text={tokenName} key={i} callback={() => this.setSelectedToken(i)}/>)
+			let isDisabled = false;
+			if(i === this.state.selectedTokenIndex) isDisabled = true;
+			buttonHolder.push(<Button text={tokenName} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
 		}
 		return buttonHolder;
 	}
@@ -110,18 +124,21 @@ class Card extends Component {
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
 				<div className="card__body__column">
-				<h3 className="mb0">{item.acceptedTokenString } { this.displayLogo(item.acceptedTokenString)}</h3>
+				<h3 className="mb0">{item.acceptedTokenString } </h3>
+				{this.displayLogo(item.acceptedTokenString)}
 					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)+' '}</p>
 					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)+' '}</p>
-					<Button text="Contribute" disabled={true} callback={async() => await deposit(address, item.address, isETH, this.props.tokenMap, this.props.poolTrackerAddress)}/>
+					<p>{"APY: "+ this.getAPY(item.depositAPY)}</p>
+					<Button text="Contribute" callback={async() => await deposit(address, item.address, isETH, this.props.tokenMap, this.props.poolTrackerAddress)}/>
 					{this.displayWithdraw(item, address)}
 				</div>
 				<div className="card__body__column">
 					<p>{"user balance: "+this.precise(item.userBalance, item.decimals)}</p>
 					<p>{"total balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
-					<p>{"deposit APY: "+ this.getAPY(item.depositAPY)}</p>
-					<p>{"amount scaled: "+ item.amountScaled}</p>
-					<p>{"liq index: "+ this.props.tokenMap[item.acceptedTokenString].liquidityIndex}</p>
+					<p>{"amountScaled: "+item.amountScaled}</p>
+					<p>{"liq Index: "+item.liquidityIndex}</p>
+					<p>{"atokens: "+ this.rayMul(item.amountScaled, item.reserveNormalizedIncome/*this.props.tokenMap[item.acceptedTokenString].liquidityIndex*/)}</p>
+					<p>{"user interest earned: "+ (this.rayMul(item.amountScaled, item.reserveNormalizedIncome) - item.userBalance)}</p>
 					<p>{"claimed donation: "+this.precise(item.claimedInterest, item.decimals)}</p>
 					<p>{"unclaimed donation: "+this.precise(item.unclaimedInterest, item.decimals)}</p>
 					{this.displayClaim(item, address)}
@@ -142,7 +159,6 @@ class Card extends Component {
 			const totalDeposits = this.precise(item.totalDeposits, item.decimals);
 			totalBalance += totalDeposits * priceUSD;
 		}
-
 		totalBalance = totalBalance.toFixed(2);
 
 		return totalBalance;
@@ -160,7 +176,6 @@ class Card extends Component {
 			const userDeposits = this.precise(item.userBalance, item.decimals);
 			userBalance += userDeposits * priceUSD;
 		}
-
 		userBalance = userBalance.toFixed(2);
 
 		return userBalance;

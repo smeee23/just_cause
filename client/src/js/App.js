@@ -40,8 +40,7 @@ class App extends Component {
 				console.log('accounts' , this.accounts, this.accounts[0]);
 				activeAccount = this.accounts[0];
 			}
-
-			//activeAccount = this.accounts[0];
+			
 			this.networkId = await this.web3.eth.net.getId();
 
 			this.AaveProtocolDataProviderInstance = new this.web3.eth.Contract(
@@ -130,9 +129,7 @@ class App extends Component {
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.liquidityRate).toPrecision(4);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
 			//console.log(key, tokenMap[key] && tokenMap[key].apiKey, address);
-			let result = JSON.parse(await getPriceFromMessari(tokenMap[key] && tokenMap[key].apiKey));
-			result = result.data.market_data.price_usd;
-			tokenMap[key]['priceUSD'] = result;
+			tokenMap[key]['priceUSD'] = await getPriceFromMessari(tokenMap[key] && tokenMap[key].apiKey);
 			//console.log('api response:', result);
 		}
 		console.log('updated tokenMap', tokenMap, typeof tokenMap);

@@ -26,7 +26,7 @@ contract JustCausePool is Initializable {
     address[] acceptedTokens;
 
     event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
-    event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 donation);
+    event Withdraw(address tokenAddress, address depositor, uint256 amount);
     event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
 
     address receiver;
@@ -46,10 +46,9 @@ contract JustCausePool is Initializable {
         _;
     }
 
-    modifier enoughFunds(address _userAddr, address _tokenAddr, uint256 _amount, uint256 _donation) {
+    modifier enoughFunds(address _userAddr, address _tokenAddr, uint256 _amount) {
         require(_amount > 0, "amount must exceed 0");
         //require(depositors[_userAddr][_tokenAddr]  >= _amount, "no funds deposited for selected token");
-        require(_amount >= _donation, "donation cannot exceed withdrawal amount");
         _;
     }
 
@@ -94,7 +93,7 @@ contract JustCausePool is Initializable {
         acceptedTokens = _acceptedTokens;
     }
 
-    function deposit(address _assetAddress, uint256 _amount, address _depositor) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) public {
+    function deposit(address _assetAddress, uint256 _amount, address _depositor) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external {
         IERC20 token = IERC20(_assetAddress);
         require(token.allowance(_depositor, address(this)) >= _amount, "sender not approved");
         token.transferFrom(_depositor, address(this), _amount);
@@ -105,7 +104,7 @@ contract JustCausePool is Initializable {
         //tallyDeposit(_amount, _assetAddress, _depositor);
     }
 
-    function depositETH(address _wethAddress /*, address _depositor*/) onlyMaster(msg.sender) public payable {
+    function depositETH(address _wethAddress /*, address _depositor*/) onlyMaster(msg.sender) external payable {
         address poolAddr = address(lendingPool);
         wethGateway.depositETH{value: msg.value}(poolAddr, address(this), 0);
         totalDeposits[_wethAddress] += msg.value;
@@ -123,24 +122,16 @@ contract JustCausePool is Initializable {
         depositors[_depositor][_assetAddress] = depositedAmount;
     }*/
 
-    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation, address _depositor) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount, _donation) public {
+    function withdraw(address _assetAddress, uint256 _amount, address _depositor) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount) external {
         //address poolAddr = address(lendingPool);
-        if(_donation != 0){
-            uint256 newAmount = _amount - _donation;
-            lendingPool.withdraw(_assetAddress, _donation, receiver);
-            if(newAmount != 0)
-                lendingPool.withdraw(_assetAddress, newAmount, _depositor);
-        }
-        else
-            lendingPool.withdraw(_assetAddress, _amount, _depositor);
-
+        lendingPool.withdraw(_assetAddress, _amount, _depositor);
         //depositors[_depositor][_assetAddress] -= _amount;
         totalDeposits[_assetAddress] -= _amount;
 
         //if(depositors[_depositor][_assetAddress] == 0){
             //poolTracker.withdrawDeposit(_depositor, _amount, block.timestamp, _assetAddress);
         //}
-        emit Withdraw(_assetAddress, _depositor, _amount, _donation);
+        emit Withdraw(_assetAddress, _depositor, _amount);
     }
 
     function withdrawDonations(address _assetAddress) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) public{
@@ -163,6 +154,10 @@ contract JustCausePool is Initializable {
 
     function getAcceptedTokens() external view returns(address[] memory){
         return acceptedTokens;
+    }
+
+    function getReserveNormalizedIncome(address _asset) external view returns(uint256){
+        return lendingPool.getReserveNormalizedIncome(_asset);
     }
 
     function getName() external view returns(string memory){

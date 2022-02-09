@@ -876,14 +876,14 @@ interface IERC721 is IERC165 {
 
 interface IJustCausePool {
     event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
-    event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 userDeposits, uint256 donation);
+    event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 userDeposits);
     event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
 
     function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, address _receiver) external;
     function deposit(address _assetAddress, uint256 _amount, address _depositor) external;
     function depositETH(address _wethAddress) external payable;
     function tallyDeposit(uint256 _amount, address _assetAddress) external;
-    function withdraw(address _assetAddress, uint256 _amount, uint256 _donation, address _depositor) external;
+    function withdraw(address _assetAddress, uint256 _amount, address _depositor) external;
     function withdrawDonations(address _assetAddress) external;
     function getTotalDeposits(address _token) external view returns(uint256);
     function getAcceptedTokens() external view returns(address[] memory);
@@ -897,4 +897,5 @@ interface IJustCausePool {
     function getByteCode() external view returns(bytes memory);
     function getHashByteCode() external view returns(bytes32);
     function getAaveLiquidityIndex(address _asset) external view returns(uint256 liquidityIndex);
+    function getReserveNormalizedIncome(address _asset) external view returns(uint256);
 }

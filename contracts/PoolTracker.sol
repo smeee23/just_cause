@@ -21,10 +21,10 @@ contract PoolTracker {
     address[] private verifiedPools;
     bytes32[] validByteCodeHashes;
 
-    event AddVerifiedPools(address addressToAdd);
-    event AddDeposit(address _userAddr, address _pool);
-    event WithdrawDeposit(address _userAddr, address _pool, uint256 amount, uint256 oldAmountScaled, uint256 newAmountScaled, uint256 oldLiquidityIndex, uint256 liquidityIndex);
-    event OwnerAddress(address _owner, address _pool);
+    event AddPool(address pool, string name, address receiver);
+    event AddDeposit(address userAddr, address pool, address asset, uint256 amount);
+    event WithdrawDeposit(address userAddr, address pool, address asset, uint256 amount);
+    event Claim(address userAddr, address receiver, address pool, address asset, uint256 amount);
 
     modifier onlyVerifiedByteCode(address pool) {
         bytes32 v1ByteCodeHash = 0x69e8ff0e7c2b29468c452ea99c81161f9d6137447623140dc2714549e6014d96;
@@ -33,7 +33,7 @@ contract PoolTracker {
     }
 
     modifier onlyPools(address _pool){
-        require(isPool[_pool], "this function must be called from a pool");
+        require(isPool[_pool], "not called from a pool");
         _;
     }
 
@@ -48,44 +48,21 @@ contract PoolTracker {
     }
 
     function addDeposit(uint256 _amount, address _asset, address _pool, bool isETH) onlyPools(_pool) external payable {
-
-        /*
-        NEED TO CHECK IF FIRST DEPOSIT BEFORE ADDING TO DEPOSITORS
-        */
-        //depositors[msg.sender].push(_pool);
-
-        if(isETH) IJustCausePool(_pool).depositETH{value: msg.value}(_asset);
+        if(isETH) IJustCausePool(_pool).depositETH{value: msg.value}(_asset, msg.sender);
         else IJustCausePool(_pool).deposit(_asset, _amount , msg.sender);
-
-        uint256 _liquidityIndex = IJustCausePool(_pool).getAaveLiquidityIndex(_asset);
-        jCDepositorERC721.addFunds(msg.sender, _amount, _liquidityIndex, block.timestamp,  _pool, _asset);
-
-        emit AddDeposit(msg.sender, _pool);
+        jCDepositorERC721.addFunds(msg.sender, _amount, block.timestamp,  _pool, _asset);
+        emit AddDeposit(msg.sender, _pool, _asset, _amount);
     }
 
     function withdrawDeposit(uint256 _amount, address _asset, address _pool) onlyPools(_pool) external {
-
-        /*
-        NEED TO CHECK IF BALANCE IS 0 BEFORE REMOVAL
-        */
-        /*for(uint8 i = 0; i < depositors[msg.sender].length -1; i++){
-            if(depositors[msg.sender][i] == _pool){
-                depositors[msg.sender][i] = depositors[msg.sender][depositors[msg.sender].length - 1];
-                break;
-            }
-        }
-        depositors[msg.sender].pop();*/
-
         IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender);
-        uint256 _liquidityIndex = IJustCausePool(_pool).getAaveLiquidityIndex(_asset);
-        (uint256 amount, uint256 oldAmountScaled, uint256 newAmountScaled, uint256 oldLiquidityIndex, uint256 liquidityIndex) = jCDepositorERC721.withdrawFunds(msg.sender, _amount, _liquidityIndex, _pool, _asset);
-
-        emit WithdrawDeposit(msg.sender, _pool, amount, oldAmountScaled, newAmountScaled, oldLiquidityIndex, liquidityIndex);
+        jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
+        emit WithdrawDeposit(msg.sender, _pool, _asset, _amount);
     }
 
     function claimInterest(address _asset, address _pool) onlyPools(_pool) external {
-        IJustCausePool(_pool).withdrawDonations(_asset);
-        
+        uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset);
+        emit Claim(msg.sender, IJustCausePool(_pool).getRecipient(), _pool, _asset, amount);
     }
 
     /**
@@ -111,12 +88,8 @@ contract PoolTracker {
         jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, child);
         names[_name] =  child;
         verifiedPools.push(child);
-        //owners[msg.sender].push(child);
         isPool[child] = true;
-    }
-
-    function getReserveNormalizedIncome(address _asset, address _pool) external view returns(uint256){
-        return IJustCausePool(_pool).getReserveNormalizedIncome(_asset);
+        emit AddPool(child, _name, _receiver);
     }
 
     function getDepositorERC721Address() public view returns(address){

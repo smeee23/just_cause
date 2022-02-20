@@ -881,10 +881,10 @@ interface IJustCausePool {
 
     function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, address _receiver) external;
     function deposit(address _assetAddress, uint256 _amount, address _depositor) external;
-    function depositETH(address _wethAddress) external payable;
+    function depositETH(address _wethAddress, address _depositor) external payable;
     function tallyDeposit(uint256 _amount, address _assetAddress) external;
     function withdraw(address _assetAddress, uint256 _amount, address _depositor) external;
-    function withdrawDonations(address _assetAddress) external;
+    function withdrawDonations(address _assetAddress) external returns(uint256);
     function getTotalDeposits(address _token) external view returns(uint256);
     function getAcceptedTokens() external view returns(address[] memory);
     function getName() external view returns(string memory);

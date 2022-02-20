@@ -40,7 +40,7 @@ class App extends Component {
 				console.log('accounts' , this.accounts, this.accounts[0]);
 				activeAccount = this.accounts[0];
 			}
-			
+
 			this.networkId = await this.web3.eth.net.getId();
 
 			this.AaveProtocolDataProviderInstance = new this.web3.eth.Contract(
@@ -118,15 +118,13 @@ class App extends Component {
 		}
 	}
 	setTokenMapState = async(tokenMap) => {
-		console.log('token Map keys', Object.keys(tokenMap));
-
 		let acceptedTokens = Object.keys(tokenMap);
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
 			const aaveTokenInfo = await this.AaveProtocolDataProviderInstance.methods.getReserveData(address).call();
-			//console.log('aaveTokenInfo', aaveTokenInfo);
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.liquidityRate).toPrecision(4);
+			console.log('aaveTokenInfo', key, tokenMap[key]['depositAPY'], aaveTokenInfo);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
 			//console.log(key, tokenMap[key] && tokenMap[key].apiKey, address);
 			tokenMap[key]['priceUSD'] = await getPriceFromMessari(tokenMap[key] && tokenMap[key].apiKey);

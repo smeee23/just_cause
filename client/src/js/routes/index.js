@@ -21,9 +21,6 @@ const routes = (
 			<Route exact path={"/search"} component={Search}/>
 		</Switch>
 		<Header/>
-		<Modal>
-			<NewPoolModal/>
-		</Modal>
 	</main>
 )
 

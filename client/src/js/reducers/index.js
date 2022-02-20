@@ -12,6 +12,9 @@ import ownerPoolInfoReducer from './ownerPoolInfo'
 import userDepositPoolAddrsReducer from './userDepositPoolAddrs'
 import userDepositPoolInfoReducer from './userDepositPoolInfo'
 import poolTrackerAddressReducer from './poolTrackerAddress'
+import pendingTxReducer from './pendingTx'
+import txResultReducer from './txResult'
+import deployTxResultReducer from './deployTxResult'
 
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
@@ -25,6 +28,9 @@ const rootReducer = (history) => combineReducers({
 	userDepositPoolAddrs: userDepositPoolAddrsReducer,
 	userDepositPoolInfo: userDepositPoolInfoReducer,
 	poolTrackerAddress: poolTrackerAddressReducer,
+	pendingTx: pendingTxReducer,
+	txResult: txResultReducer,
+	deployTxResult: deployTxResultReducer,
 	router: connectRouter(history),
 })
 

@@ -16,18 +16,24 @@ contract JustCausePool is Initializable {
     //mapping(address => mapping(address => uint256)) private depositors;
     mapping(address => uint256) private totalDeposits;
     mapping(address => uint256) private interestWithdrawn;
+    uint256 public claimIndex;
     bool public isBase;
 
     ILendingPoolAddressesProvider provider;
+    address lendingPoolAddr;
+    address dataProviderAddr;
+    address wethGatewayAddr;
+
+    /*ILendingPoolAddressesProvider provider;
     ILendingPool lendingPool;
-    IProtocolDataProvider constant dataProvider = IProtocolDataProvider(address(0x3c73A5E5785cAC854D468F727c606C07488a29D6)); // Kovan
-    IWETHGateway constant wethGateway = IWETHGateway(address(0xA61ca04DF33B72b235a8A28CfB535bb7A5271B70)); //Kovan
+    IProtocolDataProvider constant dataProvider = IProtocolDataProvider(address(0x3c73A5E5785cAC854D468F727c606C07488a29D6));*/ // Kovan
+    //IWETHGateway constant wethGateway = IWETHGateway(address(0xA61ca04DF33B72b235a8A28CfB535bb7A5271B70)); //Kovan
 
     address[] acceptedTokens;
 
-    event Deposit(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits);
-    event Withdraw(address tokenAddress, address depositor, uint256 amount);
-    event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
+    event Deposit(address tokenAddress, address depositor, uint256 amount);
+    event Withdraw(address tokenAddress, address caller, uint256 amount);
+    event WithdrawDonations(address tokenAddress, uint256 amount);
 
     address receiver;
     address master;
@@ -87,28 +93,33 @@ contract JustCausePool is Initializable {
         master = msg.sender;
         name = _name;
         about = _about;
+
         provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
-        address lendingPoolAddr = provider.getLendingPool();
-        lendingPool = ILendingPool(lendingPoolAddr); // Kovan
+        lendingPoolAddr = provider.getLendingPool();
+        dataProviderAddr = address(0x3c73A5E5785cAC854D468F727c606C07488a29D6);//Kovan
+        wethGatewayAddr = address(0xA61ca04DF33B72b235a8A28CfB535bb7A5271B70);//Kovan
         acceptedTokens = _acceptedTokens;
+
+        /*provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
+        address lendingPoolAddr = provider.getLendingPool();
+        lendingPool = ILendingPool(lendingPoolAddr); // Kovan*/
     }
 
     function deposit(address _assetAddress, uint256 _amount, address _depositor) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external {
         IERC20 token = IERC20(_assetAddress);
         require(token.allowance(_depositor, address(this)) >= _amount, "sender not approved");
         token.transferFrom(_depositor, address(this), _amount);
-        address poolAddr = address(lendingPool);
-        token.approve(poolAddr, _amount);
-        lendingPool.deposit(address(token), _amount, address(this), 0);
+        //address poolAddr = address(lendingPool);
+        token.approve(lendingPoolAddr, _amount);
+        ILendingPool(lendingPoolAddr).deposit(address(token), _amount, address(this), 0);
         totalDeposits[_assetAddress] += _amount;
-        //tallyDeposit(_amount, _assetAddress, _depositor);
+        emit Deposit(_assetAddress, _depositor, _amount);
     }
 
-    function depositETH(address _wethAddress /*, address _depositor*/) onlyMaster(msg.sender) external payable {
-        address poolAddr = address(lendingPool);
-        wethGateway.depositETH{value: msg.value}(poolAddr, address(this), 0);
+    function depositETH(address _wethAddress , address _depositor) onlyMaster(msg.sender) external payable {
+        IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(lendingPoolAddr, address(this), 0);
         totalDeposits[_wethAddress] += msg.value;
-        //tallyDeposit(msg.value, _wethAddress, _depositor);
+        emit Deposit(_wethAddress, _depositor, msg.value);
     }
 
     /*function tallyDeposit(uint256 _amount, address _assetAddress, address _depositor) internal {
@@ -123,25 +134,19 @@ contract JustCausePool is Initializable {
     }*/
 
     function withdraw(address _assetAddress, uint256 _amount, address _depositor) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount) external {
-        //address poolAddr = address(lendingPool);
-        lendingPool.withdraw(_assetAddress, _amount, _depositor);
-        //depositors[_depositor][_assetAddress] -= _amount;
+        ILendingPool(lendingPoolAddr).withdraw(_assetAddress, _amount, _depositor);
         totalDeposits[_assetAddress] -= _amount;
-
-        //if(depositors[_depositor][_assetAddress] == 0){
-            //poolTracker.withdrawDeposit(_depositor, _amount, block.timestamp, _assetAddress);
-        //}
         emit Withdraw(_assetAddress, _depositor, _amount);
     }
 
-    function withdrawDonations(address _assetAddress) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) public{
-        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
-
+    function withdrawDonations(address _assetAddress) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external returns(uint256){
+        (address aTokenAddress,,) = IProtocolDataProvider(dataProviderAddr).getReserveTokensAddresses(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
+        ILendingPool(lendingPoolAddr).withdraw(_assetAddress, interestEarned, receiver);
+        claimIndex = getAaveLiquidityIndex(_assetAddress);
         interestWithdrawn[_assetAddress] += interestEarned;
-        lendingPool.withdraw(_assetAddress, interestEarned, receiver);
-        emit WithdrawDonations(_assetAddress, receiver, interestEarned, totalDeposits[_assetAddress], aTokenAddress);
+        return interestEarned;
     }
 
     /*function getUserBalance(address _userAddr, address _token) external view returns(uint256){
@@ -156,10 +161,6 @@ contract JustCausePool is Initializable {
         return acceptedTokens;
     }
 
-    function getReserveNormalizedIncome(address _asset) external view returns(uint256){
-        return lendingPool.getReserveNormalizedIncome(_asset);
-    }
-
     function getName() external view returns(string memory){
         return name;
     }
@@ -169,12 +170,12 @@ contract JustCausePool is Initializable {
     }
 
     function getATokenAddress(address _assetAddress) external view returns(address){
-        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
+        (address aTokenAddress,,) = IProtocolDataProvider(dataProviderAddr).getReserveTokensAddresses(_assetAddress);
         return aTokenAddress;
     }
 
     function getUnclaimedInterest(address _assetAddress) external view returns (uint256){
-        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
+        (address aTokenAddress,,) = IProtocolDataProvider(dataProviderAddr).getReserveTokensAddresses(_assetAddress);
             uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
             return aTokenBalance - totalDeposits[_assetAddress];
     }
@@ -184,7 +185,7 @@ contract JustCausePool is Initializable {
     }
 
     function getATokenBalance(address _assetAddress) external view returns (uint256){
-        (address aTokenAddress,,) = dataProvider.getReserveTokensAddresses(_assetAddress);
+        (address aTokenAddress,,) = IProtocolDataProvider(dataProviderAddr).getReserveTokensAddresses(_assetAddress);
         return IERC20(aTokenAddress).balanceOf(address(this));
     }
 
@@ -200,7 +201,11 @@ contract JustCausePool is Initializable {
         return keccak256(abi.encodePacked(address(this).code));
     }
 
+    function getReserveNormalizedIncome(address _asset) public view returns(uint256){
+        return ILendingPool(lendingPoolAddr).getReserveNormalizedIncome(_asset);
+    }
+
     function getAaveLiquidityIndex(address _asset) public view returns(uint256 liquidityIndex){
-        (,,,,,,,liquidityIndex,,) = dataProvider.getReserveData(_asset);
+        (,,,,,,,liquidityIndex,,) = IProtocolDataProvider(dataProviderAddr).getReserveData(_asset);
     }
 }

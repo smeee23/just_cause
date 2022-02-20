@@ -3,7 +3,11 @@ import { Fragment } from "react";
 
 import { connect } from "react-redux";
 
-import Card from '../components/Card'
+import Card from '../components/Card';
+import { Modal } from "../components/Modal";
+import PendingTxModal from "../components/modals/PendingTxModal";
+import TxResultModal from "../components/modals/TxResultModal";
+import DeployTxModal from "../components/modals/DeployTxModal";
 
 class Dashboard extends Component {
 
@@ -24,6 +28,24 @@ class Dashboard extends Component {
 		console.log('component did update');
 	}
 
+	getTxResultModal = () => {
+		if(this.props.txResult){
+			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;
+			return modal;
+		}
+	}
+	getPendingTxModal = () => {
+		if(this.props.pendingTx){
+			let modal = <Modal isOpen={true}><PendingTxModal txDetails={this.props.pendingTx}/></Modal>;
+			return modal;
+		}
+	}
+	getDeployTxModal = () => {
+		if(this.props.deployTxResult){
+			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;
+			return modal;
+		}
+	}
 	createCardInfo = () => {
 		if(this.props.verifiedPoolInfo === "No Verified Pools") return
 		let cardHolder = [];
@@ -56,7 +78,10 @@ class Dashboard extends Component {
 		return (
 			<Fragment>
 				<article>
-					<section className="page-section page-section--center horizontal-padding bw0">
+					<section className="page-section horizontal-padding bw0">
+						{this.getPendingTxModal()}
+						{this.getTxResultModal()}
+						{this.getDeployTxModal()}
 						{cardHolder}
 					</section>
 				</article>
@@ -72,6 +97,9 @@ const mapStateToProps = state => ({
 	verifiedPoolAddrs: state.verifiedPoolAddrs,
 	verifiedPoolInfo: state.verifiedPoolInfo,
 	poolTrackerAddress: state.poolTrackerAddress,
+	pendingTx: state.pendingTx,
+	txResult: state.txResult,
+	deployTxResult: state.deployTxResult,
 })
 
 const mapDispatchToProps = dispatch => ({

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import { IJustCausePool } from './Interfaces.sol';
+import { IJustCausePool, IERC20, ILendingPool, ILendingPoolAddressesProvider, IProtocolDataProvider, IWETHGateway } from './Interfaces.sol';
 import { JCDepositorERC721 } from './JCDepositorERC721.sol';
 import { JCOwnerERC721 } from './JCOwnerERC721.sol';
 import { JustCausePool } from './JustCausePool.sol';
@@ -20,6 +20,11 @@ contract PoolTracker {
     mapping(string => address) private names;
     address[] private verifiedPools;
     bytes32[] validByteCodeHashes;
+
+    ILendingPoolAddressesProvider provider;
+    address lendingPoolAddr;
+    address dataProviderAddr;
+    address wethGatewayAddr;
 
     event AddPool(address pool, string name, address receiver);
     event AddDeposit(address userAddr, address pool, address asset, uint256 amount);
@@ -41,6 +46,11 @@ contract PoolTracker {
         jCDepositorERC721 = new JCDepositorERC721();
         jCOwnerERC721 = new JCOwnerERC721();
         baseJCPool = new JustCausePool();
+
+        provider = ILendingPoolAddressesProvider(address(0x88757f2f99175387aB4C6a4b3067c77A695b0349));
+        lendingPoolAddr = provider.getLendingPool();
+        dataProviderAddr = address(0x3c73A5E5785cAC854D468F727c606C07488a29D6);//Kovan
+        wethGatewayAddr = address(0xA61ca04DF33B72b235a8A28CfB535bb7A5271B70);//Kovan
     }
 
     function addValidByteCodeHash(bytes32 _hash) public {
@@ -48,13 +58,24 @@ contract PoolTracker {
     }
 
     function addDeposit(uint256 _amount, address _asset, address _pool, bool isETH) onlyPools(_pool) external payable {
-        if(isETH) IJustCausePool(_pool).depositETH{value: msg.value}(_asset, msg.sender);
-        else IJustCausePool(_pool).deposit(_asset, _amount , msg.sender);
+        if(isETH){
+            IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(lendingPoolAddr, _pool, 0);
+            IJustCausePool(_pool).depositETH/*{value: msg.value}*/(_asset, /*msg.sender,*/ msg.value);
+        }
+        else {
+            IERC20 token = IERC20(_asset);
+            require(token.allowance(msg.sender, address(this)) >= _amount, "sender not approved");
+            token.transferFrom(msg.sender, address(this), _amount);
+            token.approve(lendingPoolAddr, _amount);
+            ILendingPool(lendingPoolAddr).deposit(address(token), _amount, _pool, 0);
+            IJustCausePool(_pool).deposit(_asset, _amount /*, msg.sender*/);
+        }
         jCDepositorERC721.addFunds(msg.sender, _amount, block.timestamp,  _pool, _asset);
         emit AddDeposit(msg.sender, _pool, _asset, _amount);
     }
 
     function withdrawDeposit(uint256 _amount, address _asset, address _pool) onlyPools(_pool) external {
+        //ILendingPool(lendingPoolAddr).withdraw(_asset, _amount, msg.sender);
         IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender);
         jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
         emit WithdrawDeposit(msg.sender, _pool, _asset, _amount);

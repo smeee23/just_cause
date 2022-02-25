@@ -9,21 +9,22 @@ import palette from "../utils/palette";
 
 import Button from '../components/Button';
 
-import DaiLogo from "./cryptoLogos/DaiLogo";
-import WbtcLogo from "./cryptoLogos/WbtcLogo";
-import UsdcLogo from "./cryptoLogos/UsdcLogo";
-import TetherLogo from "./cryptoLogos/TetherLogo";
-import EthLogo from "./cryptoLogos/EthLogo";
-import AaveLogo from "./cryptoLogos/AaveLogo";
-
 import getWeb3 from "../../getWeb3NotOnLoad";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 
 import { updatePendingTx } from "../actions/pendingTx";
 import { updateTxResult } from  "../actions/txResult";
+import { updateDepositAmount } from  "../actions/depositAmount";
+import { updateWithdrawAmount } from  "../actions/withdrawAmount";
 
-import {claim, getAllowance, getBalance, getAmountBase, approve} from '../func/contractInteractions';
+import {getAllowance, getBalance, getAmountBase} from '../func/contractInteractions';
+import { rayMul, precise, delay, getHeaderValuesInUSD, displayLogo} from '../func/ancillaryFunctions';
+
+import { Modal } from "../components/Modal";
+import DepositModal from '../components/modals/DepositModal'
+import WithdrawModal from '../components/modals/WithdrawModal'
+
 
 class Card extends Component {
 
@@ -41,54 +42,11 @@ class Card extends Component {
 		window.scrollTo(0,0);
 	}
 
-	toFixed = (x) => {
-		if (Math.abs(x) < 1.0) {
-		  let e = parseInt(x.toString().split('e-')[1]);
-		  if (e) {
-			  x *= Math.pow(10,e-1);
-			  x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
-		  }
-		} else {
-		  let e = parseInt(x.toString().split('+')[1]);
-		  if (e > 20) {
-			  e -= 20;
-			  x /= Math.pow(10,e);
-			  x += (new Array(e+1)).join('0');
-		  }
-		}
-		return x;
-	  }
-
-	precise = (x, decimals) => {
-		let number = (Number.parseFloat(x).toPrecision(6) / (10**decimals));
-		return this.toFixed(number);
-	}
-
-	rayMul = (a, b) => {
-		if (a === 0 || b === 0) {
-		  return 0;
-		}
-
-		const ray = 1e27;
-		const halfRAY = ray / 2;
-		return (a * b + halfRAY) / ray;
-	  }
-
-
-	getAPY = (depositAPY) => {
-		if(depositAPY){
-			return depositAPY + '%';
-		}
-		else{
-			return "N/A";
-		}
-	}
-
 	displayWithdraw = (item, address) => {
 	if(item.userBalance > 0){
 		let isDisabled = false;
 		if(this.props.pendingTx) isDisabled = true;
-		return <Button text="Withdraw Deposit" disabled={isDisabled} callback={async() => await this.withdrawDeposit(address, item.address,  this.props.tokenMap, this.props.poolTrackerAddress, item.userBalance)}/>
+		return <Button text="Withdraw Deposit" disabled={isDisabled} callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/>
 		}
 	}
 
@@ -99,14 +57,25 @@ class Card extends Component {
 			return <Button text="Claim Interest" disabled={isDisabled} callback={async() => await this.claim(address, item.address, this.props.poolTrackerAddress)}/>
 		}
 	}
-
+	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance) => {
+		let isDisabled = false;
+		if(this.props.pendingTx) isDisabled = true;
+		if(isEth){
+			return <Button text="Deposit" disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
+		}
+		console.log('allowance newer', allowance);
+		if(allowance === 0){
+			return <Button text="Approve" disabled={isDisabled} callback={async() => await this.approve(tokenAddress, this.props.poolTrackerAddress, tokenString)}/>
+		}
+		return <Button text="Deposit" disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
+	}
 	toggleCardOpen = () => {
 		this.setState({
 			open: !this.state.open
 		})
 	}
 
-	setSelectedToken = (index, button) => {
+	setSelectedToken = (index) => {
 		this.setState({
 			selectedTokenIndex: index,
 		});
@@ -130,25 +99,23 @@ class Card extends Component {
 		if (!this.props.tokenMap) return 'no token data';
 
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
-		let isDisabled = false;
-		if(this.props.pendingTx) isDisabled = true;
 		const isETH = (item.acceptedTokenString === 'ETH') ? true : false;
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
 				<div className="card__body__column">
-					<h3 className="mb0"> {this.displayLogo(item.acceptedTokenString)} {item.acceptedTokenString } </h3>
+					<h3 className="mb0"> {displayLogo(item.acceptedTokenString)} {item.acceptedTokenString } </h3>
 					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)+' '}</p>
 					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)+' '}</p>
 					<p>{"APY: "+ item.depositAPY+'%'}</p>
-					<Button text="Contribute" disabled={isDisabled} callback={async() => await this.deposit(address, item.address, isETH, this.props.tokenMap, this.props.poolTrackerAddress)}/>
+					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
 					{this.displayWithdraw(item, address)}
 				</div>
 				<div className="card__body__column">
-					<p>{"pool balance: "+this.precise(item.totalDeposits, item.decimals)}</p>
-					<p>{"your balance: "+this.precise(item.userBalance, item.decimals)}</p>
-					<p>{"donated: "+ this.precise(this.rayMul(item.amountScaled, item.reserveNormalizedIncome) - item.userBalance, item.decimals)}</p>
-					<p>{"claimed: "+this.precise(item.claimedInterest, item.decimals)}</p>
-					<p>{"unclaimed: "+this.precise(item.unclaimedInterest, item.decimals)}</p>
+					<p>{"pool balance: "+precise(item.totalDeposits, item.decimals)}</p>
+					<p>{"your balance: "+precise(item.userBalance, item.decimals)}</p>
+					<p>{"donated: "+precise(rayMul(item.amountScaled, item.reserveNormalizedIncome) - item.userBalance, item.decimals)}</p>
+					<p>{"claimed: "+precise(item.claimedInterest, item.decimals)}</p>
+					<p>{"unclaimed: "+precise(item.unclaimedInterest, item.decimals)}</p>
 					{this.displayClaim(item, address)}
 				</div>
 				<div className="card__body__column">
@@ -162,109 +129,53 @@ class Card extends Component {
 		*/
 	}
 
-	deposit = async(poolAddress, tokenAddress, isETH, tokenMap, poolTrackerAddress) => {
-		let result;
-		let txInfo;
+	getDepositAmountModal = () => {
+		if(this.props.depositAmount){
+			let modal = <Modal isOpen={true}><DepositModal depositInfo={this.props.depositAmount}/></Modal>
+			return modal;
+		}
+	}
+
+	deposit = async(poolAddress, tokenAddress) => {
+		this.props.updateDepositAmount('');
 		console.log('deposit clicked');
 		try{
 			const web3 = await getWeb3();
-			const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
+			const tokenMap = this.props.tokenMap;
 			console.log('token map', tokenMap);
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 			console.log('tokenString:', tokenString, tokenMap[tokenString].decimals);
 			const activeAccount = await web3.currentProvider.selectedAddress;
-			const balance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount);
-			const amount = prompt("enter amount to deposit, max:", balance);
-			const amountInBase = getAmountBase(amount, tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
-			console.log("amountInGwei", amountInBase);
-			console.log(getAmountBase(amount, tokenMap[tokenString].decimals));
-			let parameter = {};
-			if(!isETH){
-				const allowance = await getAllowance(erc20Instance, poolAddress, activeAccount)
-				if(parseInt(amountInBase) > parseInt(allowance)){
-					alert("must approve token to deposit");
-					await this.approve(erc20Instance, poolAddress, activeAccount, amountInBase, tokenString);
-				}
-				parameter = {
-					from: activeAccount,
-					gas: web3.utils.toHex(1000000),
-					gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
-				};
-			}
-
-			else {
-				parameter = {
-					from: activeAccount,
-					gas: web3.utils.toHex(1000000),
-					gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei')),
-					value: amountInBase
-				};
-			}
-
-			let PoolTrackerInstance = new web3.eth.Contract(
-				PoolTracker.abi,
-				poolTrackerAddress,
-			);
-
-			console.log('poolTracker', poolTrackerAddress);
-			console.log(PoolTrackerInstance.options.address);
-			txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress};
-			result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
-				console.log('Transaction Hash :', transactionHash);
-				this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress});
-				txInfo.txHash = transactionHash;
-
-			});
-			txInfo.success = true;
+			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount);
+			await this.props.updateDepositAmount({tokenString: tokenString, tokenAddress: tokenAddress, userBalance: userBalance, poolAddress: poolAddress, amount: ''});
+			console.log('this.props.depositAmount', this.props.depositAmount);
 		}
 		catch (error) {
 			console.error(error);
 		}
-		console.log('txInfo', txInfo);
-		this.displayTxInfo(txInfo);
 	}
 
-	withdrawDeposit = async(poolAddress, tokenAddress, tokenMap, poolTrackerAddress, userBalance) => {
-		let result;
-		let txInfo;
-		console.log('withdraw deposit clicked');
+	getWithdrawAmountModal = () => {
+		if(this.props.withdrawAmount){
+			let modal = <Modal isOpen={true}><WithdrawModal withdrawInfo={this.props.withdrawAmount}/></Modal>
+			return modal;
+		}
+	}
+	withdrawDeposit = async(poolAddress, tokenAddress, userBalance) => {
+		this.props.updateWithdrawAmount('');
+		console.log('withdraw clicked');
 		try{
 			const web3 = await getWeb3();
+			const tokenMap = this.props.tokenMap;
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
-
 			let balance = userBalance / 10**tokenMap[tokenString].decimals;
 			balance = Number.parseFloat(balance).toPrecision(6);
-
-			const amount = prompt("enter amount to withdraw, pool balance:", balance);
-			//const donateAmount = prompt("enter amount to donate if desired");
-			const amountInBase = getAmountBase(amount, tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
-			const activeAccount = await web3.currentProvider.selectedAddress;
-			//const donateAmountInGwei = getAmountBase(donateAmount, tokenMap[tokenString].decimals);//web3.utils.toWei(donateAmount, 'ether');
-
-			const parameter = {
-				from: activeAccount,
-				gas: web3.utils.toHex(1000000),
-				gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
-			};
-
-			let PoolTrackerInstance = new web3.eth.Contract(
-				PoolTracker.abi,
-				poolTrackerAddress,
-			);
-
-			console.log('amount to withdraw', amountInBase, amount);
-			txInfo = {txHash: '', success: false, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress};
-			result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress).send(parameter , (err, transactionHash) => {
-				console.log('Transaction Hash :', transactionHash);
-				this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress});
-				txInfo.txHash = transactionHash;
-			});
-			txInfo.success = true;
+			await this.props.updateWithdrawAmount({tokenString: tokenString, tokenAddress: tokenAddress, userBalance: balance, poolAddress: poolAddress, amount: ''});
+			console.log('this.props.withdrawAmount', this.props.withdrawAmount);
 		}
 		catch (error) {
 			console.error(error);
 		}
-		this.displayTxInfo(txInfo);
 	}
 
 	claim = async(address, assetAddress, poolTrackerAddress) => {
@@ -300,11 +211,13 @@ class Card extends Component {
 		console.log('claim result', result);
 	}
 
-	approve = async(erc20Instance, address, activeAccount, amountInGwei, tokenString) => {
+	approve = async(tokenAddress, address, tokenString) => {
 		let result;
 		let txInfo;
 		try{
 			const web3 = await getWeb3();
+			const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
+			const activeAccount = await web3.currentProvider.selectedAddress;
 			console.log('approve clicked');
 			const parameter = {
 				from: activeAccount ,
@@ -330,79 +243,10 @@ class Card extends Component {
 	displayTxInfo = async(txInfo) => {
 		this.props.updatePendingTx('');
 		this.props.updateTxResult(txInfo);
-		await this.delay(5000);
+		await delay(5000);
 		this.props.updateTxResult('');
 	}
-	delay = (delayInms) => {
-		return new Promise(resolve => {
-		  setTimeout(() => {
-			resolve(2);
-		  }, delayInms);
-		});
-	}
-	getTotalBalancesInUSD = (acceptedTokenInfo) => {
-		if (!acceptedTokenInfo) return 'no data';
 
-		let totalBalance = 0.0;
-
-		for(let i = 0; i < acceptedTokenInfo.length; i++){
-			const item = acceptedTokenInfo[i];
-			const tokenString = item.acceptedTokenString;
-			const priceUSD = this.props.tokenMap[tokenString] && this.props.tokenMap[tokenString].priceUSD;
-			const totalDeposits = this.precise(item.totalDeposits, item.decimals);
-			totalBalance += totalDeposits * priceUSD;
-		}
-		totalBalance = totalBalance.toFixed(2);
-
-		if(isNaN(totalBalance)){
-			return "0.00";
-		}
-		return totalBalance;
-	}
-
-	getUserBalancesInUSD = (acceptedTokenInfo) => {
-		if (!acceptedTokenInfo) return 'no data';
-
-		let userBalance = 0.0;
-
-		for(let i = 0; i < acceptedTokenInfo.length; i++){
-			const item = acceptedTokenInfo[i];
-			const tokenString = item.acceptedTokenString;
-			const priceUSD = this.props.tokenMap[tokenString] && this.props.tokenMap[tokenString].priceUSD;
-			const userDeposits = this.precise(item.userBalance, item.decimals);
-			userBalance += userDeposits * priceUSD;
-		}
-		userBalance = userBalance.toFixed(2);
-
-		if(isNaN(userBalance)){
-			return "0.00";
-		}
-		return userBalance;
-	}
-
-	displayLogo = (acceptedTokenString) => {
-		let logo = '';
-		if(acceptedTokenString === 'ETH'){
-			logo = <EthLogo/>;
-		}
-		else if (acceptedTokenString === 'USDT'){
-			logo = <TetherLogo/>;
-		}
-		else if (acceptedTokenString === 'USDC'){
-			logo = <UsdcLogo/>;
-		}
-		else if (acceptedTokenString === 'WBTC'){
-			logo = <WbtcLogo/>;
-		}
-		else if (acceptedTokenString === 'DAI'){
-			logo = <DaiLogo/>;
-		}
-		else if (acceptedTokenString === 'AAVE'){
-			logo = <AaveLogo/>;
-		}
-
-		return logo;
-	}
 
 	render() {
 		const { title, about, idx, address, receiver, acceptedTokenInfo} = this.props;
@@ -422,8 +266,7 @@ class Card extends Component {
 			"card--open": this.state.open,
 		})
 
-		const userBalance = this.getUserBalancesInUSD(acceptedTokenInfo);
-		const totalBalance = this.getTotalBalancesInUSD(acceptedTokenInfo);
+		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
 		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about);
 
@@ -438,8 +281,9 @@ class Card extends Component {
 					<p className="mb0">{ about.slice(0, 20) + "..." }</p>
 				</div>
 				<div className="card__header--right">
-								<p className="mb0">{"your contribution: $" + userBalance}</p>
-								<p className="mb0">{"total contribution: $"+ totalBalance}</p>
+								<p className="mb0">{"your deposit: " + userBalance}</p>
+								<p className="mb0">{"pool : "+ totalBalance}</p>
+								<p className="mb0">{"total earned : "+ interestEarned}</p>
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
 				</div>
@@ -448,24 +292,29 @@ class Card extends Component {
 								{tokenInfo}
 						</div>
 				<div className="card__bar"/>
+				{this.getDepositAmountModal()}
+				{this.getWithdrawAmountModal()}
       		</div>
 		);
 	}
 }
 
 const mapStateToProps = state => ({
-	daiAddress: state.daiAddress,
 	activeAccount: state.activeAccount,
 	tokenMap: state.tokenMap,
 	ownerPoolAddrs: state.ownerPoolAddrs,
 	ownerPoolInfo: state.ownerPoolInfo,
 	poolTrackerAddress: state.poolTrackerAddress,
 	pendingTx: state.pendingTx,
+	depositAmount: state.depositAmount,
+	withdrawAmount: state.withdrawAmount,
 })
 
 const mapDispatchToProps = dispatch => ({
 	updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
 	updateTxResult: (res) => dispatch(updateTxResult(res)),
+	updateDepositAmount: (amnt) => dispatch(updateDepositAmount(amnt)),
+	updateWithdrawAmount: (amount) => dispatch(updateWithdrawAmount(amount)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card)

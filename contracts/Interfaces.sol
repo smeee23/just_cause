@@ -880,8 +880,8 @@ interface IJustCausePool {
     event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
 
     function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, address _receiver) external;
-    function deposit(address _assetAddress, uint256 _amount, address _depositor) external;
-    function depositETH(address _wethAddress, address _depositor) external payable;
+    function deposit(address _assetAddress, uint256 _amount/*, address _depositor*/) external;
+    function depositETH(address _wethAddress, /*address _depositor,*/ uint256 _value) external payable;
     function tallyDeposit(uint256 _amount, address _assetAddress) external;
     function withdraw(address _assetAddress, uint256 _amount, address _depositor) external;
     function withdrawDonations(address _assetAddress) external returns(uint256);

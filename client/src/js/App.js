@@ -18,11 +18,11 @@ import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 
 import getWeb3 from "../getWeb3";
 import PoolTracker from "../contracts/PoolTracker.json";
-import JCDepositorERC721 from "../contracts/JCDepositorERC721.json";
+import ERC20Instance from "../contracts/IERC20.json";
 import JCOwnerERC721 from "../contracts/JCOwnerERC721.json";
 import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.json";
 import { kovanTokenMap } from "./func/tokenMaps.js";
-import {getPoolInfo, getDepositorAddress} from './func/contractInteractions.js';
+import {getPoolInfo, getDepositorAddress, getAllowance} from './func/contractInteractions.js';
 import {getPriceFromMessari} from './func/messariPriceFeeds.js'
 
 //import { load } from "dotenv";
@@ -123,6 +123,10 @@ class App extends Component {
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
 			const aaveTokenInfo = await this.AaveProtocolDataProviderInstance.methods.getReserveData(address).call();
+
+			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
+			const activeAccount = await this.web3.currentProvider.selectedAddress;
+			tokenMap[key]['allowance'] = await getAllowance(erc20Instance, this.poolTrackerAddress, activeAccount);
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.liquidityRate).toPrecision(4);
 			console.log('aaveTokenInfo', key, tokenMap[key]['depositAPY'], aaveTokenInfo);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
@@ -171,7 +175,6 @@ class App extends Component {
 		const userDepositPools = depositBalancePools.depositPools;
 		const userBalancePools = depositBalancePools.balances;
 
-		console.log('userBalancePools', userBalancePools);
 		let isHashMatch = true;
 		for(let i = 0; i < verifiedPools.length; i++){
 			const isMatch = await this.PoolTrackerInstance.methods.checkByteCode(verifiedPools[i]).call();

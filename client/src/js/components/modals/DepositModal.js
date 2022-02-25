@@ -1,0 +1,156 @@
+import React, {Component, Fragment} from "react"
+import { connect } from "react-redux";
+import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
+import TextField from '../TextField'
+import Button from '../Button'
+
+import getWeb3 from "../../../getWeb3NotOnLoad";
+import PoolTracker from "../../../contracts/PoolTracker.json";
+import ERC20Instance from "../../../contracts/IERC20.json";
+
+import { updatePendingTx } from "../../actions/pendingTx";
+import { updateTxResult } from  "../../actions/txResult";
+import { updateDepositAmount } from  "../../actions/depositAmount";
+
+import {getAllowance, getAmountBase} from '../../func/contractInteractions';
+import {delay} from '../../func/ancillaryFunctions';
+
+class DepositModal extends Component {
+
+  constructor(props) {
+		super(props);
+
+		this.state = {
+			isValidInput: 'valid',
+      amount: 0,
+		}
+	}
+
+  setAmount = async(amount, depositInfo) => {
+    /*if(!isNaN(amount)){
+      if(Math.sign(amount) === 1){
+        if(amount > depositInfo.balance){
+          if(amount === 0){*/
+            depositInfo.amount = amount;
+            this.props.updateDepositAmount(depositInfo);
+            console.log('depositInfo', depositInfo);
+            console.log('props depositInfo', this.props.depositInfo);
+            await this.depositToChain();
+          /*}
+          else this.setState({isValidInput: 'zero', amount});
+        }
+        else this.setState({isValidInput: 'bal', amount});
+      }
+      else this.setState({isValidInput: 'neg', amount});
+    }
+    else this.setState({isValidInput: 'nan', amount});*/
+  }
+
+  depositToChain = async() => {
+			let txInfo;
+			let result;
+			try{
+				const web3 = await getWeb3();
+				const tokenAddress = this.props.depositAmount.tokenAddress;
+				const poolAddress = this.props.depositAmount.poolAddress;
+				const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
+				const tokenString = this.props.depositAmount.tokenString;
+				const isETH = (tokenString === 'ETH');
+				const activeAccount = await web3.currentProvider.selectedAddress;
+
+				const amount = this.props.depositAmount.amount;
+				this.props.updateDepositAmount('');
+				const amountInBase = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
+				console.log("amountInGwei", amountInBase);
+				console.log(getAmountBase(amount, this.props.tokenMap[tokenString].decimals));
+				let parameter = {};
+				if(!isETH){
+					const allowance = await getAllowance(erc20Instance, this.props.poolTrackerAddress, activeAccount)
+					if(parseInt(amountInBase) > parseInt(allowance)){
+						alert("must approve token to deposit");
+						await this.approve(tokenAddress, this.props.poolTrackerAddress, tokenString);
+					}
+					parameter = {
+						from: activeAccount,
+						gas: web3.utils.toHex(1000000),
+						gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+					};
+				}
+
+				else {
+					parameter = {
+						from: activeAccount,
+						gas: web3.utils.toHex(1000000),
+						gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei')),
+						value: amountInBase
+					};
+				}
+
+				let PoolTrackerInstance = new web3.eth.Contract(
+					PoolTracker.abi,
+					this.props.poolTrackerAddress,
+				);
+
+				console.log('poolTracker', this.props.poolTrackerAddress);
+				console.log(PoolTrackerInstance.options.address);
+				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress};
+				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
+					console.log('Transaction Hash :', transactionHash);
+					this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress});
+					txInfo.txHash = transactionHash;
+
+				});
+				txInfo.success = true;
+				console.log('deposit', result)
+			}
+			catch (error) {
+				console.error(error);
+			}
+			console.log('txInfo', txInfo);
+			this.displayTxInfo(txInfo);
+	}
+
+  displayTxInfo = async(txInfo) => {
+		this.props.updatePendingTx('');
+		this.props.updateTxResult(txInfo);
+		await delay(5000);
+		this.props.updateTxResult('');
+	}
+
+  getErrorMsg = () => {
+    if(this.state.isValidInput === 'nan') return this.state.amount + " is not a number";
+    else if(this.state.isValidInput === 'neg') return this.state.amount + " is a negative number";
+    else if(this.state.isValidInput === 'bal') return this.state.amount + " exceeds your balance";
+    else if(this.state.isValidInput === 'zero') return " amount cannot be zero";
+  }
+  render() {
+        const { depositInfo } = this.props;
+		return (
+      <Fragment>
+        <ModalHeader>
+          <h2 className="mb0">Deposit {depositInfo.tokenString}</h2>
+        </ModalHeader>
+        <ModalBody>
+          <TextField ref="myField" label="amount to deposit:" value={depositInfo.userBalance} />
+        </ModalBody>
+        <ModalCtas>
+          <Button text="Deposit" callback={() => this.setAmount(this.refs.myField.getValue(), depositInfo)}/>
+        </ModalCtas>
+      </Fragment>
+		);
+	}
+}
+
+const mapStateToProps = state => ({
+  tokenMap: state.tokenMap,
+	poolTrackerAddress: state.poolTrackerAddress,
+  depositAmount: state.depositAmount,
+})
+
+const mapDispatchToProps = dispatch => ({
+    updateDepositAmount: (amount) => dispatch(updateDepositAmount(amount)),
+    updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
+	  updateTxResult: (res) => dispatch(updateTxResult(res)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(DepositModal)

@@ -16,8 +16,8 @@ contract JustCausePool is Initializable {
     //mapping(address => mapping(address => uint256)) private depositors;
     mapping(address => uint256) private totalDeposits;
     mapping(address => uint256) private interestWithdrawn;
-    uint256 public claimIndex;
-    bool public isBase;
+    uint256 private claimIndex;
+    bool private isBase;
 
     ILendingPoolAddressesProvider provider;
     address lendingPoolAddr;
@@ -105,21 +105,20 @@ contract JustCausePool is Initializable {
         lendingPool = ILendingPool(lendingPoolAddr); // Kovan*/
     }
 
-    function deposit(address _assetAddress, uint256 _amount, address _depositor) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external {
-        IERC20 token = IERC20(_assetAddress);
-        require(token.allowance(_depositor, address(this)) >= _amount, "sender not approved");
-        token.transferFrom(_depositor, address(this), _amount);
+    function deposit(address _assetAddress, uint256 _amount/*, address _depositor*/) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external {
+        //IERC20 token = IERC20(_assetAddress);
+        //require(token.allowance(_depositor, address(this)) >= _amount, "sender not approved");
+        //token.transferFrom(_depositor, address(this), _amount);
         //address poolAddr = address(lendingPool);
-        token.approve(lendingPoolAddr, _amount);
-        ILendingPool(lendingPoolAddr).deposit(address(token), _amount, address(this), 0);
+        //token.approve(lendingPoolAddr, _amount);
+        //ILendingPool(lendingPoolAddr).deposit(address(token), _amount, address(this), 0);
         totalDeposits[_assetAddress] += _amount;
-        emit Deposit(_assetAddress, _depositor, _amount);
+        //emit Deposit(_assetAddress, _depositor, _amount);
     }
 
-    function depositETH(address _wethAddress , address _depositor) onlyMaster(msg.sender) external payable {
-        IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(lendingPoolAddr, address(this), 0);
-        totalDeposits[_wethAddress] += msg.value;
-        emit Deposit(_wethAddress, _depositor, msg.value);
+    function depositETH(address _wethAddress , /*address _depositor,*/ uint256 _value) onlyMaster(msg.sender) external {
+        //IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(lendingPoolAddr, address(this), 0);
+        totalDeposits[_wethAddress] += _value;
     }
 
     /*function tallyDeposit(uint256 _amount, address _assetAddress, address _depositor) internal {

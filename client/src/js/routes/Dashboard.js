@@ -9,6 +9,9 @@ import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 
+import NewPoolModal from '../components/modals/NewPoolModal'
+import DepositModal from '../components/modals/DepositModal'
+
 class Dashboard extends Component {
 
 	componentDidMount = async () => {
@@ -30,7 +33,9 @@ class Dashboard extends Component {
 
 	getTxResultModal = () => {
 		if(this.props.txResult){
-			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;
+			let modal = <Modal isOpen={true}>
+				<TxResultModal txDetails={this.props.txResult}/>
+				</Modal>;
 			return modal;
 		}
 	}
@@ -86,6 +91,7 @@ class Dashboard extends Component {
 					</section>
 				</article>
 			</Fragment>
+
 		);
 	}
 }
@@ -100,6 +106,7 @@ const mapStateToProps = state => ({
 	pendingTx: state.pendingTx,
 	txResult: state.txResult,
 	deployTxResult: state.deployTxResult,
+	depositAmount: state.depositAmount,
 })
 
 const mapDispatchToProps = dispatch => ({

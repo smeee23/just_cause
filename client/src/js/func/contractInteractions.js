@@ -99,6 +99,10 @@ import { updatePendingTx } from "../actions/pendingTx"
 				let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];
 				const balance = (balances) ? balances[0] : 0;
 				const amountScaled = (balances) ? balances[1] : 0;
+
+				//const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, acceptedTokens[j]);
+				//const activeAccount = await web3.currentProvider.selectedAddress;
+				//const allowance = await getAllowance(erc20Instance, poolTracker[i], activeAccount)
 				acceptedTokenInfo.push({
 					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
 					'userBalance':  balance,

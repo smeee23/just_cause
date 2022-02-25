@@ -10,6 +10,7 @@ $baseclass: 'modal';
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  z-index: 20000;
 
   &, &__box, &__header, &__body, &__ctas {
     display: flex;

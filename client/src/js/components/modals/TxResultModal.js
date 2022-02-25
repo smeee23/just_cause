@@ -11,18 +11,6 @@ export default class TxResultModal extends Component {
   render() {
       const { txDetails } = this.props;
 
-      /*return (
-        <Fragment>
-        <ModalHeader>
-          <h2 className="mb0">TEST</h2>
-        </ModalHeader>
-        <ModalBody>
-
-        </ModalBody>
-      </Fragment>
-      );*/
-
-
 		return (
       <Fragment>
       <ModalHeaderNoClose>

@@ -63,8 +63,7 @@ class Card extends Component {
 		if(isEth){
 			return <Button text="Deposit" disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
 		}
-		console.log('allowance newer', allowance);
-		if(allowance === 0){
+		if(Number(allowance) === 0){
 			return <Button text="Approve" disabled={isDisabled} callback={async() => await this.approve(tokenAddress, this.props.poolTrackerAddress, tokenString)}/>
 		}
 		return <Button text="Deposit" disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>

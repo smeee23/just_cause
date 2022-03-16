@@ -45,11 +45,9 @@ class TextField extends Component {
     return this.state.value;
   }
   updateValue = (e) => {
-    console.log('onChange clicked', e.target.value, this.state.value);
     this.setState({
       value: e.target.value
     });
-    console.log('after change', e.target.value, this.state.value);
   }
 
 	render() {

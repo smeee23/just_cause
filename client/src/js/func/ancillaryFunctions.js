@@ -7,6 +7,32 @@ import TetherLogo from "../components/cryptoLogos/TetherLogo";
 import EthLogo from "../components/cryptoLogos/EthLogo";
 import AaveLogo from "../components/cryptoLogos/AaveLogo";
 
+export const redirectWindow = (hash, isAddr) => {
+  let newPageUrl
+  if(!isAddr){
+    newPageUrl = "https://kovan.etherscan.io/tx/"+hash;
+  }
+  else{
+    newPageUrl = "https://kovan.etherscan.io/address/"+hash;
+  }
+  window.open(newPageUrl, "_blank")
+}
+
+export const getTokenBaseAmount = (amount, dec) => {
+    let stringf = "";
+    amount = String(amount);
+    let pos = amount.indexOf('.');
+
+    console.log('pos', pos, amount.length);
+    let len = (pos === -1) ? dec : dec - (amount.length-1 - pos);
+    for(var i=0;i<len;i++){
+      stringf = stringf+"0";
+    }
+    amount = amount.replace('.', '');
+    return amount+stringf;
+}
+
+
 export const toFixed = (x) => {
     if (Math.abs(x) < 1.0) {
       let e = parseInt(x.toString().split('e-')[1]);

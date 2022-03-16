@@ -1,4 +1,4 @@
-const userDepositPoolAddrsReducer = (state = 'No Verified Pools', action) => {
+const userDepositPoolAddrsReducer = (state = '', action) => {
 	switch (action.type) {
 		case 'UPDATE_USER_DEPOSIT_POOL_ADDRS':
 			return action.value

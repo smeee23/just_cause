@@ -1,5 +1,9 @@
 import React, {Component, Fragment} from "react"
-import { ModalHeaderNoClose, ModalBody} from "../Modal";
+import { ModalHeader, ModalBody} from "../Modal";
+
+import TextLink from '../TextLink'
+
+import { redirectWindow } from '../../func/ancillaryFunctions';
 
 export default class DeployTxModal extends Component {
 
@@ -8,19 +12,25 @@ export default class DeployTxModal extends Component {
     else if(status === 'success') return "SUCCESSFUL POOL CREATION";
     else if(status === 'failed') return "FAILED POOL CREATION";
   }
+  showPoolButton = (txDetails) => {
+    if(txDetails.status === 'success'){
+      return <TextLink text={"- POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)} href={"https://kovan.etherscan.io/address/"+txDetails.poolAddress} callback={() => redirectWindow(txDetails.poolAddress, true)}/>
+    }
+  }
   render() {
       const { txDetails } = this.props;
 
 		return (
       <Fragment>
-        <ModalHeaderNoClose>
+        <ModalHeader>
           <h2 className="mb0">{this.successOrFail(txDetails.status)}</h2>
-        </ModalHeaderNoClose>
+        </ModalHeader>
         <ModalBody>
-            <p>{"Pool Name: " + txDetails.poolName}<br/>
-               {"Pool Address: " + txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)}<br/>
-               {"Receiver: " + txDetails.receiver.slice(0, 6) + "..."+txDetails.receiver.slice(-4)}<br/>
-               {"Tx Hash: " + txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)}</p>
+            <p>{txDetails.poolName}<br/>
+               {this.showPoolButton(txDetails)}
+               <TextLink text={"- RECEIVER: "+txDetails.receiver.slice(0, 6) + "..."+txDetails.receiver.slice(-4)} href={"https://kovan.etherscan.io/address/"+txDetails.receiver} callback={() => redirectWindow(txDetails.receiver, true)}/>
+              <TextLink text={"- TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)} href={"https://kovan.etherscan.io/tx/"+txDetails.txHash} callback={() => redirectWindow(txDetails.txHash, false)}/>
+            </p>
         </ModalBody>
       </Fragment>
 		);

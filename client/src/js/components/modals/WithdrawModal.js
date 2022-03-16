@@ -12,7 +12,9 @@ import { updateTxResult } from  "../../actions/txResult";
 import { updateWithdrawAmount } from  "../../actions/withdrawAmount";
 
 import {getAmountBase} from '../../func/contractInteractions';
-import {delay} from '../../func/ancillaryFunctions';
+import {delay, getTokenBaseAmount} from '../../func/ancillaryFunctions';
+
+const BigNumber = require('bignumber.js');
 
 class WithdrawModal extends Component {
 
@@ -51,15 +53,19 @@ class WithdrawModal extends Component {
             const tokenAddress = this.props.withdrawAmount.tokenAddress;
             const poolAddress = this.props.withdrawAmount.poolAddress;
             const tokenString = this.props.withdrawAmount.tokenString;
-            const activeAccount = await web3.currentProvider.selectedAddress;
+            const isETH = (tokenString === 'ETH');
+            const activeAccount = this.props.activeAccount;
 
             const amount = this.props.withdrawAmount.amount;
             this.props.updateWithdrawAmount('');
-            const amountInBase = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
+
+            const amountInBase_test = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
+				    //const amountInBase = web3.utils.toWei(String(amount), "ether");
+            const amountInBase = getTokenBaseAmount(amount, this.props.tokenMap[tokenString].decimals);
 
             const parameter = {
                 from: activeAccount,
-                gas: web3.utils.toHex(1000000),
+                gas: web3.utils.toHex(500000),
                 gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
             };
 
@@ -68,9 +74,10 @@ class WithdrawModal extends Component {
                 this.props.poolTrackerAddress,
             );
 
-            console.log('amount to withdraw', amountInBase, amount);
             txInfo = {txHash: '', success: false, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress};
-            result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress).send(parameter , (err, transactionHash) => {
+
+            console.log('amountInBase', typeof amountInBase, amountInBase, typeof amountInBase_test, amountInBase_test);
+            result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
                 console.log('Transaction Hash :', transactionHash);
                 this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress});
                 txInfo.txHash = transactionHash;
@@ -81,7 +88,6 @@ class WithdrawModal extends Component {
         catch (error) {
             console.error(error);
         }
-        console.log('txInfo', txInfo);
         this.displayTxInfo(txInfo);
 	}
 
@@ -106,7 +112,7 @@ class WithdrawModal extends Component {
           <h2 className="mb0">Withdraw {withdrawInfo.tokenString}</h2>
         </ModalHeader>
         <ModalBody>
-          <TextField ref="myField" label="amount to withdraw:" value={withdrawInfo.userBalance} />
+          <TextField ref="myField" label="amount to withdraw:" value={withdrawInfo.formatBalance} />
         </ModalBody>
         <ModalCtas>
           <Button text="Withdraw" callback={() => this.setAmount(this.refs.myField.getValue(), withdrawInfo)}/>
@@ -118,8 +124,9 @@ class WithdrawModal extends Component {
 
 const mapStateToProps = state => ({
     tokenMap: state.tokenMap,
-	poolTrackerAddress: state.poolTrackerAddress,
+	  poolTrackerAddress: state.poolTrackerAddress,
     withdrawAmount: state.withdrawAmount,
+    activeAccount: state.activeAccount,
 })
 
 const mapDispatchToProps = dispatch => ({

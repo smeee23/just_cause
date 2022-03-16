@@ -132,9 +132,16 @@ contract JustCausePool is Initializable {
         depositors[_depositor][_assetAddress] = depositedAmount;
     }*/
 
-    function withdraw(address _assetAddress, uint256 _amount, address _depositor) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount) external {
-        ILendingPool(lendingPoolAddr).withdraw(_assetAddress, _amount, _depositor);
+    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool isETH) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount) external {
         totalDeposits[_assetAddress] -= _amount;
+        if(!isETH){
+            ILendingPool(lendingPoolAddr).withdraw(_assetAddress, _amount, _depositor);
+        }
+        else{
+            address aTokenAddress = getATokenAddress(_assetAddress);
+            IERC20(aTokenAddress).approve(wethGatewayAddr, _amount);
+            IWETHGateway(wethGatewayAddr).withdrawETH(lendingPoolAddr, _amount, _depositor);
+        }
         emit Withdraw(_assetAddress, _depositor, _amount);
     }
 
@@ -168,7 +175,7 @@ contract JustCausePool is Initializable {
         return about;
     }
 
-    function getATokenAddress(address _assetAddress) external view returns(address){
+    function getATokenAddress(address _assetAddress) public view returns(address){
         (address aTokenAddress,,) = IProtocolDataProvider(dataProviderAddr).getReserveTokensAddresses(_assetAddress);
         return aTokenAddress;
     }

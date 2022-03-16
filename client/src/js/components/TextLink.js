@@ -3,10 +3,10 @@ import React, {Component} from "react"
 class TextLink extends Component {
 
 	render() {
-		const { text, href } = this.props;
+		const { text, href, callback } = this.props;
 
 		return (
-      <button className="button button--text-link" href={href}>
+      <button className="button button--text-link" href={href} onClick={callback}>
         <div className="button__item">
           { text }
         </div>

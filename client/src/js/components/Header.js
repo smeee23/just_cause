@@ -7,6 +7,8 @@ import TextLink from "./TextLink";
 import { NavLink } from 'react-router-dom'
 import Takeover from "./Takeover";
 
+import { updateActiveAccount } from "../actions/activeAccount"
+
 class Header extends Component {
 
   isMetaMaskInstalled = () => {
@@ -22,6 +24,7 @@ class Header extends Component {
 				// You should disable this button while the request is pending!
 				const { ethereum } = window;
 				let request = await ethereum.request({ method: 'eth_requestAccounts' });
+        this.props.updateActiveAccount(request[0]);
 				console.log('request', request);
 			}
 			catch (error) {
@@ -83,4 +86,8 @@ const mapStateToProps = state => ({
   activeAccount: state.activeAccount,
 })
 
-export default connect(mapStateToProps)(Header)
+const mapDispatchToProps = dispatch => ({
+	updateActiveAccount: (s) => dispatch(updateActiveAccount(s)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header)

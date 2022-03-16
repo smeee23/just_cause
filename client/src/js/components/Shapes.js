@@ -76,7 +76,7 @@ class Shapes extends Component {
             }
         });
 
-        Matter.Body.scale(this.attractor, 1.25, 0.75);
+        Matter.Body.scale(this.attractor, 0.65, 0.65);
 
         World.add(engine.world, this.attractor);
 

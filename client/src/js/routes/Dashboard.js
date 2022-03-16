@@ -9,8 +9,11 @@ import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 
-import NewPoolModal from '../components/modals/NewPoolModal'
-import DepositModal from '../components/modals/DepositModal'
+import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
+import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
+import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
+
+import { updatePoolInfo } from '../func/contractInteractions';
 
 class Dashboard extends Component {
 
@@ -36,6 +39,19 @@ class Dashboard extends Component {
 			let modal = <Modal isOpen={true}>
 				<TxResultModal txDetails={this.props.txResult}/>
 				</Modal>;
+
+			//const poolLists = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo];
+			if(this.props.txResult.success){
+				let poolLists = updatePoolInfo(this.props.txResult.poolAddress,
+												this.props.activeAccount,
+												this.props.poolTrackerAddress,
+												this.props.tokenMap,
+												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo, this.props.userDepositPoolInfo]);
+
+				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
+				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
+				if(poolLists[2]) this.props.updateUserDepositPoolInfo(poolLists[2]);
+			}
 			return modal;
 		}
 	}
@@ -102,6 +118,8 @@ const mapStateToProps = state => ({
 	tokenMap: state.tokenMap,
 	verifiedPoolAddrs: state.verifiedPoolAddrs,
 	verifiedPoolInfo: state.verifiedPoolInfo,
+	ownerPoolInfo: state.ownerPoolInfo,
+	userDepositPoolInfo: state.userDepositPoolInfo,
 	poolTrackerAddress: state.poolTrackerAddress,
 	pendingTx: state.pendingTx,
 	txResult: state.txResult,
@@ -110,7 +128,9 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-
+	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
+	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
+	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

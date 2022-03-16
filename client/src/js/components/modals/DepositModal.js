@@ -13,16 +13,19 @@ import { updateTxResult } from  "../../actions/txResult";
 import { updateDepositAmount } from  "../../actions/depositAmount";
 
 import {getAllowance, getAmountBase} from '../../func/contractInteractions';
-import {delay} from '../../func/ancillaryFunctions';
+import {delay, getTokenBaseAmount} from '../../func/ancillaryFunctions';
+
+
+const BigNumber = require('bignumber.js');
 
 class DepositModal extends Component {
 
-  constructor(props) {
+  	constructor(props) {
 		super(props);
 
 		this.state = {
 			isValidInput: 'valid',
-      amount: 0,
+      		amount: 0,
 		}
 	}
 
@@ -33,8 +36,6 @@ class DepositModal extends Component {
           if(amount === 0){*/
             depositInfo.amount = amount;
             this.props.updateDepositAmount(depositInfo);
-            console.log('depositInfo', depositInfo);
-            console.log('props depositInfo', this.props.depositInfo);
             await this.depositToChain();
           /*}
           else this.setState({isValidInput: 'zero', amount});
@@ -56,13 +57,15 @@ class DepositModal extends Component {
 				const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 				const tokenString = this.props.depositAmount.tokenString;
 				const isETH = (tokenString === 'ETH');
-				const activeAccount = await web3.currentProvider.selectedAddress;
+				const activeAccount = this.props.activeAccount;
 
 				const amount = this.props.depositAmount.amount;
 				this.props.updateDepositAmount('');
-				const amountInBase = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
-				console.log("amountInGwei", amountInBase);
-				console.log(getAmountBase(amount, this.props.tokenMap[tokenString].decimals));
+
+				//const amountInBase_test = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
+				//const amountInBase = web3.utils.toWei(String(amount), "ether");
+				const amountInBase = getTokenBaseAmount(amount, this.props.tokenMap[tokenString].decimals);
+
 				let parameter = {};
 				if(!isETH){
 					const allowance = await getAllowance(erc20Instance, this.props.poolTrackerAddress, activeAccount)
@@ -72,7 +75,7 @@ class DepositModal extends Component {
 					}
 					parameter = {
 						from: activeAccount,
-						gas: web3.utils.toHex(1000000),
+						gas: web3.utils.toHex(800000),
 						gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
 					};
 				}
@@ -80,7 +83,7 @@ class DepositModal extends Component {
 				else {
 					parameter = {
 						from: activeAccount,
-						gas: web3.utils.toHex(1000000),
+						gas: web3.utils.toHex(800000),
 						gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei')),
 						value: amountInBase
 					};
@@ -94,6 +97,8 @@ class DepositModal extends Component {
 				console.log('poolTracker', this.props.poolTrackerAddress);
 				console.log(PoolTrackerInstance.options.address);
 				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress};
+
+				console.log('amountInBase', typeof amountInBase, amountInBase);
 				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
 					console.log('Transaction Hash :', transactionHash);
 					this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress});
@@ -106,7 +111,6 @@ class DepositModal extends Component {
 			catch (error) {
 				console.error(error);
 			}
-			console.log('txInfo', txInfo);
 			this.displayTxInfo(txInfo);
 	}
 
@@ -142,15 +146,16 @@ class DepositModal extends Component {
 }
 
 const mapStateToProps = state => ({
-  tokenMap: state.tokenMap,
+  	tokenMap: state.tokenMap,
 	poolTrackerAddress: state.poolTrackerAddress,
-  depositAmount: state.depositAmount,
+ 	depositAmount: state.depositAmount,
+	activeAccount: state.activeAccount,
 })
 
 const mapDispatchToProps = dispatch => ({
     updateDepositAmount: (amount) => dispatch(updateDepositAmount(amount)),
     updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
-	  updateTxResult: (res) => dispatch(updateTxResult(res)),
+	updateTxResult: (res) => dispatch(updateTxResult(res)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DepositModal)

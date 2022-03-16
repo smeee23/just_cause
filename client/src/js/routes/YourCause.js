@@ -5,15 +5,22 @@ import { connect } from "react-redux";
 
 import Card from '../components/Card'
 import Button from '../components/Button'
-import { AlertModal, Modal } from "../components/Modal";
-import PendingTxModal from "../components/modals/PendingTxModal";
+import { Modal } from "../components/Modal";
 import TxResultModal from "../components/modals/TxResultModal";
+import PendingTxModal from "../components/modals/PendingTxModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
-
-import getWeb3 from "../../getWeb3NotOnLoad";
-import PoolTracker from "../../contracts/PoolTracker.json";
+import NewPoolModal from "../components/modals/NewPoolModal";
 
 import { updateDeployTxResult } from  "../actions/deployTxResult";
+import {updateDeployInfo} from "../actions/deployInfo";
+
+import { addDeployedPool } from '../func/contractInteractions';
+
+import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
+import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
+import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
+
+import { updatePoolInfo } from '../func/contractInteractions';
 
 class YourCause extends Component {
 
@@ -33,10 +40,44 @@ class YourCause extends Component {
 		console.log('component did update');
 	}
 
+	getDeployTxModal = () => {
+		if(this.props.deployTxResult){
+			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;
+
+			if(this.props.deployTxResult.status === 'success'){
+				console.log('deployTxResult', this.props.deployTxResult);
+				let poolLists = addDeployedPool(this.props.deployTxResult.poolAddress,
+												this.props.activeAccount,
+												this.props.poolTrackerAddress,
+												this.props.tokenMap,
+												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo]);
+				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
+				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
+			}
+
+			return modal;
+		}
+	}
+
 	getTxResultModal = () => {
 		if(this.props.txResult){
-			console.log('TX RESULT', this.props.txResult);
-			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;
+			let modal = <Modal isOpen={true}>
+				<TxResultModal txDetails={this.props.txResult}/>
+				</Modal>;
+
+			//const poolLists = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo];
+			if(this.props.txResult.success){
+				let poolLists = updatePoolInfo(this.props.txResult.poolAddress,
+												this.props.activeAccount,
+												this.props.poolTrackerAddress,
+												this.props.tokenMap,
+												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo, this.props.userDepositPoolInfo]);
+
+				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
+				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
+				if(poolLists[2]) this.props.updateUserDepositPoolInfo(poolLists[2]);
+			}
+
 			return modal;
 		}
 	}
@@ -46,57 +87,18 @@ class YourCause extends Component {
 			return modal;
 		}
 	}
-	getDeployTxModal = () => {
-		if(this.props.deployTxResult){
-			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;
+
+	getNewPoolModal = () => {
+		if(this.props.deployInfo){
+			console.log('deployInfo', this.props.deployInfo);
+			let modal = <Modal isOpen={true}><NewPoolModal poolInfo={this.props.deployInfo}/></Modal>;
 			return modal;
 		}
 	}
-	deploy = async(tokenMap, poolTrackerAddress) => {
-		let result;
-		let txInfo;
-		try{
-			const web3 = await getWeb3();
-			const activeAccount = await web3.currentProvider.selectedAddress;
-			const poolName = prompt("Enter pool name:");
-			let acceptedTokens = prompt("Enter accepted tokens for pool (e.g. DAI USDC...)", 'ETH DAI USDC');
-			const about = prompt("Type a short summary of your cause", 'This is a test pool');
-			acceptedTokens = acceptedTokens.split(" ");
-			console.log("acceptedTokens", acceptedTokens, tokenMap);
-			let tokenAddrs = [];
-			for(let i = 0; i < acceptedTokens.length; i++){
-				tokenAddrs.push(tokenMap[acceptedTokens[i]].address);
-			}
-			console.log('poolTrackerAddress', poolTrackerAddress);
-			const receiver = prompt("Enter the address to recieve the interest", activeAccount);
-			console.log("receiver", receiver, typeof receiver);
-			console.log("token addresses", tokenAddrs);
-			const parameter = {
-				from: activeAccount,
-				gas: web3.utils.toHex(3200000),
-				gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
-			};
-
-			let PoolTrackerInstance = new web3.eth.Contract(
-				PoolTracker.abi,
-				poolTrackerAddress,
-			);
-			result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, about, receiver).send(parameter , (err, transactionHash) => {
-				console.log('Transaction Hash :', transactionHash);
-				txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver};
-				this.props.updateDeployTxResult(txInfo);
-			});
-			txInfo.poolAddress = result.events.AddPool.returnValues.pool;
-			txInfo.status = 'success';
-			console.log('deploy', result);
-			console.log('txInfo', txInfo);
-		}
-		catch (error) {
-			txInfo.status = 'failed';
-			console.error(error);
-		}
-		console.log('txInfo', txInfo);
-		this.displayDeployInfo(txInfo);
+	deploy = async() => {
+		this.props.updateDeployInfo('');
+		const activeAccount = this.props.activeAccount;
+		await this.props.updateDeployInfo({activeAccount: activeAccount});
 	}
 
 	displayDeployInfo = async(txInfo) => {
@@ -143,9 +145,8 @@ class YourCause extends Component {
 					<Button icon="plus" text="Add Pool" lg callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/>
 				</section>
 					<section className="page-section horizontal-padding bw0">
-						{this.getPendingTxModal()}
-						{this.getTxResultModal()}
 						{this.getDeployTxModal()}
+						{this.getNewPoolModal()}
 						{cardHolder}
 					</section>
 				</article>
@@ -160,15 +161,20 @@ const mapStateToProps = state => ({
 	tokenMap: state.tokenMap,
 	ownerPoolAddrs: state.ownerPoolAddrs,
 	ownerPoolInfo: state.ownerPoolInfo,
+	verifiedPoolInfo: state.verifiedPoolInfo,
 	poolTrackerAddress: state.poolTrackerAddress,
 	pendingTx: state.pendingTx,
 	txResult: state.txResult,
 	deployTxResult: state.deployTxResult,
+	deployInfo: state.deployInfo,
 })
 
 const mapDispatchToProps = dispatch => ({
-	//updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
 	updateDeployTxResult: (res) => dispatch(updateDeployTxResult(res)),
+	updateDeployInfo: (res) => dispatch(updateDeployInfo(res)),
+	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
+	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
+	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(YourCause)

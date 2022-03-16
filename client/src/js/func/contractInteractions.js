@@ -10,13 +10,11 @@ import { updatePendingTx } from "../actions/pendingTx"
 
 	export const getAllowance = async(erc20Instance, address, activeAccount) => {
 		const allowance = await erc20Instance.methods.allowance(activeAccount, address).call();
-		console.log("allowance", allowance, typeof allowance);
 		return allowance;
 	}
 
-	const getWalletBalance = async(tokenAddress) => {
+	const getWalletBalance = async(tokenAddress, activeAccount) => {
 		const web3 = await getWeb3();
-		const activeAccount = await web3.currentProvider.selectedAddress;
 		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 		const balance = await erc20Instance.methods.balanceOf(activeAccount).call();
 		return balance;
@@ -29,7 +27,7 @@ import { updatePendingTx } from "../actions/pendingTx"
 
 	export const getBalance = async(tokenAddress, decimals, tokenString, activeAccount) => {
 		if(tokenString !== 'ETH'){
-			let balance = await getWalletBalance(tokenAddress);
+			let balance = await getWalletBalance(tokenAddress, activeAccount);
 			balance = balance / 10**decimals;
 			return Number.parseFloat(balance).toPrecision(6);
 		}
@@ -41,6 +39,44 @@ import { updatePendingTx } from "../actions/pendingTx"
 		}
 	}
 
+	export const addDeployedPool = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists) => {
+
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		const userBalancePools = depositBalancePools.balances;
+
+		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
+
+		console.log('poolLists', poolLists)
+		for(let i = 0; i < poolLists.length; i++){
+			poolLists[i].push(poolInfo[0]);
+		}
+
+		console.log('poolLists 1111', poolLists)
+		return poolLists;
+	}
+
+	export const updatePoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists) => {
+
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		const userBalancePools = depositBalancePools.balances;
+
+		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
+		console.log('poolLists');
+		for(let i=0; i < poolLists.length; i++){
+			if(poolLists[i]){
+				for(let j=0; j < poolLists[i].length; j++){
+					if(poolLists[i][j].address === poolAddress){
+						console.log(poolLists[i][j].address);
+						console.log(poolInfo[0]);
+						console.log(poolLists[i][j]);
+						poolLists[i][j] = poolInfo[0];
+					}
+				}
+			}
+		}
+		console.log('poolLists', poolLists)
+		return poolLists;
+	}
 	/*export const getPoolStateFromChain = async(activeAccount, tokenMap, networkId) => {
 
 		const web3 = await getWeb3();
@@ -77,6 +113,9 @@ import { updatePendingTx } from "../actions/pendingTx"
 
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools) => {
 		const web3 = await getWeb3();
+
+		console.log('poolTracker', poolTracker);
+
 		let poolInfo = [];
 		for(let i=0; i < poolTracker.length; i++){
 			let JCPoolInstance = new web3.eth.Contract(
@@ -95,14 +134,10 @@ import { updatePendingTx } from "../actions/pendingTx"
 
 			for(let j = 0; j < acceptedTokens.length; j++){
 				const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
-				//let {balance, amountScaled} = userBalancePools[poolTracker[i]+acceptedTokens[j]];
 				let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];
 				const balance = (balances) ? balances[0] : 0;
 				const amountScaled = (balances) ? balances[1] : 0;
 
-				//const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, acceptedTokens[j]);
-				//const activeAccount = await web3.currentProvider.selectedAddress;
-				//const allowance = await getAllowance(erc20Instance, poolTracker[i], activeAccount)
 				acceptedTokenInfo.push({
 					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
 					'userBalance':  balance,
@@ -116,6 +151,7 @@ import { updatePendingTx } from "../actions/pendingTx"
 					'decimals': tokenMap[tokenString].decimals,
 					'depositAPY': tokenMap[tokenString] && tokenMap[tokenString].depositAPY,
 					'address': acceptedTokens[j],
+					'allowance': tokenMap[tokenString].allowance,
 				});
 				acceptedTokenStrings.push(tokenString);
 			}
@@ -129,12 +165,12 @@ import { updatePendingTx } from "../actions/pendingTx"
 							acceptedTokenInfo: acceptedTokenInfo,
 			});
 		}
+		console.log('end');
 		return poolInfo;
 	}
 
-	export const searchPools = async(poolTrackerAddress, activeAccount, tokenMap) => {
+	export const searchPools = async(poolTrackerAddress, activeAccount, tokenMap, searchAddr) => {
 		const web3 = await getWeb3();
-		let searchAddr = prompt("Enter pool address or name to search for pool (must be exact match):");
 
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
@@ -182,15 +218,11 @@ import { updatePendingTx } from "../actions/pendingTx"
 		);
 
 		let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
-		console.log('ERCAddr:', ERCAddr);
 
 		for(let i = 0; i < balance; i++){
 			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
-			console.log('tokenId:', tokenId);
 			const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
-			console.log('pool:', depositInfo);
 			//if(depositInfo.balance > 0){
-				console.log('depositInfo', depositInfo);
 				userDepositPools.push(depositInfo.pool);
 				userBalancePools[depositInfo.pool+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled, depositInfo.timeStamp, depositInfo.pool, depositInfo.asset];
 				//userBalancePools[depositInfo.pool+depositInfo.asset] = depositInfo.balance;
@@ -232,13 +264,3 @@ import { updatePendingTx } from "../actions/pendingTx"
 		let userDepositPools = await PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
 		return [...new Set(userDepositPools)];
 	}
-
-	const mapStateToProps = state => ({
-		pendingTx: state.pendingTx,
-	})
-
-	const mapDispatchToProps = dispatch => ({
-		updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
-	})
-
-	export default connect(mapStateToProps, mapDispatchToProps)

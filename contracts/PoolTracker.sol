@@ -74,10 +74,10 @@ contract PoolTracker {
         emit AddDeposit(msg.sender, _pool, _asset, _amount);
     }
 
-    function withdrawDeposit(uint256 _amount, address _asset, address _pool) onlyPools(_pool) external {
+    function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) onlyPools(_pool) external {
         //ILendingPool(lendingPoolAddr).withdraw(_asset, _amount, msg.sender);
-        IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender);
         jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
+        IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender, _isETH);
         emit WithdrawDeposit(msg.sender, _pool, _asset, _amount);
     }
 

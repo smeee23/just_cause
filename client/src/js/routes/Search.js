@@ -9,8 +9,14 @@ import { Modal } from "../components/Modal";
 import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
+import SearchModal from "../components/modals/SearchModal";
 
-import {searchPools} from '../func/contractInteractions';
+import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
+import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
+import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
+import {updateSearchInfo } from "../actions/searchInfo";
+
+import {searchPools, updatePoolInfo } from '../func/contractInteractions';
 
 class Search extends Component {
 
@@ -18,7 +24,7 @@ class Search extends Component {
 		super(props);
 
 		this.state = {
-			searchResults: [],
+			openModal: false,
 		}
 	}
 
@@ -33,6 +39,14 @@ class Search extends Component {
 	getTxResultModal = () => {
 		if(this.props.txResult){
 			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;
+
+			if(this.props.txResult.success){
+				let poolLists = updatePoolInfo(this.props.txResult.poolAddress);
+				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
+				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
+				if(poolLists[2]) this.props.updateUserDepositPoolInfo(poolLists[2]);
+			}
+
 			return modal;
 		}
 	}
@@ -49,16 +63,37 @@ class Search extends Component {
 		}
 	}
 
-	setSearchResults = async() => {
-		let results = await searchPools(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap);
-		console.log('results', results);
-		this.setState({
-			searchResults: this.createCardInfo(results)
-		});
+	getSearchResults = () => {
+		if(this.props.searchInfo){
+			//if(this.state.openModel === true) this.closeModal();
+			const searchResults = this.createCardInfo(this.props.searchInfo)
+			//this.props.updateSearchInfo('');
+			return searchResults;
+		}
+		else{
+			let modal = <Modal isOpen={true}><SearchModal/></Modal>;
+			return modal;
+		}
 	}
 
+	openModal = () => {
+		if(this.props.searchInfo){
+			this.setState({openModal: false});
+			this.props.updateSearchInfo('');
+		}
+		else{
+			window.location.reload(false);
+		}
+	}
+
+	getSearchModal = () => {
+		if(!this.props.searchInfo || this.state.openModal){
+			let modal = <Modal isOpen={true}><SearchModal/></Modal>;
+			return modal;
+		}
+	}
 	createCardInfo = (poolInfo) => {
-		if(poolInfo === "No Verified Pools") return
+		if(poolInfo === "") return
 		let cardHolder = [];
 		for(let i = 0; i < poolInfo.length; i++){
 			console.log('a', (poolInfo[i].name));
@@ -83,13 +118,14 @@ class Search extends Component {
 			<Fragment>
 				<article>
 				<section className="page-section page-section--center horizontal-padding bw0">
-					<Button icon="plus" text="Search" lg callback={async() => await this.setSearchResults(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap)}/>
+					<Button icon="plus" text="Search" lg callback={() => this.openModal()}/>
 				</section>
 					<section className="page-section horizontal-padding bw0">
 						{this.getPendingTxModal()}
 						{this.getTxResultModal()}
 						{this.getDeployTxModal()}
-						{this.state.searchResults}
+						{this.getSearchModal()}
+						{this.getSearchResults()}
 					</section>
 				</article>
 			</Fragment>
@@ -107,10 +143,14 @@ const mapStateToProps = state => ({
 	pendingTx: state.pendingTx,
 	txResult: state.txResult,
 	deployTxResult: state.deployTxResult,
+	searchInfo: state.searchInfo,
 })
 
 const mapDispatchToProps = dispatch => ({
-
+	pdateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
+	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
+	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
+	updateSearchInfo: (info) => dispatch(updateSearchInfo(info)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search)

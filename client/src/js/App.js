@@ -1,3 +1,5 @@
+import Web3 from "web3";
+
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { ConnectedRouter } from 'connected-react-router'
@@ -25,44 +27,51 @@ import { kovanTokenMap } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance} from './func/contractInteractions.js';
 import {getPriceFromMessari} from './func/messariPriceFeeds.js'
 
+import { Modal } from "./components/Modal";
+import PendingTxModal from "./components/modals/PendingTxModal";
+import TxResultModal from "./components/modals/TxResultModal";
+import DeployTxModal from "./components/modals/DeployTxModal";
 //import { load } from "dotenv";
 
 class App extends Component {
 
 	componentDidMount = async() => {
 		try {
+
 			window.addEventListener('resize', this.props.detectMobile);
-			console.log('app.js componentDidMount called');
-			this.web3 = await getWeb3();
+			let activeAccount = await this.getAccounts();
+			//this.web3 = await getWeb3();
 			this.accounts = await this.web3.eth.getAccounts();
-			let activeAccount = await this.web3.currentProvider.selectedAddress;
 			if(!activeAccount){
 				console.log('accounts' , this.accounts, this.accounts[0]);
 				activeAccount = this.accounts[0];
 			}
 
-			this.networkId = await this.web3.eth.net.getId();
+			console.log('account', activeAccount);
+			activeAccount =  activeAccount[0];
+			if (activeAccount){
+				this.setActiveAccountState(activeAccount);
+				this.networkId = await this.web3.eth.net.getId();
 
-			this.AaveProtocolDataProviderInstance = new this.web3.eth.Contract(
-				ProtocolDataProvider.abi,
-				ProtocolDataProvider.networks[this.networkId] && ProtocolDataProvider.networks[this.networkId].address,
-			);
+				this.AaveProtocolDataProviderInstance = new this.web3.eth.Contract(
+					ProtocolDataProvider.abi,
+					ProtocolDataProvider.networks[this.networkId] && ProtocolDataProvider.networks[this.networkId].address,
+				);
 
-			this.PoolTrackerInstance = new this.web3.eth.Contract(
-				PoolTracker.abi,
-				PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address,
-			);
+				this.PoolTrackerInstance = new this.web3.eth.Contract(
+					PoolTracker.abi,
+					PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address,
+				);
 
-			this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
+				this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
 
-			const tokenMap = this.getTokenMapFromNetwork();
-			this.setTokenMapState(tokenMap);
-			this.setActiveAccountState(activeAccount);
-			this.setPoolState(activeAccount);
-			this.setPoolTrackAddress(this.poolTrackerAddress);
+				const tokenMap = this.getTokenMapFromNetwork();
+				this.setTokenMapState(tokenMap);
+				this.setPoolState(activeAccount);
+				this.setPoolTrackAddress(this.poolTrackerAddress);
 
-			let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
-			console.log('aave protocol data response', results);
+				let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
+			}
 		}
 
 		catch (error) {
@@ -84,19 +93,20 @@ class App extends Component {
 		return Boolean(ethereum && ethereum.isMetaMask);
 	}
 
-	connectToWeb3 = async() => {
+	getAccounts = async() => {
+		let request;
 		if(this.isMetaMaskInstalled()){
 			try {
-				// Will open the MetaMask UI
-				// (You should disable this button while the request is pending)
 				const { ethereum } = window;
-				let request = await ethereum.request({ method: 'eth_requestAccounts' });
-				console.log('request', request);
+				this.web3 = new Web3(ethereum);
+				request = await ethereum.request({ method: 'eth_requestAccounts' });
+				console.log('requests', request);
 			}
 			catch (error) {
 				console.error(error);
 			}
 		}
+		return request;
 	}
 
 	getAaveData = async() => {
@@ -125,14 +135,17 @@ class App extends Component {
 			const aaveTokenInfo = await this.AaveProtocolDataProviderInstance.methods.getReserveData(address).call();
 
 			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
-			const activeAccount = await this.web3.currentProvider.selectedAddress;
-			tokenMap[key]['allowance'] = await getAllowance(erc20Instance, this.poolTrackerAddress, activeAccount);
+			const allowance = await getAllowance(erc20Instance, this.poolTrackerAddress, this.props.activeAccount);
+			tokenMap[key]['allowance'] = allowance > 0 ? true : false;
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.liquidityRate).toPrecision(4);
-			console.log('aaveTokenInfo', key, tokenMap[key]['depositAPY'], aaveTokenInfo);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
-			//console.log(key, tokenMap[key] && tokenMap[key].apiKey, address);
-			tokenMap[key]['priceUSD'] = await getPriceFromMessari(tokenMap[key] && tokenMap[key].apiKey);
-			//console.log('api response:', result);
+			tokenMap[key]['priceUSD'] = '';//await getPriceFromMessari(tokenMap[key] && tokenMap[key].apiKey);
+			if(!tokenMap[key]['priceUSD']){
+				if(key === 'USDT' | 'USDC' | 'DAI' | 'TUSD'){
+					tokenMap[key]['priceUSD'] = 1.00;
+				}
+			}
+			console.log(key, 'price usd', tokenMap[key]['priceUSD'])
 		}
 		console.log('updated tokenMap', tokenMap, typeof tokenMap);
 		this.props.updateTokenMap(tokenMap);
@@ -158,9 +171,7 @@ class App extends Component {
 
 		for(let i = 0; i < balance; i++){
 			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
-			console.log('tokenId:', tokenId);
 			const ownerInfo = await ERCInstance.methods.getCreation(tokenId).call();
-			console.log('pool:', ownerInfo);
 			userOwnedPools.push(ownerInfo.pool);
 		}
 
@@ -168,6 +179,7 @@ class App extends Component {
 	}
 
 	setPoolState = async(activeAccount) => {
+		console.log('e')
 		//const { verifiedPools, ownerPools, userDepositPools, verifiedPoolInfo, ownerPoolInfo, userDepositPoolInfo } = getPoolStateFromChain(activeAccount, this.getTokenMapFromNetwork, this.networkId);
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
 		const ownerPools = await this.getOwnerAddress(activeAccount); //await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
@@ -175,18 +187,20 @@ class App extends Component {
 		const userDepositPools = depositBalancePools.depositPools;
 		const userBalancePools = depositBalancePools.balances;
 
-		let isHashMatch = true;
+		/*let isHashMatch = true;
 		for(let i = 0; i < verifiedPools.length; i++){
 			const isMatch = await this.PoolTrackerInstance.methods.checkByteCode(verifiedPools[i]).call();
 			if(!isMatch){
 				isHashMatch = false;
 			}
 		}
-		console.log('isHashMatch', isHashMatch);
+		console.log('isHashMatch', isHashMatch);*/
 
 		const verifiedPoolInfo = await getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), userBalancePools);
+		console.log('reached');
 		const ownerPoolInfo = await getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), userBalancePools);
 		const userDepositPoolInfo = await getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), userBalancePools);
+
 
 		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
 		console.log('---------ownerPoolInfo--------', ownerPoolInfo);
@@ -219,6 +233,7 @@ class App extends Component {
 
 const mapStateToProps = state => ({
 	isMobile: state.isMobile,
+	activeAccount: state.activeAccount,
 })
 
 const mapDispatchToProps = dispatch => ({

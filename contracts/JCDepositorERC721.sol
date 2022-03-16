@@ -73,6 +73,10 @@ contract JCDepositorERC721 is ERC721Enumerable, Ownable {
         return deposits[_tokenId];
     }
 
+    function getUserBalance(uint256 _tokenId) public view returns (uint256){
+        return deposits[_tokenId].balance;
+    }
+
     function getATokenAmount(uint256 _tokenId) internal view returns(uint256){
         return rayMul(deposits[_tokenId].amountScaled, getReserveNormalizedIncome(deposits[_tokenId].asset));
     }

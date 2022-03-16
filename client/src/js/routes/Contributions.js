@@ -9,6 +9,8 @@ import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 
+import {updatePoolInfo } from '../func/contractInteractions';
+
 class Contributions extends Component {
 
 	componentDidMount = async () => {
@@ -41,6 +43,14 @@ class Contributions extends Component {
 	getTxResultModal = () => {
 		if(this.props.txResult){
 			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;
+
+			if(this.props.txResult.success){
+				let poolLists = updatePoolInfo(this.props.txResult.poolAddress);
+				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
+				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
+				if(poolLists[2]) this.props.updateUserDepositPoolInfo(poolLists[2]);
+			}
+
 			return modal;
 		}
 	}

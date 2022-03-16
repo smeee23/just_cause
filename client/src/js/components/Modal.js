@@ -2,6 +2,7 @@ import React, {Component, Fragment} from "react"
 import classNames from 'classnames'
 
 import Icon from "./Icon";
+import LogoBlackRing from "./LogoBlackRing";
 
 class ModalHeader extends Component {
   render() {
@@ -10,7 +11,7 @@ class ModalHeader extends Component {
         <Fragment>
             { this.props.children }
             <div className="modal__close-btn" onClick={this.closeModal}>
-              <Icon name={"plus"} size={32}/>
+              <LogoBlackRing/>
             </div>
         </Fragment>
       </div>

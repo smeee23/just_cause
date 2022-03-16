@@ -1,4 +1,4 @@
-const verifiedPoolInfoReducer = (state = 'No Verified Pools', action) => {
+const verifiedPoolInfoReducer = (state = '', action) => {
 	switch (action.type) {
 		case 'UPDATE_VERIFIED_POOL_INFO':
 			return action.value

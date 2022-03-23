@@ -31,18 +31,71 @@ $baseclass: 'card';
     border-radius: 0;
     display: flex;
     flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    grid-auto-rows: minmax(100px, auto);
     max-height: 0;
     transition: max-height $duration-short $easing1;
     overflow: hidden;
   }
 
+  &__body__column__one {
+    grid-column: 1 ;
+    grid-row: 1;
+  }
+  &__body__column__two {
+    grid-column: 5 ;
+    grid-row: 1 ;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  &__body__column__three {
+    grid-column: 3;
+    grid-row: 2/5;
+  }
+  &__body__column__four {
+    grid-column: 5;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  &__body__column__five {
+    grid-column: 5;
+    grid-row: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  &__body__column__six {
+    grid-column: 5;
+    grid-row: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 2 * $rem-base;
+  }
+  &__body__column__seven {
+    grid-column: 4;
+    grid-row: 2 / 5;
+  }
+  &__body__column__eight {
+    grid-column: 1/3;
+    grid-row: 2 / 5;
+  }
+  &__body__column__nine {
+    grid-column: 4;
+    grid-row: 1;
+  }
   &__body__column {
     margin-right: 4 * $rem-base;
     margin-bottom: 4 * $rem-base;
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
 
     &:first-child {
       border-right: solid 2px rgba(white, 0.33);

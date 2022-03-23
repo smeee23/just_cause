@@ -2,7 +2,7 @@ import React, {Component, Fragment} from "react"
 import { ModalHeader, ModalBody} from "../Modal";
 
 import TextLink from '../TextLink'
-import { redirectWindow } from '../../func/ancillaryFunctions';
+import { redirectWindowHash } from '../../func/ancillaryFunctions';
 
 export default class TxResultModal extends Component {
 
@@ -23,8 +23,8 @@ export default class TxResultModal extends Component {
       </ModalHeader>
       <ModalBody>
         <p>
-            <TextLink text={"- TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)} href={"https://kovan.etherscan.io/tx/"+txDetails.txHash} callback={() => redirectWindow(txDetails.txHash, false)}/>
-            <TextLink text={"- POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)} href={"https://kovan.etherscan.io/address/"+txDetails.poolAddress} callback={() => redirectWindow(txDetails.poolAddress, true)}/>
+            <TextLink text={"- TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)} href={"https://kovan.etherscan.io/tx/"+txDetails.txHash} callback={() => redirectWindowHash(txDetails.txHash, false)}/>
+            <TextLink text={"- POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)} href={"https://kovan.etherscan.io/address/"+txDetails.poolAddress} callback={() => redirectWindowHash(txDetails.poolAddress, true)}/>
         </p>
       </ModalBody>
     </Fragment>

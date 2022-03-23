@@ -42,6 +42,7 @@ class App extends Component {
 			let activeAccount = await this.getAccounts();
 			//this.web3 = await getWeb3();
 			this.accounts = await this.web3.eth.getAccounts();
+			//console.log('linkkkkk', this.props.match.params.address)
 			if(!activeAccount){
 				console.log('accounts' , this.accounts, this.accounts[0]);
 				activeAccount = this.accounts[0];

@@ -45,7 +45,7 @@ class SearchModal extends Component {
   }
 
   getModalBody = (poolInfo) => {
-    if(!this.state.pending){
+    if(!this.state.pending && !this.props.linkAddress){
       return <TextField ref="searchTerm" label="Name or Address" placeholder="Enter Name or Address"/>
     }
     return <p>Searching...</p>
@@ -53,7 +53,10 @@ class SearchModal extends Component {
 
   render() {
     const { poolInfo } = this.props;
-	console.log('props', this.props);
+    console.log('props search modal', this.props);
+    if(this.props.linkAddress && !this.state.pending && this.props.poolTrackerAddress && this.props.activeAccount && this.props.tokenMap){
+      this.setValue(this.props.linkAddress);
+    }
 		return (
       <Fragment>
         <ModalHeader>

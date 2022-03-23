@@ -28283,7 +28283,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.5",
-  "updatedAt": "2022-03-16T02:19:39.762Z",
+  "updatedAt": "2022-03-21T03:37:38.168Z",
   "devdoc": {
     "events": {
       "Burn(address,uint256,uint256,uint256,uint256,uint256)": {

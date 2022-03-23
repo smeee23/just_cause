@@ -8,6 +8,9 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 
 import { updatePendingTx } from "../actions/pendingTx"
 
+	export const getAavePriceData = (tokenMap) => {
+
+	}
 	export const getAllowance = async(erc20Instance, address, activeAccount) => {
 		const allowance = await erc20Instance.methods.allowance(activeAccount, address).call();
 		return allowance;
@@ -53,6 +56,22 @@ import { updatePendingTx } from "../actions/pendingTx"
 
 		console.log('poolLists 1111', poolLists)
 		return poolLists;
+	}
+
+	export const addUserDepositedPool = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, userDepositPoolInfo) => {
+
+		for(let i = 0; i < userDepositPoolInfo.length; i++){
+			if(userDepositPoolInfo[i].address === poolAddress){
+				return;
+			}
+		}
+
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		const userBalancePools = depositBalancePools.balances;
+		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
+		userDepositPoolInfo.push(poolInfo[0]);
+		console.log(' userDepositPoolInfo', userDepositPoolInfo);
+		return userDepositPoolInfo;
 	}
 
 	export const updatePoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists) => {
@@ -167,6 +186,13 @@ import { updatePendingTx } from "../actions/pendingTx"
 		}
 		console.log('end');
 		return poolInfo;
+	}
+
+	export const getExternalPoolInfo = async(poolTrackerAddress, activeAccount, tokenMap, address) => {
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
+		const userBalancePools = depositBalancePools.balances;
+		const resultPool = await getPoolInfo([address], tokenMap, userBalancePools);
+		return resultPool;
 	}
 
 	export const searchPools = async(poolTrackerAddress, activeAccount, tokenMap, searchAddr) => {

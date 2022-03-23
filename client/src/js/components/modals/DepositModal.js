@@ -11,8 +11,9 @@ import ERC20Instance from "../../../contracts/IERC20.json";
 import { updatePendingTx } from "../../actions/pendingTx";
 import { updateTxResult } from  "../../actions/txResult";
 import { updateDepositAmount } from  "../../actions/depositAmount";
+import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 
-import {getAllowance, getAmountBase} from '../../func/contractInteractions';
+import {getAllowance, getAmountBase, addUserDepositedPool} from '../../func/contractInteractions';
 import {delay, getTokenBaseAmount} from '../../func/ancillaryFunctions';
 
 
@@ -106,7 +107,21 @@ class DepositModal extends Component {
 
 				});
 				txInfo.success = true;
-				console.log('deposit', result)
+				console.log('deposit', result);
+
+				const tempPoolInfo = await addUserDepositedPool(poolAddress,
+													this.props.activeAccount,
+													this.props.poolTrackerAddress,
+													this.props.tokenMap,
+													this.props.userDepositPoolInfo);
+				console.log('tempPoolInfo', tempPoolInfo);
+				if(tempPoolInfo){
+					console.log('tempPoolInfo', tempPoolInfo);
+					this.props.updateUserDepositPoolInfo(tempPoolInfo);
+				}
+				else{
+					console.log('userDepositPoolInfo', this.props.userDepositPoolInfo);
+				}
 			}
 			catch (error) {
 				console.error(error);
@@ -150,12 +165,14 @@ const mapStateToProps = state => ({
 	poolTrackerAddress: state.poolTrackerAddress,
  	depositAmount: state.depositAmount,
 	activeAccount: state.activeAccount,
+	userDepositPoolInfo: state.userDepositPoolInfo,
 })
 
 const mapDispatchToProps = dispatch => ({
     updateDepositAmount: (amount) => dispatch(updateDepositAmount(amount)),
     updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
 	updateTxResult: (res) => dispatch(updateTxResult(res)),
+	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DepositModal)

@@ -48,12 +48,6 @@ class Header extends Component {
         <NavLink exact to={"/dashboard"}>
           <TextLink text="Dashboard"/>
         </NavLink>
-        <NavLink exact to={"/yourcause"}>
-          <TextLink text="Your Cause"/>
-        </NavLink>
-        <NavLink exact to={"/contributions"}>
-          <TextLink text="Contributions"/>
-        </NavLink>
         <NavLink exact to={"/search"}>
           <TextLink text="Search"/>
         </NavLink>

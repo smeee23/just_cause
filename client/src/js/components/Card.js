@@ -8,6 +8,7 @@ import Icon from "./Icon";
 import palette from "../utils/palette";
 
 import Button from '../components/Button';
+import TextLink from "./TextLink";
 
 import getWeb3 from "../../getWeb3NotOnLoad";
 import PoolTracker from "../../contracts/PoolTracker.json";
@@ -23,13 +24,12 @@ import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
 import {getBalance, getPoolInfo, getDepositorAddress} from '../func/contractInteractions';
-import { rayMul, precise, delay, getHeaderValuesInUSD, displayLogo} from '../func/ancillaryFunctions';
+import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, redirectWindowHash} from '../func/ancillaryFunctions';
 
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
 import PendingTxModal from "../components/modals/PendingTxModal";
-import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 
 
@@ -88,6 +88,7 @@ class Card extends Component {
 	}
 
 	createTokenButtons = (acceptedTokenInfo) => {
+		if(!this.state.open) return;
 		if (!acceptedTokenInfo) return 'no data';
 		let buttonHolder = [];
 		for(let i = 0; i < acceptedTokenInfo.length; i++){
@@ -105,27 +106,47 @@ class Card extends Component {
 
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
 		const isETH = (item.acceptedTokenString === 'ETH') ? true : false;
+
+		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
+
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
-				<div className="card__body__column">
-					<h3 className="mb0"> {displayLogo(item.acceptedTokenString)} {item.acceptedTokenString } </h3>
-					<p>{"address: " + address.slice(0, 6) + "..."+address.slice(-4)+' '}</p>
-					<p>{"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)+' '}</p>
-					<p>{"APY: "+ item.depositAPY+'%'}</p>
-					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
-					{this.displayWithdraw(item, address)}
+				<div className="card__body__column_one">
+					<h3 className="mb0"> {displayLogo(item.acceptedTokenString)} {item.acceptedTokenString} </h3><p style={{fontSize:17}}>{" "+ item.depositAPY+'% APY'}</p>
 				</div>
-				<div className="card__body__column">
-					<p>{"pool balance: "+precise(item.totalDeposits, item.decimals)}</p>
-					<p>{"your balance: "+precise(item.userBalance, item.decimals)}</p>
-					<p>{"donated: "+precise(rayMul(item.amountScaled, item.reserveNormalizedIncome) - item.userBalance, item.decimals)}</p>
-					<p>{"claimed: "+precise(item.claimedInterest, item.decimals)}</p>
-					<p>{"unclaimed: "+precise(item.unclaimedInterest, item.decimals)}</p>
+				<div style={{fontSize:17}} className="card__body__column__three">
+					<p>{"pool balance"}</p>
+					<p>{"your balance"}</p>
+					<p>{"claimed"}</p>
+					<p>{"unclaimed"}</p>
+				</div>
 
+				<TextLink text={"Share Tweet"} callback={() => redirectWindowHash("https://twitter.com/share?url="+encodeURIComponent("https://smeee23.github.io/just_cause/#/just_cause/search?address="), address)}/>
+
+				<div className="card__body__column__four">
 					{this.displayClaim(item, address)}
 				</div>
-				<div className="card__body__column">
-					<p>{about}</p>
+				<div className="card__body__column__five">
+					{this.displayWithdraw(item, address)}
+				</div>
+				<div className="card__body__column__six">
+					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
+				</div>
+				<div className="card__body__column__nine">
+					<TextLink text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowHash("https://kovan.etherscan.io/address/", address)}/>
+				</div>
+				<div className="card__body__column__two">
+					<TextLink text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowHash("https://kovan.etherscan.io/address/", receiver)}/>
+				</div>
+				<div style={{fontSize:17}} className="card__body__column__eight">
+					<p className="mr">{about}</p>
+				</div>
+
+				<div style={{fontSize:17}} className="card__body__column__seven">
+					<p>{precise(item.totalDeposits, item.decimals)+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD, false)+")"}</p>
+					<p>{precise(item.userBalance, item.decimals)+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD, false)+")"}</p>
+					<p>{precise(item.claimedInterest, item.decimals)+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD, true)+")" }</p>
+					<p>{precise(item.unclaimedInterest, item.decimals) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD, true)+")"}</p>
 				</div>
 			</div>
 		return tokenInfo;
@@ -134,7 +155,6 @@ class Card extends Component {
 		<p>{"liq Index: "+item.liquidityIndex}</p>
 		*/
 	}
-
 	getDepositAmountModal = () => {
 		if(this.props.depositAmount){
 			let modal = <Modal isOpen={true}><DepositModal depositInfo={this.props.depositAmount}/></Modal>
@@ -326,7 +346,7 @@ class Card extends Component {
 								{ title }
 							</h3>
 				<div className="card__header--right">
-					<p className="mb0">{ about.slice(0, 20) + "..." }</p>
+					{tokenButtons}
 				</div>
 				<div className="card__header--right">
 								<p className="mb0">{"your deposit: " + userBalance}</p>
@@ -335,10 +355,7 @@ class Card extends Component {
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
 				</div>
-						<div className="card__body">
-								{tokenButtons}
-								{tokenInfo}
-						</div>
+				{tokenInfo}
 				<div className="card__bar"/>
 				{this.getDepositAmountModal()}
 				{this.getWithdrawAmountModal()}

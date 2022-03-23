@@ -16,9 +16,8 @@ const routes = (
 		<Switch>
 			<Route exact path={"/"} component={Homepage}/>
 			<Route exact path={"/dashboard"} component={Dashboard}/>
-			<Route exact path={"/yourcause"} component={YourCause}/>
-			<Route exact path={"/contributions"} component={Contributions}/>
 			<Route exact path={"/search"} component={Search}/>
+			<Route exact path={"/search:address"} component={Search}/>
 		</Switch>
 		<Header/>
 	</main>

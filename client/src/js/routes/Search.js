@@ -16,7 +16,7 @@ import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import {updateSearchInfo } from "../actions/searchInfo";
 
-import {searchPools, updatePoolInfo } from '../func/contractInteractions';
+import {searchPools, updatePoolInfo, getExternalPoolInfo } from '../func/contractInteractions';
 
 class Search extends Component {
 
@@ -25,11 +25,14 @@ class Search extends Component {
 
 		this.state = {
 			openModal: false,
+			linkAddress: '',
 		}
 	}
 
 	componentDidMount = async () => {
 		window.scrollTo(0,0);
+		//const info = await this.getExternalLink();
+		//console.log('info', info);
 	}
 
 	componentDidUpdate = () => {
@@ -63,17 +66,26 @@ class Search extends Component {
 		}
 	}
 
+	getExternalLink = async() => {
+		//if(this.props.poolTrackerAddress && this.props.activeAccount && this.props.tokenMap && this.state.linkAddress){
+		const info = await getExternalPoolInfo(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap, this.state.linkAddress);
+		console.log('info', info)
+		const results = this.createCardInfo(info)
+		console.log('results', results)
+		return results;
+		//}
+	}
 	getSearchResults = () => {
-		if(this.props.searchInfo){
-			//if(this.state.openModel === true) this.closeModal();
-			const searchResults = this.createCardInfo(this.props.searchInfo)
-			//this.props.updateSearchInfo('');
-			return searchResults;
-		}
-		else{
-			let modal = <Modal isOpen={true}><SearchModal/></Modal>;
-			return modal;
-		}
+			if(this.props.searchInfo){
+				//if(this.state.openModel === true) this.closeModal();
+				const searchResults = this.createCardInfo(this.props.searchInfo)
+				//this.props.updateSearchInfo('');
+				return searchResults;
+			}
+			else{
+				let modal = <Modal isOpen={true}><SearchModal linkAddress={this.state.linkAddress}/></Modal>;
+				return modal;
+			}
 	}
 
 	openModal = () => {
@@ -88,7 +100,7 @@ class Search extends Component {
 
 	getSearchModal = () => {
 		if(!this.props.searchInfo || this.state.openModal){
-			let modal = <Modal isOpen={true}><SearchModal/></Modal>;
+			let modal = <Modal isOpen={true}><SearchModal linkAddress={this.state.linkAddress}/></Modal>;
 			return modal;
 		}
 	}
@@ -114,6 +126,20 @@ class Search extends Component {
 	}
 
 	render() {
+		const linkAddress  = this.props.match.params.address;
+		if(!this.state.linkAddress){
+			if(linkAddress){
+				this.setState({linkAddress});
+			}
+			else if(window.location.href.includes('?address=') && !this.state.linkAddress){
+				let addr = window.location.href;
+				console.log('linkAddress', linkAddress, this.props, window.location.href);
+				console.log('addr', typeof addr, addr)
+				addr = addr.substring(addr.length - 42);
+				this.setState({linkAddress: addr});
+			}
+		}
+
 		return (
 			<Fragment>
 				<article>

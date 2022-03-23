@@ -16,11 +16,11 @@ class Circle extends Component {
 
                     <circle stroke="#FFFFFF" cx="10.5" cy="10.5" r="9.5" strokeWidth="1"></circle>
                 </g>
-                <text fontSize="1.25px" alignmentBaseline="central" anchor="middle" fontFamily="Hurme" x="24%" y="4" fill="white">WELCOME TO</text>
-                <text fontSize="1.25px" alignmentBaseline="central" anchor="middle" fontFamily="Hurme" x="24%" y="6" fill="white">THE FUTURE</text>
-                <text fontSize="1.25px" alignmentBaseline="central" anchor="middle" fontFamily="Hurme" x="24%" y="8" fill="white">OF CROWDFUNDING</text>
-                <text fontSize="1.25px" alignmentBaseline="central" anchor="middle" fontFamily="Hurme" x="24%" y="10" fill="white">WITH...</text>
-                <text fontSize="3px" alignmentBaseline="central" anchor="middle" fontFamily="Hurme" x="12%" y="13" fill="white">JUSTCAUSE</text>
+                <text fontSize="1.25px" alignmentBaseline="central" anchor="middle" x="24%" y="4" fill="white">WELCOME TO</text>
+                <text fontSize="1.25px" alignmentBaseline="central" anchor="middle" x="24%" y="6" fill="white">THE FUTURE</text>
+                <text fontSize="1.25px" alignmentBaseline="central" anchor="middle" x="24%" y="8" fill="white">OF CROWDFUNDING</text>
+                <text fontSize="1.25px" alignmentBaseline="central" anchor="middle" x="24%" y="10" fill="white">WITH...</text>
+                <text fontSize="3px" alignmentBaseline="central" anchor="middle" x="12%" y="13" fill="white">JUSTCAUSE</text>
                 </svg>
 		);
 	}

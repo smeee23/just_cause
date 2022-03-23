@@ -89,6 +89,7 @@ class YourCause extends Component {
 	}
 
 	getNewPoolModal = () => {
+		console.log('deployInfo outer', this.props.deployInfo);
 		if(this.props.deployInfo){
 			console.log('deployInfo', this.props.deployInfo);
 			let modal = <Modal isOpen={true}><NewPoolModal poolInfo={this.props.deployInfo}/></Modal>;
@@ -97,8 +98,10 @@ class YourCause extends Component {
 	}
 	deploy = async() => {
 		this.props.updateDeployInfo('');
+		console.log('deploy reached 1', this.props.deployInfo);
 		const activeAccount = this.props.activeAccount;
 		await this.props.updateDeployInfo({activeAccount: activeAccount});
+		console.log('deploy reached 2', this.props.deployInfo);
 	}
 
 	displayDeployInfo = async(txInfo) => {

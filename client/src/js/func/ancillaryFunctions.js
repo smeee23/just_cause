@@ -7,14 +7,8 @@ import TetherLogo from "../components/cryptoLogos/TetherLogo";
 import EthLogo from "../components/cryptoLogos/EthLogo";
 import AaveLogo from "../components/cryptoLogos/AaveLogo";
 
-export const redirectWindow = (hash, isAddr) => {
-  let newPageUrl
-  if(!isAddr){
-    newPageUrl = "https://kovan.etherscan.io/tx/"+hash;
-  }
-  else{
-    newPageUrl = "https://kovan.etherscan.io/address/"+hash;
-  }
+export const redirectWindowHash = (url, hash) => {
+  let newPageUrl = url + hash;
   window.open(newPageUrl, "_blank")
 }
 
@@ -82,6 +76,19 @@ export const delay = (delayInms) => {
     resolve(2);
     }, delayInms);
   });
+}
+
+export const getFormatUSD = (amount, priceUSD, isInterest) => {
+  amount = amount * priceUSD;
+
+  if(isInterest){
+    if(amount && amount < 0.01){
+      return  "<$0.01";
+    }
+  }
+  amount = amount.toFixed(2);
+  amount = isNaN(amount) ? "$0.00" : ('$' + amount);
+  return amount;
 }
 
 export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {

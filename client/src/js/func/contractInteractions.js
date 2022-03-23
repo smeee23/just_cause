@@ -49,12 +49,12 @@ import { updatePendingTx } from "../actions/pendingTx"
 
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
 
-		console.log('poolLists', poolLists)
+		console.log('poolLists 1', poolLists)
 		for(let i = 0; i < poolLists.length; i++){
 			poolLists[i].push(poolInfo[0]);
 		}
 
-		console.log('poolLists 1111', poolLists)
+		console.log('poolLists 2', poolLists)
 		return poolLists;
 	}
 

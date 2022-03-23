@@ -1,5 +1,5 @@
 {
-  "contractName": "IERC20",
+  "contractName": "IAaveOracle",
   "abi": [
     {
       "anonymous": false,
@@ -7,23 +7,17 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "owner",
+          "name": "asset",
           "type": "address"
         },
         {
           "indexed": true,
           "internalType": "address",
-          "name": "spender",
+          "name": "source",
           "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
         }
       ],
-      "name": "Approval",
+      "name": "AssetSourceUpdated",
       "type": "event"
     },
     {
@@ -32,33 +26,90 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "to",
+          "name": "baseCurrency",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "value",
+          "name": "baseCurrencyUnit",
           "type": "uint256"
         }
       ],
-      "name": "Transfer",
+      "name": "BaseCurrencySet",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "fallbackOracle",
+          "type": "address"
+        }
+      ],
+      "name": "FallbackOracleUpdated",
       "type": "event"
     },
     {
       "inputs": [],
-      "name": "totalSupply",
+      "name": "ADDRESSES_PROVIDER",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "contract IPoolAddressesProvider",
           "name": "",
-          "type": "uint256"
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "assets",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "sources",
+          "type": "address[]"
+        }
+      ],
+      "name": "setAssetSources",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "fallbackOracle",
+          "type": "address"
+        }
+      ],
+      "name": "setFallbackOracle",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "assets",
+          "type": "address[]"
+        }
+      ],
+      "name": "getAssetsPrices",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
         }
       ],
       "stateMutability": "view",
@@ -68,124 +119,36 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "account",
+          "name": "asset",
           "type": "address"
         }
       ],
-      "name": "balanceOf",
+      "name": "getSourceOfAsset",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "address",
           "name": "",
-          "type": "uint256"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "recipient",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "transfer",
+      "inputs": [],
+      "name": "getFallbackOracle",
       "outputs": [
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "spender",
-          "type": "address"
-        }
-      ],
-      "name": "allowance",
-      "outputs": [
-        {
-          "internalType": "uint256",
           "name": "",
-          "type": "uint256"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "spender",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "approve",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "recipient",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "transferFrom",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"Approval(address,address,uint256)\":{\"details\":\"Emitted when the allowance of a `spender` for an `owner` is set by a call to {approve}. `value` is the new allowance.\"},\"Transfer(address,address,uint256)\":{\"details\":\"Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero.\"}},\"kind\":\"dev\",\"methods\":{\"allowance(address,address)\":{\"details\":\"Returns the remaining number of tokens that `spender` will be allowed to spend on behalf of `owner` through {transferFrom}. This is zero by default. This value changes when {approve} or {transferFrom} are called.\"},\"approve(address,uint256)\":{\"details\":\"Sets `amount` as the allowance of `spender` over the caller's tokens. Returns a boolean value indicating whether the operation succeeded. IMPORTANT: Beware that changing an allowance with this method brings the risk that someone may use both the old and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards: https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729 Emits an {Approval} event.\"},\"balanceOf(address)\":{\"details\":\"Returns the amount of tokens owned by `account`.\"},\"totalSupply()\":{\"details\":\"Returns the amount of tokens in existence.\"},\"transfer(address,uint256)\":{\"details\":\"Moves `amount` tokens from the caller's account to `recipient`. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event.\"},\"transferFrom(address,address,uint256)\":{\"details\":\"Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism. `amount` is then deducted from the caller's allowance. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Interfaces.sol\":\"IERC20\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/Interfaces.sol\":{\"keccak256\":\"0x3f27d302d23229bc92c99bcefa2c50a22f836b37a4e95e56cbb3c6755b85e7be\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://ccada2b7e4eca31398090f1d5c7bac957a1245928e7ead54ac7a031d7842a882\",\"dweb:/ipfs/QmSzF8BTiTTtH9M2PszBrehQ2V122diarYru4FqAmy2hcL\"]},\"project:/contracts/Libraries.sol\":{\"keccak256\":\"0x117bbb4ee43dd5cacc056a35a38e0dca5684d96e47227ea7af67055c86669591\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://465406979ef38d2b8bdd6156ee750d7a3fa34224cef6d32182a5263cbb02c899\",\"dweb:/ipfs/Qmd3jrLyNdkPW6MVJFXApy7i1sVPKQPjDVzMorBSmYpFuQ\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"source\",\"type\":\"address\"}],\"name\":\"AssetSourceUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"baseCurrency\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"baseCurrencyUnit\",\"type\":\"uint256\"}],\"name\":\"BaseCurrencySet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"fallbackOracle\",\"type\":\"address\"}],\"name\":\"FallbackOracleUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"ADDRESSES_PROVIDER\",\"outputs\":[{\"internalType\":\"contract IPoolAddressesProvider\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"assets\",\"type\":\"address[]\"}],\"name\":\"getAssetsPrices\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getFallbackOracle\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getSourceOfAsset\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"assets\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"sources\",\"type\":\"address[]\"}],\"name\":\"setAssetSources\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"fallbackOracle\",\"type\":\"address\"}],\"name\":\"setFallbackOracle\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"AssetSourceUpdated(address,address)\":{\"details\":\"Emitted after the price source of an asset is updated\",\"params\":{\"asset\":\"The address of the asset\",\"source\":\"The price source of the asset\"}},\"BaseCurrencySet(address,uint256)\":{\"details\":\"Emitted after the base currency is set\",\"params\":{\"baseCurrency\":\"The base currency of used for price quotes\",\"baseCurrencyUnit\":\"The unit of the base currency\"}},\"FallbackOracleUpdated(address)\":{\"details\":\"Emitted after the address of fallback oracle is updated\",\"params\":{\"fallbackOracle\":\"The address of the fallback oracle\"}}},\"kind\":\"dev\",\"methods\":{\"ADDRESSES_PROVIDER()\":{\"returns\":{\"_0\":\"The address of the PoolAddressesProvider contract\"}},\"getAssetsPrices(address[])\":{\"params\":{\"assets\":\"The list of assets addresses\"},\"returns\":{\"_0\":\"The prices of the given assets\"}},\"getFallbackOracle()\":{\"returns\":{\"_0\":\"The address of the fallback oracle\"}},\"getSourceOfAsset(address)\":{\"params\":{\"asset\":\"The address of the asset\"},\"returns\":{\"_0\":\"The address of the source\"}},\"setAssetSources(address[],address[])\":{\"params\":{\"assets\":\"The addresses of the assets\",\"sources\":\"The addresses of the price sources\"}},\"setFallbackOracle(address)\":{\"params\":{\"fallbackOracle\":\"The address of the fallback oracle\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"ADDRESSES_PROVIDER()\":{\"notice\":\"Returns the PoolAddressesProvider\"},\"getAssetsPrices(address[])\":{\"notice\":\"Returns a list of prices from a list of assets addresses\"},\"getFallbackOracle()\":{\"notice\":\"Returns the address of the fallback oracle\"},\"getSourceOfAsset(address)\":{\"notice\":\"Returns the address of the source for an asset address\"},\"setAssetSources(address[],address[])\":{\"notice\":\"Sets or replaces price sources of assets\"},\"setFallbackOracle(address)\":{\"notice\":\"Sets the fallback oracle\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Interfaces.sol\":\"IAaveOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/Interfaces.sol\":{\"keccak256\":\"0x3f27d302d23229bc92c99bcefa2c50a22f836b37a4e95e56cbb3c6755b85e7be\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://ccada2b7e4eca31398090f1d5c7bac957a1245928e7ead54ac7a031d7842a882\",\"dweb:/ipfs/QmSzF8BTiTTtH9M2PszBrehQ2V122diarYru4FqAmy2hcL\"]},\"project:/contracts/Libraries.sol\":{\"keccak256\":\"0x117bbb4ee43dd5cacc056a35a38e0dca5684d96e47227ea7af67055c86669591\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://465406979ef38d2b8bdd6156ee750d7a3fa34224cef6d32182a5263cbb02c899\",\"dweb:/ipfs/Qmd3jrLyNdkPW6MVJFXApy7i1sVPKQPjDVzMorBSmYpFuQ\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -49383,42 +49346,94 @@
   },
   "networks": {},
   "schemaVersion": "3.4.5",
-  "updatedAt": "2022-03-23T20:48:07.689Z",
+  "updatedAt": "2022-03-23T20:48:07.625Z",
   "devdoc": {
     "events": {
-      "Approval(address,address,uint256)": {
-        "details": "Emitted when the allowance of a `spender` for an `owner` is set by a call to {approve}. `value` is the new allowance."
+      "AssetSourceUpdated(address,address)": {
+        "details": "Emitted after the price source of an asset is updated",
+        "params": {
+          "asset": "The address of the asset",
+          "source": "The price source of the asset"
+        }
       },
-      "Transfer(address,address,uint256)": {
-        "details": "Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero."
+      "BaseCurrencySet(address,uint256)": {
+        "details": "Emitted after the base currency is set",
+        "params": {
+          "baseCurrency": "The base currency of used for price quotes",
+          "baseCurrencyUnit": "The unit of the base currency"
+        }
+      },
+      "FallbackOracleUpdated(address)": {
+        "details": "Emitted after the address of fallback oracle is updated",
+        "params": {
+          "fallbackOracle": "The address of the fallback oracle"
+        }
       }
     },
     "kind": "dev",
     "methods": {
-      "allowance(address,address)": {
-        "details": "Returns the remaining number of tokens that `spender` will be allowed to spend on behalf of `owner` through {transferFrom}. This is zero by default. This value changes when {approve} or {transferFrom} are called."
+      "ADDRESSES_PROVIDER()": {
+        "returns": {
+          "_0": "The address of the PoolAddressesProvider contract"
+        }
       },
-      "approve(address,uint256)": {
-        "details": "Sets `amount` as the allowance of `spender` over the caller's tokens. Returns a boolean value indicating whether the operation succeeded. IMPORTANT: Beware that changing an allowance with this method brings the risk that someone may use both the old and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards: https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729 Emits an {Approval} event."
+      "getAssetsPrices(address[])": {
+        "params": {
+          "assets": "The list of assets addresses"
+        },
+        "returns": {
+          "_0": "The prices of the given assets"
+        }
       },
-      "balanceOf(address)": {
-        "details": "Returns the amount of tokens owned by `account`."
+      "getFallbackOracle()": {
+        "returns": {
+          "_0": "The address of the fallback oracle"
+        }
       },
-      "totalSupply()": {
-        "details": "Returns the amount of tokens in existence."
+      "getSourceOfAsset(address)": {
+        "params": {
+          "asset": "The address of the asset"
+        },
+        "returns": {
+          "_0": "The address of the source"
+        }
       },
-      "transfer(address,uint256)": {
-        "details": "Moves `amount` tokens from the caller's account to `recipient`. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event."
+      "setAssetSources(address[],address[])": {
+        "params": {
+          "assets": "The addresses of the assets",
+          "sources": "The addresses of the price sources"
+        }
       },
-      "transferFrom(address,address,uint256)": {
-        "details": "Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism. `amount` is then deducted from the caller's allowance. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event."
+      "setFallbackOracle(address)": {
+        "params": {
+          "fallbackOracle": "The address of the fallback oracle"
+        }
       }
     },
     "version": 1
   },
   "userdoc": {
     "kind": "user",
-    "methods": {},
+    "methods": {
+      "ADDRESSES_PROVIDER()": {
+        "notice": "Returns the PoolAddressesProvider"
+      },
+      "getAssetsPrices(address[])": {
+        "notice": "Returns a list of prices from a list of assets addresses"
+      },
+      "getFallbackOracle()": {
+        "notice": "Returns the address of the fallback oracle"
+      },
+      "getSourceOfAsset(address)": {
+        "notice": "Returns the address of the source for an asset address"
+      },
+      "setAssetSources(address[],address[])": {
+        "notice": "Sets or replaces price sources of assets"
+      },
+      "setFallbackOracle(address)": {
+        "notice": "Sets the fallback oracle"
+      }
+    },
     "version": 1
   }
 }

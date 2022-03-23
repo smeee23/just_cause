@@ -33,7 +33,7 @@ class NewPoolModal extends Component {
     let result;
 	let txInfo;
 	try{
-		//this.props.updateDeployInfo('');
+		this.props.updateDeployInfo('');
 		const web3 = await getWeb3();
 		const activeAccount = this.props.activeAccount;
 		console.log("acceptedTokens", acceptedTokens, this.props.tokenMap);
@@ -73,7 +73,6 @@ class NewPoolModal extends Component {
   }
 
 	displayDeployInfo = async(txInfo) => {
-		this.props.updateDeployInfo('');
 		this.props.updateDeployTxResult('');
 		this.props.updateDeployTxResult(txInfo);
 		await delay(5000);

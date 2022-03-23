@@ -85,6 +85,7 @@ class Dashboard extends Component {
 												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo]);
 				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
 				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
+				console.log('(poolLists 3', poolLists);
 			}
 
 			return modal;

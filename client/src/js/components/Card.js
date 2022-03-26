@@ -105,7 +105,7 @@ class Card extends Component {
 		if (!this.props.tokenMap) return 'no token data';
 
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
-		const isETH = (item.acceptedTokenString === 'ETH') ? true : false;
+		const isETH = (item.acceptedTokenString === 'ETH' || 'MATIC') ? true : false;
 
 		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
 
@@ -143,10 +143,10 @@ class Card extends Component {
 				</div>
 
 				<div style={{fontSize:17}} className="card__body__column__seven">
-					<p>{precise(item.totalDeposits, item.decimals)+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD, false)+")"}</p>
-					<p>{precise(item.userBalance, item.decimals)+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD, false)+")"}</p>
-					<p>{precise(item.claimedInterest, item.decimals)+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD, true)+")" }</p>
-					<p>{precise(item.unclaimedInterest, item.decimals) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD, true)+")"}</p>
+					<p>{precise(item.totalDeposits, item.decimals)+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
+					<p>{precise(item.userBalance, item.decimals)+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+					<p>{precise(item.claimedInterest, item.decimals)+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
+					<p>{precise(item.unclaimedInterest, item.decimals) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
 				</div>
 			</div>
 		return tokenInfo;
@@ -171,6 +171,7 @@ class Card extends Component {
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);;
 			const activeAccount = this.props.activeAccount;
 			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount);
+			console.log('tokenString', tokenString);
 			await this.props.updateDepositAmount({tokenString: tokenString, tokenAddress: tokenAddress, userBalance: userBalance, poolAddress: poolAddress, activeAccount: activeAccount, amount: ''});
 			//this.updatePoolInfo(this.props.depositAmount.poolAddress, this.props.depositAmount.activeAccount);
 		}
@@ -293,29 +294,6 @@ class Card extends Component {
 			return modal;
 		}
 	}
-	/*updatePoolInfo = async(poolAddress, activeAccount) => {
-
-		const depositBalancePools = await getDepositorAddress(activeAccount, this.props.poolTrackerAddress); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
-		const userBalancePools = depositBalancePools.balances;
-
-		const poolInfo = await getPoolInfo([poolAddress], this.props.tokenMap,  userBalancePools);
-		const poolLists = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo];
-		console.log('poolLists');
-		for(let i=0; i < poolLists.length; i++){
-			for(let j=0; j < poolLists[i].length; j++){
-				if(poolLists[i][j].address === poolAddress){
-					console.log(poolLists[i][j].address);
-					console.log(poolInfo[0]);
-					console.log(poolLists[i][j]);
-					poolLists[i][j] = poolInfo[0];
-				}
-			}
-		}
-
-		this.props.updateVerifiedPoolInfo(poolLists[0]);
-		this.props.updateOwnerPoolInfo(poolLists[1]);
-		this.props.updateUserDepositPoolInfo(poolLists[2]);
-	}*/
 
 	render() {
 		const { title, about, idx, address, receiver, acceptedTokenInfo} = this.props;

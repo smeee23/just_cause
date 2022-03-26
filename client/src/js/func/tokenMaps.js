@@ -21,13 +21,16 @@ export const kovanTokenMap = {
     AMPL: {address:"0x3E0437898a5667a4769B1Ca5A34aAB1ae7E81377",decimals: 9, apiKey: "ampl"},
 }
 
-export const kovanV3TokenMap = {
-    AAVE: {address:'0xA3a8697C4C6A7D9ccF9238cb567b122d53012ac9', decimals: 18, apiKey: "aave"},
-    DAI: {address:'0x58Cd851c28dF05Edc7F018B533C0257DE57673f7', decimals: 18, apiKey: "dai"},
-    LINK: {address:'0xFfaDa869df79320120dfFd6eeE8cF664Dba43146', decimals: 18, apiKey: "tusd"},
-    USDC: {address:'0xa982Aef90A37675C0E321e3e2f3aDC959fB89351', decimals: 6, apiKey: "usdc"},
-    USDT: {address:'0x8D01d567AFdE8601C6BA784CF0da7Da12b3BFd66', decimals: 6, apiKey: "usdt"},
-    WBTC: {address:'0xaE4A267987f640AE1b0Dd757854Af00651cf2EC7', decimals: 8, apiKey: "wbtc"},
-    ETH: {address:'0xF1bE881Ee7034ebC0CD47E1af1bA94EC30DF3583', decimals: 18, apiKey: "eth"},
-    EURS: {address:'0x8017B7FC5473d05e67E617072fB237D24Add550b', decimals: 18, apiKey: "eth"},
+export const polygonMumbaiV3TokenMap = {
+    AAVE: {address: '0x0AB1917A0cf92cdcf7F7b637EaC3A46BBBE41409', decimals: 18, apiKey: "aave"},
+    DAI: {address:'0x9A753f0F7886C9fbF63cF59D0D4423C5eFaCE95B', decimals: 18, apiKey: "dai"},
+    LINK: {address:'0xD9E7e5dd6e122dDE11244e14A60f38AbA93097f2', decimals: 18, apikey:"chainlink"},
+    USDC: {address:'0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2',decimals: 6, apiKey: "usd-coin"},
+    USDT: {address:'0x21C561e551638401b937b03fE5a0a0652B99B7DD',decimals: 6, apiKey: "tether"},
+    WBTC: {address:'0x85E44420b6137bbc75a85CAB5c9A3371af976FdE',decimals: 8, apiKey: "bitcoin"},
+    WETH: {address:'0xd575d4047f8c667E064a4ad433D04E25187F40BB',decimals: 18, apiKey: "ethereum"},
+    MATIC: {address:'0xb685400156cF3CBE8725958DeAA61436727A30c3',decimals: 9, apiKey: "matic-network"},
 }
+
+export const aaveOraclePolygonMumbaiV3Address = '0x520D14AE678b41067f029Ad770E2870F85E76588';
+export const aavePoolAddressesProviderPolygonMumbaiV3Address = '0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6';

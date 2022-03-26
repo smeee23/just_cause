@@ -53,7 +53,7 @@ class WithdrawModal extends Component {
             const tokenAddress = this.props.withdrawAmount.tokenAddress;
             const poolAddress = this.props.withdrawAmount.poolAddress;
             const tokenString = this.props.withdrawAmount.tokenString;
-            const isETH = (tokenString === 'ETH');
+            const isETH = (tokenString === 'ETH'|| 'MATIC');
             const activeAccount = this.props.activeAccount;
 
             const amount = this.props.withdrawAmount.amount;

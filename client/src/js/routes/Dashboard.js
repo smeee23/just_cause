@@ -16,6 +16,8 @@ import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateDeployTxResult } from  "../actions/deployTxResult";
 import {updateDeployInfo} from "../actions/deployInfo";
+import { updateDepositAmount } from  "../actions/depositAmount";
+import { updateWithdrawAmount } from  "../actions/withdrawAmount";
 
 import { updatePoolInfo, addDeployedPool } from '../func/contractInteractions';
 
@@ -31,6 +33,11 @@ class Dashboard extends Component {
 	componentDidMount = async () => {
 		try{
 			window.scrollTo(0,0);
+			if(this.props.deployInfo) this.props.updateDeployInfo('');
+
+			if(this.props.depositAmount) this.props.updateDepositAmount('');
+
+			if(this.props.withdrawAmount) this.props.updateWithdrawAmount('');
 		}
 		catch (error) {
 			// Catch any errors for any of the above operations.
@@ -134,6 +141,7 @@ class Dashboard extends Component {
 			if(i === this.state.selectedTokenIndex) isDisabled = true;
 			buttonHolder.push(<Button text={tokenName} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
 		}
+		buttonHolder.push(<Button text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/>);
 		return buttonHolder;
 	}
 	createCardInfo = () => {
@@ -164,15 +172,14 @@ class Dashboard extends Component {
 		console.log("*********verifiedPoolInfo:", this.props.verifiedPoolInfo);
 		const cardHolder = this.createCardInfo();
 		const optionButtons = this.createOptionButtons();
+
 		return (
 			<Fragment>
 				<article>
 					<section className="page-section page-section--center horizontal-padding bw0">
 						<div style={{display:"flex"}}>
 							{optionButtons}
-
 						</div>
-						<Button text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/>
 					</section>
 					<section className="page-section horizontal-padding bw0">
 						{this.getPendingTxModal()}
@@ -213,6 +220,8 @@ const mapDispatchToProps = dispatch => ({
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 	updateDeployTxResult: (res) => dispatch(updateDeployTxResult(res)),
 	updateDeployInfo: (res) => dispatch(updateDeployInfo(res)),
+	updateDepositAmount: (amnt) => dispatch(updateDepositAmount(amnt)),
+	updateWithdrawAmount: (amount) => dispatch(updateWithdrawAmount(amount)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

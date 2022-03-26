@@ -55,6 +55,7 @@ class NewPoolModal extends Component {
 			PoolTracker.abi,
 			this.props.poolTrackerAddress,
 		);
+		console.log('this.props.poolTrackerAddress', this.props.poolTrackerAddress);
 		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, about, receiver).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver};
@@ -112,10 +113,11 @@ class NewPoolModal extends Component {
           <Multiselect ref="tokens" label="Accepted Tokens">
             <p className="mb0">DAI</p>
             <p className="mb0">USDC</p>
-            <p className="mb0">ETH</p>
+            <p className="mb0">MATIC</p>
             <p className="mb0">WBTC</p>
             <p className="mb0">USDT</p>
             <p className="mb0">AAVE</p>
+			<p className="mb0">WETH</p>
           </Multiselect>
         </ModalBody>
         <ModalCtas>

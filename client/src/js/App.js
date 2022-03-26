@@ -22,10 +22,12 @@ import getWeb3 from "../getWeb3";
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
 import JCOwnerERC721 from "../contracts/JCOwnerERC721.json";
+import PoolAddressesProvider from "../contracts/IPoolAddressesProvider.json"
+import Pool from "../contracts/IPool.json"
 import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.json";
-import { kovanTokenMap } from "./func/tokenMaps.js";
-import {getPoolInfo, getDepositorAddress, getAllowance} from './func/contractInteractions.js';
-import {getPriceFromMessari} from './func/messariPriceFeeds.js'
+import { kovanTokenMap, polygonMumbaiV3TokenMap, aavePoolAddressesProviderPolygonMumbaiV3Address } from "./func/tokenMaps.js";
+import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave} from './func/contractInteractions.js';
+import {getPriceFromMessari, getPriceFromCoinGecko} from './func/priceFeeds.js'
 
 import { Modal } from "./components/Modal";
 import PendingTxModal from "./components/modals/PendingTxModal";
@@ -54,11 +56,6 @@ class App extends Component {
 				this.setActiveAccountState(activeAccount);
 				this.networkId = await this.web3.eth.net.getId();
 
-				this.AaveProtocolDataProviderInstance = new this.web3.eth.Contract(
-					ProtocolDataProvider.abi,
-					ProtocolDataProvider.networks[this.networkId] && ProtocolDataProvider.networks[this.networkId].address,
-				);
-
 				this.PoolTrackerInstance = new this.web3.eth.Contract(
 					PoolTracker.abi,
 					PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address,
@@ -66,12 +63,12 @@ class App extends Component {
 
 				this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
 
+				this.setPoolTrackAddress(this.poolTrackerAddress);
 				const tokenMap = this.getTokenMapFromNetwork();
 				this.setTokenMapState(tokenMap);
 				this.setPoolState(activeAccount);
-				this.setPoolTrackAddress(this.poolTrackerAddress);
 
-				let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
+				//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
 			}
 		}
 
@@ -124,28 +121,30 @@ class App extends Component {
 		this.props.updateActiveAccount(activeAccount);
 	}
 	getTokenMapFromNetwork = () => {
+		console.log('networkId', this.networkId);
 		if(this.networkId === 42){
 			return kovanTokenMap;
+		}
+		else if(this.networkId === 80001){
+			return polygonMumbaiV3TokenMap;
 		}
 	}
 	setTokenMapState = async(tokenMap) => {
 		let acceptedTokens = Object.keys(tokenMap);
+		const geckoPriceData = await getPriceFromCoinGecko(this.networkId);
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
-			const aaveTokenInfo = await this.AaveProtocolDataProviderInstance.methods.getReserveData(address).call();
-
+			const aaveTokenInfo = await getLiquidityIndexFromAave(address, aavePoolAddressesProviderPolygonMumbaiV3Address);
+			console.log('aaveTokenInfo', aaveTokenInfo);
 			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
 			const allowance = await getAllowance(erc20Instance, this.poolTrackerAddress, this.props.activeAccount);
 			tokenMap[key]['allowance'] = allowance > 0 ? true : false;
-			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.liquidityRate).toPrecision(4);
+			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
-			tokenMap[key]['priceUSD'] = '';//await getPriceFromMessari(tokenMap[key] && tokenMap[key].apiKey);
-			if(!tokenMap[key]['priceUSD']){
-				if(key === 'USDT' | 'USDC' | 'DAI' | 'TUSD'){
-					tokenMap[key]['priceUSD'] = 1.00;
-				}
-			}
+			console.log('liquidity', aaveTokenInfo.currentLiquidityRate,  aaveTokenInfo.liquidityIndex);
+			const apiKey = tokenMap[key] && tokenMap[key].apiKey;
+			tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
 			console.log(key, 'price usd', tokenMap[key]['priceUSD'])
 		}
 		console.log('updated tokenMap', tokenMap, typeof tokenMap);

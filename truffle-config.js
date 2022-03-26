@@ -57,6 +57,21 @@ module.exports = {
                             return provider;
       },
       network_id: "69"
+    },
+    matic_mumbai: {
+      provider: () => {
+        let provider = new HDWalletProvider({mnemonic: key,
+                              providerOrUrl:"https://polygon-mumbai.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
+                              addressIndex: AccountIndex,
+                              network_id: 80001,
+                              confirmations: 2,
+                              timeoutBlocks: 200,
+                              skipDryRun: true,
+                              chainId: 80001
+                            });
+                            return provider;
+      },
+      network_id: "80001"
     }
   },
   compilers: {

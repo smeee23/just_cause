@@ -5,12 +5,27 @@ import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
+import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
+import Pool from "../../contracts/IPool.json";
 
-import { updatePendingTx } from "../actions/pendingTx"
+	export const getLiquidityIndexFromAave = async(tokenAddress, poolAddressesProviderAddress) => {
+		const web3 = await getWeb3();
+		const PoolAddressesProviderInstance = new web3.eth.Contract(
+			PoolAddressesProvider.abi,
+			poolAddressesProviderAddress,
+		);
 
-	export const getAavePriceData = (tokenMap) => {
+		let poolAddr = await PoolAddressesProviderInstance.methods.getPool().call();
 
+		const PoolInstance = new web3.eth.Contract(
+			Pool.abi,
+			poolAddr,
+		);
+		let aaveTokenInfo = await PoolInstance.methods.getReserveData(tokenAddress).call();
+		console.log('result', aaveTokenInfo.liquidityIndex);
+		return aaveTokenInfo;
 	}
+
 	export const getAllowance = async(erc20Instance, address, activeAccount) => {
 		const allowance = await erc20Instance.methods.allowance(activeAccount, address).call();
 		return allowance;
@@ -29,15 +44,17 @@ import { updatePendingTx } from "../actions/pendingTx"
 	}
 
 	export const getBalance = async(tokenAddress, decimals, tokenString, activeAccount) => {
-		if(tokenString !== 'ETH'){
-			let balance = await getWalletBalance(tokenAddress, activeAccount);
-			balance = balance / 10**decimals;
+		if(tokenString === 'ETH' || 'MATIC'){
+			const web3 = await getWeb3()
+			let balance = await web3.eth.getBalance(activeAccount);
+			console.log('balance', balance);
+			balance = await web3.utils.fromWei(balance, "ether");
 			return Number.parseFloat(balance).toPrecision(6);
 		}
 		else{
-			const web3 = await getWeb3()
-			let balance = await web3.eth.getBalance(activeAccount);
-			balance = await web3.utils.fromWei(balance, "ether");
+			let balance = await getWalletBalance(tokenAddress, activeAccount);
+			balance = balance / 10**decimals;
+			console.log('balance', balance);
 			return Number.parseFloat(balance).toPrecision(6);
 		}
 	}

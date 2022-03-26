@@ -57,7 +57,7 @@ class DepositModal extends Component {
 				const poolAddress = this.props.depositAmount.poolAddress;
 				const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 				const tokenString = this.props.depositAmount.tokenString;
-				const isETH = (tokenString === 'ETH');
+				const isETH = (tokenString === 'ETH' || 'MATIC');
 				const activeAccount = this.props.activeAccount;
 
 				const amount = this.props.depositAmount.amount;

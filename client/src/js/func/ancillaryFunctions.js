@@ -7,6 +7,10 @@ import TetherLogo from "../components/cryptoLogos/TetherLogo";
 import EthLogo from "../components/cryptoLogos/EthLogo";
 import AaveLogo from "../components/cryptoLogos/AaveLogo";
 
+export const getBlockExplorerUrl = (networkId) => {
+
+}
+
 export const redirectWindowHash = (url, hash) => {
   let newPageUrl = url + hash;
   window.open(newPageUrl, "_blank")
@@ -78,16 +82,13 @@ export const delay = (delayInms) => {
   });
 }
 
-export const getFormatUSD = (amount, priceUSD, isInterest) => {
+export const getFormatUSD = (amount, priceUSD) => {
   amount = amount * priceUSD;
-
-  if(isInterest){
-    if(amount && amount < 0.01){
-      return  "<$0.01";
-    }
+  if(amount && amount < 0.01){
+    return  "<$0.01";
   }
   amount = amount.toFixed(2);
-  amount = isNaN(amount) ? "$0.00" : ('$' + amount);
+  amount = isNaN(amount) ? "n/a" : ('$' + amount);
   return amount;
 }
 
@@ -110,18 +111,29 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
 
     totalBalance += precise(item.totalDeposits, item.decimals) * priceUSD;
   }
-  userBalance = userBalance.toFixed(2);
-  userBalance = isNaN(userBalance) ? "$0.00" : ('$' + userBalance);
 
-  totalBalance = totalBalance.toFixed(2);
-  totalBalance = isNaN(totalBalance) ? "$0.00" : ('$' + totalBalance);
+  if(userBalance && userBalance < 0.01){
+    userBalance =  "<$0.01";
+  }
+  else{
+    userBalance = userBalance.toFixed(2);
+    userBalance = isNaN(userBalance) ? "n/a" : ('$' + userBalance);
+  }
+
+  if(totalBalance && totalBalance < 0.01){
+    totalBalance =  "<$0.01";
+  }
+  else{
+    totalBalance = totalBalance.toFixed(2);
+    totalBalance = isNaN(totalBalance) ? "n/a" : ('$' + totalBalance);
+  }
 
   if(interestEarned && interestEarned < 0.01){
     interestEarned =  "<$0.01";
   }
   else{
     interestEarned = interestEarned.toFixed(2);
-    interestEarned = isNaN(interestEarned) ? "$0.00" : ('$' + interestEarned);
+    interestEarned = isNaN(interestEarned) ? "n/a" : ('$' + interestEarned);
   }
 
   return {userBalance, interestEarned, totalBalance}

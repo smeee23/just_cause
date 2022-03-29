@@ -105,7 +105,7 @@ class Card extends Component {
 		if (!this.props.tokenMap) return 'no token data';
 
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
-		const isETH = (item.acceptedTokenString === 'ETH' || 'MATIC') ? true : false;
+		const isETH = (item.acceptedTokenString === 'ETH' || item.acceptedTokenString === 'MATIC') ? true : false;
 
 		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
 
@@ -218,8 +218,8 @@ class Card extends Component {
 			const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === assetAddress);
 			const parameter = {
 				from: activeAccount,
-				gas: web3.utils.toHex(500000),
-				gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+				gas: web3.utils.toHex(800000),
+				gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
 			};
 
 			let PoolTrackerInstance = new web3.eth.Contract(
@@ -252,8 +252,8 @@ class Card extends Component {
 			console.log('approve clicked');
 			const parameter = {
 				from: activeAccount ,
-				gas: web3.utils.toHex(500000),
-				gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+				gas: web3.utils.toHex(800000),
+				gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
 				};
 
 			const amount = '10000000000000000000000000000000';

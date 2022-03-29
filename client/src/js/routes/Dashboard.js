@@ -141,7 +141,7 @@ class Dashboard extends Component {
 			if(i === this.state.selectedTokenIndex) isDisabled = true;
 			buttonHolder.push(<Button text={tokenName} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
 		}
-		buttonHolder.push(<Button text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/>);
+		buttonHolder.push(<Button key={4} text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/>);
 		return buttonHolder;
 	}
 	createCardInfo = () => {

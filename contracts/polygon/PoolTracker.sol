@@ -18,6 +18,8 @@ contract PoolTracker {
     //mapping(address => address[]) private depositors;
     //mapping(address => address[]) private owners;
     mapping(string => address) private names;
+    mapping(address => uint256) private tvl;
+    mapping(address => uint256) private totalDonated;
     address[] private verifiedPools;
     bytes32[] validByteCodeHashes;
 
@@ -56,6 +58,7 @@ contract PoolTracker {
     }
 
     function addDeposit(uint256 _amount, address _asset, address _pool, bool isETH) onlyPools(_pool) external payable {
+        tvl[_asset] += _amount;
         if(isETH){
             IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(poolAddr, _pool, 0);
             IJustCausePool(_pool).depositETH/*{value: msg.value}*/(_asset, /*msg.sender,*/ msg.value);
@@ -73,13 +76,15 @@ contract PoolTracker {
     }
 
     function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) onlyPools(_pool) external {
+        tvl[_asset] -= _amount;
         jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
         IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender, _isETH);
         emit WithdrawDeposit(msg.sender, _pool, _asset, _amount);
     }
 
-    function claimInterest(address _asset, address _pool) onlyPools(_pool) external {
-        uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset);
+    function claimInterest(address _asset, address _pool, bool _isETH) onlyPools(_pool) external {
+        uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset, _isETH);
+        totalDonated[_asset] += amount;
         emit Claim(msg.sender, IJustCausePool(_pool).getRecipient(), _pool, _asset, amount);
     }
 
@@ -109,6 +114,11 @@ contract PoolTracker {
         isPool[child] = true;
         emit AddPool(child, _name, _receiver);
     }
+
+    function getTVL(address _asset) public view returns(uint256){
+        return tvl[_asset];
+    }
+
 
     function getDepositorERC721Address() public view returns(address){
         return address(jCDepositorERC721);

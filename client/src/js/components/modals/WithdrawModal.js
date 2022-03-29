@@ -53,7 +53,7 @@ class WithdrawModal extends Component {
             const tokenAddress = this.props.withdrawAmount.tokenAddress;
             const poolAddress = this.props.withdrawAmount.poolAddress;
             const tokenString = this.props.withdrawAmount.tokenString;
-            const isETH = (tokenString === 'ETH'|| 'MATIC');
+            const isETH = (tokenString === 'ETH' || tokenString === 'MATIC');
             const activeAccount = this.props.activeAccount;
 
             const amount = this.props.withdrawAmount.amount;
@@ -65,8 +65,8 @@ class WithdrawModal extends Component {
 
             const parameter = {
                 from: activeAccount,
-                gas: web3.utils.toHex(500000),
-                gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+                gas: web3.utils.toHex(800000),
+                gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
             };
 
             let PoolTrackerInstance = new web3.eth.Contract(

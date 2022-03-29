@@ -57,7 +57,7 @@ class DepositModal extends Component {
 				const poolAddress = this.props.depositAmount.poolAddress;
 				const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 				const tokenString = this.props.depositAmount.tokenString;
-				const isETH = (tokenString === 'ETH' || 'MATIC');
+				const isETH = (tokenString === 'ETH' || tokenString === 'MATIC');
 				const activeAccount = this.props.activeAccount;
 
 				const amount = this.props.depositAmount.amount;
@@ -77,7 +77,7 @@ class DepositModal extends Component {
 					parameter = {
 						from: activeAccount,
 						gas: web3.utils.toHex(800000),
-						gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+						gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
 					};
 				}
 
@@ -85,7 +85,7 @@ class DepositModal extends Component {
 					parameter = {
 						from: activeAccount,
 						gas: web3.utils.toHex(800000),
-						gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei')),
+						gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei')),
 						value: amountInBase
 					};
 				}

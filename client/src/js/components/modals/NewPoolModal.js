@@ -47,8 +47,8 @@ class NewPoolModal extends Component {
 
 		const parameter = {
 			from: activeAccount,
-			gas: web3.utils.toHex(800000),
-			gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+			gas: web3.utils.toHex(1000000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
 		};
 
 		let PoolTrackerInstance = new web3.eth.Contract(
@@ -97,16 +97,9 @@ class NewPoolModal extends Component {
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">Create a new pool</h2>
+          <h2 className="mb0">create new pool</h2>
         </ModalHeader>
         <ModalBody>
-          <Select label="Icon">
-            <Icon name="poolShape1" size={32} color={palette("brand-red")} strokeWidth={3}/>
-            <Icon name="poolShape2" size={32} color={palette("brand-yellow")} strokeWidth={3}/>
-            <Icon name="poolShape3" size={32} color={palette("brand-blue")} strokeWidth={3}/>
-            <Icon name="poolShape4" size={32} color={palette("brand-pink")} strokeWidth={3}/>
-            <Icon name="poolShape5" size={32} color={palette("brand-green")} strokeWidth={3}/>
-          </Select>
           <TextField ref="poolName" label="Pool Name" id="poolName"/>
           <TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
           <TextField ref="about" label="Pool Description" placeholder="Add a short description for your pool"/>

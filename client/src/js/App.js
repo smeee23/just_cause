@@ -4,7 +4,7 @@ import React, { Component } from "react"
 import { connect } from "react-redux"
 import { ConnectedRouter } from 'connected-react-router'
 //import { createBrowserHistory } from 'history'
-import { createHashHistory } from 'history'
+import { createHashHistory, createBrowserHistory } from 'history'
 
 import routes from './routes'
 import { detectMobile } from "./actions/mobile"
@@ -220,7 +220,8 @@ class App extends Component {
 		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
 			history = this.props.history;
 		} else {
-			history = createHashHistory({ basename: '/just_cause' })
+			//history = createHashHistory({ basename: '/just_cause' })
+			history = createBrowserHistory({ basename: '/just_cause' })
 		}
 
 		return (

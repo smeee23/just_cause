@@ -1917,7 +1917,7 @@ interface IJustCausePool {
     function depositETH(address _wethAddress, /*address _depositor,*/ uint256 _value) external payable;
     function tallyDeposit(uint256 _amount, address _assetAddress) external;
     function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool isETH) external;
-    function withdrawDonations(address _assetAddress) external returns(uint256);
+    function withdrawDonations(address _assetAddress, bool isETH) external returns(uint256);
     function getTotalDeposits(address _token) external view returns(uint256);
     function getAcceptedTokens() external view returns(address[] memory);
     function getName() external view returns(string memory);

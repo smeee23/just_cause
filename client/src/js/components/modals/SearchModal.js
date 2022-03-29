@@ -60,7 +60,7 @@ class SearchModal extends Component {
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">Enter Pool Contract Address or Name to Search for (must be exact match, case sensitive):</h2>
+          <h2 className="mb0">Enter Pool Contract Address or Name to Search (must be exact match, case sensitive):</h2>
         </ModalHeader>
         <ModalBody>
           {this.getModalBody(poolInfo)}

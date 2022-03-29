@@ -16,7 +16,6 @@ contract JustCausePoolAaveV3 is Initializable {
     //mapping(address => mapping(address => uint256)) private depositors;
     mapping(address => uint256) private totalDeposits;
     mapping(address => uint256) private interestWithdrawn;
-    uint256 private claimIndex;
     bool private isBase;
 
     IPoolAddressesProvider provider;
@@ -134,13 +133,20 @@ contract JustCausePoolAaveV3 is Initializable {
         emit Withdraw(_assetAddress, _depositor, _amount);
     }
 
-    function withdrawDonations(address _assetAddress) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external returns(uint256){
+    function withdrawDonations(address _assetAddress, bool isETH) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external returns(uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
-        IPool(poolAddr).withdraw(_assetAddress, interestEarned, receiver);
-        claimIndex = getAaveLiquidityIndex(_assetAddress);
         interestWithdrawn[_assetAddress] += interestEarned;
+
+        if(!isETH){
+            IPool(poolAddr).withdraw(_assetAddress, interestEarned, receiver);
+        }
+        else{
+            IERC20(aTokenAddress).approve(wethGatewayAddr, interestEarned);
+            IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, interestEarned, receiver);
+        }
+
         return interestEarned;
     }
 

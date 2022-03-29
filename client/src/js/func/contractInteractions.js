@@ -44,7 +44,7 @@ import Pool from "../../contracts/IPool.json";
 	}
 
 	export const getBalance = async(tokenAddress, decimals, tokenString, activeAccount) => {
-		if(tokenString === 'ETH' || 'MATIC'){
+		if(tokenString === 'ETH' || tokenString === 'MATIC'){
 			const web3 = await getWeb3()
 			let balance = await web3.eth.getBalance(activeAccount);
 			console.log('balance', balance);

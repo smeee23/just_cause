@@ -14,10 +14,10 @@ import NewPoolModal from '../components/modals/NewPoolModal'
 const routes = (
 	<main>
 		<Switch>
-			<Route exact path={"/"} component={Homepage}/>
-			<Route exact path={"/dashboard"} component={Dashboard}/>
-			<Route exact path={"/search"} component={Search}/>
-			<Route exact path={"/search:address"} component={Search}/>
+			<Route exact path={"./"} component={Homepage}/>
+			<Route exact path={"./dashboard"} component={Dashboard}/>
+			<Route exact path={"./search"} component={Search}/>
+			<Route exact path={"./search:address"} component={Search}/>
 		</Switch>
 		<Header/>
 	</main>

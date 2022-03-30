@@ -121,7 +121,7 @@ class Card extends Component {
 					<p>{"unclaimed"}</p>
 				</div>
 
-				<TextLink text={"Share Tweet"} callback={() => redirectWindowHash("https://twitter.com/share?url="+encodeURIComponent("https://smeee23.github.io/just_cause/#/just_cause/search?address="), address)}/>
+				<TextLink text={"Share Tweet"} callback={() => redirectWindowHash("https://twitter.com/share?url="+encodeURIComponent("justcause.finance/#/just_cause/search?address="), address)}/>
 
 				<div className="card__body__column__four">
 					{this.displayClaim(item, address)}

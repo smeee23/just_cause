@@ -82,13 +82,23 @@ export const delay = (delayInms) => {
   });
 }
 
-export const getFormatUSD = (amount, priceUSD) => {
-  amount = amount * priceUSD;
-  if(amount && amount < 0.01){
+export const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+}
+
+export const formatDollars = (x) => {
+  if(x && x < 0.01){
     return  "<$0.01";
   }
-  amount = amount.toFixed(2);
-  amount = isNaN(amount) ? "n/a" : ('$' + amount);
+  x = x.toFixed(2);
+  let commas = numberWithCommas(x);
+  x = isNaN(x) ? "n/a" : ('$' + commas);
+  return x;
+}
+
+export const getFormatUSD = (amount, priceUSD) => {
+  amount = amount * priceUSD;
+  amount = formatDollars(amount);
   return amount;
 }
 
@@ -112,29 +122,9 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
     totalBalance += precise(item.totalDeposits, item.decimals) * priceUSD;
   }
 
-  if(userBalance && userBalance < 0.01){
-    userBalance =  "<$0.01";
-  }
-  else{
-    userBalance = userBalance.toFixed(2);
-    userBalance = isNaN(userBalance) ? "n/a" : ('$' + userBalance);
-  }
-
-  if(totalBalance && totalBalance < 0.01){
-    totalBalance =  "<$0.01";
-  }
-  else{
-    totalBalance = totalBalance.toFixed(2);
-    totalBalance = isNaN(totalBalance) ? "n/a" : ('$' + totalBalance);
-  }
-
-  if(interestEarned && interestEarned < 0.01){
-    interestEarned =  "<$0.01";
-  }
-  else{
-    interestEarned = interestEarned.toFixed(2);
-    interestEarned = isNaN(interestEarned) ? "n/a" : ('$' + interestEarned);
-  }
+  userBalance = formatDollars(userBalance);
+  totalBalance = formatDollars(totalBalance);
+  interestEarned = formatDollars(interestEarned);
 
   return {userBalance, interestEarned, totalBalance}
 }

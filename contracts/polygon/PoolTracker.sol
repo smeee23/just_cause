@@ -119,6 +119,9 @@ contract PoolTracker {
         return tvl[_asset];
     }
 
+    function getTotalDonated(address _asset) public view returns(uint256){
+        return totalDonated[_asset];
+    }
 
     function getDepositorERC721Address() public view returns(address){
         return address(jCDepositorERC721);

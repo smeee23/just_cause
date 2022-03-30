@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom'
 import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
-
+import { formatDollars } from "../func/ancillaryFunctions"
 class Header extends Component {
 
   isMetaMaskInstalled = () => {
@@ -40,6 +40,28 @@ class Header extends Component {
     return address.slice(0, 6) + "..."+address.slice(-4);
   }
 
+  displayTVL = (id, label) => {
+    const tokenMap = this.props.tokenMap
+    if(tokenMap){
+      let total = 0.0;
+
+      let acceptedTokens = Object.keys(tokenMap);
+		  for(let i = 0; i < acceptedTokens.length; i++){
+			  const key = acceptedTokens[i];
+
+        const priceUSD = tokenMap[key] && tokenMap[key].priceUSD;
+        const tokenAmount = tokenMap[key][id];
+        console.log('tvl header', tokenAmount, priceUSD);
+        if(tokenAmount && priceUSD){
+          total += tokenAmount * priceUSD;
+        }
+
+      }
+      const s = formatDollars(total);
+      return label + ' ' + s.substring(0, s.length - 3);
+    }
+  }
+
 	render() {
     const { isMobile } = this.props;
 
@@ -65,7 +87,8 @@ class Header extends Component {
           <Logo/>
           <h2 className="mb0">JustCause</h2>
         </NavLink>
-
+          <h2 className="mb0 horizontal-padding" style={{fontSize:18}}>{  this.displayTVL('totalEarned', 'Donated:') }</h2>
+          <h2 className="mb0 horizontal-padding" style={{fontSize:18}}>{  this.displayTVL('tvl', 'TVL:') }</h2>
         <nav className="app-bar__items">
           { nav }
           <Button text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
@@ -78,6 +101,7 @@ class Header extends Component {
 const mapStateToProps = state => ({
 	isMobile: state.isMobile,
   activeAccount: state.activeAccount,
+  tokenMap: state.tokenMap,
 })
 
 const mapDispatchToProps = dispatch => ({

@@ -28,6 +28,7 @@ import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.
 import { kovanTokenMap, polygonMumbaiV3TokenMap, aavePoolAddressesProviderPolygonMumbaiV3Address } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave} from './func/contractInteractions.js';
 import {getPriceFromMessari, getPriceFromCoinGecko} from './func/priceFeeds.js'
+import {precise, getFormatUSD} from './func/ancillaryFunctions';
 
 import { Modal } from "./components/Modal";
 import PendingTxModal from "./components/modals/PendingTxModal";
@@ -135,6 +136,7 @@ class App extends Component {
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
+
 			const aaveTokenInfo = await getLiquidityIndexFromAave(address, aavePoolAddressesProviderPolygonMumbaiV3Address);
 			console.log('aaveTokenInfo', aaveTokenInfo);
 			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
@@ -146,6 +148,16 @@ class App extends Component {
 			const apiKey = tokenMap[key] && tokenMap[key].apiKey;
 			tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
 			console.log(key, 'price usd', tokenMap[key]['priceUSD'])
+
+
+			const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
+			console.log(key, 'tvl', precise(tvl, tokenMap[key]['decimals']));
+			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
+
+			const totalDonated = await this.PoolTrackerInstance.methods.getTotalDonated(address).call();
+			console.log(key, 'totalDonated', precise(totalDonated, tokenMap[key]['decimals']));
+			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
+
 		}
 		console.log('updated tokenMap', tokenMap, typeof tokenMap);
 		this.props.updateTokenMap(tokenMap);

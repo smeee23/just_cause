@@ -7,8 +7,19 @@ import TetherLogo from "../components/cryptoLogos/TetherLogo";
 import EthLogo from "../components/cryptoLogos/EthLogo";
 import AaveLogo from "../components/cryptoLogos/AaveLogo";
 
-export const getBlockExplorerUrl = (networkId) => {
+export const redirectWindowTwitterShare = (url) => {
+  window.open(url, "_blank");
+}
 
+export const getBlockExplorerUrl = (label) => {
+  label = '/'+label+'/';
+  const urlBase = 'https://mumbai.polygonscan.com'
+  return urlBase + label;
+}
+export const redirectWindowBlockExplorer = (hash, label) => {
+  let url = getBlockExplorerUrl(label);
+  let newPageUrl = url + hash;
+  window.open(newPageUrl, "_blank")
 }
 
 export const redirectWindowHash = (url, hash) => {

@@ -3,7 +3,7 @@ import { ModalHeader, ModalBody} from "../Modal";
 
 import TextLink from '../TextLink'
 
-import { redirectWindowHash } from '../../func/ancillaryFunctions';
+import { redirectWindowBlockExplorer, getBlockExplorerUrl } from '../../func/ancillaryFunctions';
 
 export default class DeployTxModal extends Component {
 
@@ -14,7 +14,7 @@ export default class DeployTxModal extends Component {
   }
   showPoolButton = (txDetails) => {
     if(txDetails.status === 'success'){
-      return <TextLink text={"- POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)} href={"https://kovan.etherscan.io/address/"+txDetails.poolAddress} callback={() => redirectWindowHash(txDetails.poolAddress, true)}/>
+      return <TextLink text={"- POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)} href={getBlockExplorerUrl('address')+txDetails.poolAddress} callback={() => redirectWindowBlockExplorer(txDetails.poolAddress, 'address')}/>
     }
   }
   render() {
@@ -28,8 +28,8 @@ export default class DeployTxModal extends Component {
         <ModalBody>
             <p>{txDetails.poolName}<br/>
                {this.showPoolButton(txDetails)}
-               <TextLink text={"- RECEIVER: "+txDetails.receiver.slice(0, 6) + "..."+txDetails.receiver.slice(-4)} href={"https://kovan.etherscan.io/address/"+txDetails.receiver} callback={() => redirectWindowHash(txDetails.receiver, true)}/>
-              <TextLink text={"- TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)} href={"https://kovan.etherscan.io/tx/"+txDetails.txHash} callback={() => redirectWindowHash(txDetails.txHash, false)}/>
+               <TextLink text={"- RECEIVER: "+txDetails.receiver.slice(0, 6) + "..."+txDetails.receiver.slice(-4)} href={getBlockExplorerUrl('address')+txDetails.receiver} callback={() => redirectWindowBlockExplorer(txDetails.receiver, 'address')}/>
+              <TextLink text={"- TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)} href={getBlockExplorerUrl('tx')+txDetails.txHash} callback={() => redirectWindowBlockExplorer(txDetails.txHash, 'tx')}/>
             </p>
         </ModalBody>
       </Fragment>

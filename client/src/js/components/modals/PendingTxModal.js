@@ -3,7 +3,7 @@ import { ModalHeader, ModalBody} from "../Modal";
 
 import TextLink from '../TextLink'
 
-import { redirectWindowHash } from '../../func/ancillaryFunctions';
+import { redirectWindowBlockExplorer, getBlockExplorerUrl } from '../../func/ancillaryFunctions';
 
 export default class PendingTxModal extends Component {
 
@@ -16,8 +16,8 @@ export default class PendingTxModal extends Component {
         </ModalHeader>
         <ModalBody>
             <p>
-               <TextLink text={"- TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)} href={"https://kovan.etherscan.io/tx/"+txDetails.txHash} callback={() => redirectWindowHash(txDetails.txHash, false)}/>
-               <TextLink text={"- POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)} href={"https://kovan.etherscan.io/address/"+txDetails.poolAddress} callback={() => redirectWindowHash(txDetails.poolAddress, true)}/>
+               <TextLink text={"- TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)} href={getBlockExplorerUrl('tx')+txDetails.txHash} callback={() => redirectWindowBlockExplorer(txDetails.txHash, 'tx')}/>
+               <TextLink text={"- POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)} href={getBlockExplorerUrl('address')+txDetails.poolAddress} callback={() => redirectWindowBlockExplorer(txDetails.poolAddress, 'address')}/>
             </p>
         </ModalBody>
       </Fragment>

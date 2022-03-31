@@ -24,13 +24,14 @@ import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
 import {getBalance, getPoolInfo, getDepositorAddress} from '../func/contractInteractions';
-import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, redirectWindowHash} from '../func/ancillaryFunctions';
+import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
 
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
 import PendingTxModal from "../components/modals/PendingTxModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
+import Twitter from "../components/logos/Twitter";
 
 
 class Card extends Component {
@@ -121,7 +122,7 @@ class Card extends Component {
 					<p>{"unclaimed"}</p>
 				</div>
 
-				<TextLink text={"Share Tweet"} callback={() => redirectWindowHash("https://twitter.com/share?url="+encodeURIComponent("justcause.finance/#/just_cause/search?address="), address)}/>
+				<TextLink text={"Share Tweet"} callback={() => redirectWindowTwitterShare("https://twitter.com/share?url="+encodeURIComponent("https://www.justcause.finance/#/just_cause/search?address=") + address)}/>
 
 				<div className="card__body__column__four">
 					{this.displayClaim(item, address)}
@@ -133,10 +134,10 @@ class Card extends Component {
 					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
 				</div>
 				<div className="card__body__column__nine">
-					<TextLink text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowHash("https://kovan.etherscan.io/address/", address)}/>
+					<TextLink text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
 				</div>
 				<div className="card__body__column__two">
-					<TextLink text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowHash("https://kovan.etherscan.io/address/", receiver)}/>
+					<TextLink text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
 				</div>
 				<div style={{fontSize:17}} className="card__body__column__eight">
 					<p className="mr">{about}</p>
@@ -319,10 +320,14 @@ class Card extends Component {
 		return (
 			<div className={classnames}>
 				<div className="card__header">
-							<Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>
+				<Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>
 				<h3 className="mb0">
-								{ title }
-							</h3>
+					{ title }
+				</h3>
+				<h3 className="mb0 horizontal-padding-sm">
+					<Button tweet="tweet" callback={() => redirectWindowTwitterShare("https://twitter.com/share?url="+encodeURIComponent("https://www.justcause.finance/#/just_cause/search?address=") + address)}/>
+				</h3>
+
 				<div className="card__header--right">
 					{tokenButtons}
 				</div>

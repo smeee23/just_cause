@@ -3,9 +3,19 @@ import classNames from 'classnames'
 
 import Icon from "./Icon";
 
+import Twitter from "./logos/Twitter";
+
 class Button extends Component {
+
+  displayLine = (tweet) => {
+    if(!tweet){
+      return  <div className="button__bar--outer">
+                <div className="button__bar--inner"/>
+              </div>
+    }
+  }
 	render() {
-		const { text, icon, href, callback, disabled, lg } = this.props;
+		const { text, icon, tweet, href, callback, disabled, lg } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -27,10 +37,11 @@ class Button extends Component {
               <Icon name={icon} size={lg ? 64 : 32}/>
             </div>
           ) : null }
+          { tweet ? (
+              <Twitter/>
+          ) : null }
         </div>
-        <div className="button__bar--outer">
-          <div className="button__bar--inner"/>
-        </div>
+        {this.displayLine(tweet)}
       </button>
 		);
 	}

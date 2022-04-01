@@ -8,6 +8,18 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
 import Pool from "../../contracts/IPool.json";
 
+
+	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
+		const web3 = await getWeb3();
+		const PoolAddressesProviderInstance = new web3.eth.Contract(
+			PoolAddressesProvider.abi,
+			poolAddressesProviderAddress,
+		);
+
+		const poolAddr = await PoolAddressesProviderInstance.methods.getPool().call();
+		return poolAddr;
+	}
+
 	export const getLiquidityIndexFromAave = async(tokenAddress, poolAddressesProviderAddress) => {
 		const web3 = await getWeb3();
 		const PoolAddressesProviderInstance = new web3.eth.Contract(

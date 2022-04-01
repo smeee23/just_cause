@@ -17,6 +17,8 @@ import { updateOwnerPoolInfo } from "./actions/ownerPoolInfo"
 import { updateUserDepositPoolAddrs } from "./actions/userDepositPoolAddrs"
 import { updateUserDepositPoolInfo } from "./actions/userDepositPoolInfo"
 import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
+import { updateAavePoolAddress } from "./actions/aavePoolAddress"
+import { updateNetworkId } from "./actions/networkId"
 
 import getWeb3 from "../getWeb3";
 import PoolTracker from "../contracts/PoolTracker.json";
@@ -26,7 +28,7 @@ import PoolAddressesProvider from "../contracts/IPoolAddressesProvider.json"
 import Pool from "../contracts/IPool.json"
 import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.json";
 import { kovanTokenMap, polygonMumbaiV3TokenMap, aavePoolAddressesProviderPolygonMumbaiV3Address } from "./func/tokenMaps.js";
-import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave} from './func/contractInteractions.js';
+import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
 import {getPriceFromMessari, getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, getFormatUSD} from './func/ancillaryFunctions';
 
@@ -45,7 +47,7 @@ class App extends Component {
 			let activeAccount = await this.getAccounts();
 			//this.web3 = await getWeb3();
 			this.accounts = await this.web3.eth.getAccounts();
-			//console.log('linkkkkk', this.props.match.params.address)
+
 			if(!activeAccount){
 				console.log('accounts' , this.accounts, this.accounts[0]);
 				activeAccount = this.accounts[0];
@@ -56,6 +58,7 @@ class App extends Component {
 			if (activeAccount){
 				this.setActiveAccountState(activeAccount);
 				this.networkId = await this.web3.eth.net.getId();
+				this.setNetworkId(this.networkId);
 
 				this.PoolTrackerInstance = new this.web3.eth.Contract(
 					PoolTracker.abi,
@@ -68,7 +71,7 @@ class App extends Component {
 				const tokenMap = this.getTokenMapFromNetwork();
 				this.setTokenMapState(tokenMap);
 				this.setPoolState(activeAccount);
-
+				this.setAavePoolAddress(aavePoolAddressesProviderPolygonMumbaiV3Address)
 				//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
 			}
 		}
@@ -113,6 +116,18 @@ class App extends Component {
 		console.log('aave protocol data response', results);
 	}
 
+	setAavePoolAddress = async(aavePoolAddressesProviderAddress) => {
+		const aavePoolAddress = await getAavePoolAddress(aavePoolAddressesProviderAddress);
+		this.props.updateAavePoolAddress(aavePoolAddress);
+		console.log('aavePoolAddress', this.props.aavePoolAddress);
+
+	}
+
+	setNetworkId = (networkId) => {
+		this.props.updateNetworkId(networkId);
+		console.log('networkId', this.props.networkId);
+	}
+
 	setPoolTrackAddress = (poolTrackerAddress) => {
 		this.props.updatePoolTrackerAddress(poolTrackerAddress);
 	}
@@ -122,7 +137,6 @@ class App extends Component {
 		this.props.updateActiveAccount(activeAccount);
 	}
 	getTokenMapFromNetwork = () => {
-		console.log('networkId', this.networkId);
 		if(this.networkId === 42){
 			return kovanTokenMap;
 		}
@@ -213,7 +227,6 @@ class App extends Component {
 		const ownerPoolInfo = await getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), userBalancePools);
 		const userDepositPoolInfo = await getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), userBalancePools);
 
-
 		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
 		console.log('---------ownerPoolInfo--------', ownerPoolInfo);
 		console.log('---------userDepositPoolInfo--------', userDepositPoolInfo);
@@ -247,6 +260,8 @@ class App extends Component {
 const mapStateToProps = state => ({
 	isMobile: state.isMobile,
 	activeAccount: state.activeAccount,
+	networkId: state.networkId,
+	aavePoolAddress: state.aavePoolAddress,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -260,6 +275,8 @@ const mapDispatchToProps = dispatch => ({
 	updateUserDepositPoolAddrs: (addrsArray) => dispatch(updateUserDepositPoolAddrs(addrsArray)),
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 	updatePoolTrackerAddress: (s) => dispatch(updatePoolTrackerAddress(s)),
+	updateNetworkId: (int) => dispatch(updateNetworkId(int)),
+	updateAavePoolAddress: (s) => dispatch(updateAavePoolAddress(s)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

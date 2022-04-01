@@ -19,6 +19,8 @@ import deployInfoReducer from './deployInfo'
 import depositAmountReducer from './depositAmount'
 import withdrawAmountReducer from './withdrawAmount'
 import searchInfoReducer from './searchInfo'
+import aavePoolAddressReducer from './aavePoolAddress'
+import networkIdReducer from './networkId'
 
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
@@ -39,6 +41,8 @@ const rootReducer = (history) => combineReducers({
 	depositAmount: depositAmountReducer,
 	withdrawAmount: withdrawAmountReducer,
 	searchInfo: searchInfoReducer,
+	aavePoolAddress: aavePoolAddressReducer,
+	networkId: networkIdReducer,
 	router: connectRouter(history),
 })
 

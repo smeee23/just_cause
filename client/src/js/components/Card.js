@@ -69,12 +69,12 @@ class Card extends Component {
 		let isDisabled = false;
 		if(this.props.pendingTx) isDisabled = true;
 		if(isEth){
-			return <Button text="Deposit" disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
+			return <Button text={"Deposit "+tokenString} disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
 		}
 		if(Number(allowance) === 0){
-			return <Button text="Approve" disabled={isDisabled} callback={async() => await this.approve(tokenAddress, this.props.poolTrackerAddress, tokenString, poolAddress)}/>
+			return <Button text={"Approve "+tokenString} disabled={isDisabled} callback={async() => await this.approve(tokenAddress, this.props.poolTrackerAddress, tokenString, poolAddress)}/>
 		}
-		return <Button text="Deposit" disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
+		return <Button text={"Deposit "+tokenString} disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
 	}
 	toggleCardOpen = () => {
 		this.setState({

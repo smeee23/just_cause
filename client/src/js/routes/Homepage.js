@@ -48,7 +48,7 @@ class Homepage extends Component {
 						<h2 style={{margin:'auto', fontSize:50, paddingBottom: "50px"}}>How We Do It</h2>
 						<div style={{margin:'auto'}} className="grid">
 							<div className="grid__item--col-6 grid__item--col-12-medium">
-								<p className="mr">JustCause Pools generate interest through an integration with the Aave lending protocol. Aave is best described as an automated system of liquidity pools. Users deposit tokens they want to lend out, which are amassed into a large lending pool. Borrowers may then draw from these pools by taking out collateralized loans. In exchange for providing liquidity to the market lenders earn a passive rate of interest on their deposits.</p>
+								<p className="mr">JustCause Pools generate interest through an integration with the Aave lending protocol. Aave can be thought of as an automated system of liquidity pools. Users deposit tokens they want to lend out, which are amassed into a large lending pool. Borrowers may then draw from these pools by taking out collateralized loans. In exchange for providing liquidity to the market lenders earn a passive rate of interest on their deposits.</p>
 							</div>
 							<div className="grid__item--col-6 grid__item--col-12-medium">
 								<p className="mr">The Aave Protocol has been audited, secured, and has an ongoing bug bounty program. The protocol is completely open source, allowing anyone to interact and build on top of it. Every possible step has been taken to minimize the risk as much as possible. However, no platform can be considered entirely risk free. Please see the Risks section for more details.</p>

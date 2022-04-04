@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@aave/protocol-js": "^4.0.2",
+    "@fleekhq/fleek-storage-js": "^1.0.21",
     "@openzeppelin/contracts": "^4.4.2",
     "@truffle/hdwallet-provider": "^1.5.0",
     "axios": "^0.21.4",

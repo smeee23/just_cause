@@ -31,6 +31,7 @@ import { kovanTokenMap, polygonMumbaiV3TokenMap, aavePoolAddressesProviderPolygo
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
 import {getPriceFromMessari, getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, getFormatUSD} from './func/ancillaryFunctions';
+import {uploadAbout, getAbout, getIpfsData} from './func/ipfs';
 
 import { Modal } from "./components/Modal";
 import PendingTxModal from "./components/modals/PendingTxModal";
@@ -73,6 +74,11 @@ class App extends Component {
 				this.setPoolState(activeAccount);
 				this.setAavePoolAddress(aavePoolAddressesProviderPolygonMumbaiV3Address)
 				//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
+				//await uploadAbout('this is a test to see if this gets saved to ipfs');
+				await getAbout('test');
+				await getIpfsData('QmPTsBwAC1x4Qhr7Ckd4Vt2GJGR4CcL8bp7WSgeChfCMY2');
+
+				await getIpfsData('bafybeic4sjo4mwkxqz3gpvflmqys2kkq7dow2pvtl2n5ncgt6fih46osgu');
 			}
 		}
 

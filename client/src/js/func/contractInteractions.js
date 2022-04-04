@@ -7,6 +7,7 @@ import ERC20Instance from "../../contracts/IERC20.json";
 import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
 import Pool from "../../contracts/IPool.json";
+import { getIpfsData } from "./ipfs";
 
 
 	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
@@ -174,7 +175,8 @@ import Pool from "../../contracts/IPool.json";
 			let acceptedTokens = await JCPoolInstance.methods.getAcceptedTokens().call();
 			let name = await JCPoolInstance.methods.getName().call();
 			let receiver = await JCPoolInstance.methods.getRecipient().call();
-			let about = await JCPoolInstance.methods.getAbout().call();
+			let aboutHash = await JCPoolInstance.methods.getAbout().call();
+			const about = await getIpfsData(aboutHash);
 			const hashByteCode = await JCPoolInstance.methods.getHashByteCode().call();
 
 			let acceptedTokenStrings = [];

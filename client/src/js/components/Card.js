@@ -25,7 +25,6 @@ import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
 import {getBalance, getPoolInfo, getDepositorAddress} from '../func/contractInteractions';
 import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
-
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'

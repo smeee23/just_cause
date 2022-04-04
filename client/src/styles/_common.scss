@@ -69,6 +69,10 @@ iframe {
 	@include horizontalPadding(($rem-base * 2));
 }
 
+.horizontal-padding-med {
+	@include horizontalPadding(($rem-base * 4));
+}
+
 *::-webkit-scrollbar {
 	width: 0px;
 	background: transparent;

@@ -16,6 +16,8 @@ import { updateDepositAmount } from  "../../actions/depositAmount";
 import {updateDeployInfo} from "../../actions/deployInfo";
 import { updateDeployTxResult } from  "../../actions/deployTxResult";
 
+import {uploadAbout, getAbout, getIpfsData} from '../../func/ipfs';
+
 import { delay } from '../../func/ancillaryFunctions';
 
 class NewPoolModal extends Component {
@@ -88,8 +90,11 @@ class NewPoolModal extends Component {
 	  for(let i = 0; i < tokens.state.selected.length; i++){
 		tokenInfo[i] = tokenInfo[i].props.children;
 	  }
-	  console.log('pool info', poolName, receiver, about, tokens.state.selected);
-	  await this.deployOnChain(poolName, receiver, about, tokens.state.selected);
+
+	  const uploadResult = await uploadAbout(about);
+	  console.log('pool info', poolName, receiver, uploadResult.hash, tokens.state.selected);
+	  const aboutHash = uploadResult.hash;
+	  await this.deployOnChain(poolName, receiver, aboutHash, tokens.state.selected);
   }
   render() {
     const { poolInfo } = this.props;

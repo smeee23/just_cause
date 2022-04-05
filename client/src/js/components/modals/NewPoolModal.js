@@ -16,7 +16,7 @@ import { updateDepositAmount } from  "../../actions/depositAmount";
 import {updateDeployInfo} from "../../actions/deployInfo";
 import { updateDeployTxResult } from  "../../actions/deployTxResult";
 
-import {uploadAbout, getAbout, getIpfsData} from '../../func/ipfs';
+import {uploadAbout, getAbout, getIpfsDataBuffer} from '../../func/ipfs';
 
 import { delay } from '../../func/ancillaryFunctions';
 
@@ -27,6 +27,7 @@ class NewPoolModal extends Component {
 
 		this.state = {
 			isValidInput: 'valid',
+			fileUploadHash:"",
       		amount: 0,
 		}
 	}
@@ -96,6 +97,45 @@ class NewPoolModal extends Component {
 	  const aboutHash = uploadResult.hash;
 	  await this.deployOnChain(poolName, receiver, aboutHash, tokens.state.selected);
   }
+
+  uploadToIpfs = async() => {
+	const reader = new FileReader();
+    reader.onloadend = async() => {
+        const buf = Buffer(reader.result) // Convert data into buffer
+		const uploadResult = await uploadAbout(buf);
+		console.log('upload photo', uploadResult);
+		this.setState({
+			fileUploadHash: uploadResult.hash
+		});
+
+		/*const bufs = await getIpfsDataBuffer(this.state.fileUploadHash);
+
+		const data = Buffer.concat(bufs)
+
+		let blob = new Blob([data], {type:"image/jpg"})
+		let img = document.getElementById("target") // the img tag you want it in
+		img.src = window.URL.createObjectURL(blob)
+		console.log('img', img);*/
+    }
+    const photo = document.getElementById("photo");
+    reader.readAsArrayBuffer(photo.files[0]); // Read Provided File
+
+  }
+
+  fileUploadButton = () => {
+	console.log('fileUploadButton 1');
+	document.getElementById('photo').click();
+	document.getElementById('photo').onchange = () =>{
+		this.uploadToIpfs();
+	}
+  }
+
+  displayImage = () => {
+	  if(this.state.fileUploadHash){
+		  return <img src={'https://ipfs.io/ipfs/'+this.state.fileUploadHash}/>
+	  }
+  }
+
   render() {
     const { poolInfo } = this.props;
 	console.log('props', this.props);
@@ -117,6 +157,9 @@ class NewPoolModal extends Component {
             <p className="mb0">AAVE</p>
 			<p className="mb0">WETH</p>
           </Multiselect>
+		  <input id="photo" type="file" hidden/>
+		  <Button text="Upload Photo" callback={() => this.fileUploadButton()} />
+		  {this.displayImage()}
         </ModalBody>
         <ModalCtas>
           <Button text="Create"

@@ -133,7 +133,7 @@ $baseclass: 'card';
 
   &--open {
     .#{$baseclass}__body {
-      max-height: 700px;
+      max-height: 1500px;
     }
     .#{$baseclass}__open-button {
       transform: rotate(-45deg);

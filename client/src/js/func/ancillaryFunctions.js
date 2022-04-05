@@ -6,6 +6,8 @@ import UsdcLogo from "../components/cryptoLogos/UsdcLogo";
 import TetherLogo from "../components/cryptoLogos/TetherLogo";
 import EthLogo from "../components/cryptoLogos/EthLogo";
 import AaveLogo from "../components/cryptoLogos/AaveLogo";
+import MaticLogo from "../components/cryptoLogos/MaticLogo";
+import WEthLogo from "../components/cryptoLogos/WEthLogo";
 
 export const redirectWindowTwitterShare = (url) => {
   window.open(url, "_blank");
@@ -159,6 +161,12 @@ export const displayLogo = (acceptedTokenString) => {
   }
   else if (acceptedTokenString === 'AAVE'){
     logo = <AaveLogo/>;
+  }
+  else if(acceptedTokenString === 'WETH'){
+    logo = <WEthLogo/>;
+  }
+  else if(acceptedTokenString === 'MATIC'){
+    logo = <MaticLogo/>;
   }
 
   return logo;

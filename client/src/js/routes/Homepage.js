@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import Footer from "../components/Footer";
 import Shapes from '../components/Shapes';
 import Circle from "../components/cryptoLogos/Circle";
+import MaticLogo from "../components/cryptoLogos/MaticLogo";
 
 class Homepage extends Component {
 	componentDidMount() {

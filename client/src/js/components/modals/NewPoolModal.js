@@ -59,7 +59,7 @@ class NewPoolModal extends Component {
 			this.props.poolTrackerAddress,
 		);
 		console.log('this.props.poolTrackerAddress', this.props.poolTrackerAddress);
-		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, about, receiver).send(parameter , (err, transactionHash) => {
+		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, about, this.state.fileUploadHash, receiver).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver};
 			this.props.updateDeployTxResult(txInfo);
@@ -131,9 +131,21 @@ class NewPoolModal extends Component {
   }
 
   displayImage = () => {
-	  if(this.state.fileUploadHash){
-		  return <img src={'https://ipfs.io/ipfs/'+this.state.fileUploadHash}/>
-	  }
+	if(this.state.fileUploadHash){
+	   return <img max-width='100%' height='auto' src={'https://ipfs.io/ipfs/'+this.state.fileUploadHash}/>
+	}
+  }
+
+  isPhotoUploaded = () => {
+	if(this.state.fileUploadHash){
+		return true;
+	}
+  }
+
+  getUploadButtonText = () => {
+	if(this.state.fileUploadHash) return 'Photo Uploaded';
+
+	return 'Upload Photo'
   }
 
   render() {
@@ -158,8 +170,7 @@ class NewPoolModal extends Component {
 			<p className="mb0">WETH</p>
           </Multiselect>
 		  <input id="photo" type="file" hidden/>
-		  <Button text="Upload Photo" callback={() => this.fileUploadButton()} />
-		  {this.displayImage()}
+		  <Button disabled={this.isPhotoUploaded()} text={this.getUploadButtonText()} callback={() => this.fileUploadButton()} />
         </ModalBody>
         <ModalCtas>
           <Button text="Create"

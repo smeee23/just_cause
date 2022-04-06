@@ -32,6 +32,7 @@ contract JustCausePoolAaveV3 is Initializable {
     address master;
     string name;
     string about;
+    string picHash;
 
     modifier onlyAllowedTokens(address _tokenAddr){
         bool isAccepted;
@@ -75,9 +76,10 @@ contract JustCausePoolAaveV3 is Initializable {
         address[] memory _acceptedTokens,
         string memory _name,
         string memory _about,
+        string memory _picHash,
         address _receiver)
 
-    strLength(_name, 30) strLength(_about, 200) initializer() external {
+    strLength(_name, 30) initializer() external {
 
         require(isBase == false, "Cannot initialize base");
         require(receiver == address(0), "Initialize already called");
@@ -86,6 +88,7 @@ contract JustCausePoolAaveV3 is Initializable {
         master = msg.sender;
         name = _name;
         about = _about;
+        picHash = _picHash;
 
         provider = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)); // polygon mumbai v3
         poolAddr = provider.getPool();
@@ -168,6 +171,10 @@ contract JustCausePoolAaveV3 is Initializable {
 
     function getAbout() external view returns(string memory){
         return about;
+    }
+
+    function getPicHash() external view returns(string memory){
+        return picHash;
     }
 
     function getATokenAddress(address _assetAddress) public view returns(address aTokenAddress){

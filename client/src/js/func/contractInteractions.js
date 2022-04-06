@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 
 import getWeb3 from "../../getWeb3NotOnLoad";
-import JCPool from "../../contracts/JustCausePool.json";
+import JCPool from "../../contracts/JustCausePoolAaveV3.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
@@ -177,6 +177,7 @@ import { getIpfsData } from "./ipfs";
 			let receiver = await JCPoolInstance.methods.getRecipient().call();
 			let aboutHash = await JCPoolInstance.methods.getAbout().call();
 			const about = await getIpfsData(aboutHash);
+			const picHash =  await JCPoolInstance.methods.getPicHash().call();
 			const hashByteCode = await JCPoolInstance.methods.getHashByteCode().call();
 
 			let acceptedTokenStrings = [];
@@ -210,6 +211,7 @@ import { getIpfsData } from "./ipfs";
 							receiver: receiver,
 							name: name,
 							about: about,
+							picHash: picHash,
 							address: poolTracker[i],
 							acceptedTokens: acceptedTokenStrings,
 							acceptedTokenInfo: acceptedTokenInfo,

@@ -30,7 +30,7 @@ import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
 import PendingTxModal from "../components/modals/PendingTxModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
-import Twitter from "../components/logos/Twitter";
+import LogoCard from "../components/logos/LogoCard";
 
 
 class Card extends Component {
@@ -49,11 +49,11 @@ class Card extends Component {
 		window.scrollTo(0,0);
 	}
 
-	displayWithdraw = (item, address) => {
+	displayWithdraw = (item, address, tokenString) => {
 	if(item.userBalance > 0){
 		let isDisabled = false;
 		if(this.props.pendingTx) isDisabled = true;
-		return <Button text="Withdraw Deposit" disabled={isDisabled} callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/>
+		return <Button text={"Withdraw "+tokenString} disabled={isDisabled} callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/>
 		}
 	}
 
@@ -100,7 +100,17 @@ class Card extends Component {
 		return buttonHolder;
 	}
 
-	createTokenInfo = (address, receiver, acceptedTokenInfo, about) => {
+	notifyLoad = () => {
+		console.log('image Loaded')
+	}
+	getPoolImage = (picHash) => {
+		if(picHash){
+			return <img max-width='auto' height='100%' src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
+		}
+		return <LogoCard/>
+	}
+
+	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash) => {
 		if (!acceptedTokenInfo) return 'no data';
 		if (!this.props.tokenMap) return 'no token data';
 
@@ -112,7 +122,7 @@ class Card extends Component {
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
 				<div className="card__body__column_one">
-					<h3 className="mb0"> {displayLogo(item.acceptedTokenString)} {item.acceptedTokenString} </h3><p style={{fontSize:17}}>{" "+ item.depositAPY+'% APY'}</p>
+					{this.getPoolImage(picHash)}
 				</div>
 				<div style={{fontSize:17}} className="card__body__column__three">
 					<p>{"pool balance"}</p>
@@ -121,25 +131,22 @@ class Card extends Component {
 					<p>{"unclaimed"}</p>
 				</div>
 
-				<TextLink text={"Share Tweet"} callback={() => redirectWindowTwitterShare("https://twitter.com/share?url="+encodeURIComponent("https://www.justcause.finance/#/just_cause/search?address=") + address)}/>
-
-				<div className="card__body__column__four">
-					{this.displayClaim(item, address)}
-				</div>
-				<div className="card__body__column__five">
-					{this.displayWithdraw(item, address)}
-				</div>
 				<div className="card__body__column__six">
 					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
+					{this.displayWithdraw(item, address, item.acceptedTokenString)}
+					{this.displayClaim(item, address)}
 				</div>
 				<div className="card__body__column__nine">
-					<TextLink text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
+					<p style={{fontSize:17}}>{" "+ item.depositAPY+'% APY'}</p>
+					<h3 className="mb0"> {displayLogo(item.acceptedTokenString)} {item.acceptedTokenString} </h3>
 				</div>
 				<div className="card__body__column__two">
-					<TextLink text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
+					<TextLink style={{fontSize:17}} text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
+					<TextLink style={{fontSize:17}} text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
 				</div>
 				<div style={{fontSize:17}} className="card__body__column__eight">
 					<p className="mr">{about}</p>
+					<Button tweet="tweet" callback={() => redirectWindowTwitterShare("https://twitter.com/share?url="+encodeURIComponent("https://www.justcause.finance/#/just_cause/search?address=") + address)}/>
 				</div>
 
 				<div style={{fontSize:17}} className="card__body__column__seven">
@@ -296,7 +303,7 @@ class Card extends Component {
 	}
 
 	render() {
-		const { title, about, idx, address, receiver, acceptedTokenInfo} = this.props;
+		const { title, about, picHash, idx, address, receiver, acceptedTokenInfo} = this.props;
 		const poolIcons = [
 			{ "name": "poolShape1", "color": palette("brand-red")},
 			{ "name": "poolShape2", "color": palette("brand-yellow")},
@@ -314,7 +321,7 @@ class Card extends Component {
 
 		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
-		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about);
+		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash);
 
 		return (
 			<div className={classnames}>
@@ -322,9 +329,6 @@ class Card extends Component {
 				<Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>
 				<h3 className="mb0">
 					{ title }
-				</h3>
-				<h3 className="mb0 horizontal-padding-sm">
-					<Button tweet="tweet" callback={() => redirectWindowTwitterShare("https://twitter.com/share?url="+encodeURIComponent("https://www.justcause.finance/#/just_cause/search?address=") + address)}/>
 				</h3>
 
 				<div className="card__header--right">

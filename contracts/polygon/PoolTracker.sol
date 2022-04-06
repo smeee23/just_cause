@@ -104,10 +104,10 @@ contract PoolTracker {
         require(instance != address(0), "ERC1167: create failed");
     }
 
-    function createJCPoolClone(address[] memory _acceptedTokens, string memory _name, string memory _about, address _receiver) external {
+    function createJCPoolClone(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, address _receiver) external {
         require(names[_name] == address(0), "pool with name already exists");
         address child = clone(address(baseJCPool));
-        IJustCausePool(child).initialize(_acceptedTokens, _name, _about, _receiver);
+        IJustCausePool(child).initialize(_acceptedTokens, _name, _about, _picHash, _receiver);
         jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, child);
         names[_name] =  child;
         verifiedPools.push(child);

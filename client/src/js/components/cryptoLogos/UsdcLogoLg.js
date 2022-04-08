@@ -6,7 +6,7 @@ class UsdcLogo extends Component {
 
 	render() {
 		return (
-      <svg width="22px" height="22px" viewBox="0 0 22 22">
+      <svg width="150px" height="150px" viewBox="0 0 22 22">
           <title>icons/cypto/usdc</title>
           <g id="icons/cypto/usdc" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
               <g id="usdc-logo" fillRule="nonzero">

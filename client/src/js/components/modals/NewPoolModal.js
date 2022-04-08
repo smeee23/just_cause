@@ -18,7 +18,7 @@ import { updateDeployTxResult } from  "../../actions/deployTxResult";
 
 import {uploadAbout, getAbout, getIpfsDataBuffer} from '../../func/ipfs';
 
-import { delay } from '../../func/ancillaryFunctions';
+import { delay, displayLogo } from '../../func/ancillaryFunctions';
 
 class NewPoolModal extends Component {
 
@@ -166,16 +166,19 @@ class NewPoolModal extends Component {
 	}
   }
 
+  getTokenLogo = (tokenName) => {
+	  return <div> {displayLogo(tokenName)} {tokenName}</div>
+  }
   displayTokenSelection = () => {
 	const tokenStrings = Object.keys(this.props.tokenMap);
 	let buttonHolder = [];
 	for(let i = 0; i < tokenStrings.length; i++){
 		const tokenName = tokenStrings[i];
 		if(!this.state.acceptedTokens.includes(tokenName)){
-			buttonHolder.push(<Button text={tokenName} icon={"plus"} key={i} callback={() => this.addToken(tokenName)}/>);
+			buttonHolder.push(<Button text={this.getTokenLogo(tokenName)} icon={"plus"} key={i} callback={() => this.addToken(tokenName)}/>);
 		}
 		else{
-			buttonHolder.push(<Button text={tokenName} icon={"check"} key={i} callback={() => this.removeToken(tokenName)}/>);
+			buttonHolder.push(<Button text={this.getTokenLogo(tokenName)} icon={"check"} key={i} callback={() => this.removeToken(tokenName)}/>);
 		}
 
 	}
@@ -188,45 +191,45 @@ class NewPoolModal extends Component {
 		return (
       <Fragment>
         <ModalBodyDeploy>
-			<div className="modal__body__column__one">
+			<div  style={{fontSize:17}}  className="modal__body__column__one">
+			<p className="mr">1) Come up with a name for your JustCause Pool. This name will be unique to your Pool. </p>
+			</div>
+
+			<div  className="modal__body__column__two">
 				<TextField ref="poolName" label="Pool Name" id="poolName" value="Name your pool"/>
 			</div>
 
-			<div style={{fontSize:17}}  className="modal__body__column__two">
-				<p className="mr">Come up with a name for your JustCause Pool. This name will be unique to your Pool. </p>
+			<div style={{fontSize:17}} className="modal__body__column__three">
+				<p className="mr">2) Select an address to receive the interest earned by contributions to your cause. It does not have to be an address you own, and can be changed at anytime by you. The field defaults to the current account, but any valid address can be entered.  </p>
 			</div>
 
-			<div className="modal__body__column__three">
+			<div className="modal__body__column__four">
 				<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
 			</div>
 
-			<div style={{fontSize:17}} className="modal__body__column__four">
-			<p className="mr">This is the address that receives the interest earned by contributions to your cause. Address defaults to the current account, but any valid address can be entered. This address can be changed later by the account creating the pool. </p>
+			<div style={{fontSize:17}} className="modal__body__column__five">
+				<p className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. we want to give you the tools to fund it and share your inspiration with the world.</p>
 			</div>
 
-			<div className="modal__body__column__five">
+			<div className="modal__body__column__six">
 				<TextField ref="about" label="Pool Description" value="Describe your cause"/>
 			</div>
 
-			<div style={{fontSize:17}}  className="modal__body__column__six">
-				<p className="mr">Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. we want to give you the tools to fund it and share your inspiration with the world.</p>
+			<div style={{fontSize:17}} className="modal__body__column__seven">
+				<p className="mr">4) This is an optional step. This image will be on the NFT that you and your contributors receive. It will also be displayed on the JustCause site. If left blank image will default to the JustCause Logo </p>
 			</div>
 
-			<div className="modal__body__column__seven">
+			<div className="modal__body__column__eight">
 				<input id="photo" type="file" hidden/>
 				<Button disabled={this.isPhotoUploaded()} text={this.getUploadButtonText()} callback={() => this.fileUploadButton()} />
 			</div>
 
-			<div style={{fontSize:17}}  className="modal__body__column__eight">
-				<p className="mr">This is an optional step. This image will be on the NFT that you and your contributors receive. It will also be displayed on the JustCause site. If left blank image will default to the JustCause Logo </p>
-			</div>
-
-			<div className="modal__body__column__nine">
-				<h3 className="mb0">Token Selection:</h3>
+			<div style={{fontSize:17}} className="modal__body__column__nine">
+				<p className="mr">5) Select the tokens your contributors will be able to deposit. You will receive these tokens in the receiver address when you or someone else calls the claim function.</p>
 			</div>
 
 			<div style={{fontSize:17}} className="modal__body__column__ten">
-				<p className="mr">Select the tokens your contributors will be able to deposit with.</p>
+				<p className="mr">{"Accepted Tokens: " + this.state.acceptedTokens}</p>
 			</div>
 
 			<div style={{fontSize:17}}  className="modal__body__column__eleven">
@@ -239,7 +242,6 @@ class NewPoolModal extends Component {
 
         </ModalBodyDeploy>
         <ModalCtas>
-		  <p className="mr">{"Accepted Tokens: " + this.state.acceptedTokens}</p>
           <Button text="Create Pool"
 		  	disabled={this.checkValues()}
 			callback={() => this.setValues(this.refs.poolName.getValue(),

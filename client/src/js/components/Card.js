@@ -24,7 +24,7 @@ import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
 import {getBalance, getPoolInfo, getDepositorAddress} from '../func/contractInteractions';
-import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
+import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
@@ -138,7 +138,7 @@ class Card extends Component {
 				</div>
 				<div className="card__body__column__nine">
 					<p style={{fontSize:17}}>{" "+ item.depositAPY+'% APY'}</p>
-					<h3 className="mb0"> {displayLogo(item.acceptedTokenString)} {item.acceptedTokenString} </h3>
+					<h3 className="mb0"> {displayLogoLg(item.acceptedTokenString)} {item.acceptedTokenString} </h3>
 				</div>
 				<div className="card__body__column__two">
 					<TextLink style={{fontSize:17}} text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>

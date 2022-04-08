@@ -118,16 +118,11 @@ $baseclass: 'modal';
   &__body__column__nine {
     grid-column: 3;
     grid-row: 1;
-    display: flex;
-    flex-direction: column-reverse;
-    padding-bottom: 70px;
   }
 
   &__body__column__ten {
     grid-column: 4;
     grid-row: 1;
-    display: flex;
-    flex-direction: column-reverse;
   }
 
   &__body__column__eleven {

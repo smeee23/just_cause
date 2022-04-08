@@ -9,6 +9,13 @@ import AaveLogo from "../components/cryptoLogos/AaveLogo";
 import MaticLogo from "../components/cryptoLogos/MaticLogo";
 import WEthLogo from "../components/cryptoLogos/WEthLogo";
 
+import DaiLogoLg from "../components/cryptoLogos/DaiLogoLg";
+import WbtcLogoLg from "../components/cryptoLogos/WbtcLogoLg";
+import UsdcLogoLg from "../components/cryptoLogos/UsdcLogoLg";
+import TetherLogoLg from "../components/cryptoLogos/TetherLogoLg";
+import EthLogoLg from "../components/cryptoLogos/EthLogoLg";
+import AaveLogoLg from "../components/cryptoLogos/AaveLogoLg";
+
 export const redirectWindowTwitterShare = (url) => {
   window.open(url, "_blank");
 }
@@ -162,12 +169,42 @@ export const displayLogo = (acceptedTokenString) => {
   else if (acceptedTokenString === 'AAVE'){
     logo = <AaveLogo/>;
   }
-  else if(acceptedTokenString === 'WETH'){
+  /*else if(acceptedTokenString === 'WETH'){
     logo = <WEthLogo/>;
   }
   else if(acceptedTokenString === 'MATIC'){
     logo = <MaticLogo/>;
+  }*/
+
+  return logo;
+}
+
+export const displayLogoLg = (acceptedTokenString) => {
+  let logo = '';
+  if(acceptedTokenString === 'ETH'){
+    logo = <EthLogoLg/>;
   }
+  else if (acceptedTokenString === 'USDT'){
+    logo = <TetherLogoLg/>;
+  }
+  else if (acceptedTokenString === 'USDC'){
+    logo = <UsdcLogoLg/>;
+  }
+  else if (acceptedTokenString === 'WBTC'){
+    logo = <WbtcLogoLg/>;
+  }
+  else if (acceptedTokenString === 'DAI'){
+    logo = <DaiLogoLg/>;
+  }
+  else if (acceptedTokenString === 'AAVE'){
+    logo = <AaveLogoLg/>;
+  }
+  /*else if(acceptedTokenString === 'WETH'){
+    logo = <WEthLogo/>;
+  }
+  else if(acceptedTokenString === 'MATIC'){
+    logo = <MaticLogo/>;
+  }*/
 
   return logo;
 }

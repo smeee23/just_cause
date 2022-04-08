@@ -4,7 +4,7 @@ class AaveLogo extends Component {
 
 	render() {
 		return (
-            <svg width="22px" height="22px" viewBox="0 0 22 22">
+            <svg width="150px" height="150px" viewBox="0 0 22 22">
                 <defs>
                     <linearGradient x1="87.2792784%" y1="18.632268%" x2="12.8792784%" y2="81.232268%" id="linearGradient-1">
                         <stop stopColor="#B6509E" offset="0%"></stop>

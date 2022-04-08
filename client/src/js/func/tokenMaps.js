@@ -30,6 +30,8 @@ export const polygonMumbaiV3TokenMap = {
     WBTC: {address:'0x85E44420b6137bbc75a85CAB5c9A3371af976FdE',decimals: 8, apiKey: "bitcoin"},
     WETH: {address:'0xd575d4047f8c667E064a4ad433D04E25187F40BB',decimals: 18, apiKey: "ethereum"},
     MATIC: {address:'0xb685400156cF3CBE8725958DeAA61436727A30c3',decimals: 9, apiKey: "matic-network"},
+    //DPI: {address:'', decimals: 18, apiKey: ""},
+    //LINK: {address:'', decimals: 18, apiKey: ""},
 }
 
 export const aaveOraclePolygonMumbaiV3Address = '0x520D14AE678b41067f029Ad770E2870F85E76588';

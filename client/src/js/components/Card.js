@@ -334,10 +334,10 @@ class Card extends Component {
 				<div className="card__header--right">
 					{tokenButtons}
 				</div>
-				<div className="card__header--right">
+				<div style={{fontSize:17}} className="card__header--right">
 								<p className="mb0">{"your deposit: " + userBalance}</p>
-								<p className="mb0">{"pool : "+ totalBalance}</p>
-								<p className="mb0">{"total earned : "+ interestEarned}</p>
+								<p className="mb0">{"pool: "+ totalBalance}</p>
+								<p className="mb0">{"total earned: "+ interestEarned}</p>
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
 				</div>

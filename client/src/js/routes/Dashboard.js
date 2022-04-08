@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { connect } from "react-redux";
 
 import Card from '../components/Card';
-import { Modal } from "../components/Modal";
+import { Modal, LargeModal } from "../components/Modal";
 import Button from '../components/Button';
 import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
@@ -102,7 +102,7 @@ class Dashboard extends Component {
 		console.log('deployInfo outer', this.props.deployInfo);
 		if(this.props.deployInfo){
 			console.log('deployInfo', this.props.deployInfo);
-			let modal = <Modal isOpen={true}><NewPoolModal poolInfo={this.props.deployInfo}/></Modal>;
+			let modal = <LargeModal isOpen={true}><NewPoolModal poolInfo={this.props.deployInfo}/></LargeModal>;
 			return modal;
 		}
 	}

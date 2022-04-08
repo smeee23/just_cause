@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
-import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
+import { ModalHeader, ModalBodyDeploy, ModalCtas } from "../Modal";
 import TextField from '../TextField'
 import Select from '../Select'
 import Button from '../Button'
@@ -29,6 +29,7 @@ class NewPoolModal extends Component {
 			isValidInput: 'valid',
 			fileUploadHash:"",
       		amount: 0,
+			acceptedTokens: ["MATIC"],
 		}
 	}
 
@@ -86,16 +87,16 @@ class NewPoolModal extends Component {
 	return false;
   }
 
-  setValues = async(poolName, receiver, about, tokens) => {
-	  let tokenInfo = tokens.state.selected;
+  setValues = async(poolName, receiver, about) => {
+	  /*let tokenInfo = tokens.state.selected;
 	  for(let i = 0; i < tokens.state.selected.length; i++){
 		tokenInfo[i] = tokenInfo[i].props.children;
-	  }
+	  }*/
 
 	  const uploadResult = await uploadAbout(about);
-	  console.log('pool info', poolName, receiver, uploadResult.hash, tokens.state.selected);
+	  console.log('pool info', poolName, receiver, uploadResult.hash, this.state.acceptedTokens);
 	  const aboutHash = uploadResult.hash;
-	  await this.deployOnChain(poolName, receiver, aboutHash, tokens.state.selected);
+	  await this.deployOnChain(poolName, receiver, aboutHash, this.state.acceptedTokens);
   }
 
   uploadToIpfs = async() => {
@@ -144,8 +145,41 @@ class NewPoolModal extends Component {
 
   getUploadButtonText = () => {
 	if(this.state.fileUploadHash) return 'Photo Uploaded';
+	return 'Upload Photo';
+  }
 
-	return 'Upload Photo'
+  addToken = (tokenName) => {
+	if(!this.state.acceptedTokens.includes(tokenName)){
+		let acceptedTokens = this.state.acceptedTokens;
+		acceptedTokens.push(tokenName);
+		this.setState({acceptedTokens});
+	}
+  }
+
+  removeToken = (tokenName) => {
+	if(this.state.acceptedTokens.includes(tokenName)){
+		let acceptedTokens = this.state.acceptedTokens;
+		acceptedTokens = acceptedTokens.filter(value => {
+			return value !== tokenName;
+		});
+		this.setState({acceptedTokens});
+	}
+  }
+
+  displayTokenSelection = () => {
+	const tokenStrings = Object.keys(this.props.tokenMap);
+	let buttonHolder = [];
+	for(let i = 0; i < tokenStrings.length; i++){
+		const tokenName = tokenStrings[i];
+		if(!this.state.acceptedTokens.includes(tokenName)){
+			buttonHolder.push(<Button text={tokenName} icon={"plus"} key={i} callback={() => this.addToken(tokenName)}/>);
+		}
+		else{
+			buttonHolder.push(<Button text={tokenName} icon={"check"} key={i} callback={() => this.removeToken(tokenName)}/>);
+		}
+
+	}
+	return buttonHolder;
   }
 
   render() {
@@ -153,27 +187,60 @@ class NewPoolModal extends Component {
 	console.log('props', this.props);
 		return (
       <Fragment>
-        <ModalHeader>
-          <h2 className="mb0">create new pool</h2>
-        </ModalHeader>
-        <ModalBody>
-          <TextField ref="poolName" label="Pool Name" id="poolName"/>
-          <TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
-          <TextField ref="about" label="Pool Description" placeholder="Add a short description for your pool"/>
-          <Multiselect ref="tokens" label="Accepted Tokens">
-            <p className="mb0">DAI</p>
-            <p className="mb0">USDC</p>
-            <p className="mb0">MATIC</p>
-            <p className="mb0">WBTC</p>
-            <p className="mb0">USDT</p>
-            <p className="mb0">AAVE</p>
-			<p className="mb0">WETH</p>
-          </Multiselect>
-		  <input id="photo" type="file" hidden/>
-		  <Button disabled={this.isPhotoUploaded()} text={this.getUploadButtonText()} callback={() => this.fileUploadButton()} />
-        </ModalBody>
+        <ModalBodyDeploy>
+			<div className="modal__body__column__one">
+				<TextField ref="poolName" label="Pool Name" id="poolName" value="Name your pool"/>
+			</div>
+
+			<div style={{fontSize:17}}  className="modal__body__column__two">
+				<p className="mr">Come up with a name for your JustCause Pool. This name will be unique to your Pool. </p>
+			</div>
+
+			<div className="modal__body__column__three">
+				<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
+			</div>
+
+			<div style={{fontSize:17}} className="modal__body__column__four">
+			<p className="mr">This is the address that receives the interest earned by contributions to your cause. Address defaults to the current account, but any valid address can be entered. This address can be changed later by the account creating the pool. </p>
+			</div>
+
+			<div className="modal__body__column__five">
+				<TextField ref="about" label="Pool Description" value="Describe your cause"/>
+			</div>
+
+			<div style={{fontSize:17}}  className="modal__body__column__six">
+				<p className="mr">Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. we want to give you the tools to fund it and share your inspiration with the world.</p>
+			</div>
+
+			<div className="modal__body__column__seven">
+				<input id="photo" type="file" hidden/>
+				<Button disabled={this.isPhotoUploaded()} text={this.getUploadButtonText()} callback={() => this.fileUploadButton()} />
+			</div>
+
+			<div style={{fontSize:17}}  className="modal__body__column__eight">
+				<p className="mr">This is an optional step. This image will be on the NFT that you and your contributors receive. It will also be displayed on the JustCause site. If left blank image will default to the JustCause Logo </p>
+			</div>
+
+			<div className="modal__body__column__nine">
+				<h3 className="mb0">Token Selection:</h3>
+			</div>
+
+			<div style={{fontSize:17}} className="modal__body__column__ten">
+				<p className="mr">Select the tokens your contributors will be able to deposit with.</p>
+			</div>
+
+			<div style={{fontSize:17}}  className="modal__body__column__eleven">
+				{this.displayTokenSelection().slice(0, 4)}
+			</div>
+
+			<div style={{fontSize:17}}  className="modal__body__column__twelve">
+				{this.displayTokenSelection().slice(4)}
+			</div>
+
+        </ModalBodyDeploy>
         <ModalCtas>
-          <Button text="Create"
+		  <p className="mr">{"Accepted Tokens: " + this.state.acceptedTokens}</p>
+          <Button text="Create Pool"
 		  	disabled={this.checkValues()}
 			callback={() => this.setValues(this.refs.poolName.getValue(),
 										this.refs.receiver.getValue(),

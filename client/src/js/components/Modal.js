@@ -41,6 +41,26 @@ class ModalBody extends Component {
 	}
 }
 
+class ModalBodyTx extends Component {
+  render() {
+		return (
+      <div className="modal__bodytx">
+        { this.props.children }
+      </div>
+		);
+	}
+}
+
+class ModalBodyDeploy extends Component {
+  render() {
+		return (
+      <div className="modal__bodydeploy">
+        { this.props.children }
+      </div>
+		);
+	}
+}
+
 class ModalCtas extends Component {
   render() {
 		return (
@@ -103,7 +123,7 @@ class Modal extends Component {
 	}
 }
 
-class AlertModal extends Component {
+class LargeModal extends Component {
   constructor(props) {
     super(props);
 
@@ -121,7 +141,7 @@ class AlertModal extends Component {
 	}
 
   handleClickOutside = (event) => {
-    if (!this.refs["modal_sm"].contains(event.target)) {
+    if (!this.refs["modal"].contains(event.target)) {
       this.closeModal();
     }
   }
@@ -140,14 +160,14 @@ class AlertModal extends Component {
 
 	render() {
     const classnames = classNames({
-      "modal_sm": true,
+      "modal": true,
       "modal--open": this.state.isOpen,
     })
 
 		return (
       <div className={classnames}>
         <div className="modal__background"/>
-        <div className="modal__box theme--white" ref="modal_sm">
+        <div className="modal__boxdeploy theme--white" ref="modal">
           { this.props.children }
         </div>
       </div>
@@ -155,4 +175,4 @@ class AlertModal extends Component {
 	}
 }
 
-export { Modal, AlertModal, ModalHeader, ModalHeaderNoClose, ModalBody, ModalCtas }
+export { Modal, LargeModal, ModalHeader, ModalHeaderNoClose, ModalBody, ModalBodyTx, ModalBodyDeploy, ModalCtas }

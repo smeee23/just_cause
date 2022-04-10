@@ -4,9 +4,12 @@ class LinkLogo extends Component {
 
 	render() {
 		return (
-            <svg width="256" height="256" viewBox="0 0 256 256" fill="none">
-                <path d="M128 256c70.692 0 128-57.308 128-128C256 57.308 198.692 0 128 0 57.308 0 0 57.307 0 128c0 70.692 57.307 128 128 128Z" fill="#fff"/>
-                <path d="m128.181 19.416-19.923 11.456-54.292 31.38-19.924 11.456v108.584l19.924 11.456 54.79 31.38 19.924 11.456 19.924-11.456 53.794-31.38 19.924-11.456V73.708l-19.925-11.456-54.292-31.38-19.924-11.456ZM73.889 159.38V96.616l54.292-31.38 54.292 31.38v62.76l-54.292 31.38-54.292-31.376Z" fill="#2A5ADA"/>
+            <svg width="22px" height="22px" viewBox="0 0 22 22">
+                <g id="icons/crypto/link" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+                    <g id="chainlink-link-logo" transform="translate(1.500000, 0.000000)" fill="#2A5ADA" fillRule="nonzero">
+                        <path d="M9.45,0 L7.45,1.15 L2,4.3 L0,5.45 L0,16.35 L2,17.5 L7.5,20.65 L9.5,21.8 L11.5,20.65 L16.9,17.5 L18.9,16.35 L18.9,5.45 L16.9,4.3 L11.45,1.15 L9.45,0 Z M4,14.05 L4,7.75 L9.45,4.6 L14.9,7.75 L14.9,14.05 L9.45,17.2 L4,14.05 Z" id="Shape"></path>
+                    </g>
+                </g>
             </svg>
 		);
 	}

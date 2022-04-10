@@ -9,6 +9,8 @@ html, body, input, textarea {
 	color: $brand-white;
 }
 
+::selection { background: $brand-yellow; }
+
 body {
 	-webkit-overflow-scrolling: touch;
 

@@ -127,13 +127,10 @@ $baseclass: 'modal';
   }
 
   &__body__column__eleven {
-    grid-column: 3;
+    grid-column: 3 / 5;
     grid-row: 2;
-  }
-
-  &__body__column__twelve {
-    grid-column: 4;
-    grid-row: 2;
+    display: flex;
+    flex-wrap: wrap;
   }
 
   &__bodytx {

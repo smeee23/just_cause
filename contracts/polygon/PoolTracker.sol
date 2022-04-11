@@ -56,7 +56,7 @@ contract PoolTracker {
                 IJustCausePool(_pool).depositETH(_asset, msg.value);
             }
             else{
-                uint256 devValue = calcDevFunSplit(_amount);
+                uint256 devValue = calcDevFundSplit(_amount);
                 uint256 newValue = _amount - devValue;
 
                 IWETHGateway(wethGatewayAddr).depositETH{value: devValue}(_poolAddr, devAddress, 0);
@@ -71,7 +71,7 @@ contract PoolTracker {
                 depositNonEth(_amount, _asset, _pool);
             }
             else{
-                uint256 devValue = calcDevFunSplit(_amount);
+                uint256 devValue = calcDevFundSplit(_amount);
                 uint256 newValue = _amount - devValue;
                 depositNonEth(devValue, _asset, devAddress);
                 depositNonEth(newValue, _asset, _pool);
@@ -81,7 +81,7 @@ contract PoolTracker {
             jCDepositorERC721.addFunds(msg.sender, _amount, block.timestamp,  _pool, _asset, _metaHash);
         }
         else{
-            uint256 devValue = calcDevFunSplit(_amount);
+            uint256 devValue = calcDevFundSplit(_amount);
             uint256 newValue = _amount - devValue;
             jCDepositorERC721.addFunds(msg.sender, devValue, block.timestamp,  devAddress, _asset, _metaHash);
             jCDepositorERC721.addFunds(msg.sender, newValue, block.timestamp,  _pool, _asset, _metaHash);
@@ -89,7 +89,7 @@ contract PoolTracker {
         emit AddDeposit(msg.sender, _pool, _asset, _amount);
     }
 
-    function calcDevFunSplit(uint256 _amount) internal pure returns(uint256) {
+    function calcDevFundSplit(uint256 _amount) internal pure returns(uint256) {
         uint256 bp = 25; // 0.25% in basis points (parts per 10,000)
         return (_amount * bp) / 10000;
     }
@@ -105,8 +105,22 @@ contract PoolTracker {
 
     function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) onlyPools(_pool) external {
         tvl[_asset] -= _amount;
-        jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
-        IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender, _isETH);
+        address devAddress = verifiedPools[0];
+
+        if(devAddress == _pool){
+            jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
+            IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender, _isETH);
+        }
+        else{
+            uint256 devValue = calcDevFundSplit(_amount);
+            uint256 newValue = _amount - devValue;
+
+            jCDepositorERC721.withdrawFunds(msg.sender, newValue, _pool, _asset);
+            IJustCausePool(_pool).withdraw(_asset, newValue, msg.sender, _isETH);
+
+            jCDepositorERC721.withdrawFunds(msg.sender, devValue, devAddress, _asset);
+            IJustCausePool(_pool).withdraw(_asset, devValue, msg.sender, _isETH);
+        }
         emit WithdrawDeposit(msg.sender, _pool, _asset, _amount);
     }
 
@@ -135,13 +149,15 @@ contract PoolTracker {
     function createJCPoolClone(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver) external {
         require(names[_name] == address(0), "pool with name already exists");
         address child = clone(address(baseJCPool));
-        IJustCausePool(child).initialize(_acceptedTokens, _name, _about, _picHash, _metaUri, _receiver);
-        jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, child, _metaUri);
-        names[_name] =  child;
-
+        bool isVerified;
         if(msg.sender == validator){
             verifiedPools.push(child);
+            isVerified = true;
         }
+
+        IJustCausePool(child).initialize(_acceptedTokens, _name, _about, _picHash, _metaUri, _receiver, isVerified);
+        jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, child, _metaUri);
+        names[_name] =  child;
 
         isPool[child] = true;
         emit AddPool(child, _name, _receiver);

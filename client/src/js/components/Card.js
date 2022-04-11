@@ -332,9 +332,10 @@ class Card extends Component {
 					{ title }
 				</h3>
 
-				<div className="card__header--right">
+				<div style={{paddingLeft:"10px", display:"flex"}}>
 					{tokenButtons}
 				</div>
+
 				<div /*style={{fontSize:17}}*/ className="card__header--right">
 								<p className="mb0">{"your deposit: " + userBalance}</p>
 								<p className="mb0">{"pool: "+ totalBalance}</p>

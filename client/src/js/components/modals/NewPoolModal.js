@@ -258,11 +258,7 @@ class NewPoolModal extends Component {
 			</div>
 
 			<div /*style={{fontSize:17}}*/  className="modal__body__column__eleven">
-				{this.displayTokenSelection().slice(0, 4)}
-			</div>
-
-			<div /*style={{fontSize:17}}*/  className="modal__body__column__twelve">
-				{this.displayTokenSelection().slice(4)}
+				{this.displayTokenSelection()}
 			</div>
 
         </ModalBodyDeploy>

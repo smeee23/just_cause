@@ -8,6 +8,8 @@ import EthLogo from "../components/cryptoLogos/EthLogo";
 import AaveLogo from "../components/cryptoLogos/AaveLogo";
 import MaticLogo from "../components/cryptoLogos/MaticLogo";
 import WEthLogo from "../components/cryptoLogos/WEthLogo";
+import LinkLogo from "../components/cryptoLogos/LinkLogo";
+import DpiLogo from "../components/cryptoLogos/DpiLogo";
 
 import DaiLogoLg from "../components/cryptoLogos/DaiLogoLg";
 import WbtcLogoLg from "../components/cryptoLogos/WbtcLogoLg";
@@ -171,12 +173,18 @@ export const displayLogo = (acceptedTokenString) => {
   else if (acceptedTokenString === 'AAVE'){
     logo = <AaveLogo/>;
   }
-  /*else if(acceptedTokenString === 'WETH'){
+  else if(acceptedTokenString === 'WETH'){
     logo = <WEthLogo/>;
   }
   else if(acceptedTokenString === 'MATIC'){
     logo = <MaticLogo/>;
-  }*/
+  }
+  else if(acceptedTokenString === 'LINK'){
+    logo = <LinkLogo/>;
+  }
+  else if(acceptedTokenString === 'DPI'){
+    logo = <DpiLogo/>;
+  }
   else{
     logo = <Logo/>
   }

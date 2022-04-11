@@ -5,6 +5,49 @@ import Icon from "./Icon";
 
 import Twitter from "./logos/Twitter";
 
+class ButtonSmall extends Component {
+
+  displayLine = (tweet) => {
+    if(!tweet){
+      return  <div className="button__bar--outer">
+                <div className="button__bar--inner"/>
+              </div>
+    }
+  }
+	render() {
+		const { text, icon, tweet, href, callback, disabled, lg, logo } = this.props;
+
+    const classnames = classNames({
+      "button": true,
+      "button--icon-only": !text,
+      "button--lg": lg,
+      "button--disabled": disabled,
+    })
+
+		return (
+      <button className={classnames} href={href} onClick={callback}>
+        <div className="button__items">
+          { text ? (
+            <div className="button__itemsm button__text">
+              {logo}
+              <p className="mb0">{ text }</p>
+            </div>
+          ) : null }
+          { icon ? (
+            <div className="button__itemsm button__icon">
+              <Icon name={icon} size={lg ? 64 : 32}/>
+            </div>
+          ) : null }
+          { tweet ? (
+              <Twitter/>
+          ) : null }
+        </div>
+        {this.displayLine(tweet)}
+      </button>
+		);
+	}
+}
+
 class Button extends Component {
 
   displayLine = (tweet) => {
@@ -15,7 +58,7 @@ class Button extends Component {
     }
   }
 	render() {
-		const { text, icon, tweet, href, callback, disabled, lg } = this.props;
+		const { text, icon, tweet, href, callback, disabled, lg, logo } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -29,6 +72,7 @@ class Button extends Component {
         <div className="button__items">
           { text ? (
             <div className="button__item button__text">
+              {logo}
               <p className="mb0">{ text }</p>
             </div>
           ) : null }
@@ -47,4 +91,4 @@ class Button extends Component {
 	}
 }
 
-export default Button
+export { Button, ButtonSmall }

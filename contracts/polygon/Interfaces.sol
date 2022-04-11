@@ -1912,7 +1912,7 @@ interface IJustCausePool {
     event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 userDeposits);
     event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
 
-    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, address _receiver) external;
+    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver) external;
     function deposit(address _assetAddress, uint256 _amount/*, address _depositor*/) external;
     function depositETH(address _wethAddress, /*address _depositor,*/ uint256 _value) external payable;
     function tallyDeposit(uint256 _amount, address _assetAddress) external;
@@ -1922,6 +1922,8 @@ interface IJustCausePool {
     function getAcceptedTokens() external view returns(address[] memory);
     function getName() external view returns(string memory);
     function getAbout() external view returns(string memory);
+    function getPicHash() external view returns(string memory);
+    function getMetaUri() external view returns(string memory);
     function getATokenAddress(address _assetAddress) external view returns(address);
     function getUnclaimedInterest(address _assetAddress) external view returns (uint256);
     function getClaimedInterest(address _assetAddress) external view returns (uint256);

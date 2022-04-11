@@ -1,11 +1,11 @@
 import fleek from '@fleekhq/fleek-storage-js';
 
-export const uploadAbout = async(about) => {
+export const upload = async(data) => {
     const input = {
         apiKey:'lkQePP4w+6IIZtvblSDUKQ==',
         apiSecret: 'dTPa+IfQGbeR+D3+yv5XEw1jXHlbeT9XD5dl5RbSEXQ=',
         key: 'test2',
-        data: about,
+        data: data,
     }
 
     const result = await fleek.upload(input);

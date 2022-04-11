@@ -2,7 +2,7 @@ import React, {Component, Fragment} from "react";
 import { connect } from "react-redux"
 
 import Logo from "./Logo";
-import Button from "./Button";
+import { Button } from "./Button";
 import TextLink from "./TextLink";
 import { NavLink } from 'react-router-dom'
 import Takeover from "./Takeover";

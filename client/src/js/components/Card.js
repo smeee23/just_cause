@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import Icon from "./Icon";
 import palette from "../utils/palette";
 
-import Button from '../components/Button';
+import { Button, ButtonSmall } from '../components/Button';
 import TextLink from "./TextLink";
 
 import getWeb3 from "../../getWeb3NotOnLoad";
@@ -24,7 +24,7 @@ import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
 import {getBalance, getPoolInfo, getDepositorAddress} from '../func/contractInteractions';
-import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
+import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
@@ -95,7 +95,7 @@ class Card extends Component {
 			const tokenName = acceptedTokenInfo[i].acceptedTokenString;
 			let isDisabled = false;
 			if(i === this.state.selectedTokenIndex) isDisabled = true;
-			buttonHolder.push(<Button text={tokenName} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
+			buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
 		}
 		return buttonHolder;
 	}
@@ -104,10 +104,11 @@ class Card extends Component {
 		console.log('image Loaded')
 	}
 	getPoolImage = (picHash) => {
-		if(picHash){
-			return <img max-width='auto' height='100%' src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
+		if(!picHash){
+			//default JustCause image
+			picHash = "bafybeigop55rl4tbkhwt4k4cvd544kz2zfkpdoovrsflqqkal2v4ucixxu"
 		}
-		return <LogoCard/>
+		return <img style={{width:'auto', maxHeight:'500px', height:'100%'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
 	}
 
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash) => {
@@ -124,7 +125,7 @@ class Card extends Component {
 				<div className="card__body__column_one">
 					{this.getPoolImage(picHash)}
 				</div>
-				<div style={{fontSize:17}} className="card__body__column__three">
+				<div /*style={{fontSize:17}}*/ className="card__body__column__three">
 					<p>{"pool balance"}</p>
 					<p>{"your balance"}</p>
 					<p>{"claimed"}</p>
@@ -137,19 +138,19 @@ class Card extends Component {
 					{this.displayClaim(item, address)}
 				</div>
 				<div className="card__body__column__nine">
-					<p style={{fontSize:17}}>{" "+ item.depositAPY+'% APY'}</p>
+					<p /*style={{fontSize:17}}*/>{" "+ item.depositAPY+'% APY'}</p>
 					<h3 className="mb0"> {displayLogoLg(item.acceptedTokenString)} {item.acceptedTokenString} </h3>
 				</div>
 				<div className="card__body__column__two">
-					<TextLink style={{fontSize:17}} text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
-					<TextLink style={{fontSize:17}} text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
+					<TextLink /*style={{fontSize:17}}*/ text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
+					<TextLink /*style={{fontSize:17}}*/ text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
 				</div>
-				<div style={{fontSize:17}} className="card__body__column__eight">
+				<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
 					<p className="mr">{about}</p>
 					<Button tweet="tweet" callback={() => redirectWindowTwitterShare("https://twitter.com/share?url="+encodeURIComponent("https://www.justcause.finance/#/just_cause/search?address=") + address)}/>
 				</div>
 
-				<div style={{fontSize:17}} className="card__body__column__seven">
+				<div /*style={{fontSize:17}}*/ className="card__body__column__seven">
 					<p>{precise(item.totalDeposits, item.decimals)+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
 					<p>{precise(item.userBalance, item.decimals)+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
 					<p>{precise(item.claimedInterest, item.decimals)+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
@@ -225,7 +226,7 @@ class Card extends Component {
 			const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === assetAddress);
 			const parameter = {
 				from: activeAccount,
-				gas: web3.utils.toHex(800000),
+				gas: web3.utils.toHex(1000000),
 				gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
 			};
 
@@ -259,7 +260,7 @@ class Card extends Component {
 			console.log('approve clicked');
 			const parameter = {
 				from: activeAccount ,
-				gas: web3.utils.toHex(800000),
+				gas: web3.utils.toHex(1000000),
 				gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
 				};
 
@@ -334,7 +335,7 @@ class Card extends Component {
 				<div className="card__header--right">
 					{tokenButtons}
 				</div>
-				<div style={{fontSize:17}} className="card__header--right">
+				<div /*style={{fontSize:17}}*/ className="card__header--right">
 								<p className="mb0">{"your deposit: " + userBalance}</p>
 								<p className="mb0">{"pool: "+ totalBalance}</p>
 								<p className="mb0">{"total earned: "+ interestEarned}</p>

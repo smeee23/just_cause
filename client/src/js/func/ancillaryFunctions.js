@@ -16,6 +16,8 @@ import TetherLogoLg from "../components/cryptoLogos/TetherLogoLg";
 import EthLogoLg from "../components/cryptoLogos/EthLogoLg";
 import AaveLogoLg from "../components/cryptoLogos/AaveLogoLg";
 
+import Logo from "../components/Logo"
+
 export const redirectWindowTwitterShare = (url) => {
   window.open(url, "_blank");
 }
@@ -175,6 +177,9 @@ export const displayLogo = (acceptedTokenString) => {
   else if(acceptedTokenString === 'MATIC'){
     logo = <MaticLogo/>;
   }*/
+  else{
+    logo = <Logo/>
+  }
 
   return logo;
 }

@@ -4,10 +4,11 @@ pragma solidity 0.8.9;
 import {IPool, IPoolAddressesProvider} from './Interfaces.sol';
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
-contract JCDepositorERC721 is ERC721Enumerable, Ownable {
+contract JCDepositorERC721 is ERC721Enumerable, ERC721URIStorage, Ownable {
 
     struct Deposit {
         uint256 balance;
@@ -25,25 +26,26 @@ contract JCDepositorERC721 is ERC721Enumerable, Ownable {
     //key = keccak hash of depositor, pool and asset addresses
     mapping (uint256 => Deposit) deposits;
 
-    constructor() ERC721("JCP Depositor Token", "JCPT_TEST_D1") {
+    constructor() ERC721("JCP Contributor Token", "JCPC") {
         provider = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)); // polygon mumbai v3
         poolAddr = provider.getPool();
     }
 
-    function addFunds(address _tokenOwner, uint256 _amount, uint256 _timeStamp, address _pool, address _asset) onlyOwner public returns (uint256) {
+    function addFunds(address _tokenOwner, uint256 _amount, uint256 _timeStamp, address _pool, address _asset, string memory _metaUri) onlyOwner public returns (uint256) {
         //_tokenIds.increment();
         //uint256 tokenId = _tokenIds.current();
         uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, _pool, _asset)));
         uint256 liquidityIndex = getAaveLiquidityIndex(_asset);
         if(_exists(tokenId)){
+            deposits[tokenId].timeStamp = _timeStamp;
             deposits[tokenId].balance += _amount;
             deposits[tokenId].amountScaled += rayDiv(_amount, liquidityIndex);
         }
         else{
             deposits[tokenId] = Deposit(_amount, _timeStamp, rayDiv(_amount, liquidityIndex), _pool, _asset);
             _mint(_tokenOwner, tokenId);
+            _setTokenURI(tokenId, _metaUri);
         }
-        //_setTokenURI(tokenId, tokenURI);
 
         return tokenId;
     }
@@ -121,4 +123,30 @@ contract JCDepositorERC721 is ERC721Enumerable, Ownable {
 
     return (a * b + halfRAY) / ray;
   }
+  function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
 }

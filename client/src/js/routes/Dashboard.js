@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 import Card from '../components/Card';
 import { Modal, LargeModal } from "../components/Modal";
-import Button from '../components/Button';
+import { Button } from '../components/Button';
 import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";

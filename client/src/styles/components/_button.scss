@@ -38,6 +38,13 @@ $baseclass: 'button';
     align-items: center;
   }
 
+  &__itemsm {
+    border: solid 2px;
+    padding: ($rem-base * 1) ($rem-base * 1.5);
+    display: flex;
+    align-items: center;
+  }
+
   &__icon {
     border-left-style: none;
   }

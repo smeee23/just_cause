@@ -2,7 +2,7 @@ import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
 import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
 import TextField from '../TextField'
-import Button from '../Button'
+import { Button } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
 import PoolTracker from "../../../contracts/PoolTracker.json";
@@ -65,7 +65,7 @@ class WithdrawModal extends Component {
 
             const parameter = {
                 from: activeAccount,
-                gas: web3.utils.toHex(800000),
+                gas: web3.utils.toHex(1000000),
                 gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
             };
 

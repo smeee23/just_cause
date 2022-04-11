@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
 import TextField from '../TextField'
 import Select from '../Select'
-import Button from '../Button'
+import { Button } from '../Button'
 import Icon from '../Icon'
 
 import palette from '../../utils/palette'

@@ -30,13 +30,13 @@ class Shapes extends Component {
         }
 
         const shapes = {
-            polygon1: { sides: 0, size: 100 },
-            rectangle1: { width: 175, height: 175 },
-            polygon2: { sides: 5, size: 155 },
-            polygon3: { sides: 6, size: 150 },
-            polygon4: { sides: 8, size: 175 },
+            polygon1: { sides: 0, size: 50 },
+            rectangle1: { width: 125, height: 125 },
+            polygon2: { sides: 5, size: 100 },
+            polygon3: { sides: 6, size: 75 },
+            polygon4: { sides: 8, size: 125 },
             rectangle2: { width: 200, height: 100 },
-            polygon5: { sides: 0, size: 150 },
+            polygon5: { sides: 0, size: 100 },
         }
 
         const paletteKeys = Object.keys(palette);
@@ -76,7 +76,7 @@ class Shapes extends Component {
             }
         });
 
-        Matter.Body.scale(this.attractor, 0.72, 0.72);
+        Matter.Body.scale(this.attractor, 0.80, 0.35);
 
         World.add(engine.world, this.attractor);
 

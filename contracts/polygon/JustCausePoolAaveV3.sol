@@ -33,6 +33,7 @@ contract JustCausePoolAaveV3 is Initializable {
     string name;
     string about;
     string picHash;
+    string metaUri;
 
     modifier onlyAllowedTokens(address _tokenAddr){
         bool isAccepted;
@@ -77,6 +78,7 @@ contract JustCausePoolAaveV3 is Initializable {
         string memory _name,
         string memory _about,
         string memory _picHash,
+        string memory _metaUri,
         address _receiver)
 
     strLength(_name, 30) initializer() external {
@@ -89,6 +91,7 @@ contract JustCausePoolAaveV3 is Initializable {
         name = _name;
         about = _about;
         picHash = _picHash;
+        metaUri = _metaUri;
 
         provider = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)); // polygon mumbai v3
         poolAddr = provider.getPool();
@@ -175,6 +178,10 @@ contract JustCausePoolAaveV3 is Initializable {
 
     function getPicHash() external view returns(string memory){
         return picHash;
+    }
+
+    function getMetaUri() external view returns(string memory){
+        return metaUri;
     }
 
     function getATokenAddress(address _assetAddress) public view returns(address aTokenAddress){

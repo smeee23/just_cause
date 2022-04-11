@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { connect } from "react-redux";
 
 import Card from '../components/Card'
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 import { Modal } from "../components/Modal";
 import TxResultModal from "../components/modals/TxResultModal";
 import PendingTxModal from "../components/modals/PendingTxModal";

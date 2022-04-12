@@ -328,9 +328,9 @@ class Card extends Component {
 			<div className={classnames}>
 				<div className="card__header">
 				<Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>
-				<h3 className="mb0">
+				<h4 className="mb0">
 					{ title }
-				</h3>
+				</h4>
 
 				<div style={{paddingLeft:"10px", display:"flex"}}>
 					{tokenButtons}

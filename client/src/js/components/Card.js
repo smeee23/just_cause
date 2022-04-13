@@ -23,14 +23,13 @@ import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
-import {getBalance, getPoolInfo, getDepositorAddress} from '../func/contractInteractions';
-import { rayMul, precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
+import {getBalance} from '../func/contractInteractions';
+import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
 import PendingTxModal from "../components/modals/PendingTxModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
-import LogoCard from "../components/logos/LogoCard";
 
 
 class Card extends Component {
@@ -108,7 +107,7 @@ class Card extends Component {
 			//default JustCause image
 			picHash = "bafybeigop55rl4tbkhwt4k4cvd544kz2zfkpdoovrsflqqkal2v4ucixxu"
 		}
-		return <img style={{width:'auto', maxHeight:'500px', height:'100%'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
+		return <img alt="" style={{width:'auto', maxWidth:'300px', height:'auto'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
 	}
 
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash) => {
@@ -136,14 +135,12 @@ class Card extends Component {
 					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
 					{this.displayWithdraw(item, address, item.acceptedTokenString)}
 					{this.displayClaim(item, address)}
+					<TextLink /*style={{fontSize:17}}*/ text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
+					<TextLink /*style={{fontSize:17}}*/ text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
 				</div>
 				<div className="card__body__column__nine">
 					<p /*style={{fontSize:17}}*/>{" "+ item.depositAPY+'% APY'}</p>
 					<h3 className="mb0"> {displayLogoLg(item.acceptedTokenString)} {item.acceptedTokenString} </h3>
-				</div>
-				<div className="card__body__column__two">
-					<TextLink /*style={{fontSize:17}}*/ text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
-					<TextLink /*style={{fontSize:17}}*/ text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
 				</div>
 				<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
 					<p className="mr">{about}</p>
@@ -174,7 +171,6 @@ class Card extends Component {
 		this.props.updateDepositAmount('');
 		console.log('deposit clicked');
 		try{
-			const web3 = await getWeb3();
 			const tokenMap = this.props.tokenMap;
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);;
 			const activeAccount = this.props.activeAccount;
@@ -198,7 +194,6 @@ class Card extends Component {
 		this.props.updateWithdrawAmount('');
 		console.log('withdraw clicked');
 		try{
-			const web3 = await getWeb3();
 			const tokenMap = this.props.tokenMap;
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 			const activeAccount = this.props.activeAccount;

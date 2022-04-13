@@ -25,7 +25,7 @@ class Homepage extends Component {
 						</div>
 					</section>
 					<section style={{paddingTop: "120px"}} className="page-section horizontal-padding">
-						<h2 style={{margin:'auto', fontSize:50, paddingBottom: "50px"}}>Passive crowdfunding</h2>
+						<h2 style={{margin:'auto', fontSize:50, paddingBottom: "50px"}}>Passive Fundraising</h2>
 						<div style={{margin:'auto'}} className="grid">
 							<div className="grid__item--col-6 grid__item--col-12-medium">
 								<p className="mr">JustCause allows you to leverage the power of decentralized finance (Defi) to fund causes that are important to you. We use an innovative funding mechanism to allow users to contribute to public goods, charitible organizations, DAOs, local/global/personal injustice, and much more! Create and fund pools with your friends and JustCause smart contracts donate funds while preserving your initial deposit.</p>

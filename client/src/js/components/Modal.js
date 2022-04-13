@@ -1,7 +1,6 @@
 import React, {Component, Fragment} from "react"
 import classNames from 'classnames'
 
-import Icon from "./Icon";
 import LogoBlackRing from "./LogoBlackRing";
 
 class ModalHeader extends Component {

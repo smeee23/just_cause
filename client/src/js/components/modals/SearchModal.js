@@ -2,20 +2,9 @@ import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
 import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
 import TextField from '../TextField'
-import Select from '../Select'
 import { Button } from '../Button'
-import Icon from '../Icon'
 
-import palette from '../../utils/palette'
-import Multiselect from '../Multiselect'
-
-import getWeb3 from "../../../getWeb3NotOnLoad";
-import PoolTracker from "../../../contracts/PoolTracker.json";
-
-import { updateDepositAmount } from  "../../actions/depositAmount";
 import { updateSearchInfo} from "../../actions/searchInfo";
-
-import { delay } from '../../func/ancillaryFunctions';
 
 import {searchPools } from '../../func/contractInteractions';
 

@@ -3,8 +3,7 @@ import Web3 from "web3";
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { ConnectedRouter } from 'connected-react-router'
-//import { createBrowserHistory } from 'history'
-import { createHashHistory, createBrowserHistory } from 'history'
+import { createHashHistory} from 'history'
 
 import routes from './routes'
 import { detectMobile } from "./actions/mobile"
@@ -20,18 +19,14 @@ import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 import { updateAavePoolAddress } from "./actions/aavePoolAddress"
 import { updateNetworkId } from "./actions/networkId"
 
-import getWeb3 from "../getWeb3";
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
 import JCOwnerERC721 from "../contracts/JCOwnerERC721.json";
-import PoolAddressesProvider from "../contracts/IPoolAddressesProvider.json"
-import Pool from "../contracts/IPool.json"
-import ProtocolDataProvider from "../contracts/not_truffle/ProtocolDataProvider.json";
 import { kovanTokenMap, polygonMumbaiV3TokenMap, aavePoolAddressesProviderPolygonMumbaiV3Address } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
-import {getPriceFromMessari, getPriceFromCoinGecko} from './func/priceFeeds.js'
-import {precise, getFormatUSD} from './func/ancillaryFunctions';
-import {uploadAbout, getAbout, getIpfsData} from './func/ipfs';
+import {getPriceFromCoinGecko} from './func/priceFeeds.js'
+import {precise} from './func/ancillaryFunctions';
+import {getAbout, getIpfsData} from './func/ipfs';
 
 class App extends Component {
 

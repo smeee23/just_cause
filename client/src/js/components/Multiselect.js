@@ -40,7 +40,7 @@ class Multiselect extends Component {
   }
 
   changeSelected = (item) => {
-    const unselected = Array.from(this.props.children).filter(e => this.state.selected.includes(e) || e == item);
+    const unselected = Array.from(this.props.children).filter(e => this.state.selected.includes(e) || e === item);
     this.setState({
       selected: this.state.selected.includes(item) ? this.state.selected.filter(e => e !== item) : unselected
     })

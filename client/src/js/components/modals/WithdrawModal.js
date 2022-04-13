@@ -14,8 +14,6 @@ import { updateWithdrawAmount } from  "../../actions/withdrawAmount";
 import {getAmountBase} from '../../func/contractInteractions';
 import {delay, getTokenBaseAmount} from '../../func/ancillaryFunctions';
 
-const BigNumber = require('bignumber.js');
-
 class WithdrawModal extends Component {
 
   constructor(props) {

@@ -44,7 +44,7 @@ contract JustCausePoolAaveV3 is Initializable {
                 break;
             }
         }
-        require(isAccepted, "submitted token address is not accepted by pool");
+        require(isAccepted, "token not accepted by pool");
         _;
     }
 
@@ -55,12 +55,12 @@ contract JustCausePoolAaveV3 is Initializable {
     }
 
     modifier onlyReceiver(address _sender){
-        require(receiver == _sender, "you are not the current reciever for this pool");
+        require(receiver == _sender, "not the receiver");
         _;
     }
 
     modifier onlyMaster(address _sender){
-        require(master == _sender, "you are not the owner");
+        require(master == _sender, "not the owner");
         _;
     }
 
@@ -103,31 +103,13 @@ contract JustCausePoolAaveV3 is Initializable {
     }
 
     function deposit(address _assetAddress, uint256 _amount/*, address _depositor*/) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external {
-        //IERC20 token = IERC20(_assetAddress);
-        //require(token.allowance(_depositor, address(this)) >= _amount, "sender not approved");
-        //token.transferFrom(_depositor, address(this), _amount);
-        //address poolAddr = address(Pool);
-        //token.approve(poolAddr, _amount);
-        //IPool(poolAddr).deposit(address(token), _amount, address(this), 0);
         totalDeposits[_assetAddress] += _amount;
-        //emit Deposit(_assetAddress, _depositor, _amount);
     }
 
     function depositETH(address _wethAddress , /*address _depositor,*/ uint256 _value) onlyMaster(msg.sender) external {
         //IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(poolAddr, address(this), 0);
         totalDeposits[_wethAddress] += _value;
     }
-
-    /*function tallyDeposit(uint256 _amount, address _assetAddress, address _depositor) internal {
-        uint256 depositedAmount = depositors[_depositor][_assetAddress];
-        //uint256 liquidityIndex = getAaveLiquidityIndex(_assetAddress);
-        //if(depositedAmount == 0){
-            //poolTracker.addDeposit(_depositor, _amount, liquidityIndex, block.timestamp, _assetAddress);
-        //}
-        depositedAmount += _amount;
-        totalDeposits[_assetAddress] += _amount;
-        depositors[_depositor][_assetAddress] = depositedAmount;
-    }*/
 
     function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool isETH) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount) external {
         totalDeposits[_assetAddress] -= _amount;
@@ -142,7 +124,7 @@ contract JustCausePoolAaveV3 is Initializable {
         emit Withdraw(_assetAddress, _depositor, _amount);
     }
 
-    function withdrawDonations(address _assetAddress, bool isETH) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external returns(uint256){
+    function withdrawDonations(address _assetAddress, bool isETH) onlyMaster(msg.sender) external returns(uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
@@ -155,7 +137,6 @@ contract JustCausePoolAaveV3 is Initializable {
             IERC20(aTokenAddress).approve(wethGatewayAddr, interestEarned);
             IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, interestEarned, receiver);
         }
-
         return interestEarned;
     }
 

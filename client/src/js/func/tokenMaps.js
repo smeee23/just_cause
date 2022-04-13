@@ -24,7 +24,6 @@ export const kovanTokenMap = {
 export const polygonMumbaiV3TokenMap = {
     AAVE: {address: '0x0AB1917A0cf92cdcf7F7b637EaC3A46BBBE41409', decimals: 18, apiKey: "aave"},
     DAI: {address:'0x9A753f0F7886C9fbF63cF59D0D4423C5eFaCE95B', decimals: 18, apiKey: "dai"},
-    LINK: {address:'0xD9E7e5dd6e122dDE11244e14A60f38AbA93097f2', decimals: 18, apikey:"chainlink"},
     USDC: {address:'0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2',decimals: 6, apiKey: "usd-coin"},
     USDT: {address:'0x21C561e551638401b937b03fE5a0a0652B99B7DD',decimals: 6, apiKey: "tether"},
     WBTC: {address:'0x85E44420b6137bbc75a85CAB5c9A3371af976FdE',decimals: 8, apiKey: "bitcoin"},

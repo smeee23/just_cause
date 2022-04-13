@@ -13,11 +13,8 @@ import { updateTxResult } from  "../../actions/txResult";
 import { updateDepositAmount } from  "../../actions/depositAmount";
 import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 
-import {getAllowance, getAmountBase, addUserDepositedPool} from '../../func/contractInteractions';
+import {getAllowance, addUserDepositedPool} from '../../func/contractInteractions';
 import {delay, getTokenBaseAmount} from '../../func/ancillaryFunctions';
-
-
-const BigNumber = require('bignumber.js');
 
 class DepositModal extends Component {
 

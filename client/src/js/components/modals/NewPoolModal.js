@@ -1,13 +1,8 @@
 import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
-import { ModalHeader, ModalBodyDeploy, ModalCtas } from "../Modal";
+import { ModalBodyDeploy, ModalCtas } from "../Modal";
 import TextField from '../TextField'
-import Select from '../Select'
 import { Button, ButtonSmall } from '../Button'
-import Icon from '../Icon'
-
-import palette from '../../utils/palette'
-import Multiselect from '../Multiselect'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
 import PoolTracker from "../../../contracts/PoolTracker.json";
@@ -16,7 +11,7 @@ import { updateDepositAmount } from  "../../actions/depositAmount";
 import {updateDeployInfo} from "../../actions/deployInfo";
 import { updateDeployTxResult } from  "../../actions/deployTxResult";
 
-import {upload, uploadNftMetaData, getAbout, getIpfsDataBuffer} from '../../func/ipfs';
+import {upload} from '../../func/ipfs';
 
 import { delay, displayLogo } from '../../func/ancillaryFunctions';
 
@@ -158,7 +153,7 @@ class NewPoolModal extends Component {
 
   displayImage = () => {
 	if(this.state.fileUploadHash){
-	   return <img max-width='100%' height='auto' src={'https://ipfs.io/ipfs/'+this.state.fileUploadHash}/>
+	   return <img alt="" max-width='100%' height='auto' src={'https://ipfs.io/ipfs/'+this.state.fileUploadHash}/>
 	}
   }
 

@@ -16,7 +16,7 @@ import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import {updateSearchInfo } from "../actions/searchInfo";
 
-import {searchPools, updatePoolInfo, getExternalPoolInfo } from '../func/contractInteractions';
+import { updatePoolInfo, getExternalPoolInfo } from '../func/contractInteractions';
 
 class Search extends Component {
 

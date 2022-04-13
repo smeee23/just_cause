@@ -1,5 +1,3 @@
-import { connect } from "react-redux";
-
 import getWeb3 from "../../getWeb3NotOnLoad";
 import JCPool from "../../contracts/JustCausePoolAaveV3.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
@@ -74,14 +72,14 @@ import { getIpfsData } from "./ipfs";
 
 	export const addDeployedPool = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists) => {
 
-		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
 		const userBalancePools = depositBalancePools.balances;
 
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
 
 		console.log('poolLists 1', poolLists)
 		for(let i = 0; i < poolLists.length; i++){
-			if(i != 0 || poolInfo[0].isVerified){
+			if(i !== 0 || poolInfo[0].isVerified){
 				poolLists[i].push(poolInfo[0]);
 			}
 		}
@@ -98,7 +96,7 @@ import { getIpfsData } from "./ipfs";
 			}
 		}
 
-		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
 		const userBalancePools = depositBalancePools.balances;
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
 		userDepositPoolInfo.push(poolInfo[0]);
@@ -108,7 +106,7 @@ import { getIpfsData } from "./ipfs";
 
 	export const updatePoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists) => {
 
-		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
 		const userBalancePools = depositBalancePools.balances;
 
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
@@ -128,39 +126,6 @@ import { getIpfsData } from "./ipfs";
 		console.log('poolLists', poolLists)
 		return poolLists;
 	}
-	/*export const getPoolStateFromChain = async(activeAccount, tokenMap, networkId) => {
-
-		const web3 = await getWeb3();
-		const PoolTrackerInstance = new web3.eth.Contract(
-			PoolTracker.abi,
-			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,
-		);
-
-		const verifiedPools = await PoolTrackerInstance.methods.getVerifiedPools().call();
-		const ownerPools = await PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
-		let userDepositPools = await PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
-
-		let isHashMatch = true;
-		for(let i = 0; i < verifiedPools.length; i++){
-			const isMatch = await PoolTrackerInstance.methods.checkByteCode(verifiedPools[i]).call();
-			if(!isMatch){
-				isHashMatch = false;
-			}
-		}
-		console.log('isHashMatch', isHashMatch);
-		userDepositPools = [...new Set(userDepositPools)];
-
-		const verifiedPoolInfo = await getPoolInfo(verifiedPools, tokenMap, activeAccount);
-		const ownerPoolInfo = await getPoolInfo(ownerPools, tokenMap, activeAccount);
-		const userDepositPoolInfo = await getPoolInfo(userDepositPools, tokenMap, activeAccount);
-
-		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
-		console.log('---------ownerPoolInfo--------', ownerPoolInfo);
-		console.log('---------userDepositPoolInfo--------', userDepositPoolInfo);
-
-		return { verifiedPools, ownerPools, userDepositPools, verifiedPoolInfo, ownerPoolInfo, userDepositPoolInfo };
-	}*/
-
 
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools) => {
 		const web3 = await getWeb3();
@@ -288,11 +253,8 @@ import { getIpfsData } from "./ipfs";
 		for(let i = 0; i < balance; i++){
 			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
 			const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
-			//if(depositInfo.balance > 0){
 				userDepositPools.push(depositInfo.pool);
 				userBalancePools[depositInfo.pool+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled, depositInfo.timeStamp, depositInfo.pool, depositInfo.asset];
-				//userBalancePools[depositInfo.pool+depositInfo.asset] = depositInfo.balance;
-			//}
 		}
 
 		return {'depositPools':[...new Set(userDepositPools)], 'balances':userBalancePools};

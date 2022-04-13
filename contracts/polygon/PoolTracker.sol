@@ -21,18 +21,44 @@ contract PoolTracker is ReentrancyGuard {
     mapping(address => uint256) private totalDonated;
     address[] private verifiedPools;
 
-    IPoolAddressesProvider provider;
+    //IPoolAddressesProvider provider;
     address poolAddr;
     address wethGatewayAddr;
     address validator;
 
     event AddPool(address pool, string name, address receiver);
-    event AddDeposit(address userAddr, address pool, address asset, uint256 amount, uint256 jcValue);
+    event AddDeposit(address userAddr, address pool, address asset, uint256 amount);
     event WithdrawDeposit(address userAddr, address pool, address asset, uint256 amount);
     event Claim(address userAddr, address receiver, address pool, address asset, uint256 amount);
 
     modifier onlyPools(address _pool){
         require(isPool[_pool], "not called from a pool");
+        _;
+    }
+
+    modifier onlyAcceptedTokens(address[] memory causeAcceptedTokens){
+        address[] memory aaveAcceptedTokens = IPool(poolAddr).getReservesList();
+        for(uint8 i = 0; i < causeAcceptedTokens.length; i++){
+            bool found;
+            for(uint8 j = 0; j < aaveAcceptedTokens.length; j++){
+                if(causeAcceptedTokens[i] == aaveAcceptedTokens[j]){
+                    found = true;
+                }
+            }
+            require(found, "token not approved");
+        }
+        _;
+    }
+
+    modifier onlyAcceptedToken(address _asset){
+        address[] memory aaveAcceptedTokens = IPool(poolAddr).getReservesList();
+        bool found;
+        for(uint8 j = 0; j < aaveAcceptedTokens.length; j++){
+            if(_asset == aaveAcceptedTokens[j]){
+                found = true;
+            }
+        }
+        require(found, "token not approved");
         _;
     }
 
@@ -42,66 +68,28 @@ contract PoolTracker is ReentrancyGuard {
         jCOwnerERC721 = new JCOwnerERC721();
         baseJCPool = new JustCausePoolAaveV3();
 
-        provider = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)); // polygon mumbai v3
-        poolAddr = provider.getPool();
+        poolAddr = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)).getPool(); // polygon mumbai v3
         wethGatewayAddr = address(0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17);// polygon mumbai v3
     }
 
     function addDeposit(uint256 _amount, address _asset, address _pool, bool isETH) onlyPools(_pool) nonReentrant() external payable {
         tvl[_asset] += _amount;
         string memory _metaHash = IJustCausePool(_pool).getMetaUri();
-        address devAddress = verifiedPools[0];
+        address _poolAddr = poolAddr;
         if(isETH){
-            address _poolAddr = poolAddr;
-            if(devAddress == _pool){
-                IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(_poolAddr, _pool, 0);
-                IJustCausePool(_pool).depositETH(_asset, msg.value);
-            }
-            else{
-                (uint256 jcValue, uint256 newValue) = calcDevFundSplit(_amount);
-
-                IWETHGateway(wethGatewayAddr).depositETH{value: jcValue}(_poolAddr, devAddress, 0);
-                IJustCausePool(_pool).depositETH(_asset, jcValue);
-
-                IWETHGateway(wethGatewayAddr).depositETH{value: newValue}(_poolAddr, _pool, 0);
-                IJustCausePool(_pool).depositETH(_asset, newValue);
-            }
+            IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(_poolAddr, _pool, 0);
+            IJustCausePool(_pool).depositETH(_asset, msg.value);
         }
         else {
-            if(devAddress == _pool){
-                depositNonEth(_amount, _asset, _pool);
-            }
-            else{
-                (uint256 jcValue, uint256 newValue) = calcDevFundSplit(_amount);
-                depositNonEth(jcValue, _asset, devAddress);
-                depositNonEth(newValue, _asset, _pool);
-            }
+            IERC20 token = IERC20(_asset);
+            require(token.allowance(msg.sender, address(this)) >= _amount, "sender not approved");
+            token.transferFrom(msg.sender, address(this), _amount);
+            token.approve(_poolAddr, _amount);
+            IPool(_poolAddr).deposit(address(token), _amount, _pool, 0);
+            IJustCausePool(_pool).deposit(_asset, _amount);
         }
-        if(devAddress == _pool){
-            jCDepositorERC721.addFunds(msg.sender, _amount, block.timestamp,  _pool, _asset, _metaHash);
-        }
-        else{
-            (uint256 jcValue, uint256 newValue) = calcDevFundSplit(_amount);
-            jCDepositorERC721.addFunds(msg.sender, jcValue, block.timestamp,  devAddress, _asset, _metaHash);
-            jCDepositorERC721.addFunds(msg.sender, newValue, block.timestamp,  _pool, _asset, _metaHash);
-        }
-        emit AddDeposit(msg.sender, _pool, _asset, newValue, jcValue);
-    }
-
-    function calcDevFundSplit(uint256 _amount) internal pure returns(uint256 jcValue, uint256 newValue) {
-        uint256 bp = 25; // 0.25% in basis points (parts per 10,000)
-        jcValue = (_amount * bp) / 10000;
-        newValue = _amount - jcValue;
-    }
-
-    function depositNonEth(uint256 _amount, address _asset, address _pool) internal {
-        address _poolAddr = poolAddr;
-        IERC20 token = IERC20(_asset);
-        require(token.allowance(msg.sender, address(this)) >= _amount, "sender not approved");
-        token.transferFrom(msg.sender, address(this), _amount);
-        token.approve(_poolAddr, _amount);
-        IPool(_poolAddr).deposit(address(token), _amount, _pool, 0);
-        IJustCausePool(_pool).deposit(_asset, _amount /*, msg.sender*/);
+        jCDepositorERC721.addFunds(msg.sender, _amount, block.timestamp,  _pool, _asset, _metaHash);
+        emit AddDeposit(msg.sender, _pool, _asset, _amount);
     }
 
     function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) onlyPools(_pool) nonReentrant() external {
@@ -111,7 +99,7 @@ contract PoolTracker is ReentrancyGuard {
         emit WithdrawDeposit(msg.sender, _pool, _asset, _amount);
     }
 
-    function claimInterest(address _asset, address _pool, bool _isETH) onlyPools(_pool) nonReentrant() external {
+    function claimInterest(address _asset, address _pool, bool _isETH) onlyPools(_pool) nonReentrant() onlyAcceptedToken(_asset) external {
         uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset, _isETH);
         totalDonated[_asset] += amount;
         emit Claim(msg.sender, IJustCausePool(_pool).getRecipient(), _pool, _asset, amount);
@@ -133,7 +121,7 @@ contract PoolTracker is ReentrancyGuard {
         require(instance != address(0), "ERC1167: create failed");
     }
 
-    function createJCPoolClone(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver) external {
+    function createJCPoolClone(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver) onlyAcceptedTokens(_acceptedTokens) external {
         require(names[_name] == address(0), "pool with name already exists");
         address child = clone(address(baseJCPool));
         bool isVerified;
@@ -177,25 +165,6 @@ contract PoolTracker is ReentrancyGuard {
     function checkPool(address _pool) public view returns(bool){
         return isPool[_pool];
     }
-
-    /*function getUserDeposits(address _userAddr) external view returns(address[] memory){
-        return depositors[_userAddr];
-    }*/
-
-    /*function getUserDeposits(address _userAddr) external view returns(address[] memory){
-        uint256 numDeposits = jCDepositorERC721.balanceOf(_userAddr);
-        address[] memory poolList;
-        for(uint8 i = 0; i < numDeposits; i++){
-            uint256 tokenId = jCDepositorERC721.tokenOfOwnerByIndex(_userAddr, i);
-            (,,,, address pool,) = jCDepositorERC721.getDeposit(tokenId);
-            poolList[i] = pool;
-        }
-        return poolList;
-    }*/
-
-    /*function getUserOwned(address _userAddr) external view returns(address[] memory){
-        return owners[_userAddr];
-    }*/
 
     function getAddressFromName(string memory _name) external view returns(address){
         return names[_name];

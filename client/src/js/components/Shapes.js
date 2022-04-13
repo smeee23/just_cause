@@ -31,12 +31,12 @@ class Shapes extends Component {
 
         const shapes = {
             polygon1: { sides: 0, size: 50 },
-            rectangle1: { width: 125, height: 125 },
-            polygon2: { sides: 5, size: 100 },
-            polygon3: { sides: 6, size: 75 },
-            polygon4: { sides: 8, size: 125 },
-            rectangle2: { width: 200, height: 100 },
-            polygon5: { sides: 0, size: 100 },
+            rectangle1: { width: 125, height: 60 },
+            polygon2: { sides: 5, size: 50 },
+            polygon3: { sides: 6, size: 35 },
+            polygon4: { sides: 8, size: 35 },
+            rectangle2: { width: 100, height: 50 },
+            polygon5: { sides: 0, size: 33 },
         }
 
         const paletteKeys = Object.keys(palette);
@@ -80,7 +80,7 @@ class Shapes extends Component {
 
         World.add(engine.world, this.attractor);
 
-        this.stack = Composites.stack(-264, -264, 6, 4, 64, 64, (x, y, i, j) => {
+        this.stack = Composites.stack(-264, -264, 6, 50, 64, 64, (x, y, i, j) => {
             const options = {
                 render: {
                     // strokeStyle: palette[paletteKeys[(i + j) % paletteKeys.length]] + 'FF',
@@ -143,6 +143,7 @@ class Shapes extends Component {
     }
 
     render() {
+
         return <div ref="scene" className="shapes"/>
     }
 }

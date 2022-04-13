@@ -24,7 +24,7 @@ import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
 import {getBalance} from '../func/contractInteractions';
-import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare} from '../func/ancillaryFunctions';
+import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare, numberWithCommas} from '../func/ancillaryFunctions';
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
@@ -148,10 +148,10 @@ class Card extends Component {
 				</div>
 
 				<div /*style={{fontSize:17}}*/ className="card__body__column__seven">
-					<p>{precise(item.totalDeposits, item.decimals)+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
-					<p>{precise(item.userBalance, item.decimals)+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
-					<p>{precise(item.claimedInterest, item.decimals)+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
-					<p>{precise(item.unclaimedInterest, item.decimals) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
+					<p>{numberWithCommas(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
+					<p>{numberWithCommas(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+					<p>{numberWithCommas(precise(item.claimedInterest, item.decimals))+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
+					<p>{numberWithCommas(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
 				</div>
 			</div>
 		return tokenInfo;

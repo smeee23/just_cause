@@ -1933,4 +1933,6 @@ interface IJustCausePool {
     function getHashByteCode() external view returns(bytes32);
     function getAaveLiquidityIndex(address _asset) external view returns(uint256 liquidityIndex);
     function getReserveNormalizedIncome(address _asset) external view returns(uint256);
+    function getPoolTokenInfo(address _asset) external returns(uint256, uint256, uint256, uint256, uint256, uint256, address);
+    function getPoolInfo() external view returns(address[] memory, address, bool, string memory, string memory, string memory, string memory);
 }

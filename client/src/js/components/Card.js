@@ -224,9 +224,11 @@ class Card extends Component {
 			const web3 = await getWeb3();
 			const activeAccount = this.props.activeAccount;
 			const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === assetAddress);
+			const isETH = (tokenString === 'ETH' || tokenString === 'MATIC');
+
 			const parameter = {
 				from: activeAccount,
-				gas: web3.utils.toHex(1000000),
+				gas: web3.utils.toHex(1500000),
 				gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
 			};
 
@@ -235,7 +237,7 @@ class Card extends Component {
 				poolTrackerAddress,
 			);
 			txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: address};
-			result = await PoolTrackerInstance.methods.claimInterest(assetAddress, address).send(parameter , (err, transactionHash) => {
+			result = await PoolTrackerInstance.methods.claimInterest(assetAddress, address, isETH).send(parameter , (err, transactionHash) => {
 				console.log('Transaction Hash :', transactionHash);
 				this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: address});
 				txInfo.txHash = transactionHash;
@@ -260,7 +262,7 @@ class Card extends Component {
 			console.log('approve clicked');
 			const parameter = {
 				from: activeAccount ,
-				gas: web3.utils.toHex(1000000),
+				gas: web3.utils.toHex(1500000),
 				gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
 				};
 
@@ -332,7 +334,7 @@ class Card extends Component {
 					{ title }
 				</h4>
 
-				<div style={{paddingLeft:"10px", display:"flex"}}>
+				<div style={{paddingLeft:"10px", display:"flex", flexWrap:"wrap"}}>
 					{tokenButtons}
 				</div>
 

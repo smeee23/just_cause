@@ -65,7 +65,7 @@ class WithdrawModal extends Component {
 
             const parameter = {
                 from: activeAccount,
-                gas: web3.utils.toHex(1000000),
+                gas: web3.utils.toHex(1500000),
                 gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
             };
 

@@ -17,6 +17,10 @@ import UsdcLogoLg from "../components/cryptoLogos/UsdcLogoLg";
 import TetherLogoLg from "../components/cryptoLogos/TetherLogoLg";
 import EthLogoLg from "../components/cryptoLogos/EthLogoLg";
 import AaveLogoLg from "../components/cryptoLogos/AaveLogoLg";
+import MaticLogoLg from "../components/cryptoLogos/MaticLogoLg";
+import WEthLogoLg from "../components/cryptoLogos/WEthLogoLg";
+import LinkLogoLg from "../components/cryptoLogos/LinkLogoLg";
+import DpiLogoLg from "../components/cryptoLogos/DpiLogoLg";
 
 import Logo from "../components/Logo"
 
@@ -212,12 +216,18 @@ export const displayLogoLg = (acceptedTokenString) => {
   else if (acceptedTokenString === 'AAVE'){
     logo = <AaveLogoLg/>;
   }
-  /*else if(acceptedTokenString === 'WETH'){
-    logo = <WEthLogo/>;
+  else if(acceptedTokenString === 'WETH'){
+    logo = <WEthLogoLg/>;
   }
   else if(acceptedTokenString === 'MATIC'){
-    logo = <MaticLogo/>;
-  }*/
+    logo = <MaticLogoLg/>;
+  }
+  else if(acceptedTokenString === 'DPI'){
+    logo = <DpiLogoLg/>;
+  }
+  else if(acceptedTokenString === 'LINK'){
+    logo = <LinkLogoLg/>;
+  }
 
   return logo;
 }

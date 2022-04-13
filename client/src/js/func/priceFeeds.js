@@ -15,7 +15,7 @@ export const getPriceFromMessari = async(apiKey) => {
 export const getPriceFromCoinGecko = async(networkId) => {
     try{
         if(networkId === 80001){
-            const url = "https://api.coingecko.com/api/v3/simple/price?ids=aave,dai,tether,usd-coin,ethereum,bitcoin,chainlink,matic-network&vs_currencies=usd";
+            const url = "https://api.coingecko.com/api/v3/simple/price?ids=aave,dai,tether,usd-coin,ethereum,bitcoin,chainlink,matic-network,defipulse-index&vs_currencies=usd";
             const response = await axios.get(url);
             console.log('coingecko prices', response.data);
             return response.data;

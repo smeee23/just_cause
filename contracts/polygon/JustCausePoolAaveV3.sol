@@ -159,14 +159,6 @@ contract JustCausePoolAaveV3 is Initializable {
         return interestEarned;
     }
 
-    /*function getUserBalance(address _userAddr, address _token) external view returns(uint256){
-        return depositors[_userAddr][_token];
-    }*/
-
-    function getTotalDeposits(address _token) external view returns(uint256){
-        return totalDeposits[_token];
-    }
-
     function getAcceptedTokens() external view returns(address[] memory){
         return acceptedTokens;
     }
@@ -191,44 +183,53 @@ contract JustCausePoolAaveV3 is Initializable {
         return isVerified;
     }
 
+    function getRecipient() external view returns(address){
+        return receiver;
+    }
+
+    function getPoolInfo() external view returns (address[] memory, address, bool, string memory, string memory, string memory, string memory){
+        return (acceptedTokens, receiver, isVerified, metaUri, picHash, about, name);
+    }
     function getATokenAddress(address _assetAddress) public view returns(address aTokenAddress){
         //(,,,,,,,, aTokenAddress,,,,,,) = IPool(poolAddr).getReserveData(_assetAddress);
         aTokenAddress = IPool(poolAddr).getReserveData(_assetAddress).aTokenAddress;
     }
 
-    function getUnclaimedInterest(address _assetAddress) external view returns (uint256){
+    function getTotalDeposits(address _assetAddress) public view returns(uint256){
+        return totalDeposits[_assetAddress];
+    }
+    function getUnclaimedInterest(address _assetAddress) public view returns (uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         return aTokenBalance - totalDeposits[_assetAddress];
     }
 
-    function getClaimedInterest(address _assetAddress) external view returns (uint256){
+    function getClaimedInterest(address _assetAddress) public view returns (uint256){
         return interestWithdrawn[_assetAddress];
     }
 
-    function getATokenBalance(address _assetAddress) external view returns (uint256){
+    function getATokenBalance(address _assetAddress) public view returns (uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         return IERC20(aTokenAddress).balanceOf(address(this));
     }
 
-    function getRecipient() external view returns(address){
-        return receiver;
+    function getReserveNormalizedIncome(address _assetAddress) public view returns(uint256){
+        return IPool(poolAddr).getReserveNormalizedIncome(_assetAddress);
     }
 
-    function getByteCode() external view returns(bytes memory) {
-        return address(this).code;
+    function getAaveLiquidityIndex(address _assetAddress) public view returns(uint256 liquidityIndex){
+        liquidityIndex = IPool(poolAddr).getReserveData(_assetAddress).liquidityIndex;
     }
+
+    function getPoolTokenInfo(address _asset) external view returns(uint256, uint256, uint256, uint256, uint256, uint256, address){
+        return(getAaveLiquidityIndex(_asset), getReserveNormalizedIncome(_asset), getATokenBalance(_asset),
+                getClaimedInterest(_asset), getUnclaimedInterest(_asset), getTotalDeposits(_asset), getATokenAddress(_asset));
+    }
+    /*function getByteCode() external view returns(bytes memory) {
+        return address(this).code;
+    }its
 
     function getHashByteCode() public view returns(bytes32) {
         return keccak256(abi.encodePacked(address(this).code));
-    }
-
-    function getReserveNormalizedIncome(address _asset) public view returns(uint256){
-        return IPool(poolAddr).getReserveNormalizedIncome(_asset);
-    }
-
-    function getAaveLiquidityIndex(address _asset) public view returns(uint256 liquidityIndex){
-        //(,liquidityIndex,,,,,,,,,,,,,) = IPool(poolAddr).getReserveData(_asset);
-        liquidityIndex = IPool(poolAddr).getReserveData(_asset).liquidityIndex;
-    }
+    }*/
 }

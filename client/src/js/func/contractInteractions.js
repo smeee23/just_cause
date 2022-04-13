@@ -81,7 +81,9 @@ import { getIpfsData } from "./ipfs";
 
 		console.log('poolLists 1', poolLists)
 		for(let i = 0; i < poolLists.length; i++){
-			poolLists[i].push(poolInfo[0]);
+			if(i != 0 || poolInfo[0].isVerified){
+				poolLists[i].push(poolInfo[0]);
+			}
 		}
 
 		console.log('poolLists 2', poolLists)
@@ -172,14 +174,17 @@ import { getIpfsData } from "./ipfs";
 				poolTracker[i],
 			);
 
-			let acceptedTokens = await JCPoolInstance.methods.getAcceptedTokens().call();
-			let name = await JCPoolInstance.methods.getName().call();
-			let receiver = await JCPoolInstance.methods.getRecipient().call();
-			let aboutHash = await JCPoolInstance.methods.getAbout().call();
-			const about = await getIpfsData(aboutHash);
-			const picHash =  await JCPoolInstance.methods.getPicHash().call();
-			const hashByteCode = await JCPoolInstance.methods.getHashByteCode().call();
+			const groupedPoolInfo = await JCPoolInstance.methods.getPoolInfo().call();
 
+			let acceptedTokens = groupedPoolInfo[0];
+			const receiver = groupedPoolInfo[1];
+			const isVerified = groupedPoolInfo[2];
+			let aboutHash = groupedPoolInfo[5];
+			const about = await getIpfsData(aboutHash);
+			const picHash =  groupedPoolInfo[4];
+			const name = groupedPoolInfo[6];
+
+			console.log('grouped pool info', groupedPoolInfo, aboutHash);
 			let acceptedTokenStrings = [];
 			let acceptedTokenInfo = [];
 
@@ -188,16 +193,17 @@ import { getIpfsData } from "./ipfs";
 				let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];
 				const balance = (balances) ? balances[0] : 0;
 				const amountScaled = (balances) ? balances[1] : 0;
-
+				const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(acceptedTokens[j]).call();
+				console.log('grouped pool info', groupedPoolTokenInfo);
 				acceptedTokenInfo.push({
-					'totalDeposits': await JCPoolInstance.methods.getTotalDeposits(acceptedTokens[j]).call(),
+					'totalDeposits': groupedPoolTokenInfo[5],
 					'userBalance':  balance,
 					'amountScaled':  amountScaled,
-					'unclaimedInterest': await JCPoolInstance.methods.getUnclaimedInterest(acceptedTokens[j]).call(),
-					'claimedInterest': await JCPoolInstance.methods.getClaimedInterest(acceptedTokens[j]).call(),
-					'reserveNormalizedIncome': await JCPoolInstance.methods.getReserveNormalizedIncome(acceptedTokens[j]).call(),
-					'aTokenAddress': await JCPoolInstance.methods.getATokenAddress(acceptedTokens[j]).call(),
-					'liquidityIndex': await JCPoolInstance.methods.getAaveLiquidityIndex(acceptedTokens[j]).call(),
+					'unclaimedInterest': groupedPoolTokenInfo[4],
+					'claimedInterest': groupedPoolTokenInfo[3],
+					'reserveNormalizedIncome': groupedPoolTokenInfo[1],
+					'aTokenAddress': groupedPoolTokenInfo[2],
+					'liquidityIndex': groupedPoolTokenInfo[0],
 					'acceptedTokenString': tokenString,
 					'decimals': tokenMap[tokenString].decimals,
 					'depositAPY': tokenMap[tokenString] && tokenMap[tokenString].depositAPY,
@@ -212,6 +218,7 @@ import { getIpfsData } from "./ipfs";
 							name: name,
 							about: about,
 							picHash: picHash,
+							isVerified: isVerified,
 							address: poolTracker[i],
 							acceptedTokens: acceptedTokenStrings,
 							acceptedTokenInfo: acceptedTokenInfo,

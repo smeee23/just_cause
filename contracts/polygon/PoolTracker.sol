@@ -6,7 +6,9 @@ import { JCDepositorERC721 } from './JCDepositorERC721.sol';
 import { JCOwnerERC721 } from './JCOwnerERC721.sol';
 import { JustCausePoolAaveV3 } from './JustCausePoolAaveV3.sol';
 
-contract PoolTracker {
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+contract PoolTracker is ReentrancyGuard {
 
     JustCausePoolAaveV3 baseJCPool;
     JCDepositorERC721 jCDepositorERC721;
@@ -25,7 +27,7 @@ contract PoolTracker {
     address validator;
 
     event AddPool(address pool, string name, address receiver);
-    event AddDeposit(address userAddr, address pool, address asset, uint256 amount);
+    event AddDeposit(address userAddr, address pool, address asset, uint256 amount, uint256 jcValue);
     event WithdrawDeposit(address userAddr, address pool, address asset, uint256 amount);
     event Claim(address userAddr, address receiver, address pool, address asset, uint256 amount);
 
@@ -45,7 +47,7 @@ contract PoolTracker {
         wethGatewayAddr = address(0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17);// polygon mumbai v3
     }
 
-    function addDeposit(uint256 _amount, address _asset, address _pool, bool isETH) onlyPools(_pool) external payable {
+    function addDeposit(uint256 _amount, address _asset, address _pool, bool isETH) onlyPools(_pool) nonReentrant() external payable {
         tvl[_asset] += _amount;
         string memory _metaHash = IJustCausePool(_pool).getMetaUri();
         address devAddress = verifiedPools[0];
@@ -56,11 +58,10 @@ contract PoolTracker {
                 IJustCausePool(_pool).depositETH(_asset, msg.value);
             }
             else{
-                uint256 devValue = calcDevFundSplit(_amount);
-                uint256 newValue = _amount - devValue;
+                (uint256 jcValue, uint256 newValue) = calcDevFundSplit(_amount);
 
-                IWETHGateway(wethGatewayAddr).depositETH{value: devValue}(_poolAddr, devAddress, 0);
-                IJustCausePool(_pool).depositETH(_asset, devValue);
+                IWETHGateway(wethGatewayAddr).depositETH{value: jcValue}(_poolAddr, devAddress, 0);
+                IJustCausePool(_pool).depositETH(_asset, jcValue);
 
                 IWETHGateway(wethGatewayAddr).depositETH{value: newValue}(_poolAddr, _pool, 0);
                 IJustCausePool(_pool).depositETH(_asset, newValue);
@@ -71,9 +72,8 @@ contract PoolTracker {
                 depositNonEth(_amount, _asset, _pool);
             }
             else{
-                uint256 devValue = calcDevFundSplit(_amount);
-                uint256 newValue = _amount - devValue;
-                depositNonEth(devValue, _asset, devAddress);
+                (uint256 jcValue, uint256 newValue) = calcDevFundSplit(_amount);
+                depositNonEth(jcValue, _asset, devAddress);
                 depositNonEth(newValue, _asset, _pool);
             }
         }
@@ -81,18 +81,19 @@ contract PoolTracker {
             jCDepositorERC721.addFunds(msg.sender, _amount, block.timestamp,  _pool, _asset, _metaHash);
         }
         else{
-            uint256 devValue = calcDevFundSplit(_amount);
-            uint256 newValue = _amount - devValue;
-            jCDepositorERC721.addFunds(msg.sender, devValue, block.timestamp,  devAddress, _asset, _metaHash);
+            (uint256 jcValue, uint256 newValue) = calcDevFundSplit(_amount);
+            jCDepositorERC721.addFunds(msg.sender, jcValue, block.timestamp,  devAddress, _asset, _metaHash);
             jCDepositorERC721.addFunds(msg.sender, newValue, block.timestamp,  _pool, _asset, _metaHash);
         }
-        emit AddDeposit(msg.sender, _pool, _asset, _amount);
+        emit AddDeposit(msg.sender, _pool, _asset, newValue, jcValue);
     }
 
-    function calcDevFundSplit(uint256 _amount) internal pure returns(uint256) {
+    function calcDevFundSplit(uint256 _amount) internal pure returns(uint256 jcValue, uint256 newValue) {
         uint256 bp = 25; // 0.25% in basis points (parts per 10,000)
-        return (_amount * bp) / 10000;
+        jcValue = (_amount * bp) / 10000;
+        newValue = _amount - jcValue;
     }
+
     function depositNonEth(uint256 _amount, address _asset, address _pool) internal {
         address _poolAddr = poolAddr;
         IERC20 token = IERC20(_asset);
@@ -103,28 +104,14 @@ contract PoolTracker {
         IJustCausePool(_pool).deposit(_asset, _amount /*, msg.sender*/);
     }
 
-    function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) onlyPools(_pool) external {
+    function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) onlyPools(_pool) nonReentrant() external {
         tvl[_asset] -= _amount;
-        address devAddress = verifiedPools[0];
-
-        if(devAddress == _pool){
-            jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
-            IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender, _isETH);
-        }
-        else{
-            uint256 devValue = calcDevFundSplit(_amount);
-            uint256 newValue = _amount - devValue;
-
-            jCDepositorERC721.withdrawFunds(msg.sender, newValue, _pool, _asset);
-            IJustCausePool(_pool).withdraw(_asset, newValue, msg.sender, _isETH);
-
-            jCDepositorERC721.withdrawFunds(msg.sender, devValue, devAddress, _asset);
-            IJustCausePool(_pool).withdraw(_asset, devValue, msg.sender, _isETH);
-        }
+        jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
+        IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender, _isETH);
         emit WithdrawDeposit(msg.sender, _pool, _asset, _amount);
     }
 
-    function claimInterest(address _asset, address _pool, bool _isETH) onlyPools(_pool) external {
+    function claimInterest(address _asset, address _pool, bool _isETH) onlyPools(_pool) nonReentrant() external {
         uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset, _isETH);
         totalDonated[_asset] += amount;
         emit Claim(msg.sender, IJustCausePool(_pool).getRecipient(), _pool, _asset, amount);

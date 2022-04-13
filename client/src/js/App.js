@@ -33,12 +33,6 @@ import {getPriceFromMessari, getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, getFormatUSD} from './func/ancillaryFunctions';
 import {uploadAbout, getAbout, getIpfsData} from './func/ipfs';
 
-import { Modal } from "./components/Modal";
-import PendingTxModal from "./components/modals/PendingTxModal";
-import TxResultModal from "./components/modals/TxResultModal";
-import DeployTxModal from "./components/modals/DeployTxModal";
-//import { load } from "dotenv";
-
 class App extends Component {
 
 	componentDidMount = async() => {
@@ -153,6 +147,7 @@ class App extends Component {
 	setTokenMapState = async(tokenMap) => {
 		let acceptedTokens = Object.keys(tokenMap);
 		const geckoPriceData = await getPriceFromCoinGecko(this.networkId);
+
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
@@ -168,7 +163,6 @@ class App extends Component {
 			const apiKey = tokenMap[key] && tokenMap[key].apiKey;
 			tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
 			console.log(key, 'price usd', tokenMap[key]['priceUSD'])
-
 
 			const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
 			console.log(key, 'tvl', precise(tvl, tokenMap[key]['decimals']));

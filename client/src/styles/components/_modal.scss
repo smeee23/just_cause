@@ -37,9 +37,10 @@ $baseclass: 'modal';
   }
 
   &__boxdeploy {
-    position: relative;
+    position: static;
     width: 90%;
     height: 90%;
+    display: flex;
     flex-direction: column;
     padding: (4 * $rem-base);
     border-radius: (2 * $rem-base);
@@ -58,7 +59,6 @@ $baseclass: 'modal';
     margin-bottom: (4 * $rem-base);
 
     .#{$baseclass}__close-btn {
-      cursor: pointer;
     }
   }
 
@@ -71,12 +71,13 @@ $baseclass: 'modal';
   }
 
   &__bodydeploy {
+    height: 80%;
+    width: 100%;
     flex-wrap: wrap;
-    height:90%;
     display: flex;
     flex-wrap: wrap;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 30px;
     grid-template-rows: repeat(3, 1fr);
     > * {
@@ -109,8 +110,10 @@ $baseclass: 'modal';
     grid-row: 3;
   }
   &__body__column__seven {
-    grid-column: 3 ;
-    grid-row: 3;
+    grid-column: 2 ;
+    grid-row: 2;
+    display: flex;
+    flex-wrap: wrap;
   }
   &__body__column__eight {
     grid-column: 4 ;

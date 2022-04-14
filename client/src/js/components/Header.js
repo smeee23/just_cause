@@ -2,13 +2,14 @@ import React, {Component, Fragment} from "react";
 import { connect } from "react-redux"
 
 import Logo from "./Logo";
-import { Button } from "./Button";
+import { Button, ButtonSmall } from "./Button";
 import TextLink from "./TextLink";
 import { NavLink } from 'react-router-dom'
 import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
 import { formatDollars } from "../func/ancillaryFunctions"
+
 class Header extends Component {
 
   isMetaMaskInstalled = () => {
@@ -91,7 +92,7 @@ class Header extends Component {
           <h2 className="mb0 horizontal-padding-med" style={{fontSize:13}}>{  this.displayTVL('tvl', 'Deposited:') }</h2>
         <nav className="app-bar__items">
           { nav }
-          <Button text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
+          <ButtonSmall text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
         </nav>
       </header>
 		);

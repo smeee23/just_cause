@@ -119,6 +119,7 @@ class Search extends Component {
 					address={item.address}
 					acceptedTokenInfo={item.acceptedTokenInfo}
 					about={item.about}
+					picHash={item.picHash}
 				/>
 			);
 		}

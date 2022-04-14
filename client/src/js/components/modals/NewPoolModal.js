@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
-import { ModalBodyDeploy, ModalCtas } from "../Modal";
+import { ModalHeader, ModalBodyDeploy, ModalCtas } from "../Modal";
 import TextField from '../TextField'
 import { Button, ButtonSmall } from '../Button'
 
@@ -25,6 +25,11 @@ class NewPoolModal extends Component {
 			fileUploadHash:"",
       		amount: 0,
 			acceptedTokens: ["MATIC"],
+			step: 0,
+			poolName: "",
+			receiver: "",
+			about: "",
+			tokens: "",
 		}
 	}
 
@@ -87,16 +92,16 @@ class NewPoolModal extends Component {
 	return false;
   }
 
-  setValues = async(poolName, receiver, about) => {
+  setValues = async() => {
 	  /*let tokenInfo = tokens.state.selected;
 	  for(let i = 0; i < tokens.state.selected.length; i++){
 		tokenInfo[i] = tokenInfo[i].props.children;
 	  }*/
 
-	  const uploadResult = await upload(about);
-	  console.log('pool info', poolName, receiver, uploadResult.hash, this.state.acceptedTokens);
+	  const uploadResult = await upload(this.state.about);
+	  console.log('pool info', this.state.poolName, this.state.receiver, uploadResult.hash, this.state.acceptedTokens);
 	  const aboutHash = uploadResult.hash;
-	  await this.deployOnChain(poolName, receiver, aboutHash, about, this.state.acceptedTokens);
+	  await this.deployOnChain(this.state.poolName, this.state.receiver, aboutHash, this.state.about, this.state.acceptedTokens);
   }
 
   uploadPicToIpfs = async() => {
@@ -205,68 +210,125 @@ class NewPoolModal extends Component {
 	return buttonHolder;
   }
 
-  render() {
-    const { poolInfo } = this.props;
-	console.log('props', this.props);
-		return (
-      <Fragment>
-        <ModalBodyDeploy>
-			<div  /*style={{fontSize:17}}*/  className="modal__body__column__one">
-			<p className="mr">1) Come up with a name for your JustCause Pool. This name will be unique to your Pool. </p>
-			</div>
+  getButton = () => {
+	  if(this.state.step === 0){
+		  return "Next =>";
+	  }
+	  return "Create Pool";
+  }
 
-			<div  className="modal__body__column__two">
-				<TextField ref="poolName" label="Pool Name" id="poolName" placeholder="Name your pool"/>
-			</div>
+  handleClick = (obj) => {
+	if(this.state.step === 1){
+		this.setValues();
+	}
+	else if(this.state.step === 0){
+		this.setState({
+			step: 1,
+			poolName: obj.poolName,
+			receiver: obj.receiver,
+			about: obj.about
+		})
+	}
+  }
 
-			<div /*style={{fontSize:17}}*/ className="modal__body__column__three">
-				<p className="mr">2) Select an address to receive the interest earned by contributions to your cause. It does not have to be an address you own, and can be changed at anytime by you. The field defaults to the current account, but any valid address can be entered.  </p>
-			</div>
+  handleClickBack = () => {
+	if(this.state.step === 1){
+		this.setState({
+			step: 0,
+		})
+	}
+  }
 
-			<div className="modal__body__column__four">
-				<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
-			</div>
+  handleInputSwitch = (poolInfo) => {
+	let display;
+	if(this.state.step === 0){
 
-			<div /*style={{fontSize:17}}*/ className="modal__body__column__five">
-				<p className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. we want to give you the tools to fund it and share your inspiration with the world.</p>
-			</div>
+		display = <Fragment>
+			<ModalHeader>
+          		<h2 className="mb0">Create Cause</h2>
+       		 </ModalHeader>
+			<ModalBodyDeploy>
+				<div  style={{fontSize:11}}  className="modal__body__column__one">
+				<p className="mr">1) Come up with a name for your JustCause Pool. This name will be unique to your Pool. </p>
+				</div>
 
-			<div className="modal__body__column__six">
-				<TextField ref="about" label="Pool Description" placeholder="Describe your cause"/>
-			</div>
+				<div  className="modal__body__column__two">
+					<TextField ref="poolName" label="Pool Name" id="poolName" placeholder="Name your pool"/>
+				</div>
 
-			<div /*style={{fontSize:17}}*/ className="modal__body__column__seven">
+				<div style={{fontSize:11}} className="modal__body__column__three">
+					<p className="mr">2) Select an address to receive the interest earned by contributions to your cause. It does not have to be an address you own, and can be changed at anytime by you. The field defaults to the current account, but any valid address can be entered.  </p>
+				</div>
+
+				<div className="modal__body__column__four">
+					<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
+				</div>
+
+				<div style={{fontSize:11}} className="modal__body__column__five">
+					<p className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. we want to give you the tools to fund it and share your inspiration with the world.</p>
+				</div>
+
+				<div className="modal__body__column__six">
+					<TextField ref="about" label="Pool Description" placeholder="Describe your cause"/>
+				</div>
+			</ModalBodyDeploy>
+			<ModalCtas>
+			<Button text={this.getButton()}
+				disabled={this.checkValues()}
+				callback={() => this.handleClick({poolName: this.refs.poolName.getValue(), receiver: this.refs.receiver.getValue(), about: this.refs.about.getValue()})}
+			/>
+			</ModalCtas>
+			</Fragment>
+
+	}
+	else if(this.state.step === 1){
+
+		display = <Fragment>
+			<ModalHeader>
+          		<h2 className="mb0">Create Cause</h2>
+       		 </ModalHeader>
+			<ModalBodyDeploy>
+			<div /*style={{fontSize:17}}*/ className="modal__body__column__one">
 				<p className="mr">4) This is an optional step. This image will be on the NFT that you and your contributors receive. It will also be displayed on the JustCause site. If left blank image will default to the JustCause Logo </p>
 			</div>
 
-			<div className="modal__body__column__eight">
+			<div className="modal__body__column__two">
 				<input id="photo" type="file" hidden/>
 				<Button disabled={this.isPhotoUploaded()} text={this.getUploadButtonText()} callback={() => this.fileUploadButton()} />
 			</div>
 
-			<div /*style={{fontSize:17}}*/ className="modal__body__column__nine">
+			<div /*style={{fontSize:17}}*/ className="modal__body__column__three">
 				<p className="mr">5) Select the tokens your contributors will be able to deposit. You will receive these tokens in the receiver address when you or someone else calls the claim function.</p>
 			</div>
 
-			<div /*style={{fontSize:17}}*/ className="modal__body__column__ten">
-				<p className="mr">{"Accepted Tokens: " + this.state.acceptedTokens}</p>
-			</div>
-
-			<div /*style={{fontSize:17}}*/  className="modal__body__column__eleven">
+			<div /*style={{fontSize:17}}*/ className="modal__body__column__seven">
 				{this.displayTokenSelection()}
 			</div>
 
-        </ModalBodyDeploy>
+			<div /*style={{fontSize:17}}*/  className="modal__body__column__five">
+				<p className="mr">{"Accepted Tokens: " + this.state.acceptedTokens}</p>
+			</div>
+		</ModalBodyDeploy>
         <ModalCtas>
-          <Button text="Create Pool"
+		<Button text="<= Back"
+			callback={() => this.handleClickBack({tokens: this.refs.tokens})}
+		 />
+          <Button text={this.getButton()}
 		  	disabled={this.checkValues()}
-			callback={() => this.setValues(this.refs.poolName.getValue(),
-										this.refs.receiver.getValue(),
-										this.refs.about.getValue(),
-										this.refs.tokens)}
+			callback={() => this.handleClick({tokens: this.refs.tokens})}
 		 />
         </ModalCtas>
-      </Fragment>
+		</Fragment>
+	}
+	return display;
+  }
+  render() {
+    const { poolInfo } = this.props;
+	console.log('props', this.props);
+		return (
+			<Fragment>
+				{this.handleInputSwitch(poolInfo)}
+			</Fragment>
 		);
 	}
 }

@@ -193,6 +193,41 @@ import { getIpfsData } from "./ipfs";
 		return poolInfo;
 	}
 
+	export const nameExists = async(poolName, poolTrackerAddress) => {
+		const web3 = await getWeb3();
+		const PoolTrackerInstance = new web3.eth.Contract(
+			PoolTracker.abi,
+			poolTrackerAddress,
+		);
+		console.log("getAddressFromName");
+		const result = await PoolTrackerInstance.methods.getAddressFromName(poolName).call();
+		if(result !== '0x0000000000000000000000000000000000000000'){
+			return "Pool Name already exists, please choose another";
+		}
+	}
+	export const checkValidAddress = async(address) => {
+		const web3 = await getWeb3();
+		const result = web3.utils.isAddress(address);
+		if(!result) return "The receiver address is not a valid address, please recheck"
+
+	}
+	export const checkInputError = async(input, poolTrackerAddress) => {
+			const poolName = input.poolName;
+			const receiver = input.receiver;
+			const about = input.about;
+			console.log("input", poolName, receiver, about);
+
+			if(!poolName) return "Pool Name cannot be blank"
+			if(poolName.length > 30) return "Pool Name cannot exceed 30 characters"
+			if(!about) return "Describe section cannot be blank"
+			if(!receiver) return "Receiver section cannot be blank"
+			let error = await nameExists(poolName, poolTrackerAddress);
+			if(error) return error;
+			error = await checkValidAddress(receiver);
+			if(error) return error;
+
+			return "";
+	}
 	export const getExternalPoolInfo = async(poolTrackerAddress, activeAccount, tokenMap, address) => {
 		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
 		const userBalancePools = depositBalancePools.balances;

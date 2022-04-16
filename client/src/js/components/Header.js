@@ -74,7 +74,7 @@ class Header extends Component {
         <NavLink exact to={"/search"}>
           <TextLink text="Search"/>
         </NavLink>
-        <NavLink exact to={"/"}>
+        <NavLink exact to={"/howitworks"}>
           <TextLink text="How it works"/>
         </NavLink>
       </Fragment>

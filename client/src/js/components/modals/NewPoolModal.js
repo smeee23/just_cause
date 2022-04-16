@@ -14,6 +14,7 @@ import { updateDeployTxResult } from  "../../actions/deployTxResult";
 import {upload} from '../../func/ipfs';
 
 import { delay, displayLogo } from '../../func/ancillaryFunctions';
+import {checkInputError} from '../../func/contractInteractions';
 
 class NewPoolModal extends Component {
 
@@ -30,6 +31,7 @@ class NewPoolModal extends Component {
 			receiver: "",
 			about: "",
 			tokens: "",
+			inputError: "",
 		}
 	}
 
@@ -217,17 +219,23 @@ class NewPoolModal extends Component {
 	  return "Create Pool";
   }
 
-  handleClick = (obj) => {
+  handleClick = async(obj) => {
 	if(this.state.step === 1){
 		this.setValues();
 	}
 	else if(this.state.step === 0){
-		this.setState({
-			step: 1,
-			poolName: obj.poolName,
-			receiver: obj.receiver,
-			about: obj.about
-		})
+		const poolTracker = this.props.poolTrackerAddress;
+		const inputError = await checkInputError(obj, poolTracker);
+		this.setState({inputError});
+		console.log('inputError', inputError)
+		if(!this.state.inputError){
+			this.setState({
+				step: 1,
+				poolName: obj.poolName,
+				receiver: obj.receiver,
+				about: obj.about
+			});
+		}
 	}
   }
 
@@ -252,7 +260,7 @@ class NewPoolModal extends Component {
 				<p className="mr">1) Come up with a name for your JustCause Pool. This name will be unique to your Pool. </p>
 				</div>
 
-				<div  className="modal__body__column__two">
+				<div style={{maxWidth: "330px"}} className="modal__body__column__two">
 					<TextField ref="poolName" label="Pool Name" id="poolName" placeholder="Name your pool"/>
 				</div>
 
@@ -260,7 +268,7 @@ class NewPoolModal extends Component {
 					<p className="mr">2) Select an address to receive the interest earned by contributions to your cause. It does not have to be an address you own, and can be changed at anytime by you. The field defaults to the current account, but any valid address can be entered.  </p>
 				</div>
 
-				<div className="modal__body__column__four">
+				<div style={{maxWidth: "330px"}} className="modal__body__column__four">
 					<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
 				</div>
 
@@ -273,6 +281,7 @@ class NewPoolModal extends Component {
 				</div>
 			</ModalBodyDeploy>
 			<ModalCtas>
+			<p style={{color: "#DC143C", fontSize:16}} className="mr">{this.state.inputError}</p>
 			<Button text={this.getButton()}
 				disabled={this.checkValues()}
 				callback={() => this.handleClick({poolName: this.refs.poolName.getValue(), receiver: this.refs.receiver.getValue(), about: this.refs.about.getValue()})}

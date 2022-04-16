@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router'
 import Homepage from './Homepage'
 import Dashboard from './Dashboard'
 import Search from './Search'
+import HowItWorks from './HowItWorks'
 
 import Header from '../components/Header'
 
@@ -11,6 +12,7 @@ const routes = (
 	<main>
 		<Switch>
 			<Route exact path={"/"} component={Homepage}/>
+			<Route exact path={"/howitworks"} component={HowItWorks}/>
 			<Route exact path={"/dashboard"} component={Dashboard}/>
 			<Route exact path={"/search"} component={Search}/>
 			<Route exact path={"/search:address"} component={Search}/>

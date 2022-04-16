@@ -57,17 +57,20 @@ class App extends Component {
 
 				this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
 
+				console.log("poolTrackerAddress1", this.poolTrackerAddress)
 				this.setPoolTrackAddress(this.poolTrackerAddress);
 				const tokenMap = this.getTokenMapFromNetwork();
 				this.setTokenMapState(tokenMap);
 				this.setPoolState(activeAccount);
 				this.setAavePoolAddress(aavePoolAddressesProviderPolygonMumbaiV3Address)
+				console.log("poolTrackerAddress2", this.poolTrackerAddress)
 				//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
 				//await uploadAbout('this is a test to see if this gets saved to ipfs');
 				await getAbout('test');
 				await getIpfsData('QmPTsBwAC1x4Qhr7Ckd4Vt2GJGR4CcL8bp7WSgeChfCMY2');
 
 				await getIpfsData('bafybeic4sjo4mwkxqz3gpvflmqys2kkq7dow2pvtl2n5ncgt6fih46osgu');
+				console.log("poolTrackerAddress3", this.poolTrackerAddress)
 			}
 		}
 

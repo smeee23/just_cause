@@ -31,9 +31,8 @@ class Homepage extends Component {
 							</div>
 							<div className="grid__item--col-6 grid__item--col-12-medium">
 								<p className="lh1 mb0">
-									<a href="google.com" target="_blank">Facebook</a> /&nbsp;
-									<a href="google.com" target="_blank">Instagram</a> /&nbsp;
-									<a href="google.com" target="_blank">Twitter</a>
+									<a href="https://github.com/smeee23/just_cause" target="_blank">GitHub</a> /&nbsp;
+									<a href="https://twitter.com/JustCauseDev" target="_blank">Twitter</a>
 								</p>
 							</div>
 						</div>

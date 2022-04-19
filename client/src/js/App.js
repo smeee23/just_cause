@@ -76,9 +76,21 @@ class App extends Component {
 
 		catch (error) {
 			// Catch any errors for any of the above operations.
-			alert(
+			if(!this.props.networkId){
+				alert(
+					`Failed to load metamask wallet, no network detected`,
+				);
+			}
+			else if(this.props.networkId !== 42){
+				alert(
+					`Unsupported network detected (chain id: `+this.props.networkId+'). Please switch to polygon mumbai testnet'
+				);
+			}
+			else{
+				alert(
 				`Failed to load web3, accounts, or contract. Check console for details. If not connected to site please select the Connect Button`,
 			);
+			}
 			console.error(error);
 		}
 	}

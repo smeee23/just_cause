@@ -88,8 +88,8 @@ class Header extends Component {
           <Logo/>
           <h2 className="mb0">JustCause</h2>
         </NavLink>
-          <h2 className="mb0 horizontal-padding-med" style={{fontSize:13}}>{  this.displayTVL('totalEarned', 'Donated:') }</h2>
-          <h2 className="mb0 horizontal-padding-med" style={{fontSize:13}}>{  this.displayTVL('tvl', 'Deposited:') }</h2>
+          <h2 className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  this.displayTVL('totalEarned', 'Donated:') }</h2>
+          <h2 className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  this.displayTVL('tvl', 'Deposited:') }</h2>
         <nav className="app-bar__items">
           { nav }
           <ButtonSmall text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>

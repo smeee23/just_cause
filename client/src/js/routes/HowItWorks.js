@@ -64,7 +64,7 @@ class Homepage extends Component {
 
 				<div style={{height: "500px", flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(2, auto)", gap: "5px", gridTemplateRows: "repeat(2, auto)", alignItems:"center", justifyContent:"center"}}>
 					<h2 style={{fontSize:17, fontStyle: "italic", width:"150px", textAlign: "left", marginLeft: "10px", marginBottom: "-30px", marginTop: "30px"}}>"Don't you want to save the Rainforest?"</h2>
-					<h2 style={{fontSize:17, fontStyle: "italic", paddingLeft: "300px", textAlign: "right", marginRight: "10px", marginBottom: "-30px", marginTop: "30px"}}>"Yeah but I don't want to spend my sound crypto money!"</h2>
+					<h2 style={{fontSize:17, fontStyle: "italic", paddingRight: "300px", textAlign: "right", marginRight: "10px", marginBottom: "-30px", marginTop: "30px"}}>"Yeah but I don't want to spend my sound crypto money!"</h2>
 					<MaleOne/>
 					<FemaleOne/>
 				</div>
@@ -72,7 +72,7 @@ class Homepage extends Component {
 		else if(slide === 1){
 			graphic =
 
-				<div style={{ height: "500px", width: "900px", maxWidth: "900px", flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(2, auto)", gap: "5px", gridTemplateRows: "repeat(1, auto)", alignItems:"center", justifyContent:"center"}}>
+				<div style={{ height: "500px", flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(2, auto)", gap: "5px", gridTemplateRows: "repeat(1, auto)", alignItems:"center", justifyContent:"center"}}>
 					<div style={{gridColumn: "1", gridRow: "1"}}>
 						<h1 style={{fontSize: 60, marginLeft: "50px", textAlign: "left"}}>Lossless Donations</h1>
 						<h2 style={{fontSize:17, marginLeft: "50px", textAlign: "left", paddingRight: "50px", marginRight: "10px", marginTop: "30px"}}>Create and fund pools with your friends and family and JustCause smart contracts donate crypto while preserving your initial deposit.</h2>
@@ -83,7 +83,7 @@ class Homepage extends Component {
 		else if(slide === 2){
 			graphic =
 
-				<div style={{height: "300px", width: "900px",   flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(7, auto)", gap: "5px", gridTemplateRows: "repeat(2, auto)", alignItems:"center", justifyContent:"center"}}>
+				<div style={{height: "500px", flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(7, auto)", gap: "5px", gridTemplateRows: "repeat(2, auto)", alignItems:"center", justifyContent:"center"}}>
 					<div style={{gridColumn: "1 / 8", gridRow: "1", alignItems:"center", justifyContent:"center"}}>
 					<h2 style={{fontSize:17, marginLeft: "50px", textAlign: "center", paddingRight: "50px", marginRight: "10px", marginTop: "30px"}}>Contributors deposit tokens into JustCause Pools which in turn deposit them into Aave lending protocol. The interest earned is donated to the cause associated with the Pool. When Contributors need access to their funds they simply withdraw their original deposit and the interest accrued is left behind for the cause.</h2>
 					</div>
@@ -130,7 +130,7 @@ class Homepage extends Component {
 		else if(slide === 3){
 			graphic =
 
-				<div style={{height: "500px",width: "900px",  maxWidth: "700", flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(2, auto)", gap: "5px", gridTemplateRows: "repeat(1, auto)", alignItems:"center", justifyContent:"center"}}>
+				<div style={{height: "500px", flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(2, auto)", gap: "5px", gridTemplateRows: "repeat(1, auto)", alignItems:"center", justifyContent:"center"}}>
 					<div style={{gridColumn: "1", gridRow: "1"}}>
 						<h2 style={{fontSize:25, textAlign: "left", marginLeft: "50px", paddingRight: "50px", marginRight: "10px", marginTop: "30px"}}>Fundraising on JustCause is simple and frictionless</h2>
 						<h2 style={{fontSize:17, textAlign: "left", marginLeft: "60px", paddingRight: "50px", marginRight: "10px", marginTop: "30px"}}>- Create a pool in just a few minutes</h2>
@@ -146,7 +146,7 @@ class Homepage extends Component {
 		else if(slide === 4){
 			graphic =
 
-				<div style={{height: "500px", width: "900px", maxWidth: "650", flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(2, auto)", gap: "5px", gridTemplateRows: "repeat(1, auto)", alignItems:"center", justifyContent:"center"}}>
+				<div style={{height: "500px", flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(2, auto)", gap: "5px", gridTemplateRows: "repeat(1, auto)", alignItems:"center", justifyContent:"center"}}>
 					<div style={{gridColumn: "1", gridRow: "1"}}>
 						<FemaleOne/>
 					</div>

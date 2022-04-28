@@ -1,19 +1,32 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.9;
 
 import { IERC20, IPool, IPoolAddressesProvider, IWETHGateway} from './Interfaces.sol';
 import { SafeERC20 } from './Libraries.sol';
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+
 /**
- * This is a proof of concept starter contract, showing how uncollaterised loans are possible
- * using Aave v2 credit delegation.
- * This example supports stable interest rate borrows.
- * It is not production ready (!). User permissions and user accounting of loans should be implemented.
- * See @dev comments
- */
+ * @title JustCausePoolAaveV3 contract
+ * @author JustCause
+ * This is a proof of concept starter contract for lossless donations
+
+   Aave v3 is used to generate interest for crowdfunding
+
+   Contributors deposit tokens into JustCausePool which deposit
+   them into Aave lending protocol.
+
+   The interest earned is directed to the receiver associated with
+   the Pool.
+
+   When Contributors need access to their funds they withdraw original deposit
+   and interest accrued is left behind for the receiver to claim.
+
+ * @dev To be covered by a proxy contract
+ * @dev deposits, withdraws, withdrawDonations controlled by the PoolTracker contract (Master)
+ **/
 
 contract JustCausePoolAaveV3 is Initializable {
-    //mapping(address => mapping(address => uint256)) private depositors;
+
     mapping(address => uint256) private totalDeposits;
     mapping(address => uint256) private interestWithdrawn;
     bool private isBase;
@@ -36,6 +49,10 @@ contract JustCausePoolAaveV3 is Initializable {
     string metaUri;
     bool isVerified;
 
+    /**
+    * @dev Only tokens that are on the accepted list can be passed
+    * to functions marked by this modifier.
+    **/
     modifier onlyAllowedTokens(address _tokenAddr){
         bool isAccepted;
         for (uint8 i = 0; i < acceptedTokens.length; i++){
@@ -48,32 +65,50 @@ contract JustCausePoolAaveV3 is Initializable {
         _;
     }
 
-    modifier enoughFunds(address _userAddr, address _tokenAddr, uint256 _amount) {
-        require(_amount > 0, "amount must exceed 0");
-        //require(depositors[_userAddr][_tokenAddr]  >= _amount, "no funds deposited for selected token");
-        _;
-    }
-
+    /**
+    * @dev Only Receiver can call functions marked by this modifier.
+    **/
     modifier onlyReceiver(address _sender){
         require(receiver == _sender, "not the receiver");
         _;
     }
 
+    /**
+    * @dev Only Master can call functions marked by this modifier.
+    **/
     modifier onlyMaster(address _sender){
         require(master == _sender, "not the owner");
         _;
     }
 
+    /**
+    * @dev Limits string (pool name) to x characters when passed to
+    * functions marked by this modifier.
+    **/
     modifier strLength(string memory _str, uint8 _limit ){
         bytes memory strBytes = bytes(_str);
         require(strBytes.length < _limit, "string over character limit");
         _;
     }
 
+    /**
+   * @dev Constructor.
+   */
     constructor () {
         isBase = true;
     }
 
+    /**
+    * @notice Initializes the JustCause Pool.
+    * @dev Function is invoked by the PoolTacker contract when a Pool is created.
+    * @param _acceptedTokens List of tokens to be accepted by JCP.
+    * @param _name String name of JCP.
+    * @param _about ipfs hash of pool description of JCP.
+    * @param _picHash ipfs hash of pic of JCP.
+    * @param _metaUri meta info uri for nft of JCP.
+    * @param _receiver address of receiver of JCP donations.
+    * @param _isVerified indicates whether JCP is verified
+    **/
     function initialize(
         address[] memory _acceptedTokens,
         string memory _name,
@@ -102,18 +137,31 @@ contract JustCausePoolAaveV3 is Initializable {
         acceptedTokens = _acceptedTokens;
     }
 
-    function deposit(address _assetAddress, uint256 _amount/*, address _depositor*/) onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress) external {
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @param _amount The amount of supplied assets
+    **/
+    function deposit(address _assetAddress, uint256 _amount) external  onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress){
         totalDeposits[_assetAddress] += _amount;
     }
 
-    function depositETH(address _wethAddress , /*address _depositor,*/ uint256 _value) onlyMaster(msg.sender) external {
-        //IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(poolAddr, address(this), 0);
+    /**
+    * @param _wethAddress The address of the wrapped asset (eth/matic/...) for the chain
+    * @param _value The amount of supplied assets
+    **/
+    function depositETH(address _wethAddress, uint256 _value) external onlyMaster(msg.sender){
         totalDeposits[_wethAddress] += _value;
     }
 
-    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool isETH) onlyMaster(msg.sender) enoughFunds(_depositor, _assetAddress, _amount) external {
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @param _amount The amount of withdraw assets
+    * @param _depositor The address making the deposit
+    * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
+    **/
+    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH) onlyMaster(msg.sender) external {
         totalDeposits[_assetAddress] -= _amount;
-        if(!isETH){
+        if(!_isETH){
             IPool(poolAddr).withdraw(_assetAddress, _amount, _depositor);
         }
         else{
@@ -124,13 +172,17 @@ contract JustCausePoolAaveV3 is Initializable {
         emit Withdraw(_assetAddress, _depositor, _amount);
     }
 
-    function withdrawDonations(address _assetAddress, bool isETH) onlyMaster(msg.sender) external returns(uint256){
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
+    **/
+    function withdrawDonations(address _assetAddress, bool _isETH) onlyMaster(msg.sender) external returns(uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
         interestWithdrawn[_assetAddress] += interestEarned;
 
-        if(!isETH){
+        if(!_isETH){
             IPool(poolAddr).withdraw(_assetAddress, interestEarned, receiver);
         }
         else{
@@ -140,77 +192,141 @@ contract JustCausePoolAaveV3 is Initializable {
         return interestEarned;
     }
 
+    /**
+    * @return acceptedTokens List of tokens to be accepted by JCP.
+    **/
     function getAcceptedTokens() external view returns(address[] memory){
         return acceptedTokens;
     }
 
+    /**
+    * @return name String name of JCP.
+    **/
     function getName() external view returns(string memory){
         return name;
     }
 
+    /**
+    * @return about ipfs hash of pool description of JCP.
+    **/
     function getAbout() external view returns(string memory){
         return about;
     }
 
+    /**
+    * @return picHash ipfs hash of pic of JCP.
+    **/
     function getPicHash() external view returns(string memory){
         return picHash;
     }
 
+    /**
+    * @return metaUri meta info uri for nft of JCP.
+    **/
     function getMetaUri() external view returns(string memory){
         return metaUri;
     }
 
+    /**
+    * @return isVerified indicates whether JCP is verified
+    **/
     function getIsVerified() external view returns(bool){
         return isVerified;
     }
 
+    /**
+    * @return receiver address of receiver of JCP donations.
+    **/
     function getRecipient() external view returns(address){
         return receiver;
     }
 
+    /**
+    * @notice Returns general pool information
+    * @return acceptedTokens List of tokens to be accepted by JCP.
+    * @return name String name of JCP.
+    * @return about ipfs hash of pool description of JCP.
+    * @return picHash ipfs hash of pic of JCP.
+    * @return metaUri meta info uri for nft of JCP.
+    * @return receiver address of receiver of JCP donations.
+    * @return isVerified indicates whether JCP is verified
+    **/
     function getPoolInfo() external view returns (address[] memory, address, bool, string memory, string memory, string memory, string memory){
         return (acceptedTokens, receiver, isVerified, metaUri, picHash, about, name);
     }
+
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @return aTokenAddress address of Aave's aToken for asset
+    **/
     function getATokenAddress(address _assetAddress) public view returns(address aTokenAddress){
-        //(,,,,,,,, aTokenAddress,,,,,,) = IPool(poolAddr).getReserveData(_assetAddress);
         aTokenAddress = IPool(poolAddr).getReserveData(_assetAddress).aTokenAddress;
     }
 
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @return totalDeposit total assets deposited in pool
+    **/
     function getTotalDeposits(address _assetAddress) public view returns(uint256){
         return totalDeposits[_assetAddress];
     }
+
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @return unclaimedInterest accrued interest that has not yet been claimed
+    **/
     function getUnclaimedInterest(address _assetAddress) public view returns (uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         return aTokenBalance - totalDeposits[_assetAddress];
     }
 
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @return claimedInterest interest that has been claimed (no longer in contract)
+    **/
     function getClaimedInterest(address _assetAddress) public view returns (uint256){
         return interestWithdrawn[_assetAddress];
     }
 
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @return aTokenBalance Pool balance of aToken for the asset
+    **/
     function getATokenBalance(address _assetAddress) public view returns (uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         return IERC20(aTokenAddress).balanceOf(address(this));
     }
 
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @return normalizedIncome reserve's normalized income
+    */
     function getReserveNormalizedIncome(address _assetAddress) public view returns(uint256){
         return IPool(poolAddr).getReserveNormalizedIncome(_assetAddress);
     }
 
+    /**
+    * @param _assetAddress The address of the underlying asset of the reserve
+    * @return liquidityIndex reserve's liquidity index
+    */
     function getAaveLiquidityIndex(address _assetAddress) public view returns(uint256 liquidityIndex){
         liquidityIndex = IPool(poolAddr).getReserveData(_assetAddress).liquidityIndex;
     }
 
+    /**
+    * @notice Returns asset specific pool information
+    * @param _asset The address of the underlying asset of the reserve
+    * @return liquidityIndex reserve's liquidity index
+    * @return normalizedIncome reserve's normalized income
+    * @return aTokenBalance Pool balance of aToken for the asset
+    * @return claimedInterest interest that has been claimed (no longer in contract)
+    * @return unclaimedInterest accrued interest that has not yet been claimed
+    * @return totalDeposit total assets deposited in pool
+    * @return aTokenAddress address of Aave's aToken for asset
+    */
     function getPoolTokenInfo(address _asset) external view returns(uint256, uint256, uint256, uint256, uint256, uint256, address){
         return(getAaveLiquidityIndex(_asset), getReserveNormalizedIncome(_asset), getATokenBalance(_asset),
                 getClaimedInterest(_asset), getUnclaimedInterest(_asset), getTotalDeposits(_asset), getATokenAddress(_asset));
     }
-    /*function getByteCode() external view returns(bytes memory) {
-        return address(this).code;
-    }its
-
-    function getHashByteCode() public view returns(bytes32) {
-        return keccak256(abi.encodePacked(address(this).code));
-    }*/
 }

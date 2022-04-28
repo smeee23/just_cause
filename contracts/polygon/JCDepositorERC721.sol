@@ -7,6 +7,18 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/**
+ * @title JCDepositorERC721
+ * @author JustCause
+ * This is a proof of concept starter contract for lossless donations
+ *
+ * Aave v3 is used to generate interest for crowdfunding
+ *
+ * Creates an ERC721 with info regarding each Just Cause Pool depositor
+ *
+ * Inherets from openzeppelin ERC721 contracts
+ *
+ **/
 
 contract JCDepositorERC721 is ERC721Enumerable, ERC721URIStorage, Ownable {
 
@@ -19,33 +31,39 @@ contract JCDepositorERC721 is ERC721Enumerable, ERC721URIStorage, Ownable {
         address asset;
     }
 
-    /*struct Cause {
-        address pool;
-        Deposit[] deposits;
-    }*/
-
     IPoolAddressesProvider provider;
     address poolAddr;
-    //IProtocolDataProvider constant dataProvider = IProtocolDataProvider(address(0x3c73A5E5785cAC854D468F727c606C07488a29D6)); // Kovan
 
     //key = keccak hash of depositor, pool and asset addresses
-    //mapping (uint256 => Cause) deposits;
     mapping (uint256 => Deposit) deposits;
 
+    /**
+    * @dev Constructor.
+    */
     constructor() ERC721("JCP Contributor Token", "JCPC") {
         provider = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)); // polygon mumbai v3
         poolAddr = provider.getPool();
     }
 
-    /*function hasDeposited(uint256 _tokenId, address _asset ) internal returns(bool found{
-        Deposit[] _deposits = deposits[tokenId].deposits;
-        for(uint8 i=0; i < deposits.length; i++){
+    /**
+    * @dev Creates NFT for depositor if first deposit for pool and asset
+    * @param _tokenOwner address of depositor
+    * @param _timeStamp timeStamp of token creation
+    * @param _pool address of JCP
+    * @param _metaUri meta info uri for nft of JCP
+    * @param _asset The address of the underlying asset of the reserve
+    * @return tokenId unique tokenId keccak hash of depositor, pool and asset addresses
+    **/
+    function addFunds(
+        address _tokenOwner,
+        uint256 _amount,
+        uint256 _timeStamp,
+        address _pool,
+        address _asset,
+        string memory _metaUri
+    ) onlyOwner public returns (uint256) {
 
-        }
-    }*/
-    function addFunds(address _tokenOwner, uint256 _amount, uint256 _timeStamp, address _pool, address _asset, string memory _metaUri) onlyOwner public returns (uint256) {
-        //_tokenIds.increment();
-        //uint256 tokenId = _tokenIds.current();
+        //tokenId is keccak hash of depositor, pool and asset addresses
         uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, _pool, _asset)));
         uint256 liquidityIndex = getAaveLiquidityIndex(_asset);
         if(_exists(tokenId)){
@@ -64,6 +82,13 @@ contract JCDepositorERC721 is ERC721Enumerable, ERC721URIStorage, Ownable {
         return tokenId;
     }
 
+    /**
+    * @dev Withdraw balance for depositor
+    * @param _tokenOwner address of depositor
+    * @param _amount amount to withdraw
+    * @param _pool address of JCP
+    * @param _asset The address of the underlying asset of the reserve
+    **/
     function withdrawFunds(address _tokenOwner, uint256 _amount, address _pool, address _asset) onlyOwner external {
         uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, _pool, _asset)));
         require(_exists(tokenId), "tokenId doesn't exist");
@@ -83,24 +108,44 @@ contract JCDepositorERC721 is ERC721Enumerable, ERC721URIStorage, Ownable {
         deposits[tokenId].balance = balance;
     }
 
+    /**
+    * @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses
+    * @return Deposit struct containing info about deposit
+    **/
     function getDepositInfo(uint256 _tokenId) public view returns (Deposit memory){
         return deposits[_tokenId];
     }
 
+    /**
+    * @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses
+    * @return asset balance of user in pool
+    **/
     function getUserBalance(uint256 _tokenId) public view returns (uint256){
         return deposits[_tokenId].balance;
     }
 
+    /**
+    * @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses
+    * @return aToken accrued
+    **/
     function getATokenAmount(uint256 _tokenId) internal view returns(uint256){
+        //if claimant calls claim this alters the amount
         return rayMul(deposits[_tokenId].amountScaled, getReserveNormalizedIncome(deposits[_tokenId].asset));
     }
 
+    /**
+    * @param _asset The address of the underlying asset of the reserve
+    * @return reserve normalized income from aave
+    **/
     function getReserveNormalizedIncome(address _asset) public view returns(uint256){
         return IPool(poolAddr).getReserveNormalizedIncome(_asset);
     }
 
+    /**
+    * @param _asset The address of the underlying asset of the reserve
+    * @return liquidityIndex liquidity index from aave
+    **/
     function getAaveLiquidityIndex(address _asset) public view returns(uint256 liquidityIndex){
-        //(,liquidityIndex,,,,,,,,,,,,,) = IPool(poolAddr).getReserveData(_asset);
         liquidityIndex = IPool(poolAddr).getReserveData(_asset).liquidityIndex;
     }
 

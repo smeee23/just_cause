@@ -81,6 +81,9 @@ class Header extends Component {
     )
 		return (
       <header className="app-bar horizontal-padding">
+        <Takeover>
+          { nav }
+        </Takeover>
         <NavLink exact to={"/"} className="app-bar__left tdn">
           <Logo/>
           <h2 className="mb0">JustCause</h2>

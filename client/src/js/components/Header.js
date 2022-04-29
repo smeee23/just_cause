@@ -92,8 +92,8 @@ class Header extends Component {
           <h2 className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  this.displayTVL('tvl', 'Deposited:') }</h2>
         <nav className="app-bar__items">
           { nav }
-          <ButtonSmall text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
         </nav>
+        <ButtonSmall text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
       </header>
 		);
 	}

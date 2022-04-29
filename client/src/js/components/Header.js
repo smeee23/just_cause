@@ -93,7 +93,6 @@ class Header extends Component {
         <nav className="app-bar__items">
           { nav }
         </nav>
-        <ButtonSmall text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
       </header>
 		);
 	}

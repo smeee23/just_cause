@@ -116,9 +116,11 @@ contract JustCausePoolAaveV3 is Initializable {
         string memory _picHash,
         string memory _metaUri,
         address _receiver,
-        bool _isVerified)
+        address _poolAddr,
+        address _wethGatewayAddr,
+        bool _isVerified
 
-    strLength(_name, 30) initializer() external {
+    ) external strLength(_name, 30) initializer() {
 
         require(isBase == false, "Cannot initialize base");
         require(receiver == address(0), "Initialize already called");
@@ -131,9 +133,8 @@ contract JustCausePoolAaveV3 is Initializable {
         metaUri = _metaUri;
         isVerified = _isVerified;
 
-        provider = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)); // polygon mumbai v3
-        poolAddr = provider.getPool();
-        wethGatewayAddr = address(0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17);// polygon mumbai v3
+        poolAddr = _poolAddr;
+        wethGatewayAddr = _wethGatewayAddr;
         acceptedTokens = _acceptedTokens;
     }
 

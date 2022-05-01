@@ -40,8 +40,8 @@ contract JCDepositorERC721 is ERC721Enumerable, ERC721URIStorage, Ownable {
     /**
     * @dev Constructor.
     */
-    constructor() ERC721("JCP Contributor Token", "JCPC") {
-        provider = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)); // polygon mumbai v3
+    constructor(address _poolAddressesProviderAddr) ERC721("JCP Contributor Token", "JCPC") {
+        provider = IPoolAddressesProvider(_poolAddressesProviderAddr); // polygon mumbai v3
         poolAddr = provider.getPool();
     }
 

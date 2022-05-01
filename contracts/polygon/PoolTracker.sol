@@ -93,14 +93,14 @@ contract PoolTracker is ReentrancyGuard {
     /**
     * @dev Constructor.
     */
-    constructor () {
+    constructor (address _poolAddressesProviderAddr, address _wethGatewayAddr) {
         validator = msg.sender;
-        jCDepositorERC721 = new JCDepositorERC721();
+        jCDepositorERC721 = new JCDepositorERC721(_poolAddressesProviderAddr);
         jCOwnerERC721 = new JCOwnerERC721();
         baseJCPool = new JustCausePoolAaveV3();
 
-        poolAddr = IPoolAddressesProvider(address(0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6)).getPool(); // polygon mumbai v3
-        wethGatewayAddr = address(0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17);// polygon mumbai v3
+        poolAddr = IPoolAddressesProvider(_poolAddressesProviderAddr).getPool();
+        wethGatewayAddr = address(_wethGatewayAddr);
     }
 
     /**
@@ -193,7 +193,7 @@ contract PoolTracker is ReentrancyGuard {
             isVerified = true;
         }
 
-        IJustCausePool(child).initialize(_acceptedTokens, _name, _about, _picHash, _metaUri, _receiver, isVerified);
+        IJustCausePool(child).initialize(_acceptedTokens, _name, _about, _picHash, _metaUri, _receiver, poolAddr, wethGatewayAddr, isVerified);
         jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, child, _metaUri);
         names[_name] =  child;
 

@@ -61,11 +61,12 @@ contract JCDepositorERC721 is ERC721Enumerable, ERC721URIStorage, Ownable {
         address _pool,
         address _asset,
         string memory _metaUri
-    ) onlyOwner public returns (uint256) {
+    ) public onlyOwner returns (uint256) {
 
         //tokenId is keccak hash of depositor, pool and asset addresses
         uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, _pool, _asset)));
         uint256 liquidityIndex = getAaveLiquidityIndex(_asset);
+        //uint256 liquidityIndex = 1234;
         if(_exists(tokenId)){
             //if(deposits[tokenId][_asset].pool != address(0)){
                 deposits[tokenId].timeStamp = _timeStamp;

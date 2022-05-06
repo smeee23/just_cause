@@ -1936,3 +1936,8 @@ interface IJustCausePool {
     function getPoolTokenInfo(address _asset) external returns(uint256, uint256, uint256, uint256, uint256, uint256, address);
     function getPoolInfo() external view returns(address[] memory, address, bool, string memory, string memory, string memory, string memory);
 }
+
+interface ITestToken {
+  function mint(address _to, uint256 _amount) external;
+  function burn(address _account, uint256 _amount) external;
+}

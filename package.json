@@ -3,6 +3,7 @@
     "@aave/protocol-js": "^4.0.2",
     "@fleekhq/fleek-storage-js": "^1.0.21",
     "@openzeppelin/contracts": "^4.4.2",
+    "@openzeppelin/test-helpers": "^0.5.15",
     "@truffle/hdwallet-provider": "^1.5.0",
     "axios": "^0.21.4",
     "bignumber.js": "^9.0.2",

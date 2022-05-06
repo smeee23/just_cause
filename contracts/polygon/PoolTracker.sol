@@ -49,12 +49,12 @@ contract PoolTracker is ReentrancyGuard {
     event AddDeposit(address userAddr, address pool, address asset, uint256 amount);
     event WithdrawDeposit(address userAddr, address pool, address asset, uint256 amount);
     event Claim(address userAddr, address receiver, address pool, address asset, uint256 amount);
-
+    event Test(address[] aaveAccepted, address[] causeAccepted );
     /**
     * @dev Only address that are a pool can be passed to functions marked by this modifier.
     **/
     modifier onlyPools(address _pool){
-        require(isPool[_pool], "not called from a pool");
+        require(isPool[_pool], "not pool");
         _;
     }
 
@@ -70,7 +70,7 @@ contract PoolTracker is ReentrancyGuard {
                     found = true;
                 }
             }
-            require(found, "token not approved");
+            require(found, "tokens not approved");
         }
         _;
     }
@@ -184,7 +184,15 @@ contract PoolTracker is ReentrancyGuard {
     * @param _metaUri meta info uri for nft of JCP.
     * @param _receiver address of receiver of JCP donations.
     **/
-    function createJCPoolClone(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver) onlyAcceptedTokens(_acceptedTokens) external {
+    function createJCPoolClone(
+        address[] memory _acceptedTokens,
+        string memory _name,
+        string memory _about,
+        string memory _picHash,
+        string memory _metaUri,
+        address _receiver
+    ) external onlyAcceptedTokens(_acceptedTokens){
+
         require(names[_name] == address(0), "pool with name already exists");
         address child = clone(address(baseJCPool));
         bool isVerified;
@@ -229,6 +237,27 @@ contract PoolTracker is ReentrancyGuard {
     **/
     function getOwnerERC721Address() public view returns(address){
         return address(jCOwnerERC721);
+    }
+
+    /**
+    * @return address of validator
+    **/
+    function getValidator() public view returns(address){
+        return validator;
+    }
+
+    /**
+    * @return address of aave pool
+    **/
+    function getPoolAddr() public view returns(address){
+        return poolAddr;
+    }
+
+    /**
+    * @return address array of aave reserve list
+    **/
+    function getReservesList() public view returns(address[] memory){
+        return IPool(poolAddr).getReservesList();
     }
 
     /**

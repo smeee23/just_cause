@@ -188,7 +188,7 @@ contract JCDepositorERC721 is ERC721Enumerable, ERC721URIStorage, Ownable {
         internal
         override(ERC721, ERC721Enumerable)
     {
-        require(from == address(0), "non transferrable");
+        require(from == address(0), "non-transferrable");
         super._beforeTokenTransfer(from, to, tokenId);
     }
 

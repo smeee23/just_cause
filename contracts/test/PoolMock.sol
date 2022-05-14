@@ -11,11 +11,13 @@ contract PoolMock {
   address testToken;
   address[] aaveAcceptedTokens;
   uint256 constant INTEREST = 1000000000000000000;
+  uint256 constant RESERVE_NORMALIZED_INCOME = 7755432354;
 
-  function setTestTokens(address _aToken, address _testToken) external {
+  function setTestTokens(address _aToken, address _testToken_1, address _testToken_2) external {
     aToken = _aToken;
-    testToken = _testToken;
-    aaveAcceptedTokens.push(_testToken);
+    testToken = _testToken_1;
+    aaveAcceptedTokens.push(_testToken_1);
+    aaveAcceptedTokens.push(_testToken_2);
 
     _reserves[testToken].liquidityIndex = 1234;
     _reserves[testToken].currentLiquidityRate = 1478;
@@ -49,9 +51,9 @@ contract PoolMock {
     address onBehalfOf,
     uint16 referralCode
   ) external {
-      require(asset == testToken, "test contract only accepts test token");
+      require(asset != address(0x0), "asset cannot be burn address");
       require(referralCode == 0, "test referral code must be 0");
-      ITestToken(aToken).mint(onBehalfOf, amount);
+      ITestToken(aToken).mint(onBehalfOf, amount+INTEREST);
   }
 
     /**
@@ -70,9 +72,9 @@ contract PoolMock {
     uint256 amount,
     address to
   ) external returns (uint256){
-      require(asset == testToken, "test contract only accepts test token");
+      require(asset != address(0x0), "asset cannot be burn address");
       ITestToken(testToken).mint(to, amount);
-      ITestToken(aToken).burn(msg.sender, amount);
+      //ITestToken(aToken).burn(msg.sender, amount);
       return amount;
   }
 
@@ -81,5 +83,10 @@ contract PoolMock {
   }
   function getReserveData(address _asset) external view returns(DataTypes.ReserveData memory) {
     return _reserves[_asset];
+  }
+
+  function getReserveNormalizedIncome(address _asset) external pure returns(uint256) {
+    require(_asset != address(0x0), "asset cannot be burn address");
+    return RESERVE_NORMALIZED_INCOME;
   }
 }

@@ -12,7 +12,9 @@ module.exports = {
     develop: {
       port: 8545,
       host:"127.0.0.1",
-      network_id: "*"
+      network_id: "*",
+      gas: 50000000,
+      gasLimit: 8000000000
     },
     ganache_local: {
       provider: () => {

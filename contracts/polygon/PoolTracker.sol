@@ -115,8 +115,8 @@ contract PoolTracker is ReentrancyGuard {
         string memory _metaHash = IJustCausePool(_pool).getMetaUri();
         address _poolAddr = poolAddr;
         if(_isETH){
+            require(IWETHGateway(wethGatewayAddr).getWETHAddress() == _asset, "_asset does not match WETHGateway");
             IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(_poolAddr, _pool, 0);
-            IJustCausePool(_pool).depositETH(_asset, msg.value);
         }
         else {
             IERC20 token = IERC20(_asset);
@@ -124,8 +124,8 @@ contract PoolTracker is ReentrancyGuard {
             token.transferFrom(msg.sender, address(this), _amount);
             token.approve(_poolAddr, _amount);
             IPool(_poolAddr).deposit(address(token), _amount, _pool, 0);
-            IJustCausePool(_pool).deposit(_asset, _amount);
         }
+        IJustCausePool(_pool).deposit(_asset, _amount);
         jCDepositorERC721.addFunds(msg.sender, _amount, block.timestamp,  _pool, _asset, _metaHash);
         emit AddDeposit(msg.sender, _pool, _asset, _amount);
     }

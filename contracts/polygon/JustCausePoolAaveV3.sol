@@ -37,10 +37,6 @@ contract JustCausePoolAaveV3 is Initializable {
 
     address[] acceptedTokens;
 
-    event Deposit(address tokenAddress, address depositor, uint256 amount);
-    event Withdraw(address tokenAddress, address caller, uint256 amount);
-    event WithdrawDonations(address tokenAddress, uint256 amount);
-
     address receiver;
     address master;
     string name;
@@ -61,7 +57,7 @@ contract JustCausePoolAaveV3 is Initializable {
                 break;
             }
         }
-        require(isAccepted, "token not accepted by pool");
+        require(isAccepted, "token not accepted by jcpool");
         _;
     }
 
@@ -87,7 +83,9 @@ contract JustCausePoolAaveV3 is Initializable {
     **/
     modifier strLength(string memory _str, uint8 _limit ){
         bytes memory strBytes = bytes(_str);
-        require(strBytes.length < _limit, "string over character limit");
+        if(strBytes.length > _limit){
+            revert("string over character limit");
+        }
         _;
     }
 
@@ -147,20 +145,12 @@ contract JustCausePoolAaveV3 is Initializable {
     }
 
     /**
-    * @param _wethAddress The address of the wrapped asset (eth/matic/...) for the chain
-    * @param _value The amount of supplied assets
-    **/
-    function depositETH(address _wethAddress, uint256 _value) external onlyMaster(msg.sender){
-        totalDeposits[_wethAddress] += _value;
-    }
-
-    /**
     * @param _assetAddress The address of the underlying asset of the reserve
     * @param _amount The amount of withdraw assets
     * @param _depositor The address making the deposit
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
     **/
-    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH) onlyMaster(msg.sender) external {
+    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH) external onlyMaster(msg.sender) {
         totalDeposits[_assetAddress] -= _amount;
         if(!_isETH){
             IPool(poolAddr).withdraw(_assetAddress, _amount, _depositor);
@@ -170,14 +160,13 @@ contract JustCausePoolAaveV3 is Initializable {
             IERC20(aTokenAddress).approve(wethGatewayAddr, _amount);
             IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, _amount, _depositor);
         }
-        emit Withdraw(_assetAddress, _depositor, _amount);
     }
 
     /**
     * @param _assetAddress The address of the underlying asset of the reserve
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
     **/
-    function withdrawDonations(address _assetAddress, bool _isETH) onlyMaster(msg.sender) external returns(uint256){
+    function withdrawDonations(address _assetAddress, bool _isETH) external onlyMaster(msg.sender) returns(uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];

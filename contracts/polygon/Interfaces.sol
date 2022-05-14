@@ -1022,6 +1022,7 @@ interface IWETHGateway {
     bytes32 permitR,
     bytes32 permitS
   ) external;
+  function getWETHAddress() external view returns (address);
 }
 
 interface IPool {
@@ -1914,7 +1915,6 @@ interface IJustCausePool {
 
     function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddr, address _wethGatewayAddr, bool isVerified) external;
     function deposit(address _assetAddress, uint256 _amount/*, address _depositor*/) external;
-    function depositETH(address _wethAddress, /*address _depositor,*/ uint256 _value) external payable;
     function tallyDeposit(uint256 _amount, address _assetAddress) external;
     function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool isETH) external;
     function withdrawDonations(address _assetAddress, bool isETH) external returns(uint256);

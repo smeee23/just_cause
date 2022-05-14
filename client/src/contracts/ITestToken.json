@@ -1,154 +1,44 @@
 {
-  "contractName": "IAaveOracle",
+  "contractName": "ITestToken",
   "abi": [
     {
-      "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
           "internalType": "address",
-          "name": "asset",
+          "name": "_to",
           "type": "address"
         },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "source",
-          "type": "address"
-        }
-      ],
-      "name": "AssetSourceUpdated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "baseCurrency",
-          "type": "address"
-        },
-        {
-          "indexed": false,
           "internalType": "uint256",
-          "name": "baseCurrencyUnit",
+          "name": "_amount",
           "type": "uint256"
         }
       ],
-      "name": "BaseCurrencySet",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "fallbackOracle",
-          "type": "address"
-        }
-      ],
-      "name": "FallbackOracleUpdated",
-      "type": "event"
-    },
-    {
-      "inputs": [],
-      "name": "ADDRESSES_PROVIDER",
-      "outputs": [
-        {
-          "internalType": "contract IPoolAddressesProvider",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
+      "name": "mint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
         {
-          "internalType": "address[]",
-          "name": "assets",
-          "type": "address[]"
+          "internalType": "address",
+          "name": "_account",
+          "type": "address"
         },
         {
-          "internalType": "address[]",
-          "name": "sources",
-          "type": "address[]"
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
         }
       ],
-      "name": "setAssetSources",
+      "name": "burn",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "fallbackOracle",
-          "type": "address"
-        }
-      ],
-      "name": "setFallbackOracle",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address[]",
-          "name": "assets",
-          "type": "address[]"
-        }
-      ],
-      "name": "getAssetsPrices",
-      "outputs": [
-        {
-          "internalType": "uint256[]",
-          "name": "",
-          "type": "uint256[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "asset",
-          "type": "address"
-        }
-      ],
-      "name": "getSourceOfAsset",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getFallbackOracle",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"source\",\"type\":\"address\"}],\"name\":\"AssetSourceUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"baseCurrency\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"baseCurrencyUnit\",\"type\":\"uint256\"}],\"name\":\"BaseCurrencySet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"fallbackOracle\",\"type\":\"address\"}],\"name\":\"FallbackOracleUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"ADDRESSES_PROVIDER\",\"outputs\":[{\"internalType\":\"contract IPoolAddressesProvider\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"assets\",\"type\":\"address[]\"}],\"name\":\"getAssetsPrices\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getFallbackOracle\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getSourceOfAsset\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"assets\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"sources\",\"type\":\"address[]\"}],\"name\":\"setAssetSources\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"fallbackOracle\",\"type\":\"address\"}],\"name\":\"setFallbackOracle\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"AssetSourceUpdated(address,address)\":{\"details\":\"Emitted after the price source of an asset is updated\",\"params\":{\"asset\":\"The address of the asset\",\"source\":\"The price source of the asset\"}},\"BaseCurrencySet(address,uint256)\":{\"details\":\"Emitted after the base currency is set\",\"params\":{\"baseCurrency\":\"The base currency of used for price quotes\",\"baseCurrencyUnit\":\"The unit of the base currency\"}},\"FallbackOracleUpdated(address)\":{\"details\":\"Emitted after the address of fallback oracle is updated\",\"params\":{\"fallbackOracle\":\"The address of the fallback oracle\"}}},\"kind\":\"dev\",\"methods\":{\"ADDRESSES_PROVIDER()\":{\"returns\":{\"_0\":\"The address of the PoolAddressesProvider contract\"}},\"getAssetsPrices(address[])\":{\"params\":{\"assets\":\"The list of assets addresses\"},\"returns\":{\"_0\":\"The prices of the given assets\"}},\"getFallbackOracle()\":{\"returns\":{\"_0\":\"The address of the fallback oracle\"}},\"getSourceOfAsset(address)\":{\"params\":{\"asset\":\"The address of the asset\"},\"returns\":{\"_0\":\"The address of the source\"}},\"setAssetSources(address[],address[])\":{\"params\":{\"assets\":\"The addresses of the assets\",\"sources\":\"The addresses of the price sources\"}},\"setFallbackOracle(address)\":{\"params\":{\"fallbackOracle\":\"The address of the fallback oracle\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"ADDRESSES_PROVIDER()\":{\"notice\":\"Returns the PoolAddressesProvider\"},\"getAssetsPrices(address[])\":{\"notice\":\"Returns a list of prices from a list of assets addresses\"},\"getFallbackOracle()\":{\"notice\":\"Returns the address of the fallback oracle\"},\"getSourceOfAsset(address)\":{\"notice\":\"Returns the address of the source for an asset address\"},\"setAssetSources(address[],address[])\":{\"notice\":\"Sets or replaces price sources of assets\"},\"setFallbackOracle(address)\":{\"notice\":\"Sets the fallback oracle\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/polygon/Interfaces.sol\":\"IAaveOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/polygon/Interfaces.sol\":{\"keccak256\":\"0x16e937e41b27973235a46a311b7bc60b263f4e821a63f0971c83ba0155d4b32a\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://620549169a35d3882f55fc884adb6cb1578f9df44f0ddb98623a4192142d11ec\",\"dweb:/ipfs/QmdRkxFdY9DSFcGidjheqDNFkxE7mZk8CTQbwJKPFepVDu\"]},\"project:/contracts/polygon/Libraries.sol\":{\"keccak256\":\"0x117bbb4ee43dd5cacc056a35a38e0dca5684d96e47227ea7af67055c86669591\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://465406979ef38d2b8bdd6156ee750d7a3fa34224cef6d32182a5263cbb02c899\",\"dweb:/ipfs/Qmd3jrLyNdkPW6MVJFXApy7i1sVPKQPjDVzMorBSmYpFuQ\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/polygon/Interfaces.sol\":\"ITestToken\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/polygon/Interfaces.sol\":{\"keccak256\":\"0x16e937e41b27973235a46a311b7bc60b263f4e821a63f0971c83ba0155d4b32a\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://620549169a35d3882f55fc884adb6cb1578f9df44f0ddb98623a4192142d11ec\",\"dweb:/ipfs/QmdRkxFdY9DSFcGidjheqDNFkxE7mZk8CTQbwJKPFepVDu\"]},\"project:/contracts/polygon/Libraries.sol\":{\"keccak256\":\"0x117bbb4ee43dd5cacc056a35a38e0dca5684d96e47227ea7af67055c86669591\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://465406979ef38d2b8bdd6156ee750d7a3fa34224cef6d32182a5263cbb02c899\",\"dweb:/ipfs/Qmd3jrLyNdkPW6MVJFXApy7i1sVPKQPjDVzMorBSmYpFuQ\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -25693,94 +25583,15 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-05-11T03:59:42.733Z",
+  "updatedAt": "2022-05-11T03:59:42.813Z",
   "devdoc": {
-    "events": {
-      "AssetSourceUpdated(address,address)": {
-        "details": "Emitted after the price source of an asset is updated",
-        "params": {
-          "asset": "The address of the asset",
-          "source": "The price source of the asset"
-        }
-      },
-      "BaseCurrencySet(address,uint256)": {
-        "details": "Emitted after the base currency is set",
-        "params": {
-          "baseCurrency": "The base currency of used for price quotes",
-          "baseCurrencyUnit": "The unit of the base currency"
-        }
-      },
-      "FallbackOracleUpdated(address)": {
-        "details": "Emitted after the address of fallback oracle is updated",
-        "params": {
-          "fallbackOracle": "The address of the fallback oracle"
-        }
-      }
-    },
     "kind": "dev",
-    "methods": {
-      "ADDRESSES_PROVIDER()": {
-        "returns": {
-          "_0": "The address of the PoolAddressesProvider contract"
-        }
-      },
-      "getAssetsPrices(address[])": {
-        "params": {
-          "assets": "The list of assets addresses"
-        },
-        "returns": {
-          "_0": "The prices of the given assets"
-        }
-      },
-      "getFallbackOracle()": {
-        "returns": {
-          "_0": "The address of the fallback oracle"
-        }
-      },
-      "getSourceOfAsset(address)": {
-        "params": {
-          "asset": "The address of the asset"
-        },
-        "returns": {
-          "_0": "The address of the source"
-        }
-      },
-      "setAssetSources(address[],address[])": {
-        "params": {
-          "assets": "The addresses of the assets",
-          "sources": "The addresses of the price sources"
-        }
-      },
-      "setFallbackOracle(address)": {
-        "params": {
-          "fallbackOracle": "The address of the fallback oracle"
-        }
-      }
-    },
+    "methods": {},
     "version": 1
   },
   "userdoc": {
     "kind": "user",
-    "methods": {
-      "ADDRESSES_PROVIDER()": {
-        "notice": "Returns the PoolAddressesProvider"
-      },
-      "getAssetsPrices(address[])": {
-        "notice": "Returns a list of prices from a list of assets addresses"
-      },
-      "getFallbackOracle()": {
-        "notice": "Returns the address of the fallback oracle"
-      },
-      "getSourceOfAsset(address)": {
-        "notice": "Returns the address of the source for an asset address"
-      },
-      "setAssetSources(address[],address[])": {
-        "notice": "Sets or replaces price sources of assets"
-      },
-      "setFallbackOracle(address)": {
-        "notice": "Sets the fallback oracle"
-      }
-    },
+    "methods": {},
     "version": 1
   }
 }

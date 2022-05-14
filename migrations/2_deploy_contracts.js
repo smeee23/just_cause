@@ -14,7 +14,7 @@ module.exports = async function(deployer, network){
     poolAddressesProviderAddr = "0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6";
     wethGatewayAddr = "0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17";
   }
-  else if(network === 'test'){
+  else {
     await deployer.deploy(PoolMock);
     await deployer.deploy(PoolAddressesProviderMock);
     await deployer.deploy(TestToken);

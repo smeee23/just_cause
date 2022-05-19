@@ -30,4 +30,14 @@ tba
 
 # Test
 
-tba
+In order to run the full smart contract testing suite open the developer console by entering the command:
+
+```
+truffle develop
+```
+
+This provides your own private Ethereum blockchain sandbox. Once in the developer console enter the command:
+
+```
+test
+```

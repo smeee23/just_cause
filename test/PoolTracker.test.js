@@ -1,6 +1,7 @@
 const PoolTracker = artifacts.require("PoolTracker");
 const PoolAddressesProviderMock = artifacts.require("PoolAddressesProviderMock");
 const PoolMock = artifacts.require("PoolMock");
+const WethGatewayTest = artifacts.require("WethGatewayTest");
 const TestToken = artifacts.require("TestToken");
 const aTestToken = artifacts.require("aTestToken");
 const JCDepositorERC721 = artifacts.require("JCDepositorERC721");
@@ -8,7 +9,7 @@ const JCOwnerERC721 = artifacts.require("JCOwnerERC721");
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const chai = require("./setupchai.js");
-const BN =web3.utils.BN;
+const BN = web3.utils.BN;
 const expect = chai.expect;
 
 require("dotenv").config({path: "../.env"});
@@ -16,19 +17,25 @@ require("dotenv").config({path: "../.env"});
 contract("Pool Tracker", async (accounts) => {
 
     const [validator, depositor, owner, receiver] = accounts;
+
     beforeEach(async() => {
         this.testToken = await TestToken.new();
         this.testToken_2 = await TestToken.new();
         this.notApprovedToken = await TestToken.new();
+        this.wethToken = await TestToken.new();
         this.aToken = await aTestToken.new();
+        this.aWethToken = await aTestToken.new();
         this.poolMock = await PoolMock.new();
-        await this.poolMock.setTestTokens(this.aToken.address, this.testToken.address, this.testToken_2.address, {from: validator});
+        await this.poolMock.setTestTokens(this.aToken.address, this.testToken.address, this.testToken_2.address, this.wethToken.address, this.aWethToken.address, {from: validator});
 
         this.poolAddressesProviderMock = await PoolAddressesProviderMock.new();
         await this.poolAddressesProviderMock.setPoolImpl(this.poolMock.address, {from: validator});
 
+        this.wethGateway = await WethGatewayTest.new();
+        await this.wethGateway.setValues(this.wethToken.address, this.aWethToken.address, {from: validator});
+
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
-        const wethGatewayAddr = "0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17";
+        const wethGatewayAddr = this.wethGateway.address;
         this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
         this.jCDepositorERC721 = await JCDepositorERC721.at(await this.poolTracker.getDepositorERC721Address());
         this.jCOwnerERC721 = await JCOwnerERC721.at(await this.poolTracker.getOwnerERC721Address());
@@ -137,6 +144,55 @@ contract("Pool Tracker", async (accounts) => {
         const valueString = origTVL.add(web3.utils.toBN(depositAmount)).toString();
         assert.strictEqual(valueString, newTVL.toString(), "tvl not updated");
     });
+
+    it("add deposit updates wethGateway balance when sending netive token", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+        let origBalance = await web3.eth.getBalance(this.wethGateway.address);
+        await this.poolTracker.addDeposit(depositAmount, this.wethToken.address, knownAddress, true, {from: depositor, value: depositAmount});
+        let newBalance = await web3.eth.getBalance(this.wethGateway.address);
+        let balanceCheck = (new BN(origBalance)).add(new BN(depositAmount)).toString();
+        assert.equal(balanceCheck, newBalance, "eth balance of wethGateway has not been updated");
+    });
+
+    it("add deposit reverts when sending eth, but not specifying weth as the asset parameter", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        await expectRevert(
+            this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, true, {from: depositor, value: depositAmount}),
+            "asset does not match WETHGateway"
+        );
+    });
+
+    it("add deposit reverts when isETH is true and msg.value is 0", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("0", "ether");
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        let origBalance = await web3.eth.getBalance(this.wethGateway.address);
+
+        await expectRevert(
+            this.poolTracker.addDeposit(depositAmount, this.wethToken.address, knownAddress, true, {from: depositor, value: depositAmount}),
+            "msg.value cannot be zero"
+        );
+    });
+
+    it("add deposit reverts when isETH is false and msg.value is not 0", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        let origBalance = await web3.eth.getBalance(this.wethGateway.address);
+
+        await expectRevert(
+            this.poolTracker.addDeposit(depositAmount, this.wethToken.address, knownAddress, false, {from: depositor, value: depositAmount}),
+            "msg.value is not zero"
+        );
+    });
+
     it("withdrawDeposit reverts when _pool parameter is not a pool", async() => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
         const depositAmount = web3.utils.toWei("1", "ether");
@@ -145,6 +201,7 @@ contract("Pool Tracker", async (accounts) => {
             "not pool"
         );
     });
+
     it("withdrawDeposit withdraws _amount from JustCause pool", async() => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
         const depositAmount = web3.utils.toWei("1", "ether");
@@ -158,6 +215,62 @@ contract("Pool Tracker", async (accounts) => {
 
         await this.poolTracker.withdrawDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
         assert.equal(await this.testToken.balanceOf(depositor), depositAmount, "testToken balance not equal to withdraw amount");
+    });
+
+    it("withdrawDeposit withdraws native token from WethGateway pool", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        await this.poolTracker.addDeposit(depositAmount, this.wethToken.address, knownAddress, true, {from: depositor, value: depositAmount});
+
+        let origBalance = await web3.eth.getBalance(this.wethGateway.address);
+
+        await this.poolTracker.withdrawDeposit(depositAmount, this.wethToken.address, knownAddress, true, {from: depositor});
+
+        let newBalance = await web3.eth.getBalance(this.wethGateway.address);
+        const balanceCheck = (new BN(newBalance)).add(new BN(depositAmount)).toString();
+        assert.strictEqual(balanceCheck, origBalance, "gateway balance incorrect");
+    });
+
+    it("withdrawDeposit reverts if isETH is true and asset does not match weth address", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+
+        const approveAmount = web3.utils.toWei("1000000", "ether");
+        await this.testToken.mint(depositor, depositAmount);
+        await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
+
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        await this.poolTracker.addDeposit(depositAmount, this.wethToken.address, knownAddress, true, {from: depositor, value: depositAmount});
+        await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
+
+        await expectRevert(
+            this.poolTracker.withdrawDeposit(depositAmount, this.testToken.address, knownAddress, true, {from: depositor}),
+            "asset does not match WETHGateway"
+        );
+
+    });
+
+    it("withdrawDeposit updates jc pool atoken balance", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+        const approveAmount = web3.utils.toWei("1000000", "ether");
+        await this.testToken.mint(depositor, depositAmount);
+        await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        const origATokenBalance = (await this.aToken.balanceOf(knownAddress)).toString();
+
+        await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
+        assert.equal(await this.testToken.balanceOf(depositor), 0, "testToken balance not equal to 0");
+
+        await this.poolTracker.withdrawDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
+
+        const endATokenBalance = (await this.aToken.balanceOf(knownAddress)).sub(web3.utils.toBN(this.INTEREST)).toString();
+
+        assert.strictEqual(origATokenBalance, endATokenBalance, "atoken balance incorrect");
     });
 
     it("withdrawDeposit updates tvl", async() => {
@@ -216,6 +329,53 @@ contract("Pool Tracker", async (accounts) => {
         assert.strictEqual(valueString, this.INTEREST, "tvl not updated");
     });
 
+    it("claimInterest updates total donated when native token is claimed", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        await this.poolTracker.addDeposit(depositAmount, this.wethToken.address, knownAddress, true, {from: depositor, value: depositAmount});
+
+        const origDonated = await this.poolTracker.getTotalDonated(this.wethToken.address);
+        await this.poolTracker.claimInterest(this.wethToken.address, knownAddress, true, {from: depositor});
+        const newDonted = await this.poolTracker.getTotalDonated(this.wethToken.address);
+
+        const valueString = newDonted.sub(web3.utils.toBN(origDonated)).toString();
+        assert.strictEqual(valueString, this.INTEREST, "tvl not updated");
+    });
+
+    it("claimInterest updates receiver balance when native token is claimed", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        await this.poolTracker.addDeposit(depositAmount, this.wethToken.address, knownAddress, true, {from: depositor, value: depositAmount});
+
+        const origReceiverBalance = await web3.eth.getBalance(receiver);
+        await this.poolTracker.claimInterest(this.wethToken.address, knownAddress, true, {from: depositor});
+        const newReceiverBalance = await web3.eth.getBalance(receiver);
+
+        const valueString = (new BN(origReceiverBalance)).add(web3.utils.toBN(this.INTEREST)).toString();
+        console.log("receiver balance", valueString, newReceiverBalance);
+        assert.strictEqual(valueString, newReceiverBalance, "tvl not updated");
+    });
+
+    it("claimInterest reverts when isETH is true and asset is not weth address", async() => {
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        const depositAmount = web3.utils.toWei("1", "ether");
+        const approveAmount = web3.utils.toWei("1000000", "ether");
+        await this.testToken.mint(depositor, depositAmount);
+        await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
+
+        await expectRevert(
+            this.poolTracker.claimInterest(this.testToken.address, knownAddress, true, {from: depositor}),
+            "asset does not match WETHGateway"
+        );
+    });
+
     it("claimInterest reverts when _pool parameter is not a pool", async() => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
         await expectRevert(
@@ -232,4 +392,27 @@ contract("Pool Tracker", async (accounts) => {
             "token not approved"
         );
     });
+
+    it("getValidator  returns validator address", async() => {
+        const validatorCheck = await this.poolTracker.getValidator();
+        assert.equal(validatorCheck, validator, "validator not correct");
+    });
+
+    it("getPoolAddr  returns poolAddr address", async() => {
+        const poolAddress = await this.poolTracker.getPoolAddr();
+        assert.equal(this.poolMock.address, poolAddress, "validator not correct");
+    });
+
+    it("getReservesList returns reservesList address", async() => {
+        const reservesList = (await this.poolTracker.getReservesList()).toString();
+        const reservesListCheck = (await this.poolMock.getReservesList()).toString();
+        assert.strictEqual(reservesListCheck, reservesList, "validator not correct");
+    });
+
+    it("getBaseJCPoolAddress  returns base pool address", async() => {
+        const basePoolAddress = await this.poolTracker.getBaseJCPoolAddress();
+        console.log("basePoolAddress", basePoolAddress);
+        assert.ok(basePoolAddress, "base pool address not valid");
+    });
+
 });

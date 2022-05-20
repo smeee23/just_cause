@@ -156,7 +156,9 @@ contract JustCausePoolAaveV3 is Initializable {
             IPool(poolAddr).withdraw(_assetAddress, _amount, _depositor);
         }
         else{
-            address aTokenAddress = getATokenAddress(_assetAddress);
+            address wethAddress = IWETHGateway(wethGatewayAddr).getWETHAddress();
+            require(wethAddress == _assetAddress, "asset does not match WETHGateway");
+            address aTokenAddress = getATokenAddress(wethAddress);
             IERC20(aTokenAddress).approve(wethGatewayAddr, _amount);
             IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, _amount, _depositor);
         }
@@ -176,6 +178,7 @@ contract JustCausePoolAaveV3 is Initializable {
             IPool(poolAddr).withdraw(_assetAddress, interestEarned, receiver);
         }
         else{
+            require(IWETHGateway(wethGatewayAddr).getWETHAddress() == _assetAddress, "asset does not match WETHGateway");
             IERC20(aTokenAddress).approve(wethGatewayAddr, interestEarned);
             IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, interestEarned, receiver);
         }

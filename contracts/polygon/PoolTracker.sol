@@ -115,10 +115,12 @@ contract PoolTracker is ReentrancyGuard {
         string memory _metaHash = IJustCausePool(_pool).getMetaUri();
         address _poolAddr = poolAddr;
         if(_isETH){
-            require(IWETHGateway(wethGatewayAddr).getWETHAddress() == _asset, "_asset does not match WETHGateway");
+            require(IWETHGateway(wethGatewayAddr).getWETHAddress() == _asset, "asset does not match WETHGateway");
+            require(msg.value > 0, "msg.value cannot be zero");
             IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(_poolAddr, _pool, 0);
         }
         else {
+            require(msg.value == 0, "msg.value is not zero");
             IERC20 token = IERC20(_asset);
             require(token.allowance(msg.sender, address(this)) >= _amount, "sender not approved");
             token.transferFrom(msg.sender, address(this), _amount);

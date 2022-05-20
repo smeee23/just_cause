@@ -12,12 +12,18 @@ contract PoolMock {
   address[] aaveAcceptedTokens;
   uint256 constant INTEREST = 1000000000000000000;
   uint256 constant RESERVE_NORMALIZED_INCOME = 7755432354;
+  mapping(address => address) aTokens;
 
-  function setTestTokens(address _aToken, address _testToken_1, address _testToken_2) external {
+  function setTestTokens(address _aToken, address _testToken_1, address _testToken_2, address _wethToken, address _aWethToken) external {
     aToken = _aToken;
     testToken = _testToken_1;
     aaveAcceptedTokens.push(_testToken_1);
     aaveAcceptedTokens.push(_testToken_2);
+    aaveAcceptedTokens.push(_wethToken);
+
+    aTokens[_testToken_1] = _aToken;
+    aTokens[_testToken_2] = _aToken;
+    aTokens[_wethToken] = _aWethToken;
 
     _reserves[testToken].liquidityIndex = 1234;
     _reserves[testToken].currentLiquidityRate = 1478;
@@ -33,6 +39,21 @@ contract PoolMock {
     _reserves[testToken].accruedToTreasury = 9087;
     _reserves[testToken].unbacked = 9087;
     _reserves[testToken].isolationModeTotalDebt = 9087;
+
+    _reserves[_wethToken].liquidityIndex = 1234;
+    _reserves[_wethToken].currentLiquidityRate = 1478;
+    _reserves[_wethToken].variableBorrowIndex = 9087;
+    _reserves[_wethToken].currentVariableBorrowRate = 9087;
+    _reserves[_wethToken].currentStableBorrowRate = 9087;
+    _reserves[_wethToken].lastUpdateTimestamp = 9087;
+    _reserves[_wethToken].id = 9087;
+    _reserves[_wethToken].aTokenAddress = _aWethToken;
+    _reserves[_wethToken].stableDebtTokenAddress = aToken;
+    _reserves[_wethToken].variableDebtTokenAddress = aToken;
+    _reserves[_wethToken].interestRateStrategyAddress = aToken;
+    _reserves[_wethToken].accruedToTreasury = 9087;
+    _reserves[_wethToken].unbacked = 9087;
+    _reserves[_wethToken].isolationModeTotalDebt = 9087;
   }
     /**
    * @dev Deposits an `amount` of underlying asset into the reserve, receiving in return overlying aTokens.
@@ -53,7 +74,7 @@ contract PoolMock {
   ) external {
       require(asset != address(0x0), "asset cannot be burn address");
       require(referralCode == 0, "test referral code must be 0");
-      ITestToken(aToken).mint(onBehalfOf, amount+INTEREST);
+      ITestToken(aTokens[asset]).mint(onBehalfOf, amount+INTEREST);
   }
 
     /**
@@ -73,8 +94,8 @@ contract PoolMock {
     address to
   ) external returns (uint256){
       require(asset != address(0x0), "asset cannot be burn address");
-      ITestToken(testToken).mint(to, amount);
-      //ITestToken(aToken).burn(msg.sender, amount);
+      ITestToken(asset).mint(to, amount);
+      ITestToken(aTokens[asset]).burn(msg.sender, amount);
       return amount;
   }
 

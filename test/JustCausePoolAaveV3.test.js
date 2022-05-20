@@ -6,10 +6,11 @@ const aTestToken = artifacts.require("aTestToken");
 const JCDepositorERC721 = artifacts.require("JCDepositorERC721");
 const JCOwnerERC721 = artifacts.require("JCOwnerERC721");
 const JustCausePoolAaveV3 = artifacts.require("JustCausePoolAaveV3");
+const WethGatewayTest = artifacts.require("WethGatewayTest");
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const chai = require("./setupchai.js");
-const BN =web3.utils.BN;
+const BN = web3.utils.BN;
 const expect = chai.expect;
 
 require("dotenv").config({path: "../.env"});
@@ -22,17 +23,21 @@ contract("JustCausePoolAaveV3", async (accounts) => {
         this.testToken = await TestToken.new();
         this.testToken_2 = await TestToken.new();
         this.notApprovedToken = await TestToken.new();
+        this.wethToken = await TestToken.new();
         this.aToken = await aTestToken.new();
+        this.aWethToken = await aTestToken.new();
         this.poolMock = await PoolMock.new();
-        await this.poolMock.setTestTokens(this.aToken.address, this.testToken.address, this.testToken_2.address, {from: validator});
+        await this.poolMock.setTestTokens(this.aToken.address, this.testToken.address, this.testToken_2.address, this.wethToken.address, this.aWethToken.address, {from: validator});
 
         this.poolAddressesProviderMock = await PoolAddressesProviderMock.new();
         await this.poolAddressesProviderMock.setPoolImpl(this.poolMock.address, {from: validator});
 
-        const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
-        const wethGatewayAddr = "0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17";
-        this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
+        this.wethGateway = await WethGatewayTest.new();
+        await this.wethGateway.setValues(this.wethToken.address, this.aWethToken.address, {from: validator});
 
+        const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
+        const wethGatewayAddr = this.wethGateway.address;
+        this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
         this.jCDepositorERC721 = await JCDepositorERC721.at(await this.poolTracker.getDepositorERC721Address());
         this.jCOwnerERC721 = await JCOwnerERC721.at(await this.poolTracker.getOwnerERC721Address());
 
@@ -43,9 +48,8 @@ contract("JustCausePoolAaveV3", async (accounts) => {
 
     it("JustCausePoolAaveV3 reverts if initialize is called on base", async() => {
         const jCPool = await JustCausePoolAaveV3.at(await this.poolTracker.getBaseJCPoolAddress());
-        const wethGatewayAddr = "0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17";
         await expectRevert(
-            jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, wethGatewayAddr, false, {from: validator}),
+            jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, this.wethGateway.address, false, {from: validator}),
             "Cannot initialize base"
         );
     });
@@ -54,9 +58,8 @@ contract("JustCausePoolAaveV3", async (accounts) => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         const jCPool = await JustCausePoolAaveV3.at(knownAddress);
-        const wethGatewayAddr = "0x2a58E9bbb5434FdA7FF78051a4B82cb0EF669C17";
         await expectRevert(
-            jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, wethGatewayAddr, false, {from: validator}),
+            jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, this.wethGateway.address, false, {from: validator}),
             "Initializable: contract is already initialized"
         );
     });

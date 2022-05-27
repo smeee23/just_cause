@@ -25,16 +25,16 @@ body {
 }
 
 .sidenav a {
-  padding: 8px 8px 8px 32px;
+  padding: 8px 8px 8px 8px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 15px;
   color: #818181;
   display: block;
   transition: 0.3s;
 }
 
 .sidenav p {
-  padding: 8px 8px 8px 32px;
+  padding: 8px 8px 8px 8px;
   text-decoration: none;
   font-size: 25px;
   color: #818181;
@@ -68,7 +68,7 @@ body {
   <a href="#">About</a>
   <a href="#">Our Mission</a>
   <a href="#">Lossless Donations</a>
-  <a href="./FAQ.md">FAQ</a>
+  <a href="./#/FAQ.md">FAQ</a>
   <a href="#">Pools</a>
   <a href="#">Create Cause</a>
   <a href="#">Donate</a>

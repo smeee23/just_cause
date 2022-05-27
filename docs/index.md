@@ -32,6 +32,15 @@ body {
   transition: 0.3s;
 }
 
+.sidenav h2 {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 30px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
 .sidenav a:hover {
   color: #f1f1f1;
 }

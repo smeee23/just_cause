@@ -114,6 +114,8 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 <script>
   
 function setText(id) {
+  console.log("home", document.getElementById('home').innerHTML)
+  console.log("id", id)
   document.getElementById('home').innerHTML = document.getElementById(id).innerHTML;
 }
   

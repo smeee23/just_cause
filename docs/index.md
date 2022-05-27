@@ -91,7 +91,7 @@ body {
               
 ![jc_logo](https://user-images.githubusercontent.com/85646760/170550529-6cd84d59-b1c6-496c-810c-0242cf9eb843.png)
   
-# What JustCause?
+# What is JustCause?
 
 JustCause is a crowdfunding platform that allows users to leverage the power of defi to fund causes that are important to them. We use an innovative funding mechanism to allow users to contribute to public goods, charitable organizations, DAOs, local/global/personal causes, and much more.
 

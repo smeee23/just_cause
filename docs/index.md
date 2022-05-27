@@ -68,7 +68,7 @@ body {
   <a href="#">About</a>
   <a href="#">Our Mission</a>
   <a href="#">Lossless Donations</a>
-  <a href="#" onclick="setFAQText()">FAQ</a>
+  <a href="#" onclick="closeNav()">FAQ</a>
   <a href="#">Pools</a>
   <a href="#">Create Cause</a>
   <a href="#">Donate</a>

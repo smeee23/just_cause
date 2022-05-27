@@ -103,7 +103,7 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 
 </div>
   
-<div id="faq" markdown="1" style="width: 0px">
+<div id="faq" markdown="1" style=“display:none”>
               
 # FAQ
   
@@ -115,7 +115,7 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
   
 function setText(id) {
   console.log("home", document.getElementById('home').innerHTML)
-  console.log("id", id)
+  console.log("id", id, document.getElementById(id))
   document.getElementById('home').innerHTML = document.getElementById(id).innerHTML;
 }
   

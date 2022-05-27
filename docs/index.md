@@ -66,8 +66,8 @@ body {
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <p>General</p>
   <a href="#">About</a>
-  <a href="#">Our Mission</a>
-  <a href="#">Lossless Donations</a>
+  <a href="https://github.com/smeee23/just_cause">Our Mission</a>
+  <a href="https://smeee23.github.io/just_cause/#/FAQ.md">Lossless Donations</a>
   <a href="./#/FAQ.md">FAQ</a>
   <a href="#">Pools</a>
   <a href="#">Create Cause</a>

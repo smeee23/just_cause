@@ -67,7 +67,7 @@ body {
   <a href="#">About</a>
   <a href="#">Our Mission</a>
   <a href="#">Lossless Donations</a>
-  <a href="#">FAQ</a>
+  <a href="./FAQ.md">FAQ</a>
   <a href="#">Pools</a>
   <a href="#">Create Cause</a>
   <a href="#">Donate</a>

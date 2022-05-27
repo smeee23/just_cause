@@ -10,7 +10,11 @@ title: about
 body {
   font-family: "Lato", sans-serif;
 }
-
+  
+.hidden {
+  display: none;
+}
+  
 .sidenav {
   height: 100%;
   width: 0;
@@ -103,7 +107,7 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 
 </div>
   
-<div id="faq" markdown="1" style=“display: block”>
+<div id="faq" class="hidden" markdown="1">
               
 # FAQ
   

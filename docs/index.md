@@ -69,24 +69,22 @@ body {
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <p>General</p>
-  <a href="#">About</a>
-  <a href="#">Our Mission</a>
-  <a href="#">Lossless Donations</a>
+  <a href="#" onclick="setText('home')">About</a>
+  <a href="#" onclick="setText('mission')">Our Mission</a>
+  <a href="#" onclick="setText('donations')">Lossless Donations</a>
+  <a href="#" onclick="setText('cause')">Your Cause</a>
   <a href="#" onclick="setText('faq')">FAQ</a>
-  <a href="#">Pools</a>
-  <a href="#">Create Cause</a>
-  <a href="#">Donate</a>
   
   <p>Guides</p>
-  <a href="#">Polygon Network</a>
-  <a href="#">Create Cause</a>
-  <a href="#">Donate</a>
-  <a href="#">View NFT</a>
-  <a href="#">Share Cause</a>
+  <a href="#" onclick="setText('polygon_guide')">Polygon Network</a>
+  <a href="#" onclick="setText('create_guide')">Create Cause</a>
+  <a href="#" onclick="setText('donate_guide')">Donate</a>
+  <a href="#" onclick="setText('view_nft_guide')">View NFT</a>
+  <a href="#" onclick="setText('share_guide')">Share Cause</a>
   
   <p>Contracts</p>
-  <a href="#">PoolTacker</a>
-  <a href="#">JustCausePool</a>
+  <a href="#" onclick="setText('poolTracker')">PoolTacker</a>
+  <a href="#" onclick="setText('justCausePool')">JustCausePool</a>
 </div>
 
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
@@ -107,6 +105,24 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 
 </div>
   
+<div id="mission" class="hidden" markdown="1">
+              
+# Our Mission
+
+</div>
+  
+<div id="donations" class="hidden" markdown="1">
+              
+# Lossless Donations
+
+</div>
+  
+<div id="cause" class="hidden" markdown="1">
+              
+# Your Cause
+
+</div>
+
 <div id="faq" class="hidden" markdown="1">
               
 # FAQ
@@ -114,12 +130,60 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 ## What the FAQ?
 
 </div>
-                                                               
+  
+<div id="polygon_guide" class="hidden" markdown="1">
+              
+# Getting Started With Polygon
+  
+Guide to be released shortly
+
+</div>
+  
+<div id="create_guide" class="hidden" markdown="1">
+              
+# Create a Cause
+  
+Guide to be released shortly
+
+</div>
+  
+<div id="donate_guide" class="hidden" markdown="1">
+              
+# Donation
+  
+Guide to be released shortly
+
+</div>
+<div id="view_nft_guide" class="hidden" markdown="1">
+              
+# View Your NFT on OpenSea
+  
+Guide to be released shortly
+
+</div>
+
+<div id="share_guide" class="hidden" markdown="1">
+              
+# Share Your Cause
+  
+Guide to be released shortly
+
+</div>
+  
+<div id="poolTracker" class="hidden" markdown="1">
+              
+# PoolTracker
+
+</div>
+  
+<div id="justCausePool" class="hidden" markdown="1">
+              
+# JustCausePool
+
+</div>
 <script>
   
 function setText(id) {
-  console.log("home", document.getElementById('home').innerHTML)
-  console.log("id", id, document.getElementById(id))
   document.getElementById('home').innerHTML = document.getElementById(id).innerHTML;
 }
   

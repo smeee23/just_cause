@@ -2,8 +2,6 @@
 layout: default
 ---
 
-![jc_logo](https://user-images.githubusercontent.com/85646760/170550529-6cd84d59-b1c6-496c-810c-0242cf9eb843.png)
-
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -56,10 +54,11 @@ body {
 
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <h2>General</h2>
   <a href="#">About</a>
-  <a href="#">Services</a>
-  <a href="#">Clients</a>
-  <a href="#">Contact</a>
+  <a href="#">FAQ</a>
+  <a href="#">Pools</a>
+  <a href="#">Donator NFTs</a>
 </div>
 
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Docs</span>
@@ -77,6 +76,7 @@ function closeNav() {
 </body>
 </html> 
 
+![jc_logo](https://user-images.githubusercontent.com/85646760/170550529-6cd84d59-b1c6-496c-810c-0242cf9eb843.png)
 
 # What JustCause?
 

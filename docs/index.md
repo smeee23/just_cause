@@ -65,10 +65,10 @@ body {
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <p>General</p>
-  <a href="#">About</a>
+  <a href="#" onclick="setAboutText()">About</a>
   <a href="#">Our Mission</a>
-  <a href="#>Lossless Donations</a>
-  <a href="#">FAQ</a>
+  <a href="#">Lossless Donations</a>
+  <a href="#" onclick="setFAQText()">FAQ</a>
   <a href="#">Pools</a>
   <a href="#">Create Cause</a>
   <a href="#">Donate</a>
@@ -87,8 +87,10 @@ body {
 
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
 
-<div class="content" markdown="1">
-                                                               
+<div id="content" markdown="1">
+              
+![jc_logo](https://user-images.githubusercontent.com/85646760/170550529-6cd84d59-b1c6-496c-810c-0242cf9eb843.png)
+  
 # What JustCause?
 
 JustCause is a crowdfunding platform that allows users to leverage the power of defi to fund causes that are important to them. We use an innovative funding mechanism to allow users to contribute to public goods, charitable organizations, DAOs, local/global/personal causes, and much more.
@@ -100,6 +102,14 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 </div>
                                                                
 <script>
+  
+function setFAQText(){
+  document.getElementById("content").innerText = 
+  "# FAQ
+  
+  ## What the FAQ!";
+}
+  
 function openNav() {
   document.getElementById("mySidenav").style.width = "250px";
 }

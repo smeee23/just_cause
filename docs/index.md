@@ -103,7 +103,7 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 
 </div>
   
-<div id="faq" markdown="1" style="width=0">
+<div id="faq" markdown="1" style="width: 0">
               
 # FAQ
   

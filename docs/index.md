@@ -25,7 +25,7 @@ body {
 }
 
 .sidenav a {
-  padding: 8px 8px 8px 8px;
+  padding: 8px 8px 8px 32px;
   text-decoration: none;
   font-size: 15px;
   color: #818181;
@@ -34,7 +34,7 @@ body {
 }
 
 .sidenav p {
-  padding: 8px 8px 8px 8px;
+  padding: 8px 8px 8px 16px;
   text-decoration: none;
   font-size: 25px;
   color: #818181;
@@ -68,7 +68,7 @@ body {
   <a href="#">About</a>
   <a href="#">Our Mission</a>
   <a href="#">Lossless Donations</a>
-  <a href="#" onclick="closeNav()">FAQ</a>
+  <a href="#" onclick="setText()">FAQ</a>
   <a href="#">Pools</a>
   <a href="#">Create Cause</a>
   <a href="#">Donate</a>
@@ -102,6 +102,10 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 </div>
                                                                
 <script>
+  
+function setText() {
+  document.getElementById("content").innerText = "# FAQ";
+}
   
 function openNav() {
   document.getElementById("mySidenav").style.width = "250px";

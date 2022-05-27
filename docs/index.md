@@ -69,7 +69,7 @@ body {
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <p>General</p>
-  <a href="#" onclick="setText('home')">About</a>
+  <a href="#" onclick="setText('about')">About</a>
   <a href="#" onclick="setText('mission')">Our Mission</a>
   <a href="#" onclick="setText('donations')">Lossless Donations</a>
   <a href="#" onclick="setText('cause')">Your Cause</a>

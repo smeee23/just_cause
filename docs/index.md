@@ -101,7 +101,7 @@ JustCause has two types of pools: Verified Pools and Unverified pools. Verified 
 
 </div>
   
-<div id="faq" markdown="1" style=“display:none”>
+<div id="faq" markdown="1">
               
 ![jc_logo](https://user-images.githubusercontent.com/85646760/170550529-6cd84d59-b1c6-496c-810c-0242cf9eb843.png)
   

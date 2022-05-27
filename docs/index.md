@@ -26,16 +26,16 @@ body {
 .sidenav a {
   padding: 8px 8px 8px 32px;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 17px;
   color: #818181;
   display: block;
   transition: 0.3s;
 }
 
-.sidenav h2 {
+.sidenav p {
   padding: 8px 8px 8px 32px;
   text-decoration: none;
-  font-size: 30px;
+  font-size: 25px;
   color: #818181;
   display: block;
   transition: 0.3s;
@@ -63,7 +63,7 @@ body {
 
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <h2>General</h2>
+  <p>General</p>
   <a href="#">About</a>
   <a href="#">Our Mission</a>
   <a href="#">Lossless Donations</a>
@@ -72,14 +72,14 @@ body {
   <a href="#">Create Cause</a>
   <a href="#">Donate</a>
   
-  <h2>Guides</h2>
+  <p>Guides</p>
   <a href="#">Polygon Network</a>
   <a href="#">Create Cause</a>
   <a href="#">Donate</a>
   <a href="#">View NFT</a>
   <a href="#">Share Cause</a>
   
-  <h2>Contracts</h2>
+  <p>Contracts</p>
   <a href="#">PoolTacker</a>
   <a href="#">JustCausePool</a>
 </div>

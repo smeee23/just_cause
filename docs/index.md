@@ -56,9 +56,23 @@ body {
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <h2>General</h2>
   <a href="#">About</a>
+  <a href="#">Our Mission</a>
+  <a href="#">Lossless Donations</a>
   <a href="#">FAQ</a>
   <a href="#">Pools</a>
-  <a href="#">Donator NFTs</a>
+  <a href="#">Create Cause</a>
+  <a href="#">Donate</a>
+  
+  <h2>Guides</h2>
+  <a href="#">Polygon Network</a>
+  <a href="#">Create Cause</a>
+  <a href="#">Donate</a>
+  <a href="#">View NFT</a>
+  <a href="#">Share Cause</a>
+  
+  <h2>Contracts</h2>
+  <a href="#">PoolTacker</a>
+  <a href="#">JustCausePool</a>
 </div>
 
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Docs</span>

@@ -142,7 +142,7 @@ To donate users go to the Dashboard to see JustCause's Verified Pools. Alternati
 
 Users share Causes they create or feel passionate about on social media by clicking the share icons in the  Pool. This creates a post with a link on the platform for friends to follow and contribute.
 
-Contributors can see and withdraw deposits from pools under Contributions in the Dashboard tab.  
+Contributors are able to see and withdraw deposits from pools they have contributed to under Contributions in the Dashboard tab.  
   
 </div>
   

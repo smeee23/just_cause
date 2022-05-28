@@ -129,9 +129,21 @@ Our mission is to give users the freedom to create and fund any cause they deem 
               
 # Lossless Donations
 
-JustCause Pools generate interest through an integration with the Aave lending protocol. Aave can be thought of as an automated system of liquidity pools. Users deposit tokens they want to lend out, which are amassed into a large lending pool. Borrowers may then draw from these pools by taking out collateralized loans. In exchange for providing liquidity to the market lenders earn a passive rate of interest on their deposits.
+JustCause smart contracts let users donate to charity without parting with their hard earned money! 
+
+###Aave
+
+JustCause Pools generate interest through an integration with the [Aave lending protocol](https://docs.aave.com/hub/). Aave can be thought of as an automated system of liquidity pools. Users deposit tokens they want to lend out, which are amassed into a large lending pool. Borrowers may then draw from these pools by taking out collateralized loans. In exchange for providing liquidity to the market lenders earn a passive rate of interest on their deposits.
 
 The Aave Protocol has been audited, and has an ongoing bug bounty program. It secures tens of billions of dollars of value. The protocol is completely open source, allowing anyone to interact and build on top of it. Every possible step has been taken to minimize the risk as much as possible. However, no platform can be considered entirely risk free. Please see the Risks section for more details.
+
+###Fund a Cause
+
+To donate users can head over to the Dashboard to check out our Verified Pools. Alternatively, users can search for user generated pools by name or contract address. 
+
+Users can share Causes they create or feel passionate about on social media by clicking the share icons in the  Pool. This creates a post with a link on the platform for friends to follow and contribute.
+
+Contributors can see and withdraw deposits from pools under Contributions in the Dashboard tab.  
   
 </div>
   

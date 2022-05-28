@@ -177,8 +177,71 @@ Receivers are able to see and claim donations for pools under Your Causes in the
 <div id="faq" class="hidden" markdown="1">
               
 # FAQ
+
+---
   
-## What the FAQ?
+### What is JustCause?
+
+JustCause is a decentralized non-custodial crowdfunding protocol where users participate as Contributors or Pool Creators. Contributors deposit funds that are used in the Aave lending protocol to generate donations for public goods, charitable organizations, DAOs, local/global/personal causes, and much more.
+
+---
+
+### Where are my deposited funds stored?
+
+Your funds are allocated in a smart contract. The code of the smart contract is public, open source, and audited by third party auditors. You can withdraw your funds from the pool at any time.
+
+---
+
+### How do I interact with the JustCause protocol?
+
+[JustCause Dapp](https://www.justcause.finance/#/) is currently deployed on the Polygon PoS (proof of stake) network. 
+
+See: [Getting started on the Polygon PoS chain](https://wallet.polygon.technology/)
+
+---
+
+### What is the cost of donating with JustCause protocol?
+
+While Contributors receive their full deposit back upon withdrawal, interacting with the protocol requires transactions and thus transaction fees on the Polygon PoS blockchain.
+
+---
+
+### Why use JustCause?
+
+JustCause is an open source, permissionless and non-custodial protocol. This means that anyone has the freedom to create or contribute to pools.
+
+Crowdfunding mechanisms based on traditional financial payment networks are inherently permissioned and custodial. This leaves the funds and users of these systems vulnerable to financial censorship. We want to solve this problem.
+
+---
+
+### Is there any risk?
+
+The risks related to the JustCause platform are the smart contract risk (risk of a bug within the protocol code and the Aave protocol code) and liquidation risk (risk on the collateral liquidation process on Aave). Every possible step has been taken to minimize the risk as much as possible-- the protocol code is public and open source and it has been audited. 
+
+---
+
+### How much will my contributions donate?
+JustCause Pools receive continuous earnings from Aave that evolve with market conditions based on:
+
+The interest rate payment on loans – on Aave depositors share the interests paid by borrowers corresponding to the average borrow rate times the utilization rate. The higher the utilization of a reserve the higher the yield for depositors. 
+
+Flash Loan fees – on Aave depositors receive a share of the Flash Loan fees corresponding to .09% of the Flash Loan volume.
+
+On Aave each asset has its own market of supply and demand with its own APY (Annual Percentage Yield) which evolves with time. 
+
+---
+
+### Is there a minimum or maximum amount to deposit?
+
+Users are able to deposit any amount they want, there is no minimum or maximum limit.  
+
+---
+
+### What tokens are allowed to be deposited?
+
+JustCause Pools accept Polygon network MATIC, USDC, USDT, DAI, WBTC, WETH, AAVE, DPI, and LINK with more to be added.
+
+---
 
 </div>
   

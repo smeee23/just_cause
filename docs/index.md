@@ -168,9 +168,9 @@ It is important to note that anyone can create a user pool for any reason. More 
   
 User pools can be found by searching by name or contract address.
   
-### Your Causes
+### Your Cause
   
-Receivers can see and claim donations for pools under Your Causes in the Dashboard tab. For instructions on claiming, please see the guide section.
+Receivers are able to see and claim donations for pools under Your Causes in the Dashboard tab. For instructions on claiming, please see the guide section.
   
 </div>
 

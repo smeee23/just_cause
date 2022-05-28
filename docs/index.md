@@ -98,7 +98,7 @@ body {
 
 JustCause is a crowdfunding platform that allows users to leverage the power of defi to fund causes that are important to them. We use an innovative funding mechanism to allow users to contribute to public goods, charitable organizations, DAOs, local/global/personal causes, and much more.
 
-Users are able to participate as either Contributors or Pool Creators. Pool Creators generate JustCause Pools representing a cause in need of funding. Contributors deposit tokens into JustCause Pools which in turn deposit them into Aave’s lending protocol. The interest earned is donated to the cause associated with the Pool. When Contributors need access to their funds, they simply withdraw their original deposit and the interest accrued is left behind for the cause.
+Users participate as either Contributors or Pool Creators. Pool Creators generate JustCause Pools representing a cause in need of funding. Contributors deposit tokens into JustCause Pools which in turn deposit them into Aave’s lending protocol. The interest earned is donated to the cause associated with the Pool. When Contributors need access to their funds, they simply withdraw their original deposit and the interest accrued is left behind for the cause.
 
 # Our Mission
   
@@ -114,7 +114,7 @@ Our mission is to give users the freedom to create and fund any cause they deem 
 
 JustCause is a crowdfunding platform that allows users to leverage the power of defi to fund causes that are important to them. We use an innovative funding mechanism to allow users to contribute to public goods, charitable organizations, DAOs, local/global/personal causes, and much more.
 
-Users are able to participate as either Contributors or Pool Creators. Pool Creators generate JustCause Pools representing a cause in need of funding. Contributors deposit tokens into JustCause Pools which in turn deposit them into Aave’s lending protocol. The interest earned is donated to the cause associated with the Pool. When Contributors need access to their funds, they simply withdraw their original deposit and the interest accrued is left behind for the cause.
+Users participate as either Contributors or Pool Creators. Pool Creators generate JustCause Pools representing a cause in need of funding. Contributors deposit tokens into JustCause Pools which in turn deposit them into Aave’s lending protocol. The interest earned is donated to the cause associated with the Pool. When Contributors need access to their funds, they simply withdraw their original deposit and the interest accrued is left behind for the cause.
               
 # Our Mission
   
@@ -138,9 +138,9 @@ The Aave Protocol has been audited, and has an ongoing bug bounty program. It se
 
 ### Fund a Cause
 
-To donate users can head over to the Dashboard to check out our Verified Pools. Alternatively, users can search for user generated pools by name or contract address. 
+To donate users go to the Dashboard to see JustCause's Verified Pools. Alternatively, users search for user generated pools by name or contract address. 
 
-Users can share Causes they create or feel passionate about on social media by clicking the share icons in the  Pool. This creates a post with a link on the platform for friends to follow and contribute.
+Users share Causes they create or feel passionate about on social media by clicking the share icons in the  Pool. This creates a post with a link on the platform for friends to follow and contribute.
 
 Contributors can see and withdraw deposits from pools under Contributions in the Dashboard tab.  
   

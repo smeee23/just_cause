@@ -73,6 +73,7 @@ body {
   <a href="#" onclick="setText('donations')">Lossless Donations</a>
   <a href="#" onclick="setText('cause')">Your Cause</a>
   <a href="#" onclick="setText('faq')">FAQ</a>
+  <a href="#" onclick="setText('risks')">Risks</a>
   
   <p>Guides</p>
   <a href="#" onclick="setText('polygon_guide')">Polygon Network</a>
@@ -132,7 +133,9 @@ JustCause smart contracts let users donate to charity without parting with their
 
 ### Aave
 
-JustCause Pools generate interest through an integration with the [Aave lending protocol](https://docs.aave.com/hub/). Aave can be thought of as an automated system of liquidity pools. Users deposit tokens they want to lend out, which are amassed into a large lending pool. Borrowers may then draw from these pools by taking out collateralized loans. In exchange for providing liquidity to the market lenders earn a passive rate of interest on their deposits.
+JustCause Pools generate interest through an integration with the [Aave lending protocol](https://docs.aave.com/hub/). Aave can be thought of as an automated system of liquidity pools. Users deposit tokens they want to lend out, which are amassed into reserve pools. Borrowers may then draw from these pools by taking out collateralized loans. In exchange for providing liquidity to the market lenders earn a passive rate of interest on their deposits.
+  
+With lending protocols like Aave risk exists because the financial value behind the collateral and borrowed debt can fluctuate significantly due to the volatility of crypto markets. To mitigate this risk, Aave requires loans to be overcollateralized, meaning the collateral is always worth more than the debt being borrowed. To maintain solvency, positions nearing under collateralization are liquidated (collateral is sold to pay back the debt), protecting lenders and keeping all positions over 100% collateralized.
 
 The Aave Protocol has been audited, and has an ongoing bug bounty program. It secures tens of billions of dollars of value. The protocol is completely open source, allowing anyone to interact and build on top of it. Every possible step has been taken to minimize the risk as much as possible. However, no platform can be considered entirely risk free. Please see the Risks section for more details.
 
@@ -200,7 +203,7 @@ Your funds are allocated in a smart contract. The code of the smart contract is 
 
 [JustCause dApp](https://www.justcause.finance/#/) is currently deployed on the Polygon PoS (proof of stake) network. 
 
-See: [Getting started on the Polygon PoS chain](https://wallet.polygon.technology/)
+Users can also 
 
 ---
   
@@ -256,7 +259,20 @@ JustCause Pools accept Polygon network MATIC, USDC, USDT, DAI, WBTC, WETH, AAVE,
 ---
 
 </div>
+
+<div id="risks" class="hidden" markdown="1">
   
+# Risks
+
+### Aave
+  
+The Aave Protocol has been audited, and has an ongoing bug bounty program. It secures tens of billions of dollars of value. The protocol is completely open source, allowing anyone to interact and build on top of it. Every possible step has been taken to minimize the risk as much as possible. However, no platform can be considered entirely risk free. 
+
+### Permanent loss of a peg
+If one of the stablecoins deposited in a JustCause pool goes significantly down below the peg of $1.00 and never returns to the peg, it could mean the loss of user funds. 
+  
+</div>
+
 <div id="polygon_guide" class="hidden" markdown="1">
               
 # Getting Started With Polygon

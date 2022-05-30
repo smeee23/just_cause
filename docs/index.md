@@ -203,7 +203,7 @@ Your funds are allocated in a smart contract. The code of the smart contract is 
 
 [JustCause dApp](https://www.justcause.finance/#/) is currently deployed on the Polygon PoS (proof of stake) network. 
 
-Users can also 
+Users have the option to run the dApp locally by following the setup guide in our [readme file](https://github.com/smeee23/just_cause/blob/main/README.md).
 
 ---
   

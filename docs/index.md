@@ -143,6 +143,10 @@ To donate users go to the Dashboard to see JustCause's Verified Pools. Alternati
 Users share Causes they create or feel passionate about on social media by clicking the share icons in the  Pool. This creates a post with a link on the platform for friends to follow and contribute.
 
 Contributors are able to see and withdraw deposits from pools they have contributed to under Contributions in the Dashboard tab.  
+
+### Contributor NFT’s
+
+Another unique feature of JustCause is that the deposit information for the users and pool creators is stored on-chain in the form of an NFT’s (non-fungible token). A Pool Creator has the option of uploading an image at the time of pool creation. An NFT is generated of the image for the Contributors to the pool. The Contributor’s token acts as an on-chain receipt by storing data on their funds deposited in the Pool. It is for this reason that contributor NFT’s are non-transferable. The only way to get one is to deposit for the cause. 
   
 </div>
   
@@ -194,7 +198,15 @@ Your funds are allocated in a smart contract. The code of the smart contract is 
 
 ### How do I interact with the JustCause protocol?
 
-[JustCause Dapp](https://www.justcause.finance/#/) is currently deployed on the Polygon PoS (proof of stake) network. 
+[JustCause dApp](https://www.justcause.finance/#/) is currently deployed on the Polygon PoS (proof of stake) network. 
+
+See: [Getting started on the Polygon PoS chain](https://wallet.polygon.technology/)
+
+---
+  
+### What is Polygon PoS?
+
+Polygon is a decentralised Ethereum scaling platform that enables developers to build scalable user-friendly dApps with low transaction fees. 
 
 See: [Getting started on the Polygon PoS chain](https://wallet.polygon.technology/)
 

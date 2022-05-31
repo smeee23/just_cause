@@ -223,6 +223,8 @@ While Contributors receive their full deposit back upon withdrawal, interacting 
 
 ### Why use JustCause?
 
+  # Because we are awesome
+
 JustCause is an open source, permissionless and non-custodial protocol. This means that anyone has the freedom to create or contribute to pools.
 
 Crowdfunding mechanisms based on traditional financial payment networks are inherently permissioned and custodial. This leaves the funds and users of these systems vulnerable to financial censorship. We want to solve this problem.

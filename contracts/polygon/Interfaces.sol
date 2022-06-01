@@ -1913,7 +1913,7 @@ interface IJustCausePool {
     event Withdraw(address tokenAddress, address depositor, uint256 amount, uint256 userDeposits);
     event WithdrawDonations(address tokenAddress, address depositor, uint256 amount, uint256 totalDeposits, address aTokenAddress);
 
-    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddr, address _wethGatewayAddr, bool isVerified) external;
+    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddr, address _wethGatewayAddr, address _erc721Addr, bool isVerified) external;
     function deposit(address _assetAddress, uint256 _amount/*, address _depositor*/) external;
     function tallyDeposit(uint256 _amount, address _assetAddress) external;
     function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool isETH) external;
@@ -1929,12 +1929,35 @@ interface IJustCausePool {
     function getClaimedInterest(address _assetAddress) external view returns (uint256);
     function getATokenBalance(address _assetAddress) external view returns (uint256);
     function getRecipient() external view returns(address);
-    function getByteCode() external view returns(bytes memory);
-    function getHashByteCode() external view returns(bytes32);
+    function getERC721Address() external view returns(address);
     function getAaveLiquidityIndex(address _asset) external view returns(uint256 liquidityIndex);
     function getReserveNormalizedIncome(address _asset) external view returns(uint256);
     function getPoolTokenInfo(address _asset) external returns(uint256, uint256, uint256, uint256, uint256, uint256, address);
     function getPoolInfo() external view returns(address[] memory, address, bool, string memory, string memory, string memory, string memory);
+}
+
+interface IJCDepositorERC721{
+
+    struct Deposit {
+        uint256 balance;
+        uint256 timeStamp;
+        address asset;
+    }
+
+    function initialize(address _jcPool) external;
+    function addFunds(
+        address _tokenOwner,
+        uint256 _amount,
+        uint256 _timeStamp,
+        address _asset,
+        string memory _metaUri
+    ) external returns (bool);
+    function withdrawFunds(address _tokenOwner, uint256 _amount, address _asset) external;
+
+    function getDepositInfo(uint256 _tokenId) external view returns (Deposit memory);
+    function getUserBalance(uint256 _tokenId) external view returns (uint256);
+    function getUserTokens(address _tokenOwner) external view returns(uint256[] memory);
+    function getPool() external view returns(address);
 }
 
 interface ITestToken {

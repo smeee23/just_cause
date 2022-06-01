@@ -5,7 +5,7 @@ const WethGatewayTest = artifacts.require("WethGatewayTest");
 const TestToken = artifacts.require("TestToken");
 const aTestToken = artifacts.require("aTestToken");
 const JCDepositorERC721 = artifacts.require("JCDepositorERC721");
-const JCOwnerERC721 = artifacts.require("JCOwnerERC721");
+const JustCausePoolAaveV3 = artifacts.require("JustCausePoolAaveV3");
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const chai = require("./setupchai.js");
@@ -37,23 +37,23 @@ contract("Pool Tracker", async (accounts) => {
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
         this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
-        this.jCDepositorERC721 = await JCDepositorERC721.at(await this.poolTracker.getDepositorERC721Address());
-        this.jCOwnerERC721 = await JCOwnerERC721.at(await this.poolTracker.getOwnerERC721Address());
-
+       
         this.INTEREST = "1000000000000000000";
     });
 
-    it("pools created by validator should be added to verified pools", async() => {
+   it("pools created by validator should be added to verified pools", async() => {
         const startPoolsLength = (await this.poolTracker.getVerifiedPools()).length;
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator});
         assert.equal(startPoolsLength + 1, (await this.poolTracker.getVerifiedPools()).length, "The pool created by validator was not added to verified list");
     });
 
-    it("should transfer each Owner an nft on pool creation", async() => {
-        const startPoolsLength = (await this.poolTracker.getVerifiedPools()).length;
-
+    it("should add each receiver to receivers mapping on pool creation", async() => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator});
-        assert.equal(await this.jCOwnerERC721.balanceOf(receiver), 1, "owner nft balance not equal to 1");
+        const receiverPools = await this.poolTracker.getReceiverPools(receiver);
+        console.log("receiverPools", receiverPools);
+        assert.equal(receiverPools.length, 1, "receiver mapping not updated");
+        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+        assert.strictEqual(receiverPools[0], knownAddress, "The pool name did not return the correct address");
     });
 
     it("pools created by non-validator addresses should not be in verified pools", async() => {
@@ -126,9 +126,12 @@ contract("Pool Tracker", async (accounts) => {
         await this.testToken.mint(depositor, depositAmount);
         await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
+        const erc721Address = await jCPool.getERC721Address();
+        const erc721Instance = await JCDepositorERC721.at(erc721Address);
 
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
-        assert.equal(await this.jCDepositorERC721.balanceOf(depositor), 1, "balance not equal to 1");
+        assert.equal(await erc721Instance.balanceOf(depositor), 1, "balance not equal to 1");
     });
     it("add deposit updates tvl", async() => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
@@ -301,9 +304,7 @@ contract("Pool Tracker", async (accounts) => {
         await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
-        const tokenId = await this.jCDepositorERC721.tokenOfOwnerByIndex(depositor, 0);
-        const depositInfo = await this.jCDepositorERC721.getDepositInfo(tokenId);
-        console.log('balance', depositInfo.balance, overAmount)
+
         await expectRevert(
             this.poolTracker.withdrawDeposit(overAmount, this.testToken.address, knownAddress, false, {from: depositor}),
             "Panic: Arithmetic overflow"
@@ -317,6 +318,8 @@ contract("Pool Tracker", async (accounts) => {
         await this.testToken.mint(depositor, depositAmount);
         await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+
+        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
 
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
         assert.equal(await this.testToken.balanceOf(depositor), 0, "testToken balance not equal to 0");
@@ -356,7 +359,6 @@ contract("Pool Tracker", async (accounts) => {
         const newReceiverBalance = await web3.eth.getBalance(receiver);
 
         const valueString = (new BN(origReceiverBalance)).add(web3.utils.toBN(this.INTEREST)).toString();
-        console.log("receiver balance", valueString, newReceiverBalance);
         assert.strictEqual(valueString, newReceiverBalance, "tvl not updated");
     });
 
@@ -411,7 +413,6 @@ contract("Pool Tracker", async (accounts) => {
 
     it("getBaseJCPoolAddress  returns base pool address", async() => {
         const basePoolAddress = await this.poolTracker.getBaseJCPoolAddress();
-        console.log("basePoolAddress", basePoolAddress);
         assert.ok(basePoolAddress, "base pool address not valid");
     });
 

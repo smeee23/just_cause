@@ -4,7 +4,6 @@ const PoolMock = artifacts.require("PoolMock");
 const TestToken = artifacts.require("TestToken");
 const aTestToken = artifacts.require("aTestToken");
 const JCDepositorERC721 = artifacts.require("JCDepositorERC721");
-const JCOwnerERC721 = artifacts.require("JCOwnerERC721");
 const JustCausePoolAaveV3 = artifacts.require("JustCausePoolAaveV3");
 const WethGatewayTest = artifacts.require("WethGatewayTest");
 const { expectRevert } = require('@openzeppelin/test-helpers');
@@ -38,9 +37,7 @@ contract("JustCausePoolAaveV3", async (accounts) => {
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
         this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
-        this.jCDepositorERC721 = await JCDepositorERC721.at(await this.poolTracker.getDepositorERC721Address());
-        this.jCOwnerERC721 = await JCOwnerERC721.at(await this.poolTracker.getOwnerERC721Address());
-
+        
         this.INTEREST = "1000000000000000000";
         this.RESERVE_NORMALIZED_INCOME = "7755432354";
         this.LIQUIDITY_INDEX = "1234"
@@ -48,8 +45,9 @@ contract("JustCausePoolAaveV3", async (accounts) => {
 
     it("JustCausePoolAaveV3 reverts if initialize is called on base", async() => {
         const jCPool = await JustCausePoolAaveV3.at(await this.poolTracker.getBaseJCPoolAddress());
+        const erc721Address = await jCPool.getERC721Address();
         await expectRevert(
-            jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, this.wethGateway.address, false, {from: validator}),
+            jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, this.wethGateway.address, erc721Address, false, {from: validator}),
             "Cannot initialize base"
         );
     });
@@ -58,8 +56,9 @@ contract("JustCausePoolAaveV3", async (accounts) => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         const jCPool = await JustCausePoolAaveV3.at(knownAddress);
+        const erc721Address = await jCPool.getERC721Address();
         await expectRevert(
-            jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, this.wethGateway.address, false, {from: validator}),
+            jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, this.wethGateway.address, erc721Address, false, {from: validator}),
             "Initializable: contract is already initialized"
         );
     });

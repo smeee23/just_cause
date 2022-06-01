@@ -34,11 +34,12 @@ contract JustCausePoolAaveV3 is Initializable {
     IPoolAddressesProvider provider;
     address poolAddr;
     address wethGatewayAddr;
+    address erc721Addr;
 
     address[] acceptedTokens;
 
     address receiver;
-    address master;
+    address poolTracker;
     string name;
     string about;
     string picHash;
@@ -72,8 +73,8 @@ contract JustCausePoolAaveV3 is Initializable {
     /**
     * @dev Only Master can call functions marked by this modifier.
     **/
-    modifier onlyMaster(address _sender){
-        require(master == _sender, "not the owner");
+    modifier onlyPoolTracker(){
+        require(poolTracker == msg.sender, "not the owner");
         _;
     }
 
@@ -116,6 +117,7 @@ contract JustCausePoolAaveV3 is Initializable {
         address _receiver,
         address _poolAddr,
         address _wethGatewayAddr,
+        address _erc721Addr,
         bool _isVerified
 
     ) external strLength(_name, 30) initializer() {
@@ -124,7 +126,7 @@ contract JustCausePoolAaveV3 is Initializable {
         require(receiver == address(0), "Initialize already called");
 
         receiver = _receiver;
-        master = msg.sender;
+        poolTracker = msg.sender;
         name = _name;
         about = _about;
         picHash = _picHash;
@@ -133,6 +135,7 @@ contract JustCausePoolAaveV3 is Initializable {
 
         poolAddr = _poolAddr;
         wethGatewayAddr = _wethGatewayAddr;
+        erc721Addr = _erc721Addr;
         acceptedTokens = _acceptedTokens;
     }
 
@@ -140,7 +143,7 @@ contract JustCausePoolAaveV3 is Initializable {
     * @param _assetAddress The address of the underlying asset of the reserve
     * @param _amount The amount of supplied assets
     **/
-    function deposit(address _assetAddress, uint256 _amount) external  onlyMaster(msg.sender) onlyAllowedTokens(_assetAddress){
+    function deposit(address _assetAddress, uint256 _amount) external  onlyPoolTracker onlyAllowedTokens(_assetAddress){
         totalDeposits[_assetAddress] += _amount;
     }
 
@@ -150,7 +153,7 @@ contract JustCausePoolAaveV3 is Initializable {
     * @param _depositor The address making the deposit
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
     **/
-    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH) external onlyMaster(msg.sender) {
+    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH) external onlyPoolTracker {
         totalDeposits[_assetAddress] -= _amount;
         if(!_isETH){
             IPool(poolAddr).withdraw(_assetAddress, _amount, _depositor);
@@ -168,7 +171,7 @@ contract JustCausePoolAaveV3 is Initializable {
     * @param _assetAddress The address of the underlying asset of the reserve
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
     **/
-    function withdrawDonations(address _assetAddress, bool _isETH) external onlyMaster(msg.sender) returns(uint256){
+    function withdrawDonations(address _assetAddress, bool _isETH) external onlyPoolTracker returns(uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
@@ -232,6 +235,13 @@ contract JustCausePoolAaveV3 is Initializable {
     **/
     function getRecipient() external view returns(address){
         return receiver;
+    }
+
+    /**
+    * @return erc721Addr address of receiver of JCP donations.
+    **/
+    function getERC721Address() external view returns(address){
+        return erc721Addr;
     }
 
     /**

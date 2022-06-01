@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.9;
 
-import { IJustCausePool, IERC20, IPool, IPoolAddressesProvider, IWETHGateway } from './Interfaces.sol';
+import { IJustCausePool, IJCDepositorERC721, IERC20, IPool, IPoolAddressesProvider, IWETHGateway } from './Interfaces.sol';
 import { JCDepositorERC721 } from './JCDepositorERC721.sol';
-import { JCOwnerERC721 } from './JCOwnerERC721.sol';
 import { JustCausePoolAaveV3 } from './JustCausePoolAaveV3.sol';
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -31,14 +30,15 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract PoolTracker is ReentrancyGuard {
 
     JustCausePoolAaveV3 baseJCPool;
-    JCDepositorERC721 jCDepositorERC721;
-    JCOwnerERC721 jCOwnerERC721;
+    JCDepositorERC721 baseERC721;
 
     //contract addresses will point to bool if they exist
     mapping(address => bool) private isPool;
     mapping(string => address) private names;
     mapping(address => uint256) private tvl;
     mapping(address => uint256) private totalDonated;
+    mapping(address => address[]) private contributors;
+    mapping(address => address[]) private receivers;
     address[] private verifiedPools;
 
     address poolAddr;
@@ -95,9 +95,8 @@ contract PoolTracker is ReentrancyGuard {
     */
     constructor (address _poolAddressesProviderAddr, address _wethGatewayAddr) {
         validator = msg.sender;
-        jCDepositorERC721 = new JCDepositorERC721(_poolAddressesProviderAddr);
-        jCOwnerERC721 = new JCOwnerERC721();
         baseJCPool = new JustCausePoolAaveV3();
+        baseERC721 = new JCDepositorERC721();
 
         poolAddr = IPoolAddressesProvider(_poolAddressesProviderAddr).getPool();
         wethGatewayAddr = address(_wethGatewayAddr);
@@ -128,7 +127,10 @@ contract PoolTracker is ReentrancyGuard {
             IPool(_poolAddr).deposit(address(token), _amount, _pool, 0);
         }
         IJustCausePool(_pool).deposit(_asset, _amount);
-        jCDepositorERC721.addFunds(msg.sender, _amount, block.timestamp,  _pool, _asset, _metaHash);
+        bool isFirstDeposit = IJCDepositorERC721(IJustCausePool(_pool).getERC721Address()).addFunds(msg.sender, _amount, block.timestamp, _asset, _metaHash);
+        if(isFirstDeposit){
+            contributors[msg.sender].push(_pool);
+        }
         emit AddDeposit(msg.sender, _pool, _asset, _amount);
     }
 
@@ -141,7 +143,7 @@ contract PoolTracker is ReentrancyGuard {
     **/
     function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) external  onlyPools(_pool) nonReentrant(){
         tvl[_asset] -= _amount;
-        jCDepositorERC721.withdrawFunds(msg.sender, _amount, _pool, _asset);
+        IJCDepositorERC721(IJustCausePool(_pool).getERC721Address()).withdrawFunds(msg.sender, _amount, _asset);
         IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender, _isETH);
         emit WithdrawDeposit(msg.sender, _pool, _asset, _amount);
     }
@@ -196,19 +198,22 @@ contract PoolTracker is ReentrancyGuard {
     ) external onlyAcceptedTokens(_acceptedTokens){
 
         require(names[_name] == address(0), "pool with name already exists");
-        address child = clone(address(baseJCPool));
+        address jcpChild = clone(address(baseJCPool));
+        address erc721Child = clone(address(baseERC721));
         bool isVerified;
         if(msg.sender == validator){
-            verifiedPools.push(child);
+            verifiedPools.push(jcpChild);
             isVerified = true;
         }
 
-        IJustCausePool(child).initialize(_acceptedTokens, _name, _about, _picHash, _metaUri, _receiver, poolAddr, wethGatewayAddr, isVerified);
-        jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, child, _metaUri);
-        names[_name] =  child;
+        IJustCausePool(jcpChild).initialize(_acceptedTokens, _name, _about, _picHash, _metaUri, _receiver, poolAddr, wethGatewayAddr, erc721Child, isVerified);
+        IJCDepositorERC721(erc721Child).initialize(jcpChild);
+        //jCOwnerERC721.createReceiverToken(_receiver, block.timestamp, jcpChild, _metaUri);
+        receivers[_receiver].push(jcpChild);
+        names[_name] =  jcpChild;
 
-        isPool[child] = true;
-        emit AddPool(child, _name, _receiver);
+        isPool[jcpChild] = true;
+        emit AddPool(jcpChild, _name, _receiver);
     }
 
     /**
@@ -231,14 +236,15 @@ contract PoolTracker is ReentrancyGuard {
     * @return address of ERC721 for depositors, created on deployment
     **/
     function getDepositorERC721Address() public view returns(address){
-        return address(jCDepositorERC721);
+        return address(baseERC721);
     }
 
     /**
-    * @return address of ERC721 for owners, created on deployment
+    * @param _user address to check for receiver
+    * @return address[] of pools that a user is a receiver for
     **/
-    function getOwnerERC721Address() public view returns(address){
-        return address(jCOwnerERC721);
+    function getReceiverPools(address _user) public view returns(address[] memory){
+        return receivers[_user];
     }
 
     /**
@@ -246,6 +252,14 @@ contract PoolTracker is ReentrancyGuard {
     **/
     function getValidator() public view returns(address){
         return validator;
+    }
+
+    /**
+    * @param _user The address of the underlying asset of the reserve
+    * @return address[] of pools
+    **/
+    function getContributions(address _user) public view returns(address[] memory){
+        return contributors[_user];
     }
 
     /**

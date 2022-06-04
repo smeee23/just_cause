@@ -329,7 +329,8 @@ This contract is part of the JustCause Protocol for lossless donations using Aav
 
 > aTokens are tokens minted and burnt upon supply and withdraw of assets to an Aave market, which denote the amount of crypto assets supplied and the yield earned on those assets. The aTokens’ value is pegged to the value of the corresponding supplied asset at a 1:1 ratio and can be safely stored, transferred or traded. All yield collected by the aTokens' reserves are distributed to aToken holders directly by continuously increasing their wallet balance. - Aave Documentation
   
-*Functions withdraw() and withdrawDonations() directly call the aave Pool while deposits are done through the PoolTracker contract to minimize approvals.*
+*Functions withdraw() and withdrawDonations() directly interact with the Aave Pool.* 
+*Deposits are performed through the PoolTracker contract to minimize approvals.*
 
 ---
 
@@ -392,11 +393,61 @@ Function updates total deposits. Deposit interactions with the Aave Pool contrac
 
 | Param | Type | Description |
 |--- | --- | --- |
-| _assetAddress| address | The address of the underlying asset of the reserve |
+| _assetAddress| address | address of the underlying asset of the reserve |
 |--- | --- | --- |
-| _amount | uint256 | The amount of supplied assets |
+| _amount | uint256 | amount of supplied assets |
+|--- | --- | --- |
+  
+---
+
+## withdraw
+  
+```solidity
+function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH)...
+```
+
+Function withdraws Contributor's funds from Aave pools, exchanging the JustCausePool's aTokens for reserve tokens and sending them to the Contributor's wallet.
+  
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress| address | address of the underlying asset of the reserve |
+|--- | --- | --- |
+| _amount | uint256 | amount of supplied assets |
+|--- | --- | --- |
+| _depositor | address | The address making the deposit |
+|--- | --- | --- |
+| _isETH | bool | indicating if asset is the base token of network (eth/matic/...) |
+|--- | --- | --- |
+  
+---
+
+## withdrawDonations
+  
+```solidity
+function withdrawDonations(address _assetAddress, address _feeAddress, bool _isETH)...
+```
+
+Function claims donations for receiver. Calls Aave Pool contract, exchanging JustCausePool's aTokens for reserve tokens for interestEarned amount. Calculates interestEarned and subtracts 0.2% fee from claim amount for non-verified Pools. Sends interestEarned - fee to receiver and fee to protocol (or just sends interestEarned for verified Pools). 
+  
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress| address | address of the underlying asset of the reserve |
+|--- | --- | --- |
+| _feeAddress | address | The address that collects the 0.2% protocol fee |
+|--- | --- | --- |
+| _isETH | bool | indicating if asset is the base token of network (eth/matic/...) |
 |--- | --- | --- |
 
+---
+
+  
+# View Methods
+  
+
+---
+  
 </div>
 <script>
   

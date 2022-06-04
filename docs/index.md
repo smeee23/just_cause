@@ -322,29 +322,44 @@ Guide to be released shortly
   
 <div id="justCausePool" class="hidden" markdown="1">
               
-#JustCausePool
+# JustCausePool
+ ---
 
 The JustCausePool contract is a point of contact with the Aave Pool contract, and where the protocol stores the deposited [aTokens](https://docs.aave.com/developers/tokens/atoken). 
 
-> aTokens are tokens minted and burnt upon supply and withdraw of assets to an Aave market, which denote the amount of crypto assets supplied and the yield earned on those assets. The aTokens’ value is pegged to the value of the corresponding supplied asset at a 1:1 ratio and can be safely stored, transferred or traded. All yield collected by the aTokens' reserves are distributed to aToken holders directly by continuously increasing their wallet balance.
+> aTokens are tokens minted and burnt upon supply and withdraw of assets to an Aave market, which denote the amount of crypto assets supplied and the yield earned on those assets. The aTokens’ value is pegged to the value of the corresponding supplied asset at a 1:1 ratio and can be safely stored, transferred or traded. All yield collected by the aTokens' reserves are distributed to aToken holders directly by continuously increasing their wallet balance. - Aave Documentation
 
 ---
 
-## Write Methods
+  
+# Write Methods
+  
 
 ---
 
-### initialize
+## initialize
 
 Initializes the JustCausePool proxy contracts. Function is invoked by the PoolTacker contract when a Pool is created.
 
 | Param | Type | Description |
-|--- | --- |
+|--- | --- | --- |
 | _acceptedTokens | address[] memory | List of tokens to be accepted by the JustCausePool. |
-|--- | --- |
+|--- | --- | --- |
 | _name | string memory | Unique name of Pool |
-
-
+|--- | --- | --- |
+| _about | string memory | ipfs hash of pool description of JCP. |
+|--- | --- | --- |
+|_picHash | string memory | ipfs hash of pic of JCP. |
+|--- | --- | --- |
+| _metaUri | string memory | meta info uri for nft of JCP. |
+|--- | --- | --- |
+| _receiver | address | address of receiver of JCP donations. |
+|--- | --- | --- |
+| _erc721Addr | address | address of nft contract for pool. |
+|--- | --- | --- |
+| _isVerified | bool | indicates whether JCP is verified. |
+|--- | --- | --- |
+  
 </div>
 <script>
   

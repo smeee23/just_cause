@@ -338,6 +338,11 @@ The JustCausePool contract is a point of contact with the Aave Pool contract, an
 ---
 
 ## initialize
+  
+```
+initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddr, address _wethGatewayAddr, address _erc721Addr, bool _isVerified);
+  
+```
 
 Initializes the JustCausePool proxy contracts. Function is invoked by the PoolTacker contract when a Pool is created.
 

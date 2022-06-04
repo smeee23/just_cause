@@ -325,9 +325,11 @@ Guide to be released shortly
 # JustCausePool
  ---
 
-The JustCausePool contract is a point of contact with the Aave Pool contract, and where the protocol stores the deposited [aTokens](https://docs.aave.com/developers/tokens/atoken). 
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. Aave is used to generate interest for crowdfunding. The JustCausePool contract is a point of contact with the Aave Pool contract, and where the protocol stores the deposited [aTokens](https://docs.aave.com/developers/tokens/atoken). 
 
 > aTokens are tokens minted and burnt upon supply and withdraw of assets to an Aave market, which denote the amount of crypto assets supplied and the yield earned on those assets. The aTokens’ value is pegged to the value of the corresponding supplied asset at a 1:1 ratio and can be safely stored, transferred or traded. All yield collected by the aTokens' reserves are distributed to aToken holders directly by continuously increasing their wallet balance. - Aave Documentation
+  
+*Functions withdraw() and withdrawDonations() directly call the aave Pool while deposits are done through the PoolTracker contract to minimize approvals.*
 
 ---
 
@@ -352,40 +354,23 @@ function initialize(
         address _erc721Addr,
         bool _isVerified
 
-    ) external strLength(_name, 30) initializer() {
-
-        require(isBase == false, "Cannot initialize base");
-        require(receiver == address(0), "Initialize already called");
-
-        receiver = _receiver;
-        poolTracker = msg.sender;
-        name = _name;
-        about = _about;
-        picHash = _picHash;
-        metaUri = _metaUri;
-        isVerified = _isVerified;
-
-        poolAddr = _poolAddr;
-        wethGatewayAddr = _wethGatewayAddr;
-        erc721Addr = _erc721Addr;
-        acceptedTokens = _acceptedTokens;
-    }
-  
+    )...
 ```
 
 Initializes the JustCausePool proxy contracts. Function is invoked by the PoolTacker contract when a Pool is created.
+  
 
 | Param | Type | Description |
 |--- | --- | --- |
-| _acceptedTokens | address[] memory | List of tokens to be accepted by the JustCausePool. |
+| _acceptedTokens | address[] memory | List of tokens to be accepted by the JustCausePool (JCP). |
 |--- | --- | --- |
 | _name | string memory | Unique name of Pool |
 |--- | --- | --- |
 | _about | string memory | ipfs hash of pool description of JCP. |
 |--- | --- | --- |
-|_picHash | string memory | ipfs hash of pic of JCP. |
+|_picHash | string memory | ipfs hash of picture used for the Pool NFT that Contributors receive. |
 |--- | --- | --- |
-| _metaUri | string memory | meta info uri for nft of JCP. |
+| _metaUri | string memory | meta info uri for NFT of JCP. |
 |--- | --- | --- |
 | _receiver | address | address of receiver of JCP donations. |
 |--- | --- | --- |
@@ -394,6 +379,24 @@ Initializes the JustCausePool proxy contracts. Function is invoked by the PoolTa
 | _isVerified | bool | indicates whether JCP is verified. |
 |--- | --- | --- |
   
+---
+  
+## deposit
+  
+```solidity
+function deposit(address _assetAddress, uint256 _amount)...
+```
+
+Function updates total deposits. Deposit interactions with the Aave Pool contract are done through the PoolTracker contract to minimize approvals.
+  
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress| address | The address of the underlying asset of the reserve |
+|--- | --- | --- |
+| _amount | uint256 | The amount of supplied assets |
+|--- | --- | --- |
+
 </div>
 <script>
   

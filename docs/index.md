@@ -339,8 +339,37 @@ The JustCausePool contract is a point of contact with the Aave Pool contract, an
 
 ## initialize
   
-```
-initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddr, address _wethGatewayAddr, address _erc721Addr, bool _isVerified);
+```solidity
+function initialize(
+        address[] memory _acceptedTokens,
+        string memory _name,
+        string memory _about,
+        string memory _picHash,
+        string memory _metaUri,
+        address _receiver,
+        address _poolAddr,
+        address _wethGatewayAddr,
+        address _erc721Addr,
+        bool _isVerified
+
+    ) external strLength(_name, 30) initializer() {
+
+        require(isBase == false, "Cannot initialize base");
+        require(receiver == address(0), "Initialize already called");
+
+        receiver = _receiver;
+        poolTracker = msg.sender;
+        name = _name;
+        about = _about;
+        picHash = _picHash;
+        metaUri = _metaUri;
+        isVerified = _isVerified;
+
+        poolAddr = _poolAddr;
+        wethGatewayAddr = _wethGatewayAddr;
+        erc721Addr = _erc721Addr;
+        acceptedTokens = _acceptedTokens;
+    }
   
 ```
 

@@ -445,8 +445,22 @@ Function claims donations for receiver. Calls Aave Pool contract, exchanging Jus
   
 # View Methods
   
-
+  
 ---
+  
+## getAcceptedTokens
+  
+```solidity
+function getAcceptedTokens() external view returns(address[] memory)...
+```
+
+Function returns list of tokens to be accepted by Pool.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| acceptedTokens| address[] | List of tokens to be accepted by JCP. |
+|--- | --- | --- |
   
 </div>
 <script>

@@ -363,9 +363,9 @@ Initializes the JustCausePool proxy contracts. Function is invoked by the PoolTa
 
 | Param | Type | Description |
 |--- | --- | --- |
-| _acceptedTokens | address[] memory | List of tokens to be accepted by the JustCausePool (JCP). |
+| _acceptedTokens | address[] memory | list of tokens to be accepted by the JustCausePool (JCP). |
 |--- | --- | --- |
-| _name | string memory | Unique name of Pool |
+| _name | string memory | unique name of Pool |
 |--- | --- | --- |
 | _about | string memory | ipfs hash of pool description of JCP. |
 |--- | --- | --- |
@@ -415,7 +415,7 @@ Function withdraws Contributor's funds from Aave pools, exchanging the JustCause
 |--- | --- | --- |
 | _amount | uint256 | amount of supplied assets |
 |--- | --- | --- |
-| _depositor | address | The address making the deposit |
+| _depositor | address | address making the deposit |
 |--- | --- | --- |
 | _isETH | bool | indicating if asset is the base token of network (eth/matic/...) |
 |--- | --- | --- |
@@ -433,11 +433,11 @@ Function claims donations for receiver. Calls Aave Pool contract, exchanging Jus
 
 | Param | Type | Description |
 |--- | --- | --- |
-| _assetAddress| address | address of the underlying asset of the reserve |
+| _assetAddress| `address` | address of the underlying asset of the reserve |
 |--- | --- | --- |
-| _feeAddress | address | The address that collects the 0.2% protocol fee |
+| _feeAddress | `address` | address that collects the 0.2% protocol fee |
 |--- | --- | --- |
-| _isETH | bool | indicating if asset is the base token of network (eth/matic/...) |
+| _isETH | `bool` | indicating if asset is the base token of network (eth/matic/...) |
 |--- | --- | --- |
 
 ---
@@ -459,7 +459,23 @@ Function returns list of tokens to be accepted by Pool.
 
 | Return | Type | Description |
 |--- | --- | --- |
-| acceptedTokens| address[] | List of tokens to be accepted by JCP. |
+| acceptedTokens| `address[]` | List of tokens to be accepted by JCP. |
+|--- | --- | --- |
+  
+---
+  
+## getName
+  
+```solidity
+function getName() external view returns(string memory)...
+```
+
+Function returns name of JustCausePool.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| name | 'string memory' | unique name of Pool |
 |--- | --- | --- |
   
 </div>

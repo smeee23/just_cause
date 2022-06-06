@@ -722,7 +722,8 @@ Function returns the reserve normalized income of the Aave Pool for the supplied
 |--- | --- | --- |
 | normalizedIncome | `uint256` |  reserve's normalized income |
 |--- | --- | --- |
-  ---
+  
+---
   
 ## getAaveLiquidityIndex
   
@@ -741,15 +742,16 @@ Function returns the liquidity index of the Aave Pool for the supplied _assetAdd
 |--- | --- | --- |
 | liquidityIndex | `uint256` |  reserve's liquidity index |
 |--- | --- | --- |
+  
 ---
   
-## getReserveNormalizedIncome
+## getPoolTokenInfo
   
 ```solidity
-function getReserveNormalizedIncome(address _assetAddress) public view returns(uint256)...
+function getPoolTokenInfo(address _asset) external view returns(uint256, uint256, uint256, uint256, uint256, uint256, address)...
 ```
 
-Function returns the reserve normalized income of the Aave Pool for the supplied _assetAddress.
+Function rReturns asset specific pool information.
 
 | Param | Type | Description |
 |--- | --- | --- |

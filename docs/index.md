@@ -363,21 +363,21 @@ Initializes the JustCausePool proxy contracts. Function is invoked by the PoolTa
 
 | Param | Type | Description |
 |--- | --- | --- |
-| _acceptedTokens | address[] memory | list of tokens to be accepted by the JustCausePool (JCP). |
+| _acceptedTokens | `address[] memory` | list of tokens to be accepted by the JustCausePool (JCP) |
 |--- | --- | --- |
-| _name | string memory | unique name of Pool |
+| _name | `string memory` | unique name of Pool |
 |--- | --- | --- |
-| _about | string memory | ipfs hash of pool description of JCP. |
+| _about | `string memory` | ipfs hash of pool description of JCP |
 |--- | --- | --- |
-|_picHash | string memory | ipfs hash of picture used for the Pool NFT that Contributors receive. |
+|_picHash | `string memory` | ipfs hash of picture used for the Pool NFT that Contributors receive |
 |--- | --- | --- |
-| _metaUri | string memory | meta info uri for NFT of JCP. |
+| _metaUri | `string memory` | meta info uri for NFT of JCP |
 |--- | --- | --- |
-| _receiver | address | address of receiver of JCP donations. |
+| _receiver | `address` | address of receiver of JCP donations |
 |--- | --- | --- |
-| _erc721Addr | address | address of nft contract for pool. |
+| _erc721Addr | `address` | address of nft contract for pool |
 |--- | --- | --- |
-| _isVerified | bool | indicates whether JCP is verified. |
+| _isVerified | `bool` | indicates whether JCP is verified |
 |--- | --- | --- |
   
 ---
@@ -393,9 +393,9 @@ Function updates total deposits. Deposit interactions with the Aave Pool contrac
 
 | Param | Type | Description |
 |--- | --- | --- |
-| _assetAddress| address | address of the underlying asset of the reserve |
+| _assetAddress| `address` | address of the underlying asset of the reserve |
 |--- | --- | --- |
-| _amount | uint256 | amount of supplied assets |
+| _amount | `uint256` | amount of supplied assets |
 |--- | --- | --- |
   
 ---
@@ -411,13 +411,13 @@ Function withdraws Contributor's funds from Aave pools, exchanging the JustCause
 
 | Param | Type | Description |
 |--- | --- | --- |
-| _assetAddress| address | address of the underlying asset of the reserve |
+| _assetAddress| `address` | address of the underlying asset of the reserve |
 |--- | --- | --- |
-| _amount | uint256 | amount of supplied assets |
+| _amount | `uint256` | amount of supplied assets |
 |--- | --- | --- |
-| _depositor | address | address making the deposit |
+| _depositor | `address` | address making the deposit |
 |--- | --- | --- |
-| _isETH | bool | indicating if asset is the base token of network (eth/matic/...) |
+| _isETH | `bool` | indicating if asset is the base token of network (eth/matic/...) |
 |--- | --- | --- |
   
 ---
@@ -459,7 +459,7 @@ Function returns list of tokens to be accepted by Pool.
 
 | Return | Type | Description |
 |--- | --- | --- |
-| acceptedTokens| `address[]` | List of tokens to be accepted by JCP. |
+| acceptedTokens| `address[]` | List of tokens to be accepted by JCP |
 |--- | --- | --- |
   
 ---
@@ -475,7 +475,302 @@ Function returns name of JustCausePool.
 
 | Return | Type | Description |
 |--- | --- | --- |
-| name | 'string memory' | unique name of Pool |
+| name | `string memory` | unique name of Pool |
+|--- | --- | --- |
+  
+---
+  
+## getAbout
+  
+```solidity
+function getAbout() external view returns(string memory)...
+```
+
+Function returns ipfs hash of pool description of JustCausePool.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| about | `string memory` | ipfs hash of pool description of JCP. |
+|--- | --- | --- |
+
+---
+  
+## getPicHash
+  
+```solidity
+function getPicHash() external view returns(string memory)...
+```
+
+Function returns ipfs hash of NFT picture for JustCausePool.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| picHash | `string memory` | ipfs hash of picture used for the Pool NFT that Contributors receive. |
+|--- | --- | --- |
+  
+---
+  
+## getMetaUri
+  
+```solidity
+function getMetaUri() external view returns(string memory){...
+```
+
+Function returns meta info uri for NFT for JustCausePool.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| metaUri | `string memory` | meta info uri for NFT of JCP. |
+|--- | --- | --- |
+  
+---
+  
+## getIsVerified
+  
+```solidity
+function getIsVerified() external view returns(bool)...
+```
+
+Function returns whether JustCausePool is a verified pool or user created.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| isVerified | `bool` | indicates whether JCP is verified |
+|--- | --- | --- |
+
+  
+---
+  
+## getRecipient
+  
+```solidity
+function getRecipient() external view returns(address)...
+```
+
+Function returns the receiver address of the Pool.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| receiver | `address` | address of receiver of JCP donations |
+|--- | --- | --- |
+  
+---
+  
+## getERC721Address
+  
+```solidity
+function getERC721Address() external view returns(address)...
+```
+
+Function returns the receiver address of the Pool.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| erc721Addr | `address` | address of the NFT contract for this Pool |
+|--- | --- | --- |
+  
+---
+  
+## getPoolInfo
+  
+```solidity
+function getPoolInfo() external view returns (address[] memory, address, bool, string memory, string memory, string memory, string memory)...
+```
+
+Function returns general pool information.
+  
+
+| Return | Type | Description |
+|--- | --- | --- |
+| acceptedTokens | `address[] memory` | list of tokens to be accepted by the JustCausePool (JCP) |
+|--- | --- | --- |
+| name | `string memory` | unique name of Pool |
+|--- | --- | --- |
+| about | `string memory` | ipfs hash of pool description of JCP |
+|--- | --- | --- |
+| picHash | `string memory` | ipfs hash of picture used for the Pool NFT that Contributors receive |
+|--- | --- | --- |
+| metaUri | `string memory` | meta info uri for NFT of JCP |
+|--- | --- | --- |
+| receiver | `address` | address of receiver of JCP donations |
+|--- | --- | --- |
+| isVerified | `bool` | indicates whether JCP is verified |
+|--- | --- | --- |
+  
+---
+  
+## getATokenAddress
+  
+```solidity
+function getATokenAddress(address _assetAddress) public view returns(address aTokenAddress)...
+```
+
+Function returns the address of Aave's aToken for the supplied _assetAddress.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress | `address` | address of the underlying asset of the reserve |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| totalDeposit | `uint256` | total assets deposited in pool |
+|--- | --- | --- |
+
+---
+  
+## getTotalDeposits
+  
+```solidity
+function getTotalDeposits(address _assetAddress) public view returns(uint256)...
+```
+
+Function returns the total assets deposited in the Pool for the supplied _assetAddress.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress | `address` | Address of the underlying asset of the reserve |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| aTokenAddress | `address` | address of Aave's aToken for the supplied _assetAddress |
+|--- | --- | --- |
+
+---
+  
+## getUnclaimedInterest
+  
+```solidity
+function getUnclaimedInterest(address _assetAddress) public view returns (uint256)...
+```
+
+Function returns the accrued interest that has not yet been claimed for the supplied _assetAddress.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress | `address` | Address of the underlying asset of the reserve |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| unclaimedInterest | `uint256` | accrued interest that has not yet been claimed |
+|--- | --- | --- |
+  
+---
+  
+## getClaimedInterest
+  
+```solidity
+function getClaimedInterest(address _assetAddress) public view returns (uint256)...
+```
+
+Function returns the accrued interest that has not yet been claimed for the supplied _assetAddress.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress | `address` | Address of the underlying asset of the reserve |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| claimedInterest | `address` | record of donations that have been paid out to receiver |
+|--- | --- | --- |
+
+---
+  
+## getATokenBalance
+  
+```solidity
+function getATokenBalance(address _assetAddress) public view returns (uint256)...
+```
+
+Function returns the Pool balance of aToken for the supplied _assetAddress.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress | `address` | Address of the underlying asset of the reserve |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| aTokenBalance | `uint256` |  Pool balance of aToken for the asset |
+|--- | --- | --- |
+  
+---
+  
+## getReserveNormalizedIncome
+  
+```solidity
+function getReserveNormalizedIncome(address _assetAddress) public view returns(uint256)...
+```
+
+Function returns the reserve normalized income of the Aave Pool for the supplied _assetAddress.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress | `address` | Address of the underlying asset of the reserve |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| normalizedIncome | `uint256` |  reserve's normalized income |
+|--- | --- | --- |
+  ---
+  
+## getAaveLiquidityIndex
+  
+```solidity
+function getAaveLiquidityIndex(address _assetAddress) public view returns(uint256 liquidityIndex)...
+```
+
+Function returns the liquidity index of the Aave Pool for the supplied _assetAddress.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress | `address` | Address of the underlying asset of the reserve |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| liquidityIndex | `uint256` |  reserve's liquidity index |
+|--- | --- | --- |
+---
+  
+## getReserveNormalizedIncome
+  
+```solidity
+function getReserveNormalizedIncome(address _assetAddress) public view returns(uint256)...
+```
+
+Function returns the reserve normalized income of the Aave Pool for the supplied _assetAddress.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _assetAddress | `address` | Address of the underlying asset of the reserve |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| liquidityIndex | `uint256` |  reserve's liquidity index |
+|--- | --- | --- |
+| normalizedIncome | `uint256` |  reserve's normalized income |
+|--- | --- | --- |
+| aTokenBalance | `uint256` |  Pool balance of aToken for the asset |
+|--- | --- | --- |
+| claimedInterest | `address` | record of donations that have been paid out to receiver |
+|--- | --- | --- |
+| unclaimedInterest | `address` | accrued interest that has not yet been claimed |
+|--- | --- | --- |
+| totalDeposit | `uint256` | total assets deposited in pool |
+|--- | --- | --- |
+| aTokenAddress | `address` | address of Aave's aToken for the supplied _assetAddress |
 |--- | --- | --- |
   
 </div>

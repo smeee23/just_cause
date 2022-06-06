@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.9;
 
-import { IPool, ITestToken, IERC20 } from '../polygon/Interfaces.sol';
+import { IERC20} from '../polygon/interfaces/other/IERC20.sol';
+import { ITestToken } from '../polygon/interfaces/test/ITestToken.sol';
+import { IPool } from '../polygon/interfaces/aave/IPool.sol';
 
 contract WethGatewayTest {
 

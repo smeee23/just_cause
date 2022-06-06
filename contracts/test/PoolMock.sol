@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.9;
 
-import { IERC20, ITestToken } from '../polygon/Interfaces.sol';
-import { DataTypes } from "../polygon/Libraries.sol";
+import { IERC20} from '../polygon/interfaces/other/IERC20.sol';
+import { ITestToken } from '../polygon/interfaces/test/ITestToken.sol';
+import { DataTypes } from "../polygon/libraries/DataTypes.sol";
+
 contract PoolMock {
 
   mapping(address => DataTypes.ReserveData) internal _reserves;

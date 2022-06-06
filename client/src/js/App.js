@@ -196,9 +196,9 @@ class App extends Component {
 	}
 
 	getOwnerAddress = async(activeAccount) => {
-		let userOwnedPools = [];
-		const ERCAddr = await this.PoolTrackerInstance.methods.getOwnerERC721Address().call();
-		const ERCInstance = new this.web3.eth.Contract(
+		const userOwnedPools = await this.PoolTrackerInstance.methods.getReceiverPools(activeAccount).call();
+
+		/*const ERCInstance = new this.web3.eth.Contract(
 			JCOwnerERC721.abi,
 			ERCAddr,
 		);
@@ -209,7 +209,7 @@ class App extends Component {
 			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
 			const ownerInfo = await ERCInstance.methods.getCreation(tokenId).call();
 			userOwnedPools.push(ownerInfo.pool);
-		}
+		}*/
 
 		return userOwnedPools;
 	}

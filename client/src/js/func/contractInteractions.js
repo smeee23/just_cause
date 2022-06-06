@@ -1,5 +1,5 @@
 import getWeb3 from "../../getWeb3NotOnLoad";
-import JCPool from "../../contracts/JustCausePoolAaveV3.json";
+import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
@@ -277,20 +277,43 @@ import { getIpfsData } from "./ipfs";
 			poolTrackerAddress,
 		);
 		console.log('poolTrackerAddress', poolTrackerAddress);
-		const ERCAddr = await PoolTrackerInstance.methods.getDepositorERC721Address().call();
-		const ERCInstance = new web3.eth.Contract(
-			JCDepositorERC721.abi,
-			ERCAddr,
-		);
+		//const ERCAddr = await PoolTrackerInstance.methods.getDepositorERC721Address().call();
+		const depositList = await PoolTrackerInstance.methods.getContributions(activeAccount).call();
 
-		let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
+		for(let i = 0; i < depositList.length; i++){
+			const JCPoolInstance = new web3.eth.Contract(
+				JCPool.abi,
+				depositList[i],
+			);
+
+			console.log("result_______", JCPoolInstance);
+			const ercAddr = await JCPoolInstance.methods.getERC721Address().call();
+			//const assets = await JCPoolInstance.getAcceptedTokens().call();
+			const ERCInstance = new web3.eth.Contract(
+				JCDepositorERC721.abi,
+				ercAddr,
+			);
+
+			let tokenIds = await ERCInstance.methods.getUserTokens(activeAccount).call();
+			for(let j = 0; j < tokenIds.length; j++){
+				const tokenId = tokenIds[j].toString();
+				if(tokenId != "0"){
+					const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
+
+					userDepositPools.push(depositList[i]);
+					userBalancePools[depositList[i]+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled, depositInfo.timeStamp, depositList[i], depositInfo.asset];
+				}
+			}
+		}
+
+		/*let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
 
 		for(let i = 0; i < balance; i++){
 			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
 			const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
 				userDepositPools.push(depositInfo.pool);
 				userBalancePools[depositInfo.pool+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled, depositInfo.timeStamp, depositInfo.pool, depositInfo.asset];
-		}
+		}*/
 
 		return {'depositPools':[...new Set(userDepositPools)], 'balances':userBalancePools};
 	}

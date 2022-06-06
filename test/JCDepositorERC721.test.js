@@ -5,7 +5,11 @@ const WethGatewayTest = artifacts.require("WethGatewayTest");
 const TestToken = artifacts.require("TestToken");
 const aTestToken = artifacts.require("aTestToken");
 const JCDepositorERC721 = artifacts.require("JCDepositorERC721");
+<<<<<<< HEAD
 const JustCausePool = artifacts.require("JustCausePool");
+=======
+const JustCausePoolAaveV3 = artifacts.require("JustCausePoolAaveV3");
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const chai = require("./setupchai.js");
@@ -37,7 +41,11 @@ contract("JCDepositorERC721", async (accounts) => {
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
         this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         this.INTEREST = "1000000000000000000";
     });
 
@@ -48,7 +56,11 @@ contract("JCDepositorERC721", async (accounts) => {
         await this.testToken.mint(depositor, depositAmount);
         await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+<<<<<<< HEAD
         const jCPool = await JustCausePool.at(knownAddress);
+=======
+        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         const erc721Address = await jCPool.getERC721Address();
         const erc721Instance = await JCDepositorERC721.at(erc721Address);
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
@@ -66,7 +78,11 @@ contract("JCDepositorERC721", async (accounts) => {
         await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
+<<<<<<< HEAD
         const jCPool = await JustCausePool.at(knownAddress);
+=======
+        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         const erc721Address = await jCPool.getERC721Address();
         const erc721Instance = await JCDepositorERC721.at(erc721Address);
 
@@ -129,7 +145,11 @@ contract("JCDepositorERC721", async (accounts) => {
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
 
+<<<<<<< HEAD
         const jCPool = await JustCausePool.at(knownAddress);
+=======
+        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         const erc721Address = await jCPool.getERC721Address();
         const erc721Instance = await JCDepositorERC721.at(erc721Address);
 
@@ -156,7 +176,11 @@ contract("JCDepositorERC721", async (accounts) => {
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
 
+<<<<<<< HEAD
         const jCPool = await JustCausePool.at(knownAddress);
+=======
+        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         const erc721Address = await jCPool.getERC721Address();
         const erc721Instance = await JCDepositorERC721.at(erc721Address);
 
@@ -193,7 +217,11 @@ contract("JCDepositorERC721", async (accounts) => {
 		let userBalancePools = {};
 
         for(let i = 0; i < depositList.length; i++){
+<<<<<<< HEAD
             let jCPool = await JustCausePool.at(depositList[i]);
+=======
+            let jCPool = await JustCausePoolAaveV3.at(depositList[i]);
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
             let erc721Address = await jCPool.getERC721Address();
             const erc721Instance = await JCDepositorERC721.at(erc721Address);
 

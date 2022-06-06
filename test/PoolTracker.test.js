@@ -5,7 +5,11 @@ const WethGatewayTest = artifacts.require("WethGatewayTest");
 const TestToken = artifacts.require("TestToken");
 const aTestToken = artifacts.require("aTestToken");
 const JCDepositorERC721 = artifacts.require("JCDepositorERC721");
+<<<<<<< HEAD
 const JustCausePool = artifacts.require("JustCausePool");
+=======
+const JustCausePoolAaveV3 = artifacts.require("JustCausePoolAaveV3");
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const chai = require("./setupchai.js");
@@ -37,7 +41,11 @@ contract("Pool Tracker", async (accounts) => {
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
         this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
+<<<<<<< HEAD
 
+=======
+       
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         this.INTEREST = "1000000000000000000";
     });
 
@@ -126,7 +134,11 @@ contract("Pool Tracker", async (accounts) => {
         await this.testToken.mint(depositor, depositAmount);
         await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
+<<<<<<< HEAD
         const jCPool = await JustCausePool.at(knownAddress);
+=======
+        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         const erc721Address = await jCPool.getERC721Address();
         const erc721Instance = await JCDepositorERC721.at(erc721Address);
 
@@ -319,7 +331,11 @@ contract("Pool Tracker", async (accounts) => {
         await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
 
+<<<<<<< HEAD
         const jCPool = await JustCausePool.at(knownAddress);
+=======
+        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
 
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
         assert.equal(await this.testToken.balanceOf(depositor), 0, "testToken balance not equal to 0");
@@ -359,6 +375,7 @@ contract("Pool Tracker", async (accounts) => {
         const newReceiverBalance = await web3.eth.getBalance(receiver);
 
         const valueString = (new BN(origReceiverBalance)).add(web3.utils.toBN(this.INTEREST)).toString();
+<<<<<<< HEAD
         console.log('verified', valueString, newReceiverBalance);
         assert.strictEqual(valueString, newReceiverBalance, "tvl not updated");
     });
@@ -415,6 +432,8 @@ contract("Pool Tracker", async (accounts) => {
         const paidInterest = "998000000000000000"; //this.INTEREST - 0.2% fee
         const valueString = (new BN(origReceiverBalance)).add(web3.utils.toBN(paidInterest)).toString();
         console.log('non-verified', valueString, newReceiverBalance);
+=======
+>>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         assert.strictEqual(valueString, newReceiverBalance, "tvl not updated");
     });
 

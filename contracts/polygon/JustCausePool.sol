@@ -236,7 +236,7 @@ contract JustCausePool is Initializable {
     }
 
     /**
-    * @return acceptedTokens List of tokens to be accepted by JCP.
+    * @return acceptedTokens git
     **/
     function getAcceptedTokens() external view returns(address[] memory){
         return acceptedTokens;

@@ -4,11 +4,7 @@ const PoolMock = artifacts.require("PoolMock");
 const TestToken = artifacts.require("TestToken");
 const aTestToken = artifacts.require("aTestToken");
 const JCDepositorERC721 = artifacts.require("JCDepositorERC721");
-<<<<<<< HEAD
 const JustCausePool = artifacts.require("JustCausePool");
-=======
-const JustCausePoolAaveV3 = artifacts.require("JustCausePoolAaveV3");
->>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
 const WethGatewayTest = artifacts.require("WethGatewayTest");
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
@@ -41,23 +37,13 @@ contract("JustCausePool", async (accounts) => {
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
         this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         this.INTEREST = "1000000000000000000";
         this.RESERVE_NORMALIZED_INCOME = "7755432354";
         this.LIQUIDITY_INDEX = "1234"
     });
 
-<<<<<<< HEAD
     it("JustCausePool reverts if initialize is called on base", async() => {
         const jCPool = await JustCausePool.at(await this.poolTracker.getBaseJCPoolAddress());
-=======
-    it("JustCausePoolAaveV3 reverts if initialize is called on base", async() => {
-        const jCPool = await JustCausePoolAaveV3.at(await this.poolTracker.getBaseJCPoolAddress());
->>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         const erc721Address = await jCPool.getERC721Address();
         await expectRevert(
             jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, this.wethGateway.address, erc721Address, false, {from: validator}),
@@ -68,11 +54,7 @@ contract("JustCausePool", async (accounts) => {
     it("JustCausePool initialize cannot be called twice", async() => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
-<<<<<<< HEAD
         const jCPool = await JustCausePool.at(knownAddress);
-=======
-        const jCPool = await JustCausePoolAaveV3.at(knownAddress);
->>>>>>> 8d3522a653ebe45a6b02949dfbe56d89b9dadee3
         const erc721Address = await jCPool.getERC721Address();
         await expectRevert(
             jCPool.initialize([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, this.poolMock.address, this.wethGateway.address, erc721Address, false, {from: validator}),

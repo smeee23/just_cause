@@ -21,7 +21,6 @@ import { updateNetworkId } from "./actions/networkId"
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
-import JCOwnerERC721 from "../contracts/JCOwnerERC721.json";
 import { kovanTokenMap, polygonMumbaiV3TokenMap, aavePoolAddressesProviderPolygonMumbaiV3Address } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
@@ -81,7 +80,7 @@ class App extends Component {
 					`Failed to load metamask wallet, no network detected`,
 				);
 			}
-			else if(this.props.networkId !== 42){
+			else if(this.props.networkId !== 80001){
 				alert(
 					`Unsupported network detected (chain id: `+this.props.networkId+'). Please switch to polygon mumbai testnet'
 				);

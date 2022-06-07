@@ -363,15 +363,15 @@ Initializes the JustCausePool proxy contracts. Function is invoked by the PoolTa
 
 | Param | Type | Description |
 |--- | --- | --- |
-| _acceptedTokens | `address[] memory` | list of tokens to be accepted by the JustCausePool (JCP) |
+| _acceptedTokens | `address[]` | list of tokens to be accepted by the JustCausePool (JCP) |
 |--- | --- | --- |
-| _name | `string memory` | unique name of Pool |
+| _name | `string` | unique name of Pool |
 |--- | --- | --- |
-| _about | `string memory` | ipfs hash of pool description of JCP |
+| _about | `string` | ipfs hash of pool description of JCP |
 |--- | --- | --- |
-|_picHash | `string memory` | ipfs hash of picture used for the Pool NFT that Contributors receive |
+|_picHash | `string` | ipfs hash of picture used for the Pool NFT that Contributors receive |
 |--- | --- | --- |
-| _metaUri | `string memory` | meta info uri for NFT of JCP |
+| _metaUri | `string` | meta info uri for NFT of JCP |
 |--- | --- | --- |
 | _receiver | `address` | address of receiver of JCP donations |
 |--- | --- | --- |
@@ -475,7 +475,7 @@ Function returns name of JustCausePool.
 
 | Return | Type | Description |
 |--- | --- | --- |
-| name | `string memory` | unique name of Pool |
+| name | `string` | unique name of Pool |
 |--- | --- | --- |
   
 ---
@@ -491,7 +491,7 @@ Function returns ipfs hash of pool description of JustCausePool.
 
 | Return | Type | Description |
 |--- | --- | --- |
-| about | `string memory` | ipfs hash of pool description of JCP. |
+| about | `string` | ipfs hash of pool description of JCP. |
 |--- | --- | --- |
 
 ---
@@ -507,7 +507,7 @@ Function returns ipfs hash of NFT picture for JustCausePool.
 
 | Return | Type | Description |
 |--- | --- | --- |
-| picHash | `string memory` | ipfs hash of picture used for the Pool NFT that Contributors receive. |
+| picHash | `string` | ipfs hash of picture used for the Pool NFT that Contributors receive. |
 |--- | --- | --- |
   
 ---
@@ -523,7 +523,7 @@ Function returns meta info uri for NFT for JustCausePool.
 
 | Return | Type | Description |
 |--- | --- | --- |
-| metaUri | `string memory` | meta info uri for NFT of JCP. |
+| metaUri | `string` | meta info uri for NFT of JCP. |
 |--- | --- | --- |
   
 ---
@@ -588,15 +588,15 @@ Function returns general pool information.
 
 | Return | Type | Description |
 |--- | --- | --- |
-| acceptedTokens | `address[] memory` | list of tokens to be accepted by the JustCausePool (JCP) |
+| acceptedTokens | `address[]` | list of tokens to be accepted by the JustCausePool (JCP) |
 |--- | --- | --- |
-| name | `string memory` | unique name of Pool |
+| name | `string` | unique name of Pool |
 |--- | --- | --- |
-| about | `string memory` | ipfs hash of pool description of JCP |
+| about | `string` | ipfs hash of pool description of JCP |
 |--- | --- | --- |
-| picHash | `string memory` | ipfs hash of picture used for the Pool NFT that Contributors receive |
+| picHash | `string` | ipfs hash of picture used for the Pool NFT that Contributors receive |
 |--- | --- | --- |
-| metaUri | `string memory` | meta info uri for NFT of JCP |
+| metaUri | `string` | meta info uri for NFT of JCP |
 |--- | --- | --- |
 | receiver | `address` | address of receiver of JCP donations |
 |--- | --- | --- |

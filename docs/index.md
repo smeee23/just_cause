@@ -84,6 +84,7 @@ body {
   
   <p>Contracts</p>
   <a href="#" onclick="setText('poolTracker')">PoolTacker</a>
+  <a href="#" onclick="setText('depositorNFT')">JCDepositorERC721</a>
   <a href="#" onclick="setText('justCausePool')">JustCausePool</a>
 </div>
 
@@ -317,6 +318,15 @@ Guide to be released shortly
 <div id="poolTracker" class="hidden" markdown="1">
               
 # PoolTracker
+
+</div>
+  
+<div id="depositorNFT" class="hidden" markdown="1">
+              
+# JCDepositorERC721
+---
+  
+
 
 </div>
   

@@ -326,7 +326,7 @@ Guide to be released shortly
 # JCDepositorERC721
 ---
   
-
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. Creates an ERC721 (NFT) with info regarding each Just Cause Pool depositor.
 
 </div>
   

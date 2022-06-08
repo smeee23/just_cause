@@ -809,7 +809,7 @@ mapping (uint256 => Deposit) deposits;
  The tokenId consists of a keccak hash of the addresses of the Contributor, JustCausePool, and reserve asset 
 
 ```solidity
-uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, jcPool, _asset)))`
+uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, jcPool, _asset)))
 	
 ```
 	

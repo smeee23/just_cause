@@ -897,6 +897,81 @@ Function updates the balance for _tokenOwner. Creates NFT for _tokenOwner if fir
   
   
 ---
+
+  
+## getDepositInfo
+  
+```solidity
+function getDepositInfo(uint256 _tokenId) public view returns (Deposit memory)...
+```
+
+Function returns the deposit info for a given tokenId. This includes the Contributor's balance, time of deposit, and the reserve asset deposited.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _tokenId | `uint256` | unique tokenId keccak hash of depositor, pool and asset addresses |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| Deposit | `struct` |  struct containing info about the holders deposit |
+|--- | --- | --- |
+	
+---
+  
+## getUserBalance
+  
+```solidity
+function getUserBalance(uint256 _tokenId) public view returns (uint256)...
+```
+
+Function returns the Contributor's Pool balance info for a given tokenId.
+	
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _tokenId | `uint256` | unique tokenId keccak hash of depositor, pool and asset addresses |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| balance | `struct` |  the pool balance of the owner of the token |
+|--- | --- | --- |
+	
+## getUserTokens
+  
+```solidity
+function getUserTokens(address _tokenOwner) external view returns(uint256[] memory)...
+```
+
+Function returns an uint for all assets accepted by the Pool. It returns tokenIds for each asset deposited by _tokenOwner. If there is no deposit on record for a particular asset, the function returns 0.
+    
+	
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _tokenOwner | `address` | address of contributor |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| ids | `uint256[]` |  list of tokenId's belonging to a given Contributor |
+|--- | --- | --- |
+
+## getPool
+  
+```solidity
+function getPool() public view returns(address)...
+```
+
+Function returns the Pool associated with this NFT contract.
+    
+
+| Return | Type | Description |
+|--- | --- | --- |
+| jcPool | `address` | the pool associated with this ERC721 token |
+|--- | --- | --- |
+	
 </div>
   
 <script>

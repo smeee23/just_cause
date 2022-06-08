@@ -784,21 +784,113 @@ Function rReturns asset specific pool information.
 ---
   
 This contract is part of the JustCause Protocol for lossless donations using Aave v3. It creates an ERC721 (NFT) for each Contributor, which acts as a digital receipt storing information about their donations. It is for this reason that the NFTs cannot be sold/transferred from the original Contributor's wallet. The only way to get a JustCausePool NFT is to **donate!**
+	
   
 The contract inherits from the [OpenZeppelin](https://www.openzeppelin.com/) contract ERC721URIStorageUpgradeable.  Each JCDepositorERC721 is created through a proxy contract and matches 1:1 with a specific JustCausePool contract. 
+	
 
 User deposit information is stored in a Deposit `struct`
 
 ``` solidity
-	struct Deposit {
-		uint256 balance;
-		uint256 timeStamp;
-		address asset;
-	}
+struct Deposit {
+	uint256 balance;
+	uint256 timeStamp;
+	address asset;
+}
+	
 ```
 
-A mapping `mapping (uint256 => Deposit) deposits` links unique tokenId’s to Deposit information. The tokenId consists of a keccak hash of the addresses of the Contributor, JustCausePool, and reserve asset `uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, jcPool, _asset)))`
+A mapping links unique tokenId’s to Deposit information.
 
+```solidity
+mapping (uint256 => Deposit) deposits;
+``` 
+
+ The tokenId consists of a keccak hash of the addresses of the Contributor, JustCausePool, and reserve asset 
+
+```solidity
+uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, jcPool, _asset)))`
+	
+```
+	
+	
+---
+
+  
+# Write Methods
+  
+
+---
+
+## initialize
+  
+```solidity
+function initialize(address _jcPool)...
+```
+
+Initializes the JCDepositor Token. Function is invoked by the PoolTacker contract when a Pool is created.
+  
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _receiver | `address` | address of JustCausePool that is associated with this contract |
+|--- | --- | --- |
+  
+---
+  
+## addFunds
+  
+```solidity
+function addFunds(
+	address _tokenOwner,
+        uint256 _amount,
+        uint256 _timeStamp,
+        address _asset,
+        string memory _metaUri
+)...
+```
+
+Function updates the balance for _tokenOwner. Creates NFT for _tokenOwner if first deposit for pool and reserve asset.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _tokenOwner | `address` | address of contributor |
+|--- | --- | --- |
+| _amount | `uint256` | amount of supplied assets |
+|--- | --- | --- |
+| _timeStamp | `uint256` | timeStamp of token creation |
+|--- | --- | --- |
+| _asset| `address` | address of the underlying asset of the reserve |
+|--- | --- | --- |
+| _metaUri | `string` | meta info uri for nft of JCP |
+|--- | --- | --- |
+	
+| Return | Type | Description |
+|--- | --- | --- |
+| firstDeposit | `bool` |  is this the contributor's fist deposit |
+|--- | --- | --- |
+
+	
+---
+  
+## withdrawFunds
+  
+```solidity
+function withdrawFunds(address _tokenOwner, uint256 _amount, address _asset)...
+```
+
+Function updates the balance for _tokenOwner. Creates NFT for _tokenOwner if first deposit for pool and reserve asset.
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _tokenOwner | `address` | address of contributor |
+|--- | --- | --- |
+| _amount | `uint256` | amount of supplied assets |
+|--- | --- | --- |
+| _asset | `address` | address of the underlying asset of the reserve |
+|--- | --- | --- |
+	
+	
 </div>
   
 <script>

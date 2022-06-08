@@ -321,15 +321,6 @@ Guide to be released shortly
 
 </div>
   
-<div id="depositorNFT" class="hidden" markdown="1">
-              
-# JCDepositorERC721
----
-  
-This contract is part of the JustCause Protocol for lossless donations using Aave v3. Creates an ERC721 (NFT) with info regarding each Just Cause Pool depositor.
-
-</div>
-  
 <div id="justCausePool" class="hidden" markdown="1">
               
 # JustCausePool
@@ -786,6 +777,30 @@ Function rReturns asset specific pool information.
 |--- | --- | --- |
   
 </div>
+  
+<div id="depositorNFT" class="hidden" markdown="1">
+              
+# JCDepositorERC721
+---
+  
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. It creates an ERC721 (NFT) for each Contributor, which acts as a digital receipt storing information about their donations. It is for this reason that the NFTs cannot be sold/transferred from the original Contributor's wallet. The only way to get a JustCausePool NFT is to **donate!**
+  
+The contract inherits from the [OpenZeppelin](https://www.openzeppelin.com/) contract ERC721URIStorageUpgradeable.  Each JCDepositorERC721 is created through a proxy contract and matches 1:1 with a specific JustCausePool contract. 
+
+User deposit information is stored in a Deposit `struct`
+
+``` solidity
+	struct Deposit {
+		uint256 balance;
+		uint256 timeStamp;
+		address asset;
+	}
+```
+
+A mapping `mapping (uint256 => Deposit) deposits` links unique tokenId’s to Deposit information. The tokenId consists of a keccak hash of the addresses of the Contributor, JustCausePool, and reserve asset `uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, jcPool, _asset)))`
+
+</div>
+  
 <script>
   
 function setText(id) {

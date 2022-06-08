@@ -890,7 +890,13 @@ Function updates the balance for _tokenOwner. Creates NFT for _tokenOwner if fir
 | _asset | `address` | address of the underlying asset of the reserve |
 |--- | --- | --- |
 	
-	
+---
+
+  
+# View Methods
+  
+  
+---
 </div>
   
 <script>

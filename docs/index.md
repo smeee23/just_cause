@@ -1034,18 +1034,49 @@ Function withdraws the _asset from the Aave reserve pool and pays back the origi
 function claimInterest(address _asset, address _pool, bool _isETH) ...
 ```
 
-Function withdraws the _asset from the Aave reserve pool and pays back the original deposit to the Contributor. Emits WithdrawDeposit event.
+Function claims the acrued interest as donations for the receiver of the Pool. Emits Claim event.
 	
   
 | Param | Type | Description |
-|--- | --- | --- |
-| _amount | `uint256` | amount of supplied assets |
 |--- | --- | --- |
 | _asset| `address` | address of the underlying asset of the reserve |
 |--- | --- | --- |
 | _pool | `address` | address of JustCausePool |
 |--- | --- | --- |
 | _isETH | `bool` | indicates if the _asset is the native token of the chain |
+|--- | --- | --- |
+	
+---
+  
+## createJCPoolClone
+  
+```solidity
+function createJCPoolClone(
+	address[] memory _acceptedTokens,
+	string memory _name,
+	string memory _about,
+	string memory _picHash,
+	string memory _metaUri,
+	address _receiver
+)...
+```
+
+Function creates new JustCausePool and JCDepositorERC721 by proxy contract. Adds Pool to verified list if sender is team address. Emits AddPool event.
+	
+
+| Param | Type | Description |
+|--- | --- | --- |
+| _acceptedTokens | `address[]` | list of tokens to be accepted by the JustCausePool (JCP) |
+|--- | --- | --- |
+| _name | `string` | unique name of Pool |
+|--- | --- | --- |
+| _about | `string` | ipfs hash of pool description of JCP |
+|--- | --- | --- |
+|_picHash | `string` | ipfs hash of picture used for the Pool NFT that Contributors receive |
+|--- | --- | --- |
+| _metaUri | `string` | meta info uri for NFT of JCP |
+|--- | --- | --- |
+| _receiver | `address` | address of receiver of JCP donations |
 |--- | --- | --- |
 	
 </div>

@@ -1079,9 +1079,231 @@ Function creates new JustCausePool and JCDepositorERC721 by proxy contract. Adds
 | _receiver | `address` | address of receiver of JCP donations |
 |--- | --- | --- |
 	
+---
+
+  
+# View Methods
+  
+  
+---
+
+## getTvl
+  
+```solidity
+function getTVL(address _asset) public view returns(uint256)...
+```
+
+Function returns the total value locked for a given asset.
+    
+| Param | Type | Description |
+|--- | --- | --- |
+| _asset | `address` | address of the underlying asset of the reserve |
+|--- | --- | --- |
+	
+| Return | Type | Description |
+|--- | --- | --- |
+| tvl | `uint256` | the total value locked |
+|--- | --- | --- |
+	
+---
+
+## getTotalDonated
+  
+```solidity
+function getTotalDonated(address _asset) public view returns(uint256)...
+```
+
+Function returns the total donated amount for a given asset.
+    
+| Param | Type | Description |
+|--- | --- | --- |
+| _asset | `address` | address of the underlying asset of the reserve |
+|--- | --- | --- |
+	
+| Return | Type | Description |
+|--- | --- | --- |
+| totalDonation | `uint256` | claimed donation for a given asset |
+|--- | --- | --- |
+	
+---
+
+## getDepositorERC721Address
+	
+```solidity
+ function getDepositorERC721Address() public view returns(address)...
+```
+
+Function returns the JCDepositorERC721 address.
+    
+
+| Return | Type | Description |
+|--- | --- | --- |
+| addressOfERC721 | `address` | address of ERC721 for depositors, created on deployment |
+|--- | --- | --- |
+	
+---
+
+## getReceiverPools
+  
+```solidity
+ function getReceiverPools(address _user) public view returns(address[] memory)...
+```
+
+Function returns the the list of pools that a given address is the receiver for.
+    
+| Param | Type | Description |
+|--- | --- | --- |
+| _user | `address` | address to check for receiver |
+|--- | --- | --- |
+	
+| Return | Type | Description |
+|--- | --- | --- |
+| receiverList | `address[]` | list of pools that an address is the receiver for |
+|--- | --- | --- |
+
+---
+
+## getValidator
+	
+```solidity
+ function getValidator() public view returns(address)...
+```
+
+Function returns the address of the validator. This is the address that is allowed to create verified pools.
+    
+
+| Return | Type | Description |
+|--- | --- | --- |
+| validator | `address` | address of ERC721 for depositors, created on deployment |
+|--- | --- | --- |
+	
+---
+	
+## getContributions
+  
+```solidity
+ function getContributions(address _user) public view returns(address[] memory)...
+```
+
+Function returns the the list of pools that a given address is a contributor to.
+    
+| Param | Type | Description |
+|--- | --- | --- |
+| _user | `address` | address to check for contributions |
+|--- | --- | --- |
+	
+| Return | Type | Description |
+|--- | --- | --- |
+| contributorList | `address[]` | list of pools that an address is a contributor to |
+|--- | --- | --- |
+
+---
+
+## getPoolAddr
+	
+```solidity
+ function getPoolAddr() public view returns(address)...
+```
+
+Function returns the address of Aave Pool contract.
+    
+
+| Return | Type | Description |
+|--- | --- | --- |
+| poolAddr | `address` | address of Aave Pool contract |
+|--- | --- | --- |
+	
+---
+
+## getReservesList
+	
+```solidity
+ function getReservesList() public view returns(address[] memory)...
+```
+
+Function returns a list of addresses of Aave reserves.
+    
+
+| Return | Type | Description |
+|--- | --- | --- |
+| reserveList | `address[]` | list of addresses of Aave reserves |
+|--- | --- | --- |
+	
+---
+
+## getBaseJCPoolAddress
+	
+```solidity
+ function getBaseJCPoolAddress() public view returns(address)...
+```
+
+Function returns base JustCausePool address.
+    
+
+| Return | Type | Description |
+|--- | --- | --- |
+| baseJCPool | `address` | base JustCausePool address |
+|--- | --- | --- |
+	
+---
+
+## getVerifiedPools
+	
+```solidity
+ function getVerifiedPools() public view returns(address[] memory)...
+```
+
+Function returns list of verified pools.
+    
+
+| Return | Type | Description |
+|--- | --- | --- |
+| verifiedPools | `address[]` | list of verified pools |
+|--- | --- | --- |
+	
+---
+
+## checkPool
+	
+```solidity
+  function checkPool(address _pool) public view returns(bool)...
+```
+
+Function returns if a pool address exists
+    
+| Param | Type | Description |
+|--- | --- | --- |
+| _pool | `address` | address of JustCausePool |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| isPool | `bool` | if pool address exists |
+|--- | --- | --- |
+	
+---
+	
+## getAddressFromName
+	
+```solidity
+ function getAddressFromName(string memory _name) external view returns(address)...
+```
+
+Function returns an address from a pool name.
+    
+| Param | Type | Description |
+|--- | --- | --- |
+| _name | `string` | name of pool |
+|--- | --- | --- |
+	
+| Return | Type | Description |
+|--- | --- | --- |
+| pool | `address` | address for a given pool name |
+|--- | --- | --- |
+	
 </div>
 	
-<script>
+<script>list of addresses of Aave reserves
   
 function setText(id) {
   document.getElementById('home').innerHTML = document.getElementById(id).innerHTML;

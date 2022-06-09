@@ -978,6 +978,34 @@ It generates the proxy contracts for both JustCausePool and JCDepositorERC721 an
 
 The PoolTracker contract also interacts directly with Aave [Pool](https://docs.aave.com/developers/core-contracts/pool#view-methods) and [WETHGateway](https://docs.aave.com/developers/periphery-contracts/wethgateway) when Contributors make donations through the addDeposit function. This makes approvals required only once per token. The withdrawDeposit and claim functions do not interact with the Aave contracts directly. This interaction is handled by the JustCausePool contract.
 
+	---
+
+  
+# Write Methods
+  
+
+---
+
+## addDeposit
+  
+```solidity
+function addDeposit(uint256 _amount, address _asset, address _pool, bool _isETH)...
+```
+
+Function deposits specified token to the Aave Pool contract either via the WETHGateway or the Aave Pool directly. Calls JCDepositorERC721 to mint NFT for the Contributor.
+	
+  
+| Param | Type | Description |
+|--- | --- | --- |
+| _amount | `uint256` | amount of supplied assets |
+|--- | --- | --- |
+| _asset| `address` | address of the underlying asset of the reserve |
+|--- | --- | --- |
+| _pool | `address` | address of JustCausePool |
+|--- | --- | --- |
+| _isETH | `bool` | indicates if the _asset is the native token of the chain |
+|--- | --- | --- |
+	
 </div>
 	
 <script>

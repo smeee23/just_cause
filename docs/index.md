@@ -319,12 +319,15 @@ Guide to be released shortly
               
 # JustCausePool
  ---
+	
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/just_cause/blob/main/contracts/polygon/JustCausePool.sol) in our github repository. 
 
-This contract is part of the JustCause Protocol for lossless donations using Aave v3. Aave is used to generate interest for crowdfunding. The JustCausePool contract is a point of contact with the Aave Pool contract, and where the protocol stores the deposited [aTokens](https://docs.aave.com/developers/tokens/atoken). 
+The protocol uses Aave to generate interest for crowdfunding. JustCausePool is a point of contact with the Aave Pool contract, and where the protocol stores the deposited [aTokens](https://docs.aave.com/developers/tokens/atoken). 
 
 > aTokens are tokens minted and burnt upon supply and withdraw of assets to an Aave market, which denote the amount of crypto assets supplied and the yield earned on those assets. The aTokens’ value is pegged to the value of the corresponding supplied asset at a 1:1 ratio and can be safely stored, transferred or traded. All yield collected by the aTokens' reserves are distributed to aToken holders directly by continuously increasing their wallet balance. - Aave Documentation
   
 *Functions withdraw() and withdrawDonations() directly interact with the Aave Pool.* 
+	
 *Deposits are performed through the PoolTracker contract to minimize approvals.*
 
 ---
@@ -777,7 +780,9 @@ Function rReturns asset specific pool information.
 # JCDepositorERC721
 ---
   
-This contract is part of the JustCause Protocol for lossless donations using Aave v3. It creates an ERC721 (NFT) for each Contributor, which acts as a digital receipt storing information about their donations. It is for this reason that the NFTs cannot be sold/transferred from the original Contributor's wallet. The only way to get a JustCausePool NFT is to **donate!**
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/just_cause/blob/main/contracts/polygon/JCDepositorERC721.sol) in our github repository. 
+	
+JCDepositorERC721 creates an ERC721 (NFT) for each Contributor, which acts as a digital receipt storing information about their donations. It is for this reason that the NFTs cannot be sold/transferred from the original Contributor's wallet. The only way to get a JustCausePool NFT is to **donate!**
 	
   
 The contract inherits from the [OpenZeppelin](https://www.openzeppelin.com/) contract ERC721URIStorageUpgradeable.  Each JCDepositorERC721 is created through a proxy contract and matches 1:1 with a specific JustCausePool contract. 
@@ -972,7 +977,9 @@ Function returns the Pool associated with this NFT contract.
               
 # PoolTracker
 
-This contract is part of the JustCause Protocol for lossless donations using Aave v3. PoolTracker coordinates all major functionality of the protocol. 
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/just_cause/blob/main/contracts/polygon/PoolTracker.sol) in our github repository.
+	
+PoolTracker coordinates all major functionality of the protocol. 
 
 It generates the proxy contracts for both JustCausePool and JCDepositorERC721 and is the only address with permission to execute their write methods. 
 

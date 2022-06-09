@@ -992,7 +992,49 @@ The PoolTracker contract also interacts directly with Aave [Pool](https://docs.a
 function addDeposit(uint256 _amount, address _asset, address _pool, bool _isETH)...
 ```
 
-Function deposits specified token to the Aave Pool contract either via the WETHGateway or the Aave Pool directly. Calls JCDepositorERC721 to mint NFT for the Contributor.
+Function deposits specified token to the Aave Pool contract either via the WETHGateway or the Aave Pool directly. Calls JCDepositorERC721 to mint NFT for the Contributor. Emits AddDeposit event.
+	
+  
+| Param | Type | Description |
+|--- | --- | --- |
+| _amount | `uint256` | amount of supplied assets |
+|--- | --- | --- |
+| _asset| `address` | address of the underlying asset of the reserve |
+|--- | --- | --- |
+| _pool | `address` | address of JustCausePool |
+|--- | --- | --- |
+| _isETH | `bool` | indicates if the _asset is the native token of the chain |
+|--- | --- | --- |
+	
+---
+
+## withdrawDeposit
+  
+```solidity
+function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH)...
+```
+
+Function withdraws the _asset from the Aave reserve pool and pays back the original deposit to the Contributor. Emits WithdrawDeposit event.
+	
+  
+| Param | Type | Description |
+|--- | --- | --- |
+| _amount | `uint256` | amount of supplied assets |
+|--- | --- | --- |
+| _asset| `address` | address of the underlying asset of the reserve |
+|--- | --- | --- |
+| _pool | `address` | address of JustCausePool |
+|--- | --- | --- |
+| _isETH | `bool` | indicates if the _asset is the native token of the chain |
+|--- | --- | --- |
+	
+# claimInterest
+  
+```solidity
+function claimInterest(address _asset, address _pool, bool _isETH) ...
+```
+
+Function withdraws the _asset from the Aave reserve pool and pays back the original deposit to the Contributor. Emits WithdrawDeposit event.
 	
   
 | Param | Type | Description |

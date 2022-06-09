@@ -315,12 +315,6 @@ Guide to be released shortly
 
 </div>
   
-<div id="poolTracker" class="hidden" markdown="1">
-              
-# PoolTracker
-
-</div>
-  
 <div id="justCausePool" class="hidden" markdown="1">
               
 # JustCausePool
@@ -974,6 +968,18 @@ Function returns the Pool associated with this NFT contract.
 	
 </div>
   
+<div id="poolTracker" class="hidden" markdown="1">
+              
+# PoolTracker
+	
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. PoolTracker coordinates all major functionality of the protocol. 
+
+It generates the proxy contracts for both JustCausePool and JCDepositorERC721 and is the only address with permission to execute their write methods. 
+
+The PoolTracker contract also interacts directly with Aave [Pool](https://docs.aave.com/developers/core-contracts/pool#view-methods) and [WETHGateway](https://docs.aave.com/developers/periphery-contracts/wethgateway) when Contributors make donations through the addDeposit function. This makes approvals required only once per token. The withdrawDeposit and claim functions do not interact with the Aave contracts directly. This interaction is handled by the JustCausePool contract.
+
+</div>
+	
 <script>
   
 function setText(id) {

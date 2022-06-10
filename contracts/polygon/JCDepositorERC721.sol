@@ -40,9 +40,9 @@ contract JCDepositorERC721 is ERC721URIStorageUpgradeable {
     }
 
     /**
-    * @notice Initializes the JustCause Pool.
+    * @notice Initializes the JCDepositor Token.
     * @dev Function is invoked by the PoolTacker contract when a Pool is created.
-    * @param _jcPool address of JustCause Pool that is associated with this contract.
+    * @param _jcPool address of JustCausePool that is associated with this contract.
     **/
     function initialize(address _jcPool) initializer public {
         __ERC721_init("JCP Contributor Token", "JCPC");
@@ -53,10 +53,11 @@ contract JCDepositorERC721 is ERC721URIStorageUpgradeable {
     /**
     * @dev Updates balance for _tokenOwner. Creates NFT for _tokenOwner if first deposit for pool and _asset
     * @param _tokenOwner address of depositor
+    * @param _amount timeStamp of token creation
     * @param _timeStamp timeStamp of token creation
-    * @param _metaUri meta info uri for nft of JCP
     * @param _asset The address of the underlying asset of the reserve
-    * @return tokenId unique tokenId keccak hash of depositor, pool and asset addresses
+    * @param _metaUri meta info uri for nft of JCP
+    * @return bool is this the contributor's fist deposit
     **/
     function addFunds(
         address _tokenOwner,
@@ -85,7 +86,7 @@ contract JCDepositorERC721 is ERC721URIStorageUpgradeable {
     }
 
     /**
-    * @dev Finds tokenId from _tokenOwner, pool, and _asset. Updates balance of depositor for withdraw
+    * @dev Calculates tokenId from _tokenOwner, pool, and _asset. Updates balance of depositor for withdraw
     * @param _tokenOwner address of depositor
     * @param _amount amount to withdraw
     * @param _asset The address of the underlying asset of the reserve
@@ -122,7 +123,7 @@ contract JCDepositorERC721 is ERC721URIStorageUpgradeable {
     /**
     * @dev function returns an int for all assets accepted by the Pool. It returns tokenIds for each asset deposited by _tokenOwner.
     * @param _tokenOwner owner to look for tokenId's
-    * @return asset balance of user in pool
+    * @return ids uint256[] of user deposits
     **/
     function getUserTokens(address _tokenOwner) external view returns(uint256[] memory){
         address[] memory assets = IJustCausePool(jcPool).getAcceptedTokens();
@@ -132,7 +133,6 @@ contract JCDepositorERC721 is ERC721URIStorageUpgradeable {
             uint256 tokenId = uint256(keccak256(abi.encodePacked(_tokenOwner, jcPool, assets[i])));
             if(_exists(tokenId)){
                 ids[i] = tokenId;
-                //counter = counter + 1;
             }
         }
         return ids;

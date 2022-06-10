@@ -115,7 +115,12 @@ contract PoolTracker is ReentrancyGuard {
     * @param _pool address of JCP
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
     **/
-    function addDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) onlyPools(_pool) nonReentrant() external payable {
+    function addDeposit(
+        uint256 _amount,
+        address _asset,
+        address _pool,
+        bool _isETH
+    ) onlyPools(_pool) nonReentrant() external payable {
         tvl[_asset] += _amount;
         string memory _metaHash = IJustCausePool(_pool).getMetaUri();
         address _poolAddr = poolAddr;
@@ -147,7 +152,13 @@ contract PoolTracker is ReentrancyGuard {
     * @param _pool address of JCP
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
     **/
-    function withdrawDeposit(uint256 _amount, address _asset, address _pool, bool _isETH) external  onlyPools(_pool) nonReentrant(){
+    function withdrawDeposit(
+        uint256 _amount,
+        address _asset,
+        address _pool,
+        bool _isETH
+    ) external  onlyPools(_pool) nonReentrant(){
+
         tvl[_asset] -= _amount;
         IJCDepositorERC721(IJustCausePool(_pool).getERC721Address()).withdrawFunds(msg.sender, _amount, _asset);
         IJustCausePool(_pool).withdraw(_asset, _amount, msg.sender, _isETH);
@@ -160,7 +171,12 @@ contract PoolTracker is ReentrancyGuard {
     * @param _pool address of JCP
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
     **/
-    function claimInterest(address _asset, address _pool, bool _isETH) external onlyPools(_pool) nonReentrant() onlyAcceptedToken(_asset){
+    function claimInterest(
+        address _asset,
+        address _pool,
+        bool _isETH
+    ) external onlyPools(_pool) nonReentrant() onlyAcceptedToken(_asset){
+        
         uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset, validator, _isETH);
         totalDonated[_asset] += amount;
         emit Claim(msg.sender, IJustCausePool(_pool).getRecipient(), _pool, _asset, amount);
@@ -186,7 +202,7 @@ contract PoolTracker is ReentrancyGuard {
 
     /**
     * @dev Emit AddPool
-    * @notice Creates new JustCause Pool by proxy contract.
+    * @notice Creates new JustCausePool and JCDepositorERC721 by proxy contract.
     * @param _acceptedTokens List of tokens to be accepted by JCP.
     * @param _name String name of JCP.
     * @param _about ipfs hash of pool description of JCP.
@@ -231,7 +247,7 @@ contract PoolTracker is ReentrancyGuard {
 
     /**
     * @param _asset The address of the underlying asset of the reserve
-    * @return total claimed donation for a given asset
+    * @return totalDonation claimed donation for a given asset
     **/
     function getTotalDonated(address _asset) public view returns(uint256){
         return totalDonated[_asset];

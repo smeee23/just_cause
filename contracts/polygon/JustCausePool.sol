@@ -285,7 +285,7 @@ contract JustCausePool is Initializable {
     }
 
     /**
-    * @return erc721Addr address of receiver of JCP donations.
+    * @return erc721Addr address of the NFT contract for this Pool.
     **/
     function getERC721Address() external view returns(address){
         return erc721Addr;

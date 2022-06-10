@@ -150,7 +150,7 @@ Contributors are able to see and withdraw deposits from pools they have contribu
 
 ### Contributor NFT’s
 
-Another unique feature of JustCause is that the deposit information for the users and pool creators is stored on-chain in the form of an NFT’s (non-fungible token). A Pool Creator has the option of uploading an image at the time of pool creation. An NFT is generated of the image for the Contributors to the pool. The Contributor’s token acts as an on-chain receipt by storing data on their funds deposited in the Pool. It is for this reason that contributor NFT’s are non-transferable. The only way to get one is to deposit for the cause. 
+Another unique feature of JustCause is that the deposit information for the users and pool creators is stored on-chain in the form of an NFT’s (non-fungible tokens). A Pool Creator has the option of uploading an image at the time of pool creation. An NFT is generated of the image for the Contributors to the pool. The Contributor’s token acts as an on-chain receipt by storing data on their funds deposited in the Pool. It is for this reason that contributor NFT’s are non-transferable. The only way to get one is to deposit for the cause. 
   
 </div>
   

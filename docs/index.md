@@ -130,7 +130,7 @@ Our mission is to give users the freedom to create and fund any cause they deem 
               
 # Lossless Donations
 
-JustCause smart contracts let users donate to charity without parting with their hard earned money! 
+JustCause smart contracts let users give to charity without actually giving their hard earned money! 
 
 ### Aave
 
@@ -936,6 +936,8 @@ Function returns the Contributor's Pool balance info for a given tokenId.
 |--- | --- | --- |
 | balance | `struct` |  the pool balance of the owner of the token |
 |--- | --- | --- |
+
+---
 	
 ## getUserTokens
   
@@ -957,6 +959,8 @@ Function returns an uint for all assets accepted by the Pool. It returns tokenId
 | ids | `uint256[]` |  list of tokenId's belonging to a given Contributor |
 |--- | --- | --- |
 
+---
+	
 ## getPool
   
 ```solidity
@@ -1036,7 +1040,7 @@ Function withdraws the _asset from the Aave reserve pool and pays back the origi
 | _isETH | `bool` | indicates if the _asset is the native token of the chain |
 |--- | --- | --- |
 	
-# claimInterest
+## claimInterest
   
 ```solidity
 function claimInterest(address _asset, address _pool, bool _isETH) ...

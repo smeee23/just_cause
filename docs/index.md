@@ -138,7 +138,7 @@ JustCause Pools generate interest through an integration with the [Aave lending 
   
 With lending protocols like Aave risk exists because the financial value behind the collateral and borrowed debt can fluctuate significantly due to the volatility of crypto markets. To mitigate this risk, Aave requires loans to be overcollateralized, meaning the collateral is always worth more than the debt being borrowed. To maintain solvency, positions nearing under collateralization are liquidated (collateral is sold to pay back the debt), protecting lenders and keeping all positions over 100% collateralized.
 
-The Aave Protocol has been audited, and has an ongoing bug bounty program. It secures tens of billions of dollars of value. The protocol is completely open source, allowing anyone to interact and build on top of it. Every possible step has been taken to minimize the risk as much as possible. However, no platform can be considered entirely risk free. Please see the Risks section for more details.
+The Aave Protocol has been audited, and has an ongoing bug bounty program. It secures tens of billions of dollars of value. The protocol is completely open source, allowing anyone to interact and build on top of it. Every possible step has been taken to minimize the risk as much as possible. However, no platform can be considered entirely risk free. Please see the [Aave risk framework](https://docs.aave.com/risk/) for more details.
 
 ### Fund a Cause
 

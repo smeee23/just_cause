@@ -111,8 +111,8 @@ class Card extends Component {
 	}
 
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash) => {
-		if (!acceptedTokenInfo) return 'no data';
-		if (!this.props.tokenMap) return 'no token data';
+		if (!acceptedTokenInfo) return '';
+		if (!this.props.tokenMap) return '';
 
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
 		const isETH = (item.acceptedTokenString === 'ETH' || item.acceptedTokenString === 'MATIC') ? true : false;
@@ -334,9 +334,9 @@ class Card extends Component {
 				</div>
 
 				<div /*style={{fontSize:17}}*/ className="card__header--right">
-								<p className="mb0">{"your deposit: " + userBalance}</p>
-								<p className="mb0">{"pool: "+ totalBalance}</p>
-								<p className="mb0">{"total earned: "+ interestEarned}</p>
+								<p className="mb0">{userBalance == "" ? "" : "your deposit: " + userBalance}</p>
+								<p className="mb0">{totalBalance == "" ? "" : "pool: "+ totalBalance}</p>
+								<p className="mb0">{interestEarned == "" ? "" : "total earned: "+ interestEarned}</p>
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
 				</div>

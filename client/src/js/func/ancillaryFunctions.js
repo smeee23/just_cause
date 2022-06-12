@@ -120,7 +120,7 @@ export const formatDollars = (x) => {
   }
   x = x.toFixed(2);
   let commas = numberWithCommas(x);
-  x = isNaN(x) ? "n/a" : ('$' + commas);
+  x = isNaN(x) ? "" : ('$' + commas);
   return x;
 }
 

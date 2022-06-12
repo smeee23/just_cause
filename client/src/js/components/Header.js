@@ -52,7 +52,8 @@ class Header extends Component {
 
         const priceUSD = tokenMap[key] && tokenMap[key].priceUSD;
         const tokenAmount = tokenMap[key][id];
-        console.log('tvl header', tokenAmount, priceUSD);
+        console.log('tokenAmount', tokenAmount, key, id);
+        console.log('header', tokenAmount, priceUSD);
         if(tokenAmount && priceUSD){
           total += tokenAmount * priceUSD;
         }
@@ -88,7 +89,7 @@ class Header extends Component {
           <Logo/>
           <h2 className="mb0">JustCause</h2>
         </NavLink>
-          <h2 className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  this.displayTVL('totalEarned', 'Donated:') }</h2>
+          <h2 className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  this.displayTVL('totalDonated', 'Donated:') }</h2>
           <h2 className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  this.displayTVL('tvl', 'Deposited:') }</h2>
         <nav className="app-bar__items">
           { nav }

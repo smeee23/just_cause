@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
 import TextField from '../TextField'
 import { Button } from '../Button'
+import { ButtonExtraSmall } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
 import PoolTracker from "../../../contracts/PoolTracker.json";
@@ -24,6 +25,7 @@ class DepositModal extends Component {
 		this.state = {
 			isValidInput: 'valid',
       		amount: 0,
+			val: '0.0',
 		}
 	}
 
@@ -133,6 +135,17 @@ class DepositModal extends Component {
 		this.props.updateTxResult('');
 	}
 
+	getTextField = (userBalance) => {
+		console.log("val", this.state.val);
+		let tf = <TextField ref="myField" label="amount to deposit:" value={this.state.val} />;
+		console.log('tf', tf);
+		return tf;
+	}
+
+	setInputValue = (userBalance) => {
+		this.setState({ val : userBalance});
+	}
+
   getErrorMsg = () => {
     if(this.state.isValidInput === 'nan') return this.state.amount + " is not a number";
     else if(this.state.isValidInput === 'neg') return this.state.amount + " is a negative number";
@@ -147,7 +160,9 @@ class DepositModal extends Component {
           <h2 className="mb0">Deposit {depositInfo.tokenString}</h2>
         </ModalHeader>
         <ModalBody>
-          <TextField ref="myField" label="amount to deposit:" value={depositInfo.userBalance} />
+		  <TextField ref="myField" label="amount to deposit:" value={this.state.val} />
+		  <ButtonExtraSmall text="MAX" callback={() => this.refs.myField.replaceValue(depositInfo.userBalance)}/>
+		  <p>balance: {depositInfo.userBalance}</p>
         </ModalBody>
         <ModalCtas>
           <Button text="Deposit" callback={() => this.setAmount(this.refs.myField.getValue(), depositInfo)}/>

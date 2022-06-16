@@ -157,6 +157,26 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
   return {userBalance, interestEarned, totalBalance}
 }
 
+export const displayTVL = (id, label, tokenMap, cutOff) => {
+  if(tokenMap){
+    let total = 0.0;
+
+    let acceptedTokens = Object.keys(tokenMap);
+    for(let i = 0; i < acceptedTokens.length; i++){
+      const key = acceptedTokens[i];
+
+      const priceUSD = tokenMap[key] && tokenMap[key].priceUSD;
+      const tokenAmount = tokenMap[key][id];
+      if(tokenAmount && priceUSD){
+        total += tokenAmount * priceUSD;
+      }
+
+    }
+    const s = formatDollars(total);
+    return label + ' ' + s.substring(0, s.length - cutOff);
+  }
+}
+
 export const displayLogo = (acceptedTokenString) => {
   let logo = '';
   if(acceptedTokenString === 'ETH'){

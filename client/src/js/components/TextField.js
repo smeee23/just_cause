@@ -50,6 +50,12 @@ class TextField extends Component {
     });
   }
 
+  replaceValue = (e) => {
+    this.setState({
+      value: e
+    });
+  }
+
 	render() {
 		const { label, placeholder, id } = this.props;
 

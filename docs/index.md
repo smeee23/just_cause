@@ -135,7 +135,7 @@ The Aave Protocol has been audited, and has an ongoing bug bounty program. It se
 
 ### Fund a Cause
 
-To donate users go to the Dashboard to see JustCause's Verified Pools. Alternatively, users search for user generated pools by name or contract address.
+Through lossless donations, JustCause is able to charge no fees to Contributors. To donate users go to the Dashboard to see JustCause's Verified Pools. Alternatively, users search for user generated pools by name or contract address.
 
 Users share Causes they create or feel passionate about on social media by clicking the share icons in the  Pool. This creates a post with a link on the platform for friends to follow and contribute.
 
@@ -171,7 +171,8 @@ User pools can be found by searching by name or contract address.
 
 ### Your Cause
 
-Receivers are able to see and claim donations for pools under Your Causes in the Dashboard tab. For instructions on claiming, please see the guide section.
+Donations must be claimed through a transaction on the blockchain. User pools are charged a fee of 0.2% when the claim function is called. In other words for each $100 that is donated JustCause receives $0.20. No fee is charged to Contributors by JustCause.
+
 
 </div>
 
@@ -211,9 +212,17 @@ See: [Getting started on the Polygon PoS chain](https://wallet.polygon.technolog
 
 ### What is the cost of donating with JustCause protocol?
 
-While Contributors receive their full deposit back upon withdrawal, interacting with the protocol requires transactions and thus transaction fees on the Polygon PoS blockchain.
+Contributors receive their full deposit back upon withdrawal, minus fees. Interacting with the protocol requires transactions and thus transaction fees on the Polygon PoS blockchain.
 
 ---
+
+### What fees does the protocol charge?
+
+to fund the protocol a fee of 0.2% is charged when the interest is paid to the cause for user created pools. In other words, for each $100 that is withdrawn as a donation JustCause receives $0.20. This fee is magnitudes lower than traditional crowdfunding sites. No fee is charged to the Contributor.
+
+
+---
+
 
 ### Why use JustCause?
 

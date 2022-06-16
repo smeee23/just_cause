@@ -24,12 +24,14 @@ class Homepage extends Component {
 				<article>
 					<section className="page-section page-section--center horizontal-padding">
 						<div style={{width:500, height:window.innerHeight/1.2, /*background: "#3FA7D6", border:"20px", borderRadius:"50%",*/ display:"flex", gap:"2", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
-								<h2 style={{fontSize:17, marginBottom: "20px"}} >Future of crowdfunding</h2>
-								<div style={{display:"flex", gap:"10", flexDirection: "wrap", alignItems:"center", justifyContent:"center"}}>
-									<LogoCard/><h1 style={{marginBottom: "0px", marginLeft: "20px",}} >JustCause</h1>
-							    </div>
 
-								<h2 style={{fontSize:17}} > {displayTVL('totalDonated', 'Total Donated', this.props.tokenMap, 0)} </h2>
+								<div style={{display:"flex", gap:"10", flexDirection: "wrap", alignItems:"center", justifyContent:"center"}}>
+									<LogoCard/>
+									<div style={{display:"flex", gap:"10", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
+										<h1 style={{marginBottom: "0px", marginLeft: "20px"}} >JustCause</h1>
+										<h2 style={{fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Future of crowdfunding</h2>
+									</div>
+							    </div>
 						</div>
 					</section>
 					<section className="page-section bw0 horizontal-padding">

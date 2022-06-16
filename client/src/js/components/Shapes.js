@@ -30,13 +30,13 @@ class Shapes extends Component {
         }
 
         const shapes = {
-            polygon1: { sides: 0, size: 100 },
-            rectangle1: { width: 200, height: 100 },
-            polygon2: { sides: 5, size: 150 },
-            polygon3: { sides: 6, size: 120 },
-            polygon4: { sides: 8, size: 100 },
-            rectangle2: { width: 100, height: 50 },
-            polygon5: { sides: 0, size: 66 },
+            polygon1: { sides: 0, size: 200 },
+            rectangle1: { width: 400, height: 200 },
+            polygon2: { sides: 5, size: 300 },
+            polygon3: { sides: 6, size: 240 },
+            polygon4: { sides: 8, size: 200 },
+            rectangle2: { width: 200, height: 100 },
+            polygon5: { sides: 0, size: 120 },
         }
 
         const paletteKeys = Object.keys(palette);

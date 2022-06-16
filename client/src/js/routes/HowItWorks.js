@@ -61,7 +61,7 @@ class Homepage extends Component {
 					</div>
 					<div style={{gridColumn: "7", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
 						<Charity/>
-						<h2 style={{marginTop: "5px"}} className="mb0">Cause</h2>
+						<h2 style={{marginTop: "5px"}} className="mb0">Your Cause</h2>
 					</div>
 				</div>
 					</div>

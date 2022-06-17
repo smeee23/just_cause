@@ -218,10 +218,8 @@ export const displayLogo = (acceptedTokenString) => {
 
 export const checkLocationForAppDeploy = () => {
   const urls = ["https://www.justcause.finance/#/", "https://www.justcause.finance/#/just_cause/howitworks", "https://www.justcause.finance/#/just_cause/",
-                "https://www.justcause.finance/#/just_cause", ];
-  const paths = ['/', '/howitworks'];
+              "https://www.justcause.finance/#/just_cause", "http://localhost:3000/", "http://localhost:3000/howitworks"];
 
-  //if(paths.includes(window.location.pathname)) return "outsideApp";
   if(urls.includes(window.location.href)) return "outsideApp";
 
   return "inApp";

@@ -220,9 +220,9 @@ export const checkLocationForAppDeploy = () => {
   const urls = ["https://www.justcause.finance/#/", "https://www.justcause.finance/#/just_cause/howitworks", "https://www.justcause.finance/#/just_cause/"];
   const paths = ['/', '/howitworks'];
 
-  if(paths.includes(window.location.pathname)) return "outsideApp";
+  //if(paths.includes(window.location.pathname)) return "outsideApp";
   if(urls.includes(window.location.href)) return "outsideApp";
-  
+
   return "inApp";
 }
 

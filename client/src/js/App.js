@@ -33,6 +33,7 @@ class App extends Component {
 		try {
 
 			window.addEventListener('resize', this.props.detectMobile);
+			console.log("path app.js", window.location.pathname)
 			if(!['/', '/howitworks'].includes(window.location.pathname)){
 				let activeAccount = await this.getAccounts();
 				//this.web3 = await getWeb3();

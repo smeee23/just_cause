@@ -38,6 +38,7 @@ class Header extends Component {
 	}
 
   generateNav = () => {
+    console.log("pathname header", window.location.pathname);
     if(['/', '/howitworks'].includes(window.location.pathname)){
       return (
         <Fragment>

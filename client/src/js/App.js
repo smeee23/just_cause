@@ -35,8 +35,8 @@ class App extends Component {
 			window.addEventListener('resize', this.props.detectMobile);
 			console.log("path app.js", window.location.pathname);
 			console.log("href app.js", window.location.href);
-			console.log(checkLocationForAppDeploy());
-			
+			console.log("check", checkLocationForAppDeploy());
+
 			if("inApp" === checkLocationForAppDeploy()){
 				let activeAccount = await this.getAccounts();
 				//this.web3 = await getWeb3();

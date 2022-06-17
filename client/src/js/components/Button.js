@@ -4,18 +4,20 @@ import classNames from 'classnames'
 import Icon from "./Icon";
 
 import Twitter from "./logos/Twitter";
+import Github from "./logos/Github";
+import Discord from "./logos/Discord";
 
 class ButtonExtraSmall extends Component {
 
-  displayLine = (tweet) => {
-    if(!tweet){
+  displayLine = (tweet, github) => {
+    if(!tweet && ! github){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
     }
   }
 	render() {
-		const { text, icon, tweet, href, callback, disabled, lg, logo } = this.props;
+		const { text, icon, tweet, href, callback, disabled, lg, logo, github } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -41,8 +43,11 @@ class ButtonExtraSmall extends Component {
           { tweet ? (
               <Twitter/>
           ) : null }
+          { github ? (
+              <Github/>
+          ) : null }
         </div>
-        {this.displayLine(tweet)}
+        {this.displayLine(tweet, github)}
       </button>
 		);
 	}
@@ -93,15 +98,15 @@ class ButtonSmall extends Component {
 
 class Button extends Component {
 
-  displayLine = (tweet) => {
-    if(!tweet){
+  displayLine = (tweet, github, discord) => {
+    if(!tweet && !github && !discord){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
     }
   }
 	render() {
-		const { text, icon, tweet, href, callback, disabled, lg, logo } = this.props;
+		const { text, icon, tweet, github, discord, href, callback, disabled, lg, logo } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -127,8 +132,14 @@ class Button extends Component {
           { tweet ? (
               <Twitter/>
           ) : null }
+          { github ? (
+              <Github/>
+          ) : null }
+          { discord ? (
+              <Discord/>
+          ) : null }
         </div>
-        {this.displayLine(tweet)}
+        {this.displayLine(tweet, github, discord)}
       </button>
 		);
 	}

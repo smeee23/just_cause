@@ -33,43 +33,45 @@ class App extends Component {
 		try {
 
 			window.addEventListener('resize', this.props.detectMobile);
-			let activeAccount = await this.getAccounts();
-			//this.web3 = await getWeb3();
-			this.accounts = await this.web3.eth.getAccounts();
+			if(!['/', '/howitworks'].includes(window.location.pathname)){
+				let activeAccount = await this.getAccounts();
+				//this.web3 = await getWeb3();
+				this.accounts = await this.web3.eth.getAccounts();
 
-			if(!activeAccount){
-				console.log('accounts' , this.accounts, this.accounts[0]);
-				activeAccount = this.accounts[0];
-			}
+				if(!activeAccount){
+					console.log('accounts' , this.accounts, this.accounts[0]);
+					activeAccount = this.accounts[0];
+				}
 
-			console.log('account', activeAccount);
-			activeAccount =  activeAccount[0];
-			if (activeAccount){
-				this.setActiveAccountState(activeAccount);
-				this.networkId = await this.web3.eth.net.getId();
-				this.setNetworkId(this.networkId);
+				console.log('account', activeAccount);
+				activeAccount =  activeAccount[0];
+				if (activeAccount){
+					this.setActiveAccountState(activeAccount);
+					this.networkId = await this.web3.eth.net.getId();
+					this.setNetworkId(this.networkId);
 
-				this.PoolTrackerInstance = new this.web3.eth.Contract(
-					PoolTracker.abi,
-					PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address,
-				);
+					this.PoolTrackerInstance = new this.web3.eth.Contract(
+						PoolTracker.abi,
+						PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address,
+					);
 
-				this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
+					this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
 
-				console.log("poolTrackerAddress1", this.poolTrackerAddress)
-				this.setPoolTrackAddress(this.poolTrackerAddress);
-				const tokenMap = this.getTokenMapFromNetwork();
-				this.setTokenMapState(tokenMap);
-				this.setPoolState(activeAccount);
-				this.setAavePoolAddress(aavePoolAddressesProviderPolygonMumbaiV3Address)
-				console.log("poolTrackerAddress2", this.poolTrackerAddress)
-				//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
-				//await uploadAbout('this is a test to see if this gets saved to ipfs');
-				await getAbout('test');
-				await getIpfsData('QmPTsBwAC1x4Qhr7Ckd4Vt2GJGR4CcL8bp7WSgeChfCMY2');
+					console.log("poolTrackerAddress1", this.poolTrackerAddress)
+					this.setPoolTrackAddress(this.poolTrackerAddress);
+					const tokenMap = this.getTokenMapFromNetwork();
+					this.setTokenMapState(tokenMap);
+					this.setPoolState(activeAccount);
+					this.setAavePoolAddress(aavePoolAddressesProviderPolygonMumbaiV3Address)
+					console.log("poolTrackerAddress2", this.poolTrackerAddress)
+					//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
 
-				await getIpfsData('bafybeic4sjo4mwkxqz3gpvflmqys2kkq7dow2pvtl2n5ncgt6fih46osgu');
-				console.log("poolTrackerAddress3", this.poolTrackerAddress)
+					await getAbout('test');
+					await getIpfsData('QmPTsBwAC1x4Qhr7Ckd4Vt2GJGR4CcL8bp7WSgeChfCMY2');
+
+					await getIpfsData('bafybeic4sjo4mwkxqz3gpvflmqys2kkq7dow2pvtl2n5ncgt6fih46osgu');
+					console.log("poolTrackerAddress3", this.poolTrackerAddress)
+				}
 			}
 		}
 
@@ -196,20 +198,6 @@ class App extends Component {
 
 	getOwnerAddress = async(activeAccount) => {
 		const userOwnedPools = await this.PoolTrackerInstance.methods.getReceiverPools(activeAccount).call();
-
-		/*const ERCInstance = new this.web3.eth.Contract(
-			JCOwnerERC721.abi,
-			ERCAddr,
-		);
-
-		let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
-
-		for(let i = 0; i < balance; i++){
-			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
-			const ownerInfo = await ERCInstance.methods.getCreation(tokenId).call();
-			userOwnedPools.push(ownerInfo.pool);
-		}*/
-
 		return userOwnedPools;
 	}
 
@@ -221,15 +209,6 @@ class App extends Component {
 		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
 		const userDepositPools = depositBalancePools.depositPools;
 		const userBalancePools = depositBalancePools.balances;
-
-		/*let isHashMatch = true;
-		for(let i = 0; i < verifiedPools.length; i++){
-			const isMatch = await this.PoolTrackerInstance.methods.checkByteCode(verifiedPools[i]).call();
-			if(!isMatch){
-				isHashMatch = false;
-			}
-		}
-		console.log('isHashMatch', isHashMatch);*/
 
 		const verifiedPoolInfo = await getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), userBalancePools);
 		console.log('reached');

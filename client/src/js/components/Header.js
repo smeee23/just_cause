@@ -27,6 +27,9 @@ class Header extends Component {
 				let request = await ethereum.request({ method: 'eth_requestAccounts' });
         this.props.updateActiveAccount(request[0]);
 				console.log('request', request);
+
+        window.location.reload(false);
+
 			}
 			catch (error) {
 				console.error(error);
@@ -34,7 +37,72 @@ class Header extends Component {
 		}
 	}
 
+  generateNav = () => {
+    if(['/', '/howitworks'].includes(window.location.pathname)){
+      return (
+        <Fragment>
+          <NavLink exact to={"/howitworks"}>
+            <TextLink text="How it works"/>
+          </NavLink>
+          <a href="https://docs.justcause.finance/" target="_blank">
+            <TextLink text="Docs"/>
+          </a>
+
+        </Fragment>
+      )
+    }
+    else{
+      return (
+        <Fragment>
+          <NavLink exact to={"/dashboard"}>
+            <TextLink text="Dashboard"/>
+          </NavLink>
+          <NavLink exact to={"/search"}>
+            <TextLink text="Search"/>
+          </NavLink>
+          <a href="https://docs.justcause.finance/" target="_blank">
+            <TextLink text="Docs"/>
+          </a>
+        </Fragment>
+      )
+    }
+  }
+
+  getHomeLink = () => {
+    if(['/', '/howitworks'].includes(window.location.pathname)){
+      return (
+        <NavLink exact to={"/"} className="app-bar__left tdn">
+          <Logo/>
+            <h2 className="mb0">JustCause</h2>
+        </NavLink>
+      );
+    }
+    else{
+      return (
+        <div className="app-bar__left tdn">
+          <Logo/>
+          <h2 className="mb0">JustCause</h2>
+        </div>
+      );
+    }
+  }
+
+  getConnectButton = () => {
+    if(['/', '/howitworks'].includes(window.location.pathname)){
+      return (
+        <NavLink exact to={"/dashboard"}>
+          <ButtonSmall text={"Lauch App"} icon={"poolShape5"} callback={this.connectToWeb3}/>
+        </NavLink>
+        )
+    }
+    else{
+      return <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
+    }
+  }
   displayAddress = (address) => {
+    console.log('url test', window.location.href);
+    console.log('path name', window.location.pathname);
+
     if(address === 'Connect')
       return address;
 
@@ -44,33 +112,19 @@ class Header extends Component {
 	render() {
     const { isMobile } = this.props;
 
-    const nav = (
-      <Fragment>
-        <NavLink exact to={"/dashboard"}>
-          <TextLink text="Dashboard"/>
-        </NavLink>
-        <NavLink exact to={"/search"}>
-          <TextLink text="Search"/>
-        </NavLink>
-        <NavLink exact to={"/howitworks"}>
-          <TextLink text="How it works"/>
-        </NavLink>
-      </Fragment>
-    )
+    const nav = this.generateNav();
+
 		return (
       <header className="app-bar horizontal-padding">
         <Takeover>
           { nav }
         </Takeover>
-        <NavLink exact to={"/"} className="app-bar__left tdn">
-          <Logo/>
-          <h2 className="mb0">JustCause</h2>
-        </NavLink>
+        {this.getHomeLink()}
           <h2 className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  displayTVL('totalDonated', 'Donated:', this.props.tokenMap, 3) }</h2>
           <h2 className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
         <nav className="app-bar__items">
           { nav }
-          <ButtonSmall text={isMobile ? null : this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
+        {this.getConnectButton()}
         </nav>
       </header>
 		);

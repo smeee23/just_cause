@@ -145,7 +145,7 @@ class Search extends Component {
 			<Fragment>
 				<article>
 				<section className="page-section page-section--center horizontal-padding bw0">
-					<Button icon="plus" text="Search" lg callback={() => this.openModal()}/>
+					<Button text="Search" callback={() => this.openModal()}/>
 				</section>
 					<section className="page-section horizontal-padding bw0">
 						{this.getPendingTxModal()}

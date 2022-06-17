@@ -24,7 +24,7 @@ import ERC20Instance from "../contracts/IERC20.json";
 import { kovanTokenMap, polygonMumbaiV3TokenMap, aavePoolAddressesProviderPolygonMumbaiV3Address } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
-import {precise} from './func/ancillaryFunctions';
+import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
 import {getAbout, getIpfsData} from './func/ipfs';
 
 class App extends Component {
@@ -34,7 +34,9 @@ class App extends Component {
 
 			window.addEventListener('resize', this.props.detectMobile);
 			console.log("path app.js", window.location.pathname)
-			if(!['/', '/howitworks'].includes(window.location.pathname)){
+			console.log("href app.js", window.location.href)
+
+			if("insideApp" = ){
 				let activeAccount = await this.getAccounts();
 				//this.web3 = await getWeb3();
 				this.accounts = await this.web3.eth.getAccounts();

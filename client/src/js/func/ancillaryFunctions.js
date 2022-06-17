@@ -216,6 +216,16 @@ export const displayLogo = (acceptedTokenString) => {
   return logo;
 }
 
+export const checkLocationForAppDeploy = () => {
+  const urls = ["https://www.justcause.finance/#/", "https://www.justcause.finance/#/just_cause/howitworks", "https://www.justcause.finance/#/just_cause/"];
+  const paths = ['/', '/howitworks'];
+
+  if(paths.includes(window.location.pathname)) return "outsideApp";
+  if(urls.includes(window.location.href)) return "outsideApp";
+  
+  return "inApp";
+}
+
 export const displayLogoLg = (acceptedTokenString) => {
   let logo = '';
   if(acceptedTokenString === 'ETH'){

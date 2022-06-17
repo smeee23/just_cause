@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom'
 import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
-import { formatDollars, displayTVL } from "../func/ancillaryFunctions"
+import { checkLocationForAppDeploy, displayTVL } from "../func/ancillaryFunctions"
 
 class Header extends Component {
 
@@ -39,7 +39,7 @@ class Header extends Component {
 
   generateNav = () => {
     console.log("pathname header", window.location.pathname);
-    if(['/', '/howitworks'].includes(window.location.pathname)){
+    if("outsideApp" === checkLocationForAppDeploy()){
       return (
         <Fragment>
           <NavLink exact to={"/howitworks"}>
@@ -70,7 +70,7 @@ class Header extends Component {
   }
 
   getHomeLink = () => {
-    if(['/', '/howitworks'].includes(window.location.pathname)){
+    if("outsideApp" === checkLocationForAppDeploy()){
       return (
         <NavLink exact to={"/"} className="app-bar__left tdn">
           <Logo/>
@@ -89,7 +89,7 @@ class Header extends Component {
   }
 
   getConnectButton = () => {
-    if(['/', '/howitworks'].includes(window.location.pathname)){
+    if("outsideApp" === checkLocationForAppDeploy()){
       return (
         <NavLink exact to={"/dashboard"}>
           <ButtonSmall text={"Lauch App"} icon={"poolShape5"} callback={this.connectToWeb3}/>
@@ -101,9 +101,6 @@ class Header extends Component {
     }
   }
   displayAddress = (address) => {
-    console.log('url test', window.location.href);
-    console.log('path name', window.location.pathname);
-
     if(address === 'Connect')
       return address;
 

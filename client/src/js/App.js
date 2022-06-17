@@ -36,7 +36,7 @@ class App extends Component {
 			console.log("path app.js", window.location.pathname)
 			console.log("href app.js", window.location.href)
 
-			if("insideApp" = ){
+			if("inApp" === checkLocationForAppDeploy()){
 				let activeAccount = await this.getAccounts();
 				//this.web3 = await getWeb3();
 				this.accounts = await this.web3.eth.getAccounts();

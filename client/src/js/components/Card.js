@@ -23,7 +23,7 @@ import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
-import {getBalance} from '../func/contractInteractions';
+import { getBalance, getContractInfo } from '../func/contractInteractions';
 import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare, numberWithCommas} from '../func/ancillaryFunctions';
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
@@ -175,8 +175,9 @@ class Card extends Component {
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);;
 			const activeAccount = this.props.activeAccount;
 			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount);
+			const contractInfo = await getContractInfo(poolAddress);
 			console.log('tokenString', tokenString);
-			await this.props.updateDepositAmount({tokenString: tokenString, tokenAddress: tokenAddress, userBalance: userBalance, poolAddress: poolAddress, activeAccount: activeAccount, amount: ''});
+			await this.props.updateDepositAmount({tokenString: tokenString, tokenAddress: tokenAddress, userBalance: userBalance, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount, amount: ''});
 			//this.updatePoolInfo(this.props.depositAmount.poolAddress, this.props.depositAmount.activeAccount);
 		}
 		catch (error) {
@@ -197,6 +198,7 @@ class Card extends Component {
 			const tokenMap = this.props.tokenMap;
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 			const activeAccount = this.props.activeAccount;
+			const contractInfo = await getContractInfo(poolAddress);
 			let formatBalance = precise(rawBalance, tokenMap[tokenString].decimals);
 			console.log('compare', rawBalance, formatBalance);
 			//formatBalance = Number.parseFloat(formatBalance).toPrecision(6);
@@ -204,7 +206,7 @@ class Card extends Component {
 			if(rawBalance /10**tokenMap[tokenString].decimals < formatBalance){
 				alert('withdraw amount issue');
 			}
-			await this.props.updateWithdrawAmount({tokenString: tokenString, tokenAddress: tokenAddress, formatBalance: formatBalance, rawBalance: rawBalance, poolAddress: poolAddress, activeAccount: activeAccount, amount: ''});
+			await this.props.updateWithdrawAmount({tokenString: tokenString, tokenAddress: tokenAddress, formatBalance: formatBalance, rawBalance: rawBalance, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount, amount: ''});
 		}
 		catch (error) {
 			console.error(error);

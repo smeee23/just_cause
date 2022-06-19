@@ -33,6 +33,7 @@ class Homepage extends Component {
 											<a href="https://github.com/smeee23/just_cause" target="_blank"><Button github="github"/></a>
 											<a style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank"><Button tweet="tweet"/></a>
 											<a style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button discord="discord"/></a>
+											<a style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button share="share"/></a>
 										</div>
 									</div>
 							    </div>

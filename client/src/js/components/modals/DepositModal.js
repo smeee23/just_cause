@@ -15,7 +15,7 @@ import { updateDepositAmount } from  "../../actions/depositAmount";
 import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 
 import {getAllowance, addUserDepositedPool} from '../../func/contractInteractions';
-import {delay, getTokenBaseAmount} from '../../func/ancillaryFunctions';
+import {delay, getTokenBaseAmount, displayLogo} from '../../func/ancillaryFunctions';
 
 class DepositModal extends Component {
 
@@ -128,6 +128,26 @@ class DepositModal extends Component {
 			this.displayTxInfo(txInfo);
 	}
 
+  displayDepositNotice = (depositInfo) => {
+	console.log("Verified Poola", this.props.verifiedPoolAddrs)
+	const contractInfo = depositInfo.contractInfo;
+	let userWarning;
+	if(contractInfo[2]){
+		userWarning = <p style={{color: "red", marginLeft:"2%", marginRight:"0%"}} className="mr">{contractInfo[6]} is a user generated pool. The allocation of donations to user pools cannot be accounted for. We advise only contributing to user pools when you know the pool creator and receiver.</p>
+	}
+	else{
+		userWarning = <p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">{contractInfo[6]} is a verified pool. Your donations are going to the right place!</p>
+	}
+	return(
+		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Deposits into {contractInfo[6]} pool are supplied to Aave lending pools to generate interest. The deposit is redeemable in full at anytime. Any interest earned is donated to {contractInfo[6]} Cause by sending it to the receiver address.</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">An NFT is minted for Contributors to the pool. The Contributor’s token acts as an on-chain receipt by storing deposit information. It cannot be sold or transferred.</p>
+			{userWarning}
+		</div>
+	)
+
+  }
+
   displayTxInfo = async(txInfo) => {
 		this.props.updatePendingTx('');
 		this.props.updateTxResult(txInfo);
@@ -154,18 +174,27 @@ class DepositModal extends Component {
   }
   render() {
         const { depositInfo } = this.props;
+		console.log("depositInfo", depositInfo);
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">Deposit {depositInfo.tokenString}</h2>
+          <h2 className="mb0">Deposit {displayLogo(depositInfo.tokenString)} {depositInfo.tokenString} for {depositInfo.contractInfo[6]}</h2>
         </ModalHeader>
-        <ModalBody>
-		  <TextField ref="myField" label="amount to deposit:" value={this.state.val} />
-		  <ButtonExtraSmall text="MAX" callback={() => this.refs.myField.replaceValue(depositInfo.userBalance)}/>
-		  <p>balance: {depositInfo.userBalance}</p>
-        </ModalBody>
         <ModalCtas>
-          <Button text="Deposit" callback={() => this.setAmount(this.refs.myField.getValue(), depositInfo)}/>
+			{this.displayDepositNotice(depositInfo)}
+			<div style={{marginLeft: "auto", marginTop:"auto", display:"flex", flexDirection: "column", alignItems:"flex-end", justifyContent:"left"}}>
+				<div style={{display:"flex", fontSize: 9, flexDirection: "wrap", gap: "10px", alignItems:"right", justifyContent:"center"}}>
+					<p>{displayLogo(depositInfo.tokenString)}{depositInfo.tokenString}: {depositInfo.userBalance}</p>
+					<ButtonExtraSmall text="MAX" callback={() => this.refs.myField.replaceValue(depositInfo.userBalance)}/>
+
+				</div>
+				<div style={{marginLeft: "auto", marginTop:"auto"}}>
+					<TextField ref="myField" label="amount to deposit:" value={this.state.val} />
+				</div>
+			</div>
+			<div style={{marginLeft: "auto", marginTop:"auto", paddingBottom:"25px"}}>
+          		<Button style={{marginLeft: "auto", marginTop:"auto"}} text="Deposit" callback={() => this.setAmount(this.refs.myField.getValue(), depositInfo)}/>
+		  	</div>
         </ModalCtas>
       </Fragment>
 		);
@@ -175,6 +204,7 @@ class DepositModal extends Component {
 const mapStateToProps = state => ({
   	tokenMap: state.tokenMap,
 	poolTrackerAddress: state.poolTrackerAddress,
+	verifiedPoolAddrs: state.verifiedPoolAddrs,
  	depositAmount: state.depositAmount,
 	activeAccount: state.activeAccount,
 	userDepositPoolInfo: state.userDepositPoolInfo,

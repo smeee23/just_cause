@@ -127,6 +127,17 @@ import { getIpfsData } from "./ipfs";
 		return poolLists;
 	}
 
+	export const getContractInfo = async(poolAddress) => {
+		const web3 = await getWeb3();
+
+		let JCPoolInstance = new web3.eth.Contract(
+			JCPool.abi,
+			poolAddress,
+		);
+
+		return await JCPoolInstance.methods.getPoolInfo().call();
+	}
+
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools) => {
 		const web3 = await getWeb3();
 

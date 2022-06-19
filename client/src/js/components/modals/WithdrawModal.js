@@ -2,7 +2,7 @@ import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
 import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
 import TextField from '../TextField'
-import { Button } from '../Button'
+import { Button, ButtonExtraSmall } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
 import PoolTracker from "../../../contracts/PoolTracker.json";
@@ -12,7 +12,7 @@ import { updateTxResult } from  "../../actions/txResult";
 import { updateWithdrawAmount } from  "../../actions/withdrawAmount";
 
 import {getAmountBase} from '../../func/contractInteractions';
-import {delay, getTokenBaseAmount} from '../../func/ancillaryFunctions';
+import {delay, getTokenBaseAmount, displayLogo} from '../../func/ancillaryFunctions';
 
 class WithdrawModal extends Component {
 
@@ -22,6 +22,7 @@ class WithdrawModal extends Component {
 		this.state = {
 			isValidInput: 'valid',
             amount: 0,
+            val: '0.0',
 		}
 	}
 
@@ -89,6 +90,17 @@ class WithdrawModal extends Component {
         this.displayTxInfo(txInfo);
 	}
 
+  displayWithdrawNotice = (name) => {
+
+    return(
+      <div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
+        <p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Your Deposit for {name} is available to be withdrawn in full. Upon withdrawal, your funds will no longer be used to generate donations for {name}.</p>
+        <h4 style={{color: "green", marginLeft:"2%", marginRight:"0%"}} className="mr">Thank you for donating!</h4>
+      </div>
+    )
+
+    }
+
   displayTxInfo = async(txInfo) => {
 		this.props.updatePendingTx('');
 		this.props.updateTxResult(txInfo);
@@ -104,18 +116,32 @@ class WithdrawModal extends Component {
   }
   render() {
         const { withdrawInfo } = this.props;
+
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">Withdraw {withdrawInfo.tokenString}</h2>
+          <h2 className="mb0">Withdraw {displayLogo(withdrawInfo.tokenString)} {withdrawInfo.tokenString} for {withdrawInfo.contractInfo[6]}</h2>
         </ModalHeader>
-        <ModalBody>
-          <TextField ref="myField" label="amount to withdraw:" value={withdrawInfo.formatBalance} />
-        </ModalBody>
         <ModalCtas>
-          <Button text="Withdraw" callback={() => this.setAmount(this.refs.myField.getValue(), withdrawInfo)}/>
+          {this.displayWithdrawNotice(withdrawInfo.contractInfo[6])}
+          <div style={{marginLeft: "auto", marginTop:"auto", display:"flex", flexDirection: "column", alignItems:"flex-end", justifyContent:"left"}}>
+            <div style={{display:"flex", fontSize: 9, flexDirection: "wrap", gap: "10px", alignItems:"right", justifyContent:"center"}}>
+              <p>{displayLogo(withdrawInfo.tokenString)}{withdrawInfo.tokenString}: {withdrawInfo.formatBalance}</p>
+              <ButtonExtraSmall text="MAX" callback={() => this.refs.myField.replaceValue(withdrawInfo.formatBalance)}/>
+
+            </div>
+            <div style={{marginLeft: "auto", marginTop:"auto"}}>
+              <TextField ref="myField" label="amount to withdraw:" value={this.state.val} />
+            </div>
+          </div>
+          <div style={{marginLeft: "auto", marginTop:"auto", paddingBottom:"25px"}}>
+            <Button style={{marginLeft: "auto", marginTop:"auto"}} text="Withdraw" callback={() => this.setAmount(this.refs.myField.getValue(), withdrawInfo)}/>
+          </div>
+
         </ModalCtas>
       </Fragment>
+
+
 		);
 	}
 }

@@ -8,6 +8,7 @@ import Github from "./logos/Github";
 import Discord from "./logos/Discord";
 import Facebook from "./logos/Facebook";
 import Instagram from "./logos/Instagram";
+import Share from "./logos/Share";
 
 class ButtonExtraSmall extends Component {
 
@@ -100,15 +101,15 @@ class ButtonSmall extends Component {
 
 class Button extends Component {
 
-  displayLine = (tweet, github, discord, facebook, instagram) => {
-    if(!tweet && !github && !discord && !facebook && !instagram){
+  displayLine = (tweet, github, discord, facebook, instagram, share) => {
+    if(!tweet && !github && !discord && !facebook && !instagram && !share){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
     }
   }
 	render() {
-		const { text, icon, tweet, github, discord, facebook, instagram, href, callback, disabled, lg, logo } = this.props;
+		const { text, icon, tweet, github, discord, facebook, instagram, share, href, callback, disabled, lg, logo } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -146,8 +147,11 @@ class Button extends Component {
           { instagram ? (
               <Instagram/>
           ) : null }
+          { share ? (
+              <Share/>
+          ) : null }
         </div>
-        {this.displayLine(tweet, github, discord, facebook, instagram)}
+        {this.displayLine(tweet, github, discord, facebook, instagram, share)}
       </button>
 		);
 	}

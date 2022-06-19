@@ -132,7 +132,7 @@ class DepositModal extends Component {
 	console.log("Verified Poola", this.props.verifiedPoolAddrs)
 	const contractInfo = depositInfo.contractInfo;
 	let userWarning;
-	if(contractInfo[2]){
+	if(!contractInfo[2]){
 		userWarning = <p style={{color: "red", marginLeft:"2%", marginRight:"0%"}} className="mr">{contractInfo[6]} is a user generated pool. The allocation of donations to user pools cannot be accounted for. We advise only contributing to user pools when you know the pool creator and receiver.</p>
 	}
 	else{

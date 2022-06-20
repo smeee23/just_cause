@@ -27,7 +27,7 @@ import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 
 import { getBalance, getContractInfo } from '../func/contractInteractions';
 import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare, numberWithCommas} from '../func/ancillaryFunctions';
-import { Modal } from "../components/Modal";
+import { Modal, SmallModal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
 import ClaimModal from '../components/modals/ClaimModal'
@@ -219,7 +219,7 @@ class Card extends Component {
 
 	getClaimModal = () => {
 		if(this.props.claim){
-			let modal = <Modal isOpen={true}><ClaimModal claimInfo={this.props.claim}/></Modal>
+			let modal = <SmallModal isOpen={true}><ClaimModal claimInfo={this.props.claim}/></SmallModal>
 			return modal;
 		}
 	}
@@ -244,7 +244,7 @@ class Card extends Component {
 
 	getApproveModal = () => {
 		if(this.props.approve){
-			let modal = <Modal isOpen={true}><ApproveModal approveInfo={this.props.approve}/></Modal>
+			let modal = <SmallModal isOpen={true}><ApproveModal approveInfo={this.props.approve}/></SmallModal>
 			return modal;
 		}
 	}

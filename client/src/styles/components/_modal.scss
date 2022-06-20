@@ -28,6 +28,19 @@ $baseclass: 'modal';
   &__box {
     position: relative;
     width: 60%;
+    max-width: 650px;
+    flex-direction: column;
+    padding: (4 * $rem-base);
+    border-radius: (2 * $rem-base);
+
+    transition-delay: $duration-shorter;
+    transform: translate3d(0,(4 * $rem-base),0);
+  }
+
+  &__boxsm {
+    position: relative;
+    width: 60%;
+    max-width: 500px;
     flex-direction: column;
     padding: (4 * $rem-base);
     border-radius: (2 * $rem-base);

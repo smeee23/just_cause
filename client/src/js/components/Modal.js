@@ -122,6 +122,58 @@ class Modal extends Component {
 	}
 }
 
+class SmallModal extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isOpen: props.isOpen,
+    }
+  }
+
+  componentDidMount() {
+		document.addEventListener('mousedown', this.handleClickOutside);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('mousedown', this.handleClickOutside);
+	}
+
+  handleClickOutside = (event) => {
+    if (!this.refs["modal"].contains(event.target)) {
+      this.closeModal();
+    }
+  }
+
+  openModal = () => {
+    this.setState({
+      isOpen: true
+    })
+  }
+
+  closeModal = () => {
+    this.setState({
+      isOpen: false
+    })
+  }
+
+	render() {
+    const classnames = classNames({
+      "modal": true,
+      "modal--open": this.state.isOpen,
+    })
+
+		return (
+      <div className={classnames}>
+        <div className="modal__background"/>
+        <div className="modal__boxsm theme--white" ref="modal">
+          { this.props.children }
+        </div>
+      </div>
+		);
+	}
+}
+
 class LargeModal extends Component {
   constructor(props) {
     super(props);
@@ -174,4 +226,4 @@ class LargeModal extends Component {
 	}
 }
 
-export { Modal, LargeModal, ModalHeader, ModalHeaderNoClose, ModalBody, ModalBodyTx, ModalBodyDeploy, ModalCtas }
+export { Modal, LargeModal, SmallModal, ModalHeader, ModalHeaderNoClose, ModalBody, ModalBodyTx, ModalBodyDeploy, ModalCtas }

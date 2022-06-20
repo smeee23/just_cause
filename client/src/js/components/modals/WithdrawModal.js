@@ -93,8 +93,8 @@ class WithdrawModal extends Component {
 
     return(
       <div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
-        <p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Your Deposit for {name} is available to be withdrawn in full. Upon withdrawal, your funds will no longer be used to generate donations for {name}.</p>
-        <h4 style={{color: "green", marginLeft:"2%", marginRight:"0%"}} className="mr">Thank you for donating!</h4>
+        <p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Your Deposit for {name} is available to be withdrawn in full. Any funds withdrawn will no longer be used to generate donations for {name}.</p>
+        <p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Thank you for donating and participating in JustCause!</p>
       </div>
     )
 
@@ -133,7 +133,7 @@ class WithdrawModal extends Component {
               <TextField ref="myField" label="amount to withdraw:" value={this.state.val} />
             </div>
           </div>
-          <div style={{marginLeft: "auto", marginTop:"auto", paddingBottom:"25px"}}>
+          <div style={{marginLeft: "auto", marginTop:"auto", paddingBottom:"31px"}}>
             <Button style={{marginLeft: "auto", marginTop:"auto"}} text="Withdraw" callback={() => this.setAmount(this.refs.myField.getValue(), withdrawInfo)}/>
           </div>
 

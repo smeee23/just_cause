@@ -192,7 +192,7 @@ class DepositModal extends Component {
 					<TextField ref="myField" label="amount to deposit:" value={this.state.val} />
 				</div>
 			</div>
-			<div style={{marginLeft: "auto", marginTop:"auto", paddingBottom:"25px"}}>
+			<div style={{marginLeft: "auto", marginTop:"auto", paddingBottom:"32px"}}>
           		<Button style={{marginLeft: "auto", marginTop:"auto"}} text="Deposit" callback={() => this.setAmount(this.refs.myField.getValue(), depositInfo)}/>
 		  	</div>
         </ModalCtas>

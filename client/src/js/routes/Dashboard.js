@@ -10,6 +10,7 @@ import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import NewPoolModal from "../components/modals/NewPoolModal";
+import Logo from "../components/Logo";
 
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
@@ -144,6 +145,33 @@ class Dashboard extends Component {
 		buttonHolder.push(<Button key={4} text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/>);
 		return buttonHolder;
 	}
+
+	getTabTitle = () => {
+		console.log("spot", this.state.selectedTokenIndex );
+		let title;
+		if(this.state.selectedTokenIndex === 0) title = "Verified Pools"
+		else if (this.state.selectedTokenIndex === 1) title = "Your Causes"
+		else if (this.state.selectedTokenIndex === 2) title = "Contributions"
+		return (
+			<div style={{marginTop: "100px", display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center"}}>
+				<h2 style={{marginTop: "50px"}}> {title}</h2>
+			</div>
+		);
+	}
+
+	getTabInfo = () => {
+		console.log("spot", this.state.selectedTokenIndex );
+
+		let info;
+		if(this.state.selectedTokenIndex === 0) info = "Verified pools are created by the JustCause team, and the recipients of the donations are known and established entities.";
+		else if (this.state.selectedTokenIndex === 1) info = "Causes for which you are the receiving address.";
+		else if (this.state.selectedTokenIndex === 2) info = "Causes you have contributed to. Includes past and present contributions.";
+		return (
+			<div style={{marginTop: "25px", maxWidth: "300px", alignItems:"center", justifyContent:"center"}}>
+				<p className="mr">{info}</p>
+			</div>
+		);
+	}
 	createCardInfo = () => {
 		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.selectedTokenIndex];
 
@@ -177,9 +205,12 @@ class Dashboard extends Component {
 		return (
 			<Fragment>
 				<article>
-					<section className="page-section page-section--center horizontal-padding bw0">
-						<div style={{display:"flex"}}>
-							{optionButtons}
+					<section  className="page-section page-section--center horizontal-padding bw0" style={{paddingBottom:"0px"}}>
+						<div style={{display:"flex", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
+							<div style={{display:"flex"}}>
+								{optionButtons}
+							</div>
+							{this.getTabInfo()}
 						</div>
 					</section>
 					<section className="page-section horizontal-padding bw0">
@@ -189,7 +220,7 @@ class Dashboard extends Component {
 						{this.getNewPoolModal()}
 						{cardHolder}
 					</section>
-					<section className="page-section page-section--center horizontal-padding bw0">
+					<section className="page-section page-section--center horizontal-padding bw0" >
 
 					</section>
 				</article>

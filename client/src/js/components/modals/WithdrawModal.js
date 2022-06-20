@@ -58,8 +58,7 @@ class WithdrawModal extends Component {
             const amount = this.props.withdrawAmount.amount;
             this.props.updateWithdrawAmount('');
 
-            const amountInBase_test = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
-				    //const amountInBase = web3.utils.toWei(String(amount), "ether");
+            const amountInBase_test = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);
             const amountInBase = getTokenBaseAmount(amount, this.props.tokenMap[tokenString].decimals);
 
             const parameter = {

@@ -21,6 +21,8 @@ import withdrawAmountReducer from './withdrawAmount'
 import searchInfoReducer from './searchInfo'
 import aavePoolAddressReducer from './aavePoolAddress'
 import networkIdReducer from './networkId'
+import claimReducer from './claim'
+import approveReducer from './approve'
 
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
@@ -43,6 +45,9 @@ const rootReducer = (history) => combineReducers({
 	searchInfo: searchInfoReducer,
 	aavePoolAddress: aavePoolAddressReducer,
 	networkId: networkIdReducer,
+	claim: claimReducer,
+	approve: approveReducer,
+	
 	router: connectRouter(history),
 })
 

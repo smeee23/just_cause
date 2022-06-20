@@ -18,6 +18,8 @@ import { updatePendingTx } from "../actions/pendingTx";
 import { updateTxResult } from  "../actions/txResult";
 import { updateDepositAmount } from  "../actions/depositAmount";
 import { updateWithdrawAmount } from  "../actions/withdrawAmount";
+import { updateClaim } from "../actions/claim";
+import { updateApprove } from "../actions/approve";
 import { updateTokenMap } from "../actions/tokenMap"
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
@@ -28,6 +30,8 @@ import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displa
 import { Modal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
+import ClaimModal from '../components/modals/ClaimModal'
+import ApproveModal from '../components/modals/ApproveModal'
 import PendingTxModal from "../components/modals/PendingTxModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 
@@ -70,7 +74,7 @@ class Card extends Component {
 			return <Button text={"Deposit "+tokenString} disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
 		}
 		if(Number(allowance) === 0){
-			return <Button text={"Approve "+tokenString} disabled={isDisabled} callback={async() => await this.approve(tokenAddress, this.props.poolTrackerAddress, tokenString, poolAddress)}/>
+			return <Button text={"Approve "+tokenString} disabled={isDisabled} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/>
 		}
 		return <Button text={"Deposit "+tokenString} disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
 	}
@@ -213,73 +217,49 @@ class Card extends Component {
 		}
 	}
 
-	claim = async(address, assetAddress, poolTrackerAddress) => {
+	getClaimModal = () => {
+		if(this.props.claim){
+			let modal = <Modal isOpen={true}><ClaimModal claimInfo={this.props.claim}/></Modal>
+			return modal;
+		}
+	}
+
+	claim = async(poolAddress, tokenAddress, poolTrackerAddress) => {
+		await this.props.updateClaim('');
 		let result;
-		let txInfo;
-		console.log('claim interest clicked', address);
+		console.log('claim interest clicked', poolAddress);
 		try{
-			const web3 = await getWeb3();
 			const activeAccount = this.props.activeAccount;
-			const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === assetAddress);
-			const isETH = (tokenString === 'ETH' || tokenString === 'MATIC');
+			const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === tokenAddress);
+			const contractInfo = await getContractInfo(poolAddress);
 
-			const parameter = {
-				from: activeAccount,
-				gas: web3.utils.toHex(1500000),
-				gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
-			};
+			await this.props.updateClaim({tokenString: tokenString, tokenAddress: tokenAddress, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount});
 
-			let PoolTrackerInstance = new web3.eth.Contract(
-				PoolTracker.abi,
-				poolTrackerAddress,
-			);
-			txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: address};
-			result = await PoolTrackerInstance.methods.claimInterest(assetAddress, address, isETH).send(parameter , (err, transactionHash) => {
-				console.log('Transaction Hash :', transactionHash);
-				this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: address});
-				txInfo.txHash = transactionHash;
-			});
-			txInfo.success = true;
-			//await this.updatePoolInfo(address, activeAccount);
 		}
 		catch (error) {
 			console.error(error);
 		}
-		this.displayTxInfo(txInfo);
 		console.log('claim result', result);
 	}
 
-	approve = async(tokenAddress, address, tokenString, poolAddress) => {
+	getApproveModal = () => {
+		if(this.props.approve){
+			let modal = <Modal isOpen={true}><ApproveModal approveInfo={this.props.approve}/></Modal>
+			return modal;
+		}
+	}
+
+	approve = async(tokenAddress, tokenString, poolAddress) => {
+		await this.props.updateApprove('');
 		let result;
-		let txInfo;
 		try{
-			const web3 = await getWeb3();
-			const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 			const activeAccount = this.props.activeAccount;
-			console.log('approve clicked');
-			const parameter = {
-				from: activeAccount ,
-				gas: web3.utils.toHex(1500000),
-				gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
-				};
 
-			const amount = '10000000000000000000000000000000';
-			txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress};
-			result = await erc20Instance.methods.approve(address, amount).send(parameter, (err, transactionHash) => {
-				console.log('Transaction Hash :', transactionHash);
-				this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress});
-				txInfo.txHash = transactionHash;
-			});
-			txInfo.success = true;
-
-			let tempTokenMap = this.props.tokenMap;
-			tempTokenMap[tokenString]['allowance'] = true;
-			this.props.updateTokenMap(tempTokenMap);
+			await this.props.updateApprove({tokenString: tokenString, tokenAddress: tokenAddress, poolAddress: poolAddress, activeAccount: activeAccount});
 		}
 		catch (error) {
 			console.error(error);
 		}
-		this.displayTxInfo(txInfo);
 		console.log("approve", result);
 	}
 	displayTxInfo = async(txInfo,) => {
@@ -346,6 +326,8 @@ class Card extends Component {
 				<div className="card__bar"/>
 				{this.getDepositAmountModal()}
 				{this.getWithdrawAmountModal()}
+				{this.getClaimModal()}
+				{this.getApproveModal()}
       		</div>
 		);
 	}
@@ -364,6 +346,8 @@ const mapStateToProps = state => ({
 	pendingTx: state.pendingTx,
 	depositAmount: state.depositAmount,
 	withdrawAmount: state.withdrawAmount,
+	claim: state.claim,
+	approve: state.approve,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -375,6 +359,8 @@ const mapDispatchToProps = dispatch => ({
 	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
 	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
+	updateClaim: (txInfo) => dispatch(updateClaim(txInfo)),
+	updateApprove: (txInfo) => dispatch(updateApprove(txInfo)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card)

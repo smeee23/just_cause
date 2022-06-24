@@ -165,7 +165,12 @@ contract JustCausePool is Initializable {
     * @param _depositor The address making the deposit
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
     **/
-    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH) external onlyPoolTracker {
+    function withdraw(
+        address _assetAddress,
+        uint256 _amount,
+        address _depositor,
+        bool _isETH
+    ) external onlyPoolTracker {
         totalDeposits[_assetAddress] -= _amount;
         if(!_isETH){
             IPool(poolAddr).withdraw(_assetAddress, _amount, _depositor);
@@ -187,8 +192,14 @@ contract JustCausePool is Initializable {
     * @param _assetAddress The address of the underlying asset of the reserve
     * @param _feeAddress The address that collects the 0.2% protocol fee
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
+    * @param _bpFee fee rate paid to the protocol
     **/
-    function withdrawDonations(address _assetAddress, address _feeAddress, bool _isETH) external onlyPoolTracker returns(uint256){
+    function withdrawDonations(
+        address _assetAddress,
+        address _feeAddress,
+        bool _isETH,
+        uint256 _bpFee)
+     external onlyPoolTracker returns(uint256){
         address aTokenAddress = getATokenAddress(_assetAddress);
         uint256 aTokenBalance = IERC20(aTokenAddress).balanceOf(address(this));
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
@@ -196,11 +207,11 @@ contract JustCausePool is Initializable {
         uint256 donated = interestEarned;
 
         if(!_isETH){
-            if(isVerified){
+            if(_bpFee == 0){
                 IPool(poolAddr).withdraw(_assetAddress, interestEarned, receiver);
             }
             else{
-                uint256 feeValue = calcSplit(interestEarned);
+                uint256 feeValue = calcSplit(interestEarned, _bpFee);
                 uint256 newValue = interestEarned - feeValue;
                 IPool(poolAddr).withdraw(_assetAddress, newValue, receiver);
                 IPool(poolAddr).withdraw(_assetAddress, feeValue, _feeAddress);
@@ -210,11 +221,11 @@ contract JustCausePool is Initializable {
         else{
             require(IWETHGateway(wethGatewayAddr).getWETHAddress() == _assetAddress, "asset does not match WETHGateway");
             IERC20(aTokenAddress).approve(wethGatewayAddr, interestEarned);
-            if(isVerified){
+            if(_bpFee == 0){
                 IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, interestEarned, receiver);
             }
             else{
-                uint256 feeValue = calcSplit(interestEarned);
+                uint256 feeValue = calcSplit(interestEarned, _bpFee);
                 uint256 newValue = interestEarned - feeValue;
                 IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, newValue, receiver);
                 IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, feeValue, _feeAddress);
@@ -228,11 +239,11 @@ contract JustCausePool is Initializable {
     /**
     * @dev function calculates the fee paid out to protocol for non-verified pools
     * @param _amount the amount to be split
-    * @return uint256 0.2% of amount
+    * @param _bpFee basis points (parts per 10,000) ex. 20 = 0.2%
+    * @return uint256 fee to be paid from amount
     **/
-    function calcSplit(uint256 _amount) internal pure returns(uint256) {
-        uint256 bp = 20; // 0.20% in basis points (parts per 10,000)
-        return (_amount * bp) / 10000;
+    function calcSplit(uint256 _amount, uint256 _bpFee) internal pure returns(uint256) {
+        return (_amount * _bpFee) / 10000; // % in basis points (parts per 10,000)
     }
 
     /**

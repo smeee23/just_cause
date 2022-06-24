@@ -23,6 +23,7 @@ import aavePoolAddressReducer from './aavePoolAddress'
 import networkIdReducer from './networkId'
 import claimReducer from './claim'
 import approveReducer from './approve'
+import shareReducer from './share'
 
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
@@ -47,7 +48,8 @@ const rootReducer = (history) => combineReducers({
 	networkId: networkIdReducer,
 	claim: claimReducer,
 	approve: approveReducer,
-	
+	share: shareReducer,
+
 	router: connectRouter(history),
 })
 

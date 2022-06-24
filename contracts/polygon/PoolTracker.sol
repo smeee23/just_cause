@@ -45,10 +45,12 @@ contract PoolTracker is ReentrancyGuard {
     mapping(address => address[]) private contributors;
     mapping(address => address[]) private receivers;
     address[] private verifiedPools;
+    uint256[5] private fees;
+    uint256 bpFee;
+    address constant MULTI_SIG = address(0x78726673245fdb56425c8bd782f6FaA3E447625A);
 
     address poolAddr;
     address wethGatewayAddr;
-    address validator;
 
     event AddPool(address pool, string name, address receiver);
     event AddDeposit(address userAddr, address pool, address asset, uint256 amount);
@@ -97,15 +99,26 @@ contract PoolTracker is ReentrancyGuard {
     }
 
     /**
+    * @dev Only multisig can call functions marked by this modifier.
+    **/
+    modifier onlyMultiSig(){
+        require(MULTI_SIG == msg.sender, "not the multi_sig");
+        _;
+    }
+
+
+    /**
     * @dev Constructor.
     */
     constructor (address _poolAddressesProviderAddr, address _wethGatewayAddr) {
-        validator = msg.sender;
         baseJCPool = new JustCausePool();
         baseERC721 = new JCDepositorERC721();
 
         poolAddr = IPoolAddressesProvider(_poolAddressesProviderAddr).getPool();
         wethGatewayAddr = address(_wethGatewayAddr);
+
+        fees = [0, 10, 20, 30, 40];
+        bpFee = fees[2];
     }
 
     /**
@@ -176,8 +189,8 @@ contract PoolTracker is ReentrancyGuard {
         address _pool,
         bool _isETH
     ) external onlyPools(_pool) nonReentrant() onlyAcceptedToken(_asset){
-        
-        uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset, validator, _isETH);
+
+        uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset, MULTI_SIG, _isETH, bpFee);
         totalDonated[_asset] += amount;
         emit Claim(msg.sender, IJustCausePool(_pool).getRecipient(), _pool, _asset, amount);
     }
@@ -188,6 +201,8 @@ contract PoolTracker is ReentrancyGuard {
      * @dev Deploys and returns the address of a clone that mimics the behaviour of `implementation`.
      *
      * This function uses the create opcode, which should never revert.
+     *
+     * from OpenZeppelin Contracts v4.4.1 (proxy/Clones.sol)
      **/
     function clone(address basePool) internal returns (address instance) {
         assembly {
@@ -223,7 +238,7 @@ contract PoolTracker is ReentrancyGuard {
         address jcpChild = clone(address(baseJCPool));
         address erc721Child = clone(address(baseERC721));
         bool isVerified;
-        if(msg.sender == validator){
+        if(msg.sender == MULTI_SIG){
             verifiedPools.push(jcpChild);
             isVerified = true;
         }
@@ -235,6 +250,20 @@ contract PoolTracker is ReentrancyGuard {
 
         isPool[jcpChild] = true;
         emit AddPool(jcpChild, _name, _receiver);
+    }
+
+    /**
+    * @param feeKey accepts 0 - 4 as keys to set the fixed rate of fees
+    **/
+    function setBasePointFee(uint256 feeKey) public onlyMultiSig() {
+        bpFee = fees[feeKey];
+    }
+
+    /**
+    * @return bpFee current bpFee
+    **/
+    function getBpFee() public view onlyMultiSig() returns(uint256) {
+        return bpFee;
     }
 
     /**
@@ -269,10 +298,10 @@ contract PoolTracker is ReentrancyGuard {
     }
 
     /**
-    * @return address of validator
+    * @return address of multi_sig
     **/
-    function getValidator() public view returns(address){
-        return validator;
+    function getMultiSig() public pure returns(address){
+        return MULTI_SIG;
     }
 
     /**

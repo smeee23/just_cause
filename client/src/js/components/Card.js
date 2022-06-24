@@ -24,9 +24,10 @@ import { updateTokenMap } from "../actions/tokenMap"
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
+import { updateShare } from  "../actions/share";
 
 import { getBalance, getContractInfo } from '../func/contractInteractions';
-import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowTwitterShare, numberWithCommas} from '../func/ancillaryFunctions';
+import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, numberWithCommas} from '../func/ancillaryFunctions';
 import { Modal, SmallModal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
@@ -34,6 +35,7 @@ import ClaimModal from '../components/modals/ClaimModal'
 import ApproveModal from '../components/modals/ApproveModal'
 import PendingTxModal from "../components/modals/PendingTxModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
+import ShareModal from "../components/modals/ShareModal";
 
 
 class Card extends Component {
@@ -114,7 +116,7 @@ class Card extends Component {
 		return <img alt="" style={{width:'auto', maxWidth:'300px', height:'auto'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
 	}
 
-	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash) => {
+	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title) => {
 		if (!acceptedTokenInfo) return '';
 		if (!this.props.tokenMap) return '';
 
@@ -148,7 +150,7 @@ class Card extends Component {
 				</div>
 				<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
 					<p className="mr">{about}</p>
-					<Button tweet="tweet" callback={() => redirectWindowTwitterShare("https://twitter.com/share?url="+encodeURIComponent("https://www.justcause.finance/#/just_cause/search?address=") + address)}/>
+					<Button share="share" callback={async() => await this.share(address, title )} />
 				</div>
 
 				<div /*style={{fontSize:17}}*/ className="card__body__column__seven">
@@ -262,6 +264,18 @@ class Card extends Component {
 		}
 		console.log("approve", result);
 	}
+
+	getShareModal = () => {
+		if(this.props.share){
+			let modal = <SmallModal isOpen={true}><ShareModal info={this.props.share}/></SmallModal>
+			return modal;
+		}
+	}
+
+	share = async(poolAddress, name) => {
+		await this.props.updateShare("");
+		await this.props.updateShare({poolAddress: poolAddress, name: name});
+	}
 	displayTxInfo = async(txInfo,) => {
 		this.props.updatePendingTx('');
 		this.props.updateTxResult(txInfo);
@@ -301,7 +315,7 @@ class Card extends Component {
 
 		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
-		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash);
+		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title);
 
 		return (
 			<div className={classnames}>
@@ -328,6 +342,7 @@ class Card extends Component {
 				{this.getWithdrawAmountModal()}
 				{this.getClaimModal()}
 				{this.getApproveModal()}
+				{this.getShareModal()}
       		</div>
 		);
 	}
@@ -348,6 +363,7 @@ const mapStateToProps = state => ({
 	withdrawAmount: state.withdrawAmount,
 	claim: state.claim,
 	approve: state.approve,
+	share: state.share,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -361,6 +377,7 @@ const mapDispatchToProps = dispatch => ({
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 	updateClaim: (txInfo) => dispatch(updateClaim(txInfo)),
 	updateApprove: (txInfo) => dispatch(updateApprove(txInfo)),
+	updateShare: (share) => dispatch(updateShare(share)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card)

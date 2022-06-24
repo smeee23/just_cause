@@ -3,11 +3,12 @@ import classNames from 'classnames'
 
 import Icon from "./Icon";
 
-import Twitter from "./logos/Twitter";
+import TwitterLight from "./logos/TwitterLight";
+import TwitterDark from "./logos/TwitterDark";
 import Github from "./logos/Github";
 import Discord from "./logos/Discord";
 import Facebook from "./logos/Facebook";
-import Instagram from "./logos/Instagram";
+import LinkedIn from "./logos/LinkedIn";
 import Share from "./logos/Share";
 
 class ButtonExtraSmall extends Component {
@@ -44,7 +45,7 @@ class ButtonExtraSmall extends Component {
             </div>
           ) : null }
           { tweet ? (
-              <Twitter/>
+              <TwitterLight/>
           ) : null }
           { github ? (
               <Github/>
@@ -90,7 +91,7 @@ class ButtonSmall extends Component {
             </div>
           ) : null }
           { tweet ? (
-              <Twitter/>
+              <TwitterLight/>
           ) : null }
         </div>
         {this.displayLine(tweet)}
@@ -101,15 +102,15 @@ class ButtonSmall extends Component {
 
 class Button extends Component {
 
-  displayLine = (tweet, github, discord, facebook, instagram, share) => {
-    if(!tweet && !github && !discord && !facebook && !instagram && !share){
+  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d) => {
+    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
     }
   }
 	render() {
-		const { text, icon, tweet, github, discord, facebook, instagram, share, href, callback, disabled, lg, logo } = this.props;
+		const { text, icon, tweet, tweet_d, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -133,7 +134,10 @@ class Button extends Component {
             </div>
           ) : null }
           { tweet ? (
-              <Twitter/>
+              <TwitterLight/>
+          ) : null }
+          { tweet_d ? (
+              <TwitterDark/>
           ) : null }
           { github ? (
               <Github/>
@@ -144,14 +148,14 @@ class Button extends Component {
           { facebook ? (
               <Facebook/>
           ) : null }
-          { instagram ? (
-              <Instagram/>
+          { linkedin ? (
+              <LinkedIn/>
           ) : null }
           { share ? (
               <Share/>
           ) : null }
         </div>
-        {this.displayLine(tweet, github, discord, facebook, instagram, share)}
+        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d)}
       </button>
 		);
 	}

@@ -20,6 +20,7 @@ import {updateDeployInfo} from "../actions/deployInfo";
 import { updateDepositAmount } from  "../actions/depositAmount";
 import { updateWithdrawAmount } from  "../actions/withdrawAmount";
 
+
 import { updatePoolInfo, addDeployedPool } from '../func/contractInteractions';
 
 class Dashboard extends Component {
@@ -163,9 +164,9 @@ class Dashboard extends Component {
 		console.log("spot", this.state.selectedTokenIndex );
 
 		let info;
-		if(this.state.selectedTokenIndex === 0) info = "Verified pools are created by the JustCause team, and the recipients of the donations are known and established entities.";
-		else if (this.state.selectedTokenIndex === 1) info = "Causes for which you are the receiving address.";
-		else if (this.state.selectedTokenIndex === 2) info = "Causes you have contributed to. Includes past and present contributions.";
+		if(this.state.selectedTokenIndex === 0) info = "The recipients of verified pools are known and established entities";
+		else if (this.state.selectedTokenIndex === 1) info = "Causes for which you are the receiving address";
+		else if (this.state.selectedTokenIndex === 2) info = "Causes you have contributed to";
 		return (
 			<div style={{marginTop: "25px", maxWidth: "300px", alignItems:"center", justifyContent:"center"}}>
 				<p className="mr">{info}</p>
@@ -254,6 +255,7 @@ const mapDispatchToProps = dispatch => ({
 	updateDeployInfo: (res) => dispatch(updateDeployInfo(res)),
 	updateDepositAmount: (amnt) => dispatch(updateDepositAmount(amnt)),
 	updateWithdrawAmount: (amount) => dispatch(updateWithdrawAmount(amount)),
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

@@ -121,6 +121,11 @@
           "internalType": "bool",
           "name": "_isETH",
           "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_bpFee",
+          "type": "uint256"
         }
       ],
       "name": "withdrawDonations",
@@ -464,7 +469,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getATokenAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"aTokenAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getATokenBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getAaveLiquidityIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"liquidityIndex\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAbout\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAcceptedTokens\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getClaimedInterest\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getERC721Address\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getIsVerified\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMetaUri\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPicHash\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPoolInfo\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"getPoolTokenInfo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRecipient\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getReserveNormalizedIncome\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getTotalDeposits\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getUnclaimedInterest\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"_acceptedTokens\",\"type\":\"address[]\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_about\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_picHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_metaUri\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_receiver\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_poolAddr\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_wethGatewayAddr\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_erc721Addr\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"_isVerified\",\"type\":\"bool\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_depositor\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"_isETH\",\"type\":\"bool\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_feeAddress\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"_isETH\",\"type\":\"bool\"}],\"name\":\"withdrawDonations\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"deposit(address,uint256)\":{\"details\":\"Function updates total deposits.\",\"params\":{\"_amount\":\"The amount of supplied assets*\",\"_assetAddress\":\"The address of the underlying asset of the reserve\"}},\"getATokenAddress(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"aTokenAddress\":\"address of Aave's aToken for asset*\"}},\"getATokenBalance(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"aTokenBalance Pool balance of aToken for the asset*\"}},\"getAaveLiquidityIndex(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"liquidityIndex\":\"reserve's liquidity index\"}},\"getAbout()\":{\"returns\":{\"_0\":\"about ipfs hash of pool description of JCP.*\"}},\"getAcceptedTokens()\":{\"returns\":{\"_0\":\"acceptedTokens List of tokens to be accepted by JCP.*\"}},\"getClaimedInterest(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"claimedInterest interest that has been claimed (no longer in contract)*\"}},\"getERC721Address()\":{\"returns\":{\"_0\":\"erc721Addr address of receiver of JCP donations.*\"}},\"getIsVerified()\":{\"returns\":{\"_0\":\"isVerified indicates whether JCP is verified*\"}},\"getMetaUri()\":{\"returns\":{\"_0\":\"metaUri meta info uri for nft of JCP.*\"}},\"getName()\":{\"returns\":{\"_0\":\"name String name of JCP.*\"}},\"getPicHash()\":{\"returns\":{\"_0\":\"picHash ipfs hash of pic of JCP.*\"}},\"getPoolInfo()\":{\"returns\":{\"_0\":\"acceptedTokens List of tokens to be accepted by JCP.\",\"_1\":\"name String name of JCP.\",\"_2\":\"about ipfs hash of pool description of JCP.\",\"_3\":\"picHash ipfs hash of pic of JCP.\",\"_4\":\"metaUri meta info uri for nft of JCP.\",\"_5\":\"receiver address of receiver of JCP donations.\",\"_6\":\"isVerified indicates whether JCP is verified*\"}},\"getPoolTokenInfo(address)\":{\"params\":{\"_asset\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"liquidityIndex reserve's liquidity index\",\"_1\":\"normalizedIncome reserve's normalized income\",\"_2\":\"aTokenBalance Pool balance of aToken for the asset\",\"_3\":\"claimedInterest interest that has been claimed (no longer in contract)\",\"_4\":\"unclaimedInterest accrued interest that has not yet been claimed\",\"_5\":\"totalDeposit total assets deposited in pool\",\"_6\":\"aTokenAddress address of Aave's aToken for asset\"}},\"getRecipient()\":{\"returns\":{\"_0\":\"receiver address of receiver of JCP donations.*\"}},\"getReserveNormalizedIncome(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"normalizedIncome reserve's normalized income\"}},\"getTotalDeposits(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"totalDeposit total assets deposited in pool*\"}},\"getUnclaimedInterest(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"unclaimedInterest accrued interest that has not yet been claimed*\"}},\"initialize(address[],string,string,string,string,address,address,address,address,bool)\":{\"details\":\"Function is invoked by the PoolTacker contract when a JustCausePool proxy is created.\",\"params\":{\"_about\":\"ipfs hash of pool description of JCP.\",\"_acceptedTokens\":\"List of tokens to be accepted by JCP.\",\"_erc721Addr\":\"address of nft contract for pool.\",\"_isVerified\":\"indicates whether JCP is verified*\",\"_metaUri\":\"meta info uri for nft of JCP.\",\"_name\":\"String name of JCP.\",\"_picHash\":\"ipfs hash of pic of JCP.\",\"_receiver\":\"address of receiver of JCP donations.\"}},\"withdraw(address,uint256,address,bool)\":{\"details\":\"Function withdraws from Aave pools, exchanging this contracts aTokens for reserve tokens for user deposits.\",\"params\":{\"_amount\":\"The amount of withdraw assets\",\"_assetAddress\":\"The address of the underlying asset of the reserve\",\"_depositor\":\"The address making the deposit\",\"_isETH\":\"bool indicating if asset is the base token of network (eth/matic/...)*\"}},\"withdrawDonations(address,address,bool)\":{\"details\":\"Function claims donations for receiver. Calls Aave pools exchanging this contracts aTokens for reserve tokens for interestEarned amount. Calculates interestEarned and subtracts 0.2% fee from claim amount.\",\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\",\"_feeAddress\":\"The address that collects the 0.2% protocol fee\",\"_isETH\":\"bool indicating if asset is the base token of network (eth/matic/...)*\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"deposit(address,uint256)\":{\"notice\":\"Only called by PoolTracker.\"},\"getPoolInfo()\":{\"notice\":\"Returns general pool information\"},\"getPoolTokenInfo(address)\":{\"notice\":\"Returns asset specific pool information\"},\"initialize(address[],string,string,string,string,address,address,address,address,bool)\":{\"notice\":\"Initializes the JustCause Pool proxy contracts.\"},\"withdraw(address,uint256,address,bool)\":{\"notice\":\"Only called by PoolTracker.\"},\"withdrawDonations(address,address,bool)\":{\"notice\":\"Only called by PoolTracker.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/polygon/interfaces/protocol/IJustCausePool.sol\":\"IJustCausePool\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/polygon/interfaces/protocol/IJustCausePool.sol\":{\"keccak256\":\"0xa95b3e421a873858cd5729ed9b65256c5ab28f353d6f1afd33c0c0889f12f105\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://5cce687f65695b942a822dee983583c84b549a6eb5ce6538e4e936139af4cdd1\",\"dweb:/ipfs/QmdcvGbDKLoofFnnmRRZYLEfuXTQ2hdmGteuiFAC6CtwRv\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getATokenAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"aTokenAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getATokenBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getAaveLiquidityIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"liquidityIndex\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAbout\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAcceptedTokens\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getClaimedInterest\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getERC721Address\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getIsVerified\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMetaUri\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPicHash\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPoolInfo\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"getPoolTokenInfo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRecipient\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getReserveNormalizedIncome\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getTotalDeposits\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"}],\"name\":\"getUnclaimedInterest\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"_acceptedTokens\",\"type\":\"address[]\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_about\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_picHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_metaUri\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_receiver\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_poolAddr\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_wethGatewayAddr\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_erc721Addr\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"_isVerified\",\"type\":\"bool\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_depositor\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"_isETH\",\"type\":\"bool\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_feeAddress\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"_isETH\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"_bpFee\",\"type\":\"uint256\"}],\"name\":\"withdrawDonations\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"deposit(address,uint256)\":{\"details\":\"Function updates total deposits.\",\"params\":{\"_amount\":\"The amount of supplied assets*\",\"_assetAddress\":\"The address of the underlying asset of the reserve\"}},\"getATokenAddress(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"aTokenAddress\":\"address of Aave's aToken for asset*\"}},\"getATokenBalance(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"aTokenBalance Pool balance of aToken for the asset*\"}},\"getAaveLiquidityIndex(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"liquidityIndex\":\"reserve's liquidity index\"}},\"getAbout()\":{\"returns\":{\"_0\":\"about ipfs hash of pool description of JCP.*\"}},\"getAcceptedTokens()\":{\"returns\":{\"_0\":\"acceptedTokens List of tokens to be accepted by JCP.*\"}},\"getClaimedInterest(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"claimedInterest interest that has been claimed (no longer in contract)*\"}},\"getERC721Address()\":{\"returns\":{\"_0\":\"erc721Addr address of receiver of JCP donations.*\"}},\"getIsVerified()\":{\"returns\":{\"_0\":\"isVerified indicates whether JCP is verified*\"}},\"getMetaUri()\":{\"returns\":{\"_0\":\"metaUri meta info uri for nft of JCP.*\"}},\"getName()\":{\"returns\":{\"_0\":\"name String name of JCP.*\"}},\"getPicHash()\":{\"returns\":{\"_0\":\"picHash ipfs hash of pic of JCP.*\"}},\"getPoolInfo()\":{\"returns\":{\"_0\":\"acceptedTokens List of tokens to be accepted by JCP.\",\"_1\":\"name String name of JCP.\",\"_2\":\"about ipfs hash of pool description of JCP.\",\"_3\":\"picHash ipfs hash of pic of JCP.\",\"_4\":\"metaUri meta info uri for nft of JCP.\",\"_5\":\"receiver address of receiver of JCP donations.\",\"_6\":\"isVerified indicates whether JCP is verified*\"}},\"getPoolTokenInfo(address)\":{\"params\":{\"_asset\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"liquidityIndex reserve's liquidity index\",\"_1\":\"normalizedIncome reserve's normalized income\",\"_2\":\"aTokenBalance Pool balance of aToken for the asset\",\"_3\":\"claimedInterest interest that has been claimed (no longer in contract)\",\"_4\":\"unclaimedInterest accrued interest that has not yet been claimed\",\"_5\":\"totalDeposit total assets deposited in pool\",\"_6\":\"aTokenAddress address of Aave's aToken for asset\"}},\"getRecipient()\":{\"returns\":{\"_0\":\"receiver address of receiver of JCP donations.*\"}},\"getReserveNormalizedIncome(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"normalizedIncome reserve's normalized income\"}},\"getTotalDeposits(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"totalDeposit total assets deposited in pool*\"}},\"getUnclaimedInterest(address)\":{\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\"},\"returns\":{\"_0\":\"unclaimedInterest accrued interest that has not yet been claimed*\"}},\"initialize(address[],string,string,string,string,address,address,address,address,bool)\":{\"details\":\"Function is invoked by the PoolTacker contract when a JustCausePool proxy is created.\",\"params\":{\"_about\":\"ipfs hash of pool description of JCP.\",\"_acceptedTokens\":\"List of tokens to be accepted by JCP.\",\"_erc721Addr\":\"address of nft contract for pool.\",\"_isVerified\":\"indicates whether JCP is verified*\",\"_metaUri\":\"meta info uri for nft of JCP.\",\"_name\":\"String name of JCP.\",\"_picHash\":\"ipfs hash of pic of JCP.\",\"_receiver\":\"address of receiver of JCP donations.\"}},\"withdraw(address,uint256,address,bool)\":{\"details\":\"Function withdraws from Aave pools, exchanging this contracts aTokens for reserve tokens for user deposits.\",\"params\":{\"_amount\":\"The amount of withdraw assets\",\"_assetAddress\":\"The address of the underlying asset of the reserve\",\"_depositor\":\"The address making the deposit\",\"_isETH\":\"bool indicating if asset is the base token of network (eth/matic/...)*\"}},\"withdrawDonations(address,address,bool,uint256)\":{\"details\":\"Function claims donations for receiver. Calls Aave pools exchanging this contracts aTokens for reserve tokens for interestEarned amount. Calculates interestEarned and subtracts 0.2% fee from claim amount.\",\"params\":{\"_assetAddress\":\"The address of the underlying asset of the reserve\",\"_bpFee\":\"fee rate paid to the protocol*\",\"_feeAddress\":\"The address that collects the 0.2% protocol fee\",\"_isETH\":\"bool indicating if asset is the base token of network (eth/matic/...)\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"deposit(address,uint256)\":{\"notice\":\"Only called by PoolTracker.\"},\"getPoolInfo()\":{\"notice\":\"Returns general pool information\"},\"getPoolTokenInfo(address)\":{\"notice\":\"Returns asset specific pool information\"},\"initialize(address[],string,string,string,string,address,address,address,address,bool)\":{\"notice\":\"Initializes the JustCause Pool proxy contracts.\"},\"withdraw(address,uint256,address,bool)\":{\"notice\":\"Only called by PoolTracker.\"},\"withdrawDonations(address,address,bool,uint256)\":{\"notice\":\"Only called by PoolTracker.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/polygon/interfaces/protocol/IJustCausePool.sol\":\"IJustCausePool\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/polygon/interfaces/protocol/IJustCausePool.sol\":{\"keccak256\":\"0x85d791156014fcafdc724ccd87b355f1ab9e58805529e8973d90634f66347635\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://3688e835f7c165796e7746caad14bce828b573597d320ce92d4edd893d6f0c0f\",\"dweb:/ipfs/QmcvHntyQ3pzoK14h1hG9ugrkfN4CqF5fRojioT37V6PhR\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -472,28 +477,28 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: agpl-3.0\npragma solidity 0.8.9;\n\ninterface IJustCausePool {\n\n    /**\n    * @notice Initializes the JustCause Pool proxy contracts.\n    * @dev Function is invoked by the PoolTacker contract when a JustCausePool proxy is created.\n    * @param _acceptedTokens List of tokens to be accepted by JCP.\n    * @param _name String name of JCP.\n    * @param _about ipfs hash of pool description of JCP.\n    * @param _picHash ipfs hash of pic of JCP.\n    * @param _metaUri meta info uri for nft of JCP.\n    * @param _receiver address of receiver of JCP donations.\n    * @param _erc721Addr address of nft contract for pool.\n    * @param _isVerified indicates whether JCP is verified\n    **/\n    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddr, address _wethGatewayAddr, address _erc721Addr, bool _isVerified) external;\n\n    /**\n    * @notice Only called by PoolTracker.\n    * @dev Function updates total deposits.\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @param _amount The amount of supplied assets\n    **/\n    function deposit(address _assetAddress, uint256 _amount) external;\n\n    /**\n    * @notice Only called by PoolTracker.\n    * @dev Function withdraws from Aave pools, exchanging this contracts aTokens\n    * for reserve tokens for user deposits.\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @param _amount The amount of withdraw assets\n    * @param _depositor The address making the deposit\n    * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)\n    **/\n    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH) external;\n\n    /**\n    * @notice Only called by PoolTracker.\n    * @dev Function claims donations for receiver. Calls Aave pools exchanging this\n    * contracts aTokens for reserve tokens for interestEarned amount.\n    * Calculates interestEarned and subtracts 0.2% fee from claim amount.\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @param _feeAddress The address that collects the 0.2% protocol fee\n    * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)\n    **/\n    function withdrawDonations(address _assetAddress, address _feeAddress, bool _isETH) external returns(uint256);\n\n    /**\n    * @return acceptedTokens List of tokens to be accepted by JCP.\n    **/\n    function getAcceptedTokens() external view returns(address[] memory);\n\n    /**\n    * @return name String name of JCP.\n    **/\n    function getName() external view returns(string memory);\n\n    /**\n    * @return about ipfs hash of pool description of JCP.\n    **/\n    function getAbout() external view returns(string memory);\n\n    /**\n    * @return picHash ipfs hash of pic of JCP.\n    **/\n    function getPicHash() external view returns(string memory);\n\n    /**\n    * @return metaUri meta info uri for nft of JCP.\n    **/\n    function getMetaUri() external view returns(string memory);\n\n    /**\n    * @return isVerified indicates whether JCP is verified\n    **/\n    function getIsVerified() external view returns(bool);\n\n    /**\n    * @return receiver address of receiver of JCP donations.\n    **/\n    function getRecipient() external view returns(address);\n\n    /**\n    * @return erc721Addr address of receiver of JCP donations.\n    **/\n    function getERC721Address() external view returns(address);\n\n        /**\n    * @notice Returns general pool information\n    * @return acceptedTokens List of tokens to be accepted by JCP.\n    * @return name String name of JCP.\n    * @return about ipfs hash of pool description of JCP.\n    * @return picHash ipfs hash of pic of JCP.\n    * @return metaUri meta info uri for nft of JCP.\n    * @return receiver address of receiver of JCP donations.\n    * @return isVerified indicates whether JCP is verified\n    **/\n    function getPoolInfo() external view returns (address[] memory, address, bool, string memory, string memory, string memory, string memory);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return aTokenAddress address of Aave's aToken for asset\n    **/\n    function getATokenAddress(address _assetAddress) external view returns(address aTokenAddress);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return totalDeposit total assets deposited in pool\n    **/\n    function getTotalDeposits(address _assetAddress) external view returns(uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return unclaimedInterest accrued interest that has not yet been claimed\n    **/\n    function getUnclaimedInterest(address _assetAddress) external view returns (uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return claimedInterest interest that has been claimed (no longer in contract)\n    **/\n    function getClaimedInterest(address _assetAddress) external view returns (uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return aTokenBalance Pool balance of aToken for the asset\n    **/\n    function getATokenBalance(address _assetAddress) external view returns (uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return normalizedIncome reserve's normalized income\n    */\n    function getReserveNormalizedIncome(address _assetAddress) external view returns(uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return liquidityIndex reserve's liquidity index\n    */\n    function getAaveLiquidityIndex(address _assetAddress) external view returns(uint256 liquidityIndex);\n\n    /**\n    * @notice Returns asset specific pool information\n    * @param _asset The address of the underlying asset of the reserve\n    * @return liquidityIndex reserve's liquidity index\n    * @return normalizedIncome reserve's normalized income\n    * @return aTokenBalance Pool balance of aToken for the asset\n    * @return claimedInterest interest that has been claimed (no longer in contract)\n    * @return unclaimedInterest accrued interest that has not yet been claimed\n    * @return totalDeposit total assets deposited in pool\n    * @return aTokenAddress address of Aave's aToken for asset\n    */\n    function getPoolTokenInfo(address _asset) external view returns(uint256, uint256, uint256, uint256, uint256, uint256, address);\n}",
+  "source": "// SPDX-License-Identifier: agpl-3.0\npragma solidity 0.8.9;\n\ninterface IJustCausePool {\n\n    /**\n    * @notice Initializes the JustCause Pool proxy contracts.\n    * @dev Function is invoked by the PoolTacker contract when a JustCausePool proxy is created.\n    * @param _acceptedTokens List of tokens to be accepted by JCP.\n    * @param _name String name of JCP.\n    * @param _about ipfs hash of pool description of JCP.\n    * @param _picHash ipfs hash of pic of JCP.\n    * @param _metaUri meta info uri for nft of JCP.\n    * @param _receiver address of receiver of JCP donations.\n    * @param _erc721Addr address of nft contract for pool.\n    * @param _isVerified indicates whether JCP is verified\n    **/\n    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddr, address _wethGatewayAddr, address _erc721Addr, bool _isVerified) external;\n\n    /**\n    * @notice Only called by PoolTracker.\n    * @dev Function updates total deposits.\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @param _amount The amount of supplied assets\n    **/\n    function deposit(address _assetAddress, uint256 _amount) external;\n\n    /**\n    * @notice Only called by PoolTracker.\n    * @dev Function withdraws from Aave pools, exchanging this contracts aTokens\n    * for reserve tokens for user deposits.\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @param _amount The amount of withdraw assets\n    * @param _depositor The address making the deposit\n    * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)\n    **/\n    function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH) external;\n\n    /**\n    * @notice Only called by PoolTracker.\n    * @dev Function claims donations for receiver. Calls Aave pools exchanging this\n    * contracts aTokens for reserve tokens for interestEarned amount.\n    * Calculates interestEarned and subtracts 0.2% fee from claim amount.\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @param _feeAddress The address that collects the 0.2% protocol fee\n    * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)\n    * @param _bpFee fee rate paid to the protocol\n    **/\n    function withdrawDonations(address _assetAddress, address _feeAddress, bool _isETH, uint256 _bpFee) external returns(uint256);\n\n    /**\n    * @return acceptedTokens List of tokens to be accepted by JCP.\n    **/\n    function getAcceptedTokens() external view returns(address[] memory);\n\n    /**\n    * @return name String name of JCP.\n    **/\n    function getName() external view returns(string memory);\n\n    /**\n    * @return about ipfs hash of pool description of JCP.\n    **/\n    function getAbout() external view returns(string memory);\n\n    /**\n    * @return picHash ipfs hash of pic of JCP.\n    **/\n    function getPicHash() external view returns(string memory);\n\n    /**\n    * @return metaUri meta info uri for nft of JCP.\n    **/\n    function getMetaUri() external view returns(string memory);\n\n    /**\n    * @return isVerified indicates whether JCP is verified\n    **/\n    function getIsVerified() external view returns(bool);\n\n    /**\n    * @return receiver address of receiver of JCP donations.\n    **/\n    function getRecipient() external view returns(address);\n\n    /**\n    * @return erc721Addr address of receiver of JCP donations.\n    **/\n    function getERC721Address() external view returns(address);\n\n        /**\n    * @notice Returns general pool information\n    * @return acceptedTokens List of tokens to be accepted by JCP.\n    * @return name String name of JCP.\n    * @return about ipfs hash of pool description of JCP.\n    * @return picHash ipfs hash of pic of JCP.\n    * @return metaUri meta info uri for nft of JCP.\n    * @return receiver address of receiver of JCP donations.\n    * @return isVerified indicates whether JCP is verified\n    **/\n    function getPoolInfo() external view returns (address[] memory, address, bool, string memory, string memory, string memory, string memory);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return aTokenAddress address of Aave's aToken for asset\n    **/\n    function getATokenAddress(address _assetAddress) external view returns(address aTokenAddress);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return totalDeposit total assets deposited in pool\n    **/\n    function getTotalDeposits(address _assetAddress) external view returns(uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return unclaimedInterest accrued interest that has not yet been claimed\n    **/\n    function getUnclaimedInterest(address _assetAddress) external view returns (uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return claimedInterest interest that has been claimed (no longer in contract)\n    **/\n    function getClaimedInterest(address _assetAddress) external view returns (uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return aTokenBalance Pool balance of aToken for the asset\n    **/\n    function getATokenBalance(address _assetAddress) external view returns (uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return normalizedIncome reserve's normalized income\n    */\n    function getReserveNormalizedIncome(address _assetAddress) external view returns(uint256);\n\n    /**\n    * @param _assetAddress The address of the underlying asset of the reserve\n    * @return liquidityIndex reserve's liquidity index\n    */\n    function getAaveLiquidityIndex(address _assetAddress) external view returns(uint256 liquidityIndex);\n\n    /**\n    * @notice Returns asset specific pool information\n    * @param _asset The address of the underlying asset of the reserve\n    * @return liquidityIndex reserve's liquidity index\n    * @return normalizedIncome reserve's normalized income\n    * @return aTokenBalance Pool balance of aToken for the asset\n    * @return claimedInterest interest that has been claimed (no longer in contract)\n    * @return unclaimedInterest accrued interest that has not yet been claimed\n    * @return totalDeposit total assets deposited in pool\n    * @return aTokenAddress address of Aave's aToken for asset\n    */\n    function getPoolTokenInfo(address _asset) external view returns(uint256, uint256, uint256, uint256, uint256, uint256, address);\n}",
   "sourcePath": "/home/smeee/just_cause/contracts/polygon/interfaces/protocol/IJustCausePool.sol",
   "ast": {
     "absolutePath": "project:/contracts/polygon/interfaces/protocol/IJustCausePool.sol",
     "exportedSymbols": {
       "IJustCausePool": [
-        6444
+        5681
       ]
     },
-    "id": 6445,
+    "id": 5682,
     "license": "agpl-3.0",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 6242,
+        "id": 5477,
         "literals": [
           "solidity",
           "0.8",
           ".9"
         ],
         "nodeType": "PragmaDirective",
-        "src": "37:22:28"
+        "src": "37:22:22"
       },
       {
         "abstract": false,
@@ -502,42 +507,42 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 6444,
+        "id": 5681,
         "linearizedBaseContracts": [
-          6444
+          5681
         ],
         "name": "IJustCausePool",
-        "nameLocation": "71:14:28",
+        "nameLocation": "71:14:22",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "documentation": {
-              "id": 6243,
+              "id": 5478,
               "nodeType": "StructuredDocumentation",
-              "src": "93:612:28",
+              "src": "93:612:22",
               "text": " @notice Initializes the JustCause Pool proxy contracts.\n @dev Function is invoked by the PoolTacker contract when a JustCausePool proxy is created.\n @param _acceptedTokens List of tokens to be accepted by JCP.\n @param _name String name of JCP.\n @param _about ipfs hash of pool description of JCP.\n @param _picHash ipfs hash of pic of JCP.\n @param _metaUri meta info uri for nft of JCP.\n @param _receiver address of receiver of JCP donations.\n @param _erc721Addr address of nft contract for pool.\n @param _isVerified indicates whether JCP is verified*"
             },
             "functionSelector": "bbc41f48",
-            "id": 6267,
+            "id": 5502,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "initialize",
-            "nameLocation": "719:10:28",
+            "nameLocation": "719:10:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6265,
+              "id": 5500,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6246,
+                  "id": 5481,
                   "mutability": "mutable",
                   "name": "_acceptedTokens",
-                  "nameLocation": "747:15:28",
+                  "nameLocation": "747:15:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "730:32:28",
+                  "scope": 5502,
+                  "src": "730:32:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -546,19 +551,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 6244,
+                      "id": 5479,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "730:7:28",
+                      "src": "730:7:22",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 6245,
+                    "id": 5480,
                     "nodeType": "ArrayTypeName",
-                    "src": "730:9:28",
+                    "src": "730:9:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -568,13 +573,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6248,
+                  "id": 5483,
                   "mutability": "mutable",
                   "name": "_name",
-                  "nameLocation": "778:5:28",
+                  "nameLocation": "778:5:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "764:19:28",
+                  "scope": 5502,
+                  "src": "764:19:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -582,10 +587,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6247,
+                    "id": 5482,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "764:6:28",
+                    "src": "764:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -595,13 +600,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6250,
+                  "id": 5485,
                   "mutability": "mutable",
                   "name": "_about",
-                  "nameLocation": "799:6:28",
+                  "nameLocation": "799:6:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "785:20:28",
+                  "scope": 5502,
+                  "src": "785:20:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -609,10 +614,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6249,
+                    "id": 5484,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "785:6:28",
+                    "src": "785:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -622,13 +627,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6252,
+                  "id": 5487,
                   "mutability": "mutable",
                   "name": "_picHash",
-                  "nameLocation": "821:8:28",
+                  "nameLocation": "821:8:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "807:22:28",
+                  "scope": 5502,
+                  "src": "807:22:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -636,10 +641,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6251,
+                    "id": 5486,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "807:6:28",
+                    "src": "807:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -649,13 +654,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6254,
+                  "id": 5489,
                   "mutability": "mutable",
                   "name": "_metaUri",
-                  "nameLocation": "845:8:28",
+                  "nameLocation": "845:8:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "831:22:28",
+                  "scope": 5502,
+                  "src": "831:22:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -663,10 +668,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6253,
+                    "id": 5488,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "831:6:28",
+                    "src": "831:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -676,13 +681,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6256,
+                  "id": 5491,
                   "mutability": "mutable",
                   "name": "_receiver",
-                  "nameLocation": "863:9:28",
+                  "nameLocation": "863:9:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "855:17:28",
+                  "scope": 5502,
+                  "src": "855:17:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -690,10 +695,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6255,
+                    "id": 5490,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "855:7:28",
+                    "src": "855:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -704,13 +709,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6258,
+                  "id": 5493,
                   "mutability": "mutable",
                   "name": "_poolAddr",
-                  "nameLocation": "882:9:28",
+                  "nameLocation": "882:9:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "874:17:28",
+                  "scope": 5502,
+                  "src": "874:17:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -718,10 +723,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6257,
+                    "id": 5492,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "874:7:28",
+                    "src": "874:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -732,13 +737,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6260,
+                  "id": 5495,
                   "mutability": "mutable",
                   "name": "_wethGatewayAddr",
-                  "nameLocation": "901:16:28",
+                  "nameLocation": "901:16:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "893:24:28",
+                  "scope": 5502,
+                  "src": "893:24:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -746,10 +751,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6259,
+                    "id": 5494,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "893:7:28",
+                    "src": "893:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -760,13 +765,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6262,
+                  "id": 5497,
                   "mutability": "mutable",
                   "name": "_erc721Addr",
-                  "nameLocation": "927:11:28",
+                  "nameLocation": "927:11:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "919:19:28",
+                  "scope": 5502,
+                  "src": "919:19:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -774,10 +779,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6261,
+                    "id": 5496,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "919:7:28",
+                    "src": "919:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -788,13 +793,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6264,
+                  "id": 5499,
                   "mutability": "mutable",
                   "name": "_isVerified",
-                  "nameLocation": "945:11:28",
+                  "nameLocation": "945:11:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6267,
-                  "src": "940:16:28",
+                  "scope": 5502,
+                  "src": "940:16:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -802,10 +807,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 6263,
+                    "id": 5498,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "940:4:28",
+                    "src": "940:4:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -814,48 +819,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "729:228:28"
+              "src": "729:228:22"
             },
             "returnParameters": {
-              "id": 6266,
+              "id": 5501,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "966:0:28"
+              "src": "966:0:22"
             },
-            "scope": 6444,
-            "src": "710:257:28",
+            "scope": 5681,
+            "src": "710:257:22",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6268,
+              "id": 5503,
               "nodeType": "StructuredDocumentation",
-              "src": "973:226:28",
+              "src": "973:226:22",
               "text": " @notice Only called by PoolTracker.\n @dev Function updates total deposits.\n @param _assetAddress The address of the underlying asset of the reserve\n @param _amount The amount of supplied assets*"
             },
             "functionSelector": "47e7ef24",
-            "id": 6275,
+            "id": 5510,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "deposit",
-            "nameLocation": "1213:7:28",
+            "nameLocation": "1213:7:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6273,
+              "id": 5508,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6270,
+                  "id": 5505,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "1229:13:28",
+                  "nameLocation": "1229:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6275,
-                  "src": "1221:21:28",
+                  "scope": 5510,
+                  "src": "1221:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -863,10 +868,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6269,
+                    "id": 5504,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1221:7:28",
+                    "src": "1221:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -877,13 +882,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6272,
+                  "id": 5507,
                   "mutability": "mutable",
                   "name": "_amount",
-                  "nameLocation": "1252:7:28",
+                  "nameLocation": "1252:7:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6275,
-                  "src": "1244:15:28",
+                  "scope": 5510,
+                  "src": "1244:15:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -891,10 +896,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6271,
+                    "id": 5506,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1244:7:28",
+                    "src": "1244:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -903,48 +908,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1220:40:28"
+              "src": "1220:40:22"
             },
             "returnParameters": {
-              "id": 6274,
+              "id": 5509,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1269:0:28"
+              "src": "1269:0:22"
             },
-            "scope": 6444,
-            "src": "1204:66:28",
+            "scope": 5681,
+            "src": "1204:66:22",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6276,
+              "id": 5511,
               "nodeType": "StructuredDocumentation",
-              "src": "1276:452:28",
+              "src": "1276:452:22",
               "text": " @notice Only called by PoolTracker.\n @dev Function withdraws from Aave pools, exchanging this contracts aTokens\n for reserve tokens for user deposits.\n @param _assetAddress The address of the underlying asset of the reserve\n @param _amount The amount of withdraw assets\n @param _depositor The address making the deposit\n @param _isETH bool indicating if asset is the base token of network (eth/matic/...)*"
             },
             "functionSelector": "12eeff7e",
-            "id": 6287,
+            "id": 5522,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "withdraw",
-            "nameLocation": "1742:8:28",
+            "nameLocation": "1742:8:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6285,
+              "id": 5520,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6278,
+                  "id": 5513,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "1759:13:28",
+                  "nameLocation": "1759:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6287,
-                  "src": "1751:21:28",
+                  "scope": 5522,
+                  "src": "1751:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -952,10 +957,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6277,
+                    "id": 5512,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1751:7:28",
+                    "src": "1751:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -966,13 +971,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6280,
+                  "id": 5515,
                   "mutability": "mutable",
                   "name": "_amount",
-                  "nameLocation": "1782:7:28",
+                  "nameLocation": "1782:7:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6287,
-                  "src": "1774:15:28",
+                  "scope": 5522,
+                  "src": "1774:15:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -980,10 +985,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6279,
+                    "id": 5514,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1774:7:28",
+                    "src": "1774:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -993,13 +998,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6282,
+                  "id": 5517,
                   "mutability": "mutable",
                   "name": "_depositor",
-                  "nameLocation": "1799:10:28",
+                  "nameLocation": "1799:10:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6287,
-                  "src": "1791:18:28",
+                  "scope": 5522,
+                  "src": "1791:18:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1007,10 +1012,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6281,
+                    "id": 5516,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1791:7:28",
+                    "src": "1791:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1021,13 +1026,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6284,
+                  "id": 5519,
                   "mutability": "mutable",
                   "name": "_isETH",
-                  "nameLocation": "1816:6:28",
+                  "nameLocation": "1816:6:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6287,
-                  "src": "1811:11:28",
+                  "scope": 5522,
+                  "src": "1811:11:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1035,10 +1040,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 6283,
+                    "id": 5518,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1811:4:28",
+                    "src": "1811:4:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -1047,48 +1052,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1750:73:28"
+              "src": "1750:73:22"
             },
             "returnParameters": {
-              "id": 6286,
+              "id": 5521,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1832:0:28"
+              "src": "1832:0:22"
             },
-            "scope": 6444,
-            "src": "1733:100:28",
+            "scope": 5681,
+            "src": "1733:100:22",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6288,
+              "id": 5523,
               "nodeType": "StructuredDocumentation",
-              "src": "1839:522:28",
-              "text": " @notice Only called by PoolTracker.\n @dev Function claims donations for receiver. Calls Aave pools exchanging this\n contracts aTokens for reserve tokens for interestEarned amount.\n Calculates interestEarned and subtracts 0.2% fee from claim amount.\n @param _assetAddress The address of the underlying asset of the reserve\n @param _feeAddress The address that collects the 0.2% protocol fee\n @param _isETH bool indicating if asset is the base token of network (eth/matic/...)*"
+              "src": "1839:572:22",
+              "text": " @notice Only called by PoolTracker.\n @dev Function claims donations for receiver. Calls Aave pools exchanging this\n contracts aTokens for reserve tokens for interestEarned amount.\n Calculates interestEarned and subtracts 0.2% fee from claim amount.\n @param _assetAddress The address of the underlying asset of the reserve\n @param _feeAddress The address that collects the 0.2% protocol fee\n @param _isETH bool indicating if asset is the base token of network (eth/matic/...)\n @param _bpFee fee rate paid to the protocol*"
             },
-            "functionSelector": "b39824ba",
-            "id": 6299,
+            "functionSelector": "eda9c2d2",
+            "id": 5536,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "withdrawDonations",
-            "nameLocation": "2375:17:28",
+            "nameLocation": "2425:17:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6295,
+              "id": 5532,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6290,
+                  "id": 5525,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "2401:13:28",
+                  "nameLocation": "2451:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6299,
-                  "src": "2393:21:28",
+                  "scope": 5536,
+                  "src": "2443:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1096,10 +1101,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6289,
+                    "id": 5524,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2393:7:28",
+                    "src": "2443:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1110,13 +1115,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6292,
+                  "id": 5527,
                   "mutability": "mutable",
                   "name": "_feeAddress",
-                  "nameLocation": "2424:11:28",
+                  "nameLocation": "2474:11:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6299,
-                  "src": "2416:19:28",
+                  "scope": 5536,
+                  "src": "2466:19:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1124,10 +1129,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6291,
+                    "id": 5526,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2416:7:28",
+                    "src": "2466:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1138,13 +1143,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6294,
+                  "id": 5529,
                   "mutability": "mutable",
                   "name": "_isETH",
-                  "nameLocation": "2442:6:28",
+                  "nameLocation": "2492:6:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6299,
-                  "src": "2437:11:28",
+                  "scope": 5536,
+                  "src": "2487:11:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1152,33 +1157,26 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 6293,
+                    "id": 5528,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2437:4:28",
+                    "src": "2487:4:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
                   "visibility": "internal"
-                }
-              ],
-              "src": "2392:57:28"
-            },
-            "returnParameters": {
-              "id": 6298,
-              "nodeType": "ParameterList",
-              "parameters": [
+                },
                 {
                   "constant": false,
-                  "id": 6297,
+                  "id": 5531,
                   "mutability": "mutable",
-                  "name": "",
-                  "nameLocation": "-1:-1:-1",
+                  "name": "_bpFee",
+                  "nameLocation": "2508:6:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6299,
-                  "src": "2467:7:28",
+                  "scope": 5536,
+                  "src": "2500:14:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1186,10 +1184,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6296,
+                    "id": 5530,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2467:7:28",
+                    "src": "2500:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1198,48 +1196,82 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2466:9:28"
+              "src": "2442:73:22"
             },
-            "scope": 6444,
-            "src": "2366:110:28",
+            "returnParameters": {
+              "id": 5535,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5534,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5536,
+                  "src": "2533:7:22",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5533,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2533:7:22",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2532:9:22"
+            },
+            "scope": 5681,
+            "src": "2416:126:22",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6300,
+              "id": 5537,
               "nodeType": "StructuredDocumentation",
-              "src": "2482:78:28",
+              "src": "2548:78:22",
               "text": " @return acceptedTokens List of tokens to be accepted by JCP.*"
             },
             "functionSelector": "2f757006",
-            "id": 6306,
+            "id": 5543,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getAcceptedTokens",
-            "nameLocation": "2574:17:28",
+            "nameLocation": "2640:17:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6301,
+              "id": 5538,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2591:2:28"
+              "src": "2657:2:22"
             },
             "returnParameters": {
-              "id": 6305,
+              "id": 5542,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6304,
+                  "id": 5541,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6306,
-                  "src": "2616:16:28",
+                  "scope": 5543,
+                  "src": "2682:16:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1248,19 +1280,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 6302,
+                      "id": 5539,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "2616:7:28",
+                      "src": "2682:7:22",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 6303,
+                    "id": 5540,
                     "nodeType": "ArrayTypeName",
-                    "src": "2616:9:28",
+                    "src": "2682:9:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -1269,48 +1301,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2615:18:28"
+              "src": "2681:18:22"
             },
-            "scope": 6444,
-            "src": "2565:69:28",
+            "scope": 5681,
+            "src": "2631:69:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6307,
+              "id": 5544,
               "nodeType": "StructuredDocumentation",
-              "src": "2640:50:28",
+              "src": "2706:50:22",
               "text": " @return name String name of JCP.*"
             },
             "functionSelector": "17d7de7c",
-            "id": 6312,
+            "id": 5549,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getName",
-            "nameLocation": "2704:7:28",
+            "nameLocation": "2770:7:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6308,
+              "id": 5545,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2711:2:28"
+              "src": "2777:2:22"
             },
             "returnParameters": {
-              "id": 6311,
+              "id": 5548,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6310,
+                  "id": 5547,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6312,
-                  "src": "2736:13:28",
+                  "scope": 5549,
+                  "src": "2802:13:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1318,10 +1350,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6309,
+                    "id": 5546,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2736:6:28",
+                    "src": "2802:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1330,48 +1362,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2735:15:28"
+              "src": "2801:15:22"
             },
-            "scope": 6444,
-            "src": "2695:56:28",
+            "scope": 5681,
+            "src": "2761:56:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6313,
+              "id": 5550,
               "nodeType": "StructuredDocumentation",
-              "src": "2757:69:28",
+              "src": "2823:69:22",
               "text": " @return about ipfs hash of pool description of JCP.*"
             },
             "functionSelector": "343d693b",
-            "id": 6318,
+            "id": 5555,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getAbout",
-            "nameLocation": "2840:8:28",
+            "nameLocation": "2906:8:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6314,
+              "id": 5551,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2848:2:28"
+              "src": "2914:2:22"
             },
             "returnParameters": {
-              "id": 6317,
+              "id": 5554,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6316,
+                  "id": 5553,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6318,
-                  "src": "2873:13:28",
+                  "scope": 5555,
+                  "src": "2939:13:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1379,10 +1411,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6315,
+                    "id": 5552,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2873:6:28",
+                    "src": "2939:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1391,48 +1423,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2872:15:28"
+              "src": "2938:15:22"
             },
-            "scope": 6444,
-            "src": "2831:57:28",
+            "scope": 5681,
+            "src": "2897:57:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6319,
+              "id": 5556,
               "nodeType": "StructuredDocumentation",
-              "src": "2894:58:28",
+              "src": "2960:58:22",
               "text": " @return picHash ipfs hash of pic of JCP.*"
             },
             "functionSelector": "155d8e9c",
-            "id": 6324,
+            "id": 5561,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getPicHash",
-            "nameLocation": "2966:10:28",
+            "nameLocation": "3032:10:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6320,
+              "id": 5557,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2976:2:28"
+              "src": "3042:2:22"
             },
             "returnParameters": {
-              "id": 6323,
+              "id": 5560,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6322,
+                  "id": 5559,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6324,
-                  "src": "3001:13:28",
+                  "scope": 5561,
+                  "src": "3067:13:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1440,10 +1472,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6321,
+                    "id": 5558,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3001:6:28",
+                    "src": "3067:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1452,48 +1484,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3000:15:28"
+              "src": "3066:15:22"
             },
-            "scope": 6444,
-            "src": "2957:59:28",
+            "scope": 5681,
+            "src": "3023:59:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6325,
+              "id": 5562,
               "nodeType": "StructuredDocumentation",
-              "src": "3022:63:28",
+              "src": "3088:63:22",
               "text": " @return metaUri meta info uri for nft of JCP.*"
             },
             "functionSelector": "373d7c3f",
-            "id": 6330,
+            "id": 5567,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getMetaUri",
-            "nameLocation": "3099:10:28",
+            "nameLocation": "3165:10:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6326,
+              "id": 5563,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3109:2:28"
+              "src": "3175:2:22"
             },
             "returnParameters": {
-              "id": 6329,
+              "id": 5566,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6328,
+                  "id": 5565,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6330,
-                  "src": "3134:13:28",
+                  "scope": 5567,
+                  "src": "3200:13:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1501,10 +1533,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6327,
+                    "id": 5564,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3134:6:28",
+                    "src": "3200:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1513,48 +1545,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3133:15:28"
+              "src": "3199:15:22"
             },
-            "scope": 6444,
-            "src": "3090:59:28",
+            "scope": 5681,
+            "src": "3156:59:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6331,
+              "id": 5568,
               "nodeType": "StructuredDocumentation",
-              "src": "3155:70:28",
+              "src": "3221:70:22",
               "text": " @return isVerified indicates whether JCP is verified*"
             },
             "functionSelector": "357286d7",
-            "id": 6336,
+            "id": 5573,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getIsVerified",
-            "nameLocation": "3239:13:28",
+            "nameLocation": "3305:13:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6332,
+              "id": 5569,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3252:2:28"
+              "src": "3318:2:22"
             },
             "returnParameters": {
-              "id": 6335,
+              "id": 5572,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6334,
+                  "id": 5571,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6336,
-                  "src": "3277:4:28",
+                  "scope": 5573,
+                  "src": "3343:4:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1562,10 +1594,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 6333,
+                    "id": 5570,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3277:4:28",
+                    "src": "3343:4:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -1574,48 +1606,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3276:6:28"
+              "src": "3342:6:22"
             },
-            "scope": 6444,
-            "src": "3230:53:28",
+            "scope": 5681,
+            "src": "3296:53:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6337,
+              "id": 5574,
               "nodeType": "StructuredDocumentation",
-              "src": "3289:72:28",
+              "src": "3355:72:22",
               "text": " @return receiver address of receiver of JCP donations.*"
             },
             "functionSelector": "1b88094d",
-            "id": 6342,
+            "id": 5579,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getRecipient",
-            "nameLocation": "3375:12:28",
+            "nameLocation": "3441:12:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6338,
+              "id": 5575,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3387:2:28"
+              "src": "3453:2:22"
             },
             "returnParameters": {
-              "id": 6341,
+              "id": 5578,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6340,
+                  "id": 5577,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6342,
-                  "src": "3412:7:28",
+                  "scope": 5579,
+                  "src": "3478:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1623,10 +1655,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6339,
+                    "id": 5576,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3412:7:28",
+                    "src": "3478:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1636,48 +1668,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3411:9:28"
+              "src": "3477:9:22"
             },
-            "scope": 6444,
-            "src": "3366:55:28",
+            "scope": 5681,
+            "src": "3432:55:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6343,
+              "id": 5580,
               "nodeType": "StructuredDocumentation",
-              "src": "3427:74:28",
+              "src": "3493:74:22",
               "text": " @return erc721Addr address of receiver of JCP donations.*"
             },
             "functionSelector": "007ffb78",
-            "id": 6348,
+            "id": 5585,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getERC721Address",
-            "nameLocation": "3515:16:28",
+            "nameLocation": "3581:16:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6344,
+              "id": 5581,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3531:2:28"
+              "src": "3597:2:22"
             },
             "returnParameters": {
-              "id": 6347,
+              "id": 5584,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6346,
+                  "id": 5583,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6348,
-                  "src": "3556:7:28",
+                  "scope": 5585,
+                  "src": "3622:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1685,10 +1717,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6345,
+                    "id": 5582,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3556:7:28",
+                    "src": "3622:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1698,48 +1730,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3555:9:28"
+              "src": "3621:9:22"
             },
-            "scope": 6444,
-            "src": "3506:59:28",
+            "scope": 5681,
+            "src": "3572:59:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6349,
+              "id": 5586,
               "nodeType": "StructuredDocumentation",
-              "src": "3575:441:28",
+              "src": "3641:441:22",
               "text": " @notice Returns general pool information\n @return acceptedTokens List of tokens to be accepted by JCP.\n @return name String name of JCP.\n @return about ipfs hash of pool description of JCP.\n @return picHash ipfs hash of pic of JCP.\n @return metaUri meta info uri for nft of JCP.\n @return receiver address of receiver of JCP donations.\n @return isVerified indicates whether JCP is verified*"
             },
             "functionSelector": "60246c88",
-            "id": 6367,
+            "id": 5604,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getPoolInfo",
-            "nameLocation": "4030:11:28",
+            "nameLocation": "4096:11:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6350,
+              "id": 5587,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "4041:2:28"
+              "src": "4107:2:22"
             },
             "returnParameters": {
-              "id": 6366,
+              "id": 5603,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6353,
+                  "id": 5590,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6367,
-                  "src": "4067:16:28",
+                  "scope": 5604,
+                  "src": "4133:16:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1748,19 +1780,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 6351,
+                      "id": 5588,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "4067:7:28",
+                      "src": "4133:7:22",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 6352,
+                    "id": 5589,
                     "nodeType": "ArrayTypeName",
-                    "src": "4067:9:28",
+                    "src": "4133:9:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -1770,13 +1802,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6355,
+                  "id": 5592,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6367,
-                  "src": "4085:7:28",
+                  "scope": 5604,
+                  "src": "4151:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1784,10 +1816,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6354,
+                    "id": 5591,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4085:7:28",
+                    "src": "4151:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1798,13 +1830,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6357,
+                  "id": 5594,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6367,
-                  "src": "4094:4:28",
+                  "scope": 5604,
+                  "src": "4160:4:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1812,10 +1844,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 6356,
+                    "id": 5593,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4094:4:28",
+                    "src": "4160:4:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -1825,13 +1857,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6359,
+                  "id": 5596,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6367,
-                  "src": "4100:13:28",
+                  "scope": 5604,
+                  "src": "4166:13:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1839,10 +1871,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6358,
+                    "id": 5595,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4100:6:28",
+                    "src": "4166:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1852,13 +1884,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6361,
+                  "id": 5598,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6367,
-                  "src": "4115:13:28",
+                  "scope": 5604,
+                  "src": "4181:13:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1866,10 +1898,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6360,
+                    "id": 5597,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4115:6:28",
+                    "src": "4181:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1879,13 +1911,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6363,
+                  "id": 5600,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6367,
-                  "src": "4130:13:28",
+                  "scope": 5604,
+                  "src": "4196:13:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1893,10 +1925,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6362,
+                    "id": 5599,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4130:6:28",
+                    "src": "4196:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1906,13 +1938,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6365,
+                  "id": 5602,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6367,
-                  "src": "4145:13:28",
+                  "scope": 5604,
+                  "src": "4211:13:22",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1920,10 +1952,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6364,
+                    "id": 5601,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4145:6:28",
+                    "src": "4211:6:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1932,42 +1964,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "4066:93:28"
+              "src": "4132:93:22"
             },
-            "scope": 6444,
-            "src": "4021:139:28",
+            "scope": 5681,
+            "src": "4087:139:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6368,
+              "id": 5605,
               "nodeType": "StructuredDocumentation",
-              "src": "4166:152:28",
+              "src": "4232:152:22",
               "text": " @param _assetAddress The address of the underlying asset of the reserve\n @return aTokenAddress address of Aave's aToken for asset*"
             },
             "functionSelector": "711cc005",
-            "id": 6375,
+            "id": 5612,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getATokenAddress",
-            "nameLocation": "4332:16:28",
+            "nameLocation": "4398:16:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6371,
+              "id": 5608,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6370,
+                  "id": 5607,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "4357:13:28",
+                  "nameLocation": "4423:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6375,
-                  "src": "4349:21:28",
+                  "scope": 5612,
+                  "src": "4415:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1975,10 +2007,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6369,
+                    "id": 5606,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4349:7:28",
+                    "src": "4415:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1988,21 +2020,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "4348:23:28"
+              "src": "4414:23:22"
             },
             "returnParameters": {
-              "id": 6374,
+              "id": 5611,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6373,
+                  "id": 5610,
                   "mutability": "mutable",
                   "name": "aTokenAddress",
-                  "nameLocation": "4402:13:28",
+                  "nameLocation": "4468:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6375,
-                  "src": "4394:21:28",
+                  "scope": 5612,
+                  "src": "4460:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2010,10 +2042,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6372,
+                    "id": 5609,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4394:7:28",
+                    "src": "4460:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2023,42 +2055,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "4393:23:28"
+              "src": "4459:23:22"
             },
-            "scope": 6444,
-            "src": "4323:94:28",
+            "scope": 5681,
+            "src": "4389:94:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6376,
+              "id": 5613,
               "nodeType": "StructuredDocumentation",
-              "src": "4423:147:28",
+              "src": "4489:147:22",
               "text": " @param _assetAddress The address of the underlying asset of the reserve\n @return totalDeposit total assets deposited in pool*"
             },
             "functionSelector": "0251cfa1",
-            "id": 6383,
+            "id": 5620,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getTotalDeposits",
-            "nameLocation": "4584:16:28",
+            "nameLocation": "4650:16:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6379,
+              "id": 5616,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6378,
+                  "id": 5615,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "4609:13:28",
+                  "nameLocation": "4675:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6383,
-                  "src": "4601:21:28",
+                  "scope": 5620,
+                  "src": "4667:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2066,10 +2098,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6377,
+                    "id": 5614,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4601:7:28",
+                    "src": "4667:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2079,21 +2111,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "4600:23:28"
+              "src": "4666:23:22"
             },
             "returnParameters": {
-              "id": 6382,
+              "id": 5619,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6381,
+                  "id": 5618,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6383,
-                  "src": "4646:7:28",
+                  "scope": 5620,
+                  "src": "4712:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2101,10 +2133,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6380,
+                    "id": 5617,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4646:7:28",
+                    "src": "4712:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2113,42 +2145,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "4645:9:28"
+              "src": "4711:9:22"
             },
-            "scope": 6444,
-            "src": "4575:80:28",
+            "scope": 5681,
+            "src": "4641:80:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6384,
+              "id": 5621,
               "nodeType": "StructuredDocumentation",
-              "src": "4661:168:28",
+              "src": "4727:168:22",
               "text": " @param _assetAddress The address of the underlying asset of the reserve\n @return unclaimedInterest accrued interest that has not yet been claimed*"
             },
             "functionSelector": "3735ef88",
-            "id": 6391,
+            "id": 5628,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getUnclaimedInterest",
-            "nameLocation": "4843:20:28",
+            "nameLocation": "4909:20:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6387,
+              "id": 5624,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6386,
+                  "id": 5623,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "4872:13:28",
+                  "nameLocation": "4938:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6391,
-                  "src": "4864:21:28",
+                  "scope": 5628,
+                  "src": "4930:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2156,10 +2188,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6385,
+                    "id": 5622,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4864:7:28",
+                    "src": "4930:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2169,21 +2201,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "4863:23:28"
+              "src": "4929:23:22"
             },
             "returnParameters": {
-              "id": 6390,
+              "id": 5627,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6389,
+                  "id": 5626,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6391,
-                  "src": "4910:7:28",
+                  "scope": 5628,
+                  "src": "4976:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2191,10 +2223,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6388,
+                    "id": 5625,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "4910:7:28",
+                    "src": "4976:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2203,42 +2235,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "4909:9:28"
+              "src": "4975:9:22"
             },
-            "scope": 6444,
-            "src": "4834:85:28",
+            "scope": 5681,
+            "src": "4900:85:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6392,
+              "id": 5629,
               "nodeType": "StructuredDocumentation",
-              "src": "4925:174:28",
+              "src": "4991:174:22",
               "text": " @param _assetAddress The address of the underlying asset of the reserve\n @return claimedInterest interest that has been claimed (no longer in contract)*"
             },
             "functionSelector": "5ff189b9",
-            "id": 6399,
+            "id": 5636,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getClaimedInterest",
-            "nameLocation": "5113:18:28",
+            "nameLocation": "5179:18:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6395,
+              "id": 5632,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6394,
+                  "id": 5631,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "5140:13:28",
+                  "nameLocation": "5206:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6399,
-                  "src": "5132:21:28",
+                  "scope": 5636,
+                  "src": "5198:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2246,10 +2278,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6393,
+                    "id": 5630,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "5132:7:28",
+                    "src": "5198:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2259,21 +2291,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "5131:23:28"
+              "src": "5197:23:22"
             },
             "returnParameters": {
-              "id": 6398,
+              "id": 5635,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6397,
+                  "id": 5634,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6399,
-                  "src": "5178:7:28",
+                  "scope": 5636,
+                  "src": "5244:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2281,10 +2313,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6396,
+                    "id": 5633,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "5178:7:28",
+                    "src": "5244:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2293,42 +2325,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "5177:9:28"
+              "src": "5243:9:22"
             },
-            "scope": 6444,
-            "src": "5104:83:28",
+            "scope": 5681,
+            "src": "5170:83:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6400,
+              "id": 5637,
               "nodeType": "StructuredDocumentation",
-              "src": "5193:154:28",
+              "src": "5259:154:22",
               "text": " @param _assetAddress The address of the underlying asset of the reserve\n @return aTokenBalance Pool balance of aToken for the asset*"
             },
             "functionSelector": "0712f6b3",
-            "id": 6407,
+            "id": 5644,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getATokenBalance",
-            "nameLocation": "5361:16:28",
+            "nameLocation": "5427:16:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6403,
+              "id": 5640,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6402,
+                  "id": 5639,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "5386:13:28",
+                  "nameLocation": "5452:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6407,
-                  "src": "5378:21:28",
+                  "scope": 5644,
+                  "src": "5444:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2336,10 +2368,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6401,
+                    "id": 5638,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "5378:7:28",
+                    "src": "5444:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2349,21 +2381,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "5377:23:28"
+              "src": "5443:23:22"
             },
             "returnParameters": {
-              "id": 6406,
+              "id": 5643,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6405,
+                  "id": 5642,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6407,
-                  "src": "5424:7:28",
+                  "scope": 5644,
+                  "src": "5490:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2371,10 +2403,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6404,
+                    "id": 5641,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "5424:7:28",
+                    "src": "5490:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2383,42 +2415,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "5423:9:28"
+              "src": "5489:9:22"
             },
-            "scope": 6444,
-            "src": "5352:81:28",
+            "scope": 5681,
+            "src": "5418:81:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6408,
+              "id": 5645,
               "nodeType": "StructuredDocumentation",
-              "src": "5439:147:28",
+              "src": "5505:147:22",
               "text": " @param _assetAddress The address of the underlying asset of the reserve\n @return normalizedIncome reserve's normalized income"
             },
             "functionSelector": "d15e0053",
-            "id": 6415,
+            "id": 5652,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getReserveNormalizedIncome",
-            "nameLocation": "5600:26:28",
+            "nameLocation": "5666:26:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6411,
+              "id": 5648,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6410,
+                  "id": 5647,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "5635:13:28",
+                  "nameLocation": "5701:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6415,
-                  "src": "5627:21:28",
+                  "scope": 5652,
+                  "src": "5693:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2426,10 +2458,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6409,
+                    "id": 5646,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "5627:7:28",
+                    "src": "5693:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2439,21 +2471,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "5626:23:28"
+              "src": "5692:23:22"
             },
             "returnParameters": {
-              "id": 6414,
+              "id": 5651,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6413,
+                  "id": 5650,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6415,
-                  "src": "5672:7:28",
+                  "scope": 5652,
+                  "src": "5738:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2461,10 +2493,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6412,
+                    "id": 5649,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "5672:7:28",
+                    "src": "5738:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2473,42 +2505,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "5671:9:28"
+              "src": "5737:9:22"
             },
-            "scope": 6444,
-            "src": "5591:90:28",
+            "scope": 5681,
+            "src": "5657:90:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6416,
+              "id": 5653,
               "nodeType": "StructuredDocumentation",
-              "src": "5687:143:28",
+              "src": "5753:143:22",
               "text": " @param _assetAddress The address of the underlying asset of the reserve\n @return liquidityIndex reserve's liquidity index"
             },
             "functionSelector": "8aebe8d6",
-            "id": 6423,
+            "id": 5660,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getAaveLiquidityIndex",
-            "nameLocation": "5844:21:28",
+            "nameLocation": "5910:21:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6419,
+              "id": 5656,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6418,
+                  "id": 5655,
                   "mutability": "mutable",
                   "name": "_assetAddress",
-                  "nameLocation": "5874:13:28",
+                  "nameLocation": "5940:13:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6423,
-                  "src": "5866:21:28",
+                  "scope": 5660,
+                  "src": "5932:21:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2516,10 +2548,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6417,
+                    "id": 5654,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "5866:7:28",
+                    "src": "5932:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2529,21 +2561,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "5865:23:28"
+              "src": "5931:23:22"
             },
             "returnParameters": {
-              "id": 6422,
+              "id": 5659,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6421,
+                  "id": 5658,
                   "mutability": "mutable",
                   "name": "liquidityIndex",
-                  "nameLocation": "5919:14:28",
+                  "nameLocation": "5985:14:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6423,
-                  "src": "5911:22:28",
+                  "scope": 5660,
+                  "src": "5977:22:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2551,10 +2583,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6420,
+                    "id": 5657,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "5911:7:28",
+                    "src": "5977:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2563,42 +2595,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "5910:24:28"
+              "src": "5976:24:22"
             },
-            "scope": 6444,
-            "src": "5835:100:28",
+            "scope": 5681,
+            "src": "5901:100:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6424,
+              "id": 5661,
               "nodeType": "StructuredDocumentation",
-              "src": "5941:599:28",
+              "src": "6007:599:22",
               "text": " @notice Returns asset specific pool information\n @param _asset The address of the underlying asset of the reserve\n @return liquidityIndex reserve's liquidity index\n @return normalizedIncome reserve's normalized income\n @return aTokenBalance Pool balance of aToken for the asset\n @return claimedInterest interest that has been claimed (no longer in contract)\n @return unclaimedInterest accrued interest that has not yet been claimed\n @return totalDeposit total assets deposited in pool\n @return aTokenAddress address of Aave's aToken for asset"
             },
             "functionSelector": "67e0e076",
-            "id": 6443,
+            "id": 5680,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getPoolTokenInfo",
-            "nameLocation": "6554:16:28",
+            "nameLocation": "6620:16:22",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6427,
+              "id": 5664,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6426,
+                  "id": 5663,
                   "mutability": "mutable",
                   "name": "_asset",
-                  "nameLocation": "6579:6:28",
+                  "nameLocation": "6645:6:22",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6443,
-                  "src": "6571:14:28",
+                  "scope": 5680,
+                  "src": "6637:14:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2606,10 +2638,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6425,
+                    "id": 5662,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "6571:7:28",
+                    "src": "6637:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2619,21 +2651,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "6570:16:28"
+              "src": "6636:16:22"
             },
             "returnParameters": {
-              "id": 6442,
+              "id": 5679,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6429,
+                  "id": 5666,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6443,
-                  "src": "6609:7:28",
+                  "scope": 5680,
+                  "src": "6675:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2641,10 +2673,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6428,
+                    "id": 5665,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "6609:7:28",
+                    "src": "6675:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2654,13 +2686,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6431,
+                  "id": 5668,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6443,
-                  "src": "6618:7:28",
+                  "scope": 5680,
+                  "src": "6684:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2668,10 +2700,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6430,
+                    "id": 5667,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "6618:7:28",
+                    "src": "6684:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2681,13 +2713,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6433,
+                  "id": 5670,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6443,
-                  "src": "6627:7:28",
+                  "scope": 5680,
+                  "src": "6693:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2695,10 +2727,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6432,
+                    "id": 5669,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "6627:7:28",
+                    "src": "6693:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2708,13 +2740,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6435,
+                  "id": 5672,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6443,
-                  "src": "6636:7:28",
+                  "scope": 5680,
+                  "src": "6702:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2722,10 +2754,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6434,
+                    "id": 5671,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "6636:7:28",
+                    "src": "6702:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2735,13 +2767,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6437,
+                  "id": 5674,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6443,
-                  "src": "6645:7:28",
+                  "scope": 5680,
+                  "src": "6711:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2749,10 +2781,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6436,
+                    "id": 5673,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "6645:7:28",
+                    "src": "6711:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2762,13 +2794,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6439,
+                  "id": 5676,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6443,
-                  "src": "6654:7:28",
+                  "scope": 5680,
+                  "src": "6720:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2776,10 +2808,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6438,
+                    "id": 5675,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "6654:7:28",
+                    "src": "6720:7:22",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2789,13 +2821,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6441,
+                  "id": 5678,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6443,
-                  "src": "6663:7:28",
+                  "scope": 5680,
+                  "src": "6729:7:22",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2803,10 +2835,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6440,
+                    "id": 5677,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "6663:7:28",
+                    "src": "6729:7:22",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2816,21 +2848,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "6608:63:28"
+              "src": "6674:63:22"
             },
-            "scope": 6444,
-            "src": "6545:127:28",
+            "scope": 5681,
+            "src": "6611:127:22",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 6445,
-        "src": "61:6613:28",
+        "scope": 5682,
+        "src": "61:6679:22",
         "usedErrors": []
       }
     ],
-    "src": "37:6637:28"
+    "src": "37:6703:22"
   },
   "compiler": {
     "name": "solc",
@@ -2838,7 +2870,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-06-06T01:14:27.264Z",
+  "updatedAt": "2022-06-24T03:15:15.613Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -2992,12 +3024,13 @@
           "_isETH": "bool indicating if asset is the base token of network (eth/matic/...)*"
         }
       },
-      "withdrawDonations(address,address,bool)": {
+      "withdrawDonations(address,address,bool,uint256)": {
         "details": "Function claims donations for receiver. Calls Aave pools exchanging this contracts aTokens for reserve tokens for interestEarned amount. Calculates interestEarned and subtracts 0.2% fee from claim amount.",
         "params": {
           "_assetAddress": "The address of the underlying asset of the reserve",
+          "_bpFee": "fee rate paid to the protocol*",
           "_feeAddress": "The address that collects the 0.2% protocol fee",
-          "_isETH": "bool indicating if asset is the base token of network (eth/matic/...)*"
+          "_isETH": "bool indicating if asset is the base token of network (eth/matic/...)"
         }
       }
     },
@@ -3021,7 +3054,7 @@
       "withdraw(address,uint256,address,bool)": {
         "notice": "Only called by PoolTracker."
       },
-      "withdrawDonations(address,address,bool)": {
+      "withdrawDonations(address,address,bool,uint256)": {
         "notice": "Only called by PoolTracker."
       }
     },

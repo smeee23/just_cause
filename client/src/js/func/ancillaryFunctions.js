@@ -24,7 +24,28 @@ import DpiLogoLg from "../components/cryptoLogos/DpiLogoLg";
 
 import Logo from "../components/Logo"
 
-export const redirectWindowTwitterShare = (url) => {
+export const linkedInShare = (purl, ptitle, poolAddress, psummary) => {
+  let url = 'http://www.linkedin.com/shareArticle?mini=true';
+  url += '&url=' + encodeURIComponent(purl)+poolAddress;
+  url += '&title=' + encodeURIComponent(ptitle);
+  url += '&summary=' + encodeURIComponent(psummary);
+  url += '&source=' + encodeURIComponent("https://www.justcause.finance/#/");
+
+  window.open(url, "_blank");
+}
+
+export const twitterShare = (purl, ptitle, poolAddress) => {
+  let url = 'http://twitter.com/share';
+  url += '?text=' + encodeURIComponent(ptitle);
+  url += '&url=' + encodeURIComponent(purl)+poolAddress;
+  url += '&counturl=' + encodeURIComponent(purl);
+
+  window.open(url, "_blank");
+}
+
+export const facebookShare = (purl,poolAddress) => {
+  let url = 'http://www.facebook.com/sharer.php?s=100';
+  url += '&u=' + encodeURIComponent(purl)+poolAddress;
   window.open(url, "_blank");
 }
 

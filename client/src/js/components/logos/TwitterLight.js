@@ -1,6 +1,6 @@
 import React, {Component} from "react"
 
-class Twitter extends Component {
+class TwitterLight extends Component {
 
 	render() {
 		const { callback} = this.props;
@@ -12,4 +12,4 @@ class Twitter extends Component {
 	}
 }
 
-export default Twitter
+export default TwitterLight

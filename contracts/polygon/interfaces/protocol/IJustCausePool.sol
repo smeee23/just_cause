@@ -44,8 +44,9 @@ interface IJustCausePool {
     * @param _assetAddress The address of the underlying asset of the reserve
     * @param _feeAddress The address that collects the 0.2% protocol fee
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
+    * @param _bpFee fee rate paid to the protocol
     **/
-    function withdrawDonations(address _assetAddress, address _feeAddress, bool _isETH) external returns(uint256);
+    function withdrawDonations(address _assetAddress, address _feeAddress, bool _isETH, uint256 _bpFee) external returns(uint256);
 
     /**
     * @return acceptedTokens List of tokens to be accepted by JCP.

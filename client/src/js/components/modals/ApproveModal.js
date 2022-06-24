@@ -4,7 +4,6 @@ import { ModalHeader, ModalCtas } from "../Modal";
 import { Button } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
-import PoolTracker from "../../../contracts/PoolTracker.json";
 import ERC20Instance from "../../../contracts/IERC20.json";
 
 import { updatePendingTx } from "../../actions/pendingTx";

@@ -16,7 +16,7 @@ require("dotenv").config({path: "../.env"});
 
 contract("Pool Tracker", async (accounts) => {
 
-    const [validator, depositor, owner, receiver] = accounts;
+    const [multiSig, depositor, owner, receiver] = accounts;
 
     beforeEach(async() => {
         this.testToken = await TestToken.new();
@@ -26,13 +26,13 @@ contract("Pool Tracker", async (accounts) => {
         this.aToken = await aTestToken.new();
         this.aWethToken = await aTestToken.new();
         this.poolMock = await PoolMock.new();
-        await this.poolMock.setTestTokens(this.aToken.address, this.testToken.address, this.testToken_2.address, this.wethToken.address, this.aWethToken.address, {from: validator});
+        await this.poolMock.setTestTokens(this.aToken.address, this.testToken.address, this.testToken_2.address, this.wethToken.address, this.aWethToken.address, {from: multiSig});
 
         this.poolAddressesProviderMock = await PoolAddressesProviderMock.new();
-        await this.poolAddressesProviderMock.setPoolImpl(this.poolMock.address, {from: validator});
+        await this.poolAddressesProviderMock.setPoolImpl(this.poolMock.address, {from: multiSig});
 
         this.wethGateway = await WethGatewayTest.new();
-        await this.wethGateway.setValues(this.wethToken.address, this.aWethToken.address, {from: validator});
+        await this.wethGateway.setValues(this.wethToken.address, this.aWethToken.address, {from: multiSig});
 
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
@@ -40,14 +40,14 @@ contract("Pool Tracker", async (accounts) => {
         this.INTEREST = "1000000000000000000";
     });
 
-   it("pools created by validator should be added to verified pools", async() => {
+    it("pools created by multiSig should be added to verified pools", async() => {
         const startPoolsLength = (await this.poolTracker.getVerifiedPools()).length;
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator});
-        assert.equal(startPoolsLength + 1, (await this.poolTracker.getVerifiedPools()).length, "The pool created by validator was not added to verified list");
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig});
+        assert.equal(startPoolsLength + 1, (await this.poolTracker.getVerifiedPools()).length, "The pool created by multiSig was not added to verified list");
     });
 
     it("should add each receiver to receivers mapping on pool creation", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator});
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig});
         const receiverPools = await this.poolTracker.getReceiverPools(receiver);
         console.log("receiverPools", receiverPools);
         assert.equal(receiverPools.length, 1, "receiver mapping not updated");
@@ -55,21 +55,21 @@ contract("Pool Tracker", async (accounts) => {
         assert.strictEqual(receiverPools[0], knownAddress, "The pool name did not return the correct address");
     });
 
-    it("pools created by non-validator addresses should not be in verified pools", async() => {
+    it("pools created by non-multiSig addresses should not be in verified pools", async() => {
         const startPoolsLength = (await this.poolTracker.getVerifiedPools()).length;
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: owner});
-        assert.equal(startPoolsLength, (await this.poolTracker.getVerifiedPools()).length, "The pool created by non-validator address was added to verified list");
+        assert.equal(startPoolsLength, (await this.poolTracker.getVerifiedPools()).length, "The pool created by non-multiSig address was added to verified list");
     });
 
     it("getAddressFromName should return an address based on unique name", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator});
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig});
         const testAddress = await this.poolTracker.getAddressFromName("Test Pool");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         assert.strictEqual(testAddress, knownAddress, "The pool name did not return the correct address");
     });
 
     it("checkPool should return true if address is that of a pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator});
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig});
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         const isPool = await this.poolTracker.checkPool(knownAddress);
         assert.isTrue(isPool, "known address not found");
@@ -77,13 +77,13 @@ contract("Pool Tracker", async (accounts) => {
 
     it("createJCPoolClone should revert when passed a non-accepted token", async() =>{
         await expectRevert(
-            this.poolTracker.createJCPoolClone([this.notApprovedToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator}),
+            this.poolTracker.createJCPoolClone([this.notApprovedToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig}),
             "tokens not approved"
         );
     });
 
     it("add deposit ends with aTokens in JustCause pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -97,7 +97,7 @@ contract("Pool Tracker", async (accounts) => {
         assert.strictEqual(aTokenBalance, checkAmount, "atoken not updated");
     });
     it("add deposit reverts when _pool parameter is not a pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -108,7 +108,7 @@ contract("Pool Tracker", async (accounts) => {
         );
     });
     it("add deposit reverts when PoolTracker does not have allowance for token from depositor", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -119,7 +119,7 @@ contract("Pool Tracker", async (accounts) => {
         );
     });
     it("add deposit sends nft to depositor", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -133,7 +133,7 @@ contract("Pool Tracker", async (accounts) => {
         assert.equal(await erc721Instance.balanceOf(depositor), 1, "balance not equal to 1");
     });
     it("add deposit updates tvl", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -148,7 +148,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("add deposit updates wethGateway balance when sending native token", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         let origBalance = await web3.eth.getBalance(this.wethGateway.address);
@@ -159,7 +159,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("add deposit reverts when sending eth, but not specifying weth as the asset parameter", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
 
@@ -170,7 +170,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("add deposit reverts when isETH is true and msg.value is 0", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("0", "ether");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
 
@@ -183,7 +183,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("add deposit reverts when isETH is false and msg.value is not 0", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
 
@@ -196,7 +196,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("withdrawDeposit reverts when _pool parameter is not a pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         await expectRevert(
             this.poolTracker.withdrawDeposit(depositAmount, this.testToken.address, owner, false, {from: depositor}),
@@ -205,7 +205,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("withdrawDeposit withdraws _amount from JustCause pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -220,7 +220,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("withdrawDeposit withdraws native token from WethGateway pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
 
@@ -236,7 +236,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("withdrawDeposit reverts if isETH is true and asset does not match weth address", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
 
         const approveAmount = web3.utils.toWei("1000000", "ether");
@@ -256,7 +256,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("withdrawDeposit updates jc pool atoken balance", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -276,7 +276,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("withdrawDeposit updates tvl", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -295,7 +295,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("withdrawDeposit reverts if tvl overflows", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const overAmount = web3.utils.toWei("2", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
@@ -310,8 +310,9 @@ contract("Pool Tracker", async (accounts) => {
         );
     });
 
-    it("claimInterest updates totalDonated verified pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+    it("claimInterest updates totalDonated and fee is 0", async() => {
+        await this.poolTracker.setBpFee(4, {from: multiSig});
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -331,8 +332,9 @@ contract("Pool Tracker", async (accounts) => {
         assert.strictEqual(valueString, this.INTEREST, "tvl not updated");
     });
 
-    it("claimInterest updates total donated when native token is claimed verified pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+    it("claimInterest updates total donated when native token is claimed and fee is 0", async() => {
+        await this.poolTracker.setBpFee(0, {from: multiSig});
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
 
@@ -343,11 +345,13 @@ contract("Pool Tracker", async (accounts) => {
         const newDonted = await this.poolTracker.getTotalDonated(this.wethToken.address);
 
         const valueString = newDonted.sub(web3.utils.toBN(origDonated)).toString();
+
         assert.strictEqual(valueString, this.INTEREST, "tvl not updated");
     });
 
-    it("claimInterest updates receiver balance when native token is claimed veridied pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+    it("claimInterest updates receiver balance when native token is claimed and fee is 0", async() => {
+        await this.poolTracker.setBpFee(0, {from: multiSig});
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
 
@@ -418,7 +422,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("claimInterest reverts when isETH is true and asset is not weth address", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -434,7 +438,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("claimInterest reverts when _pool parameter is not a pool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         await expectRevert(
             this.poolTracker.claimInterest(this.aToken.address, owner, false, {from: depositor}),
             "not pool"
@@ -442,7 +446,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("claimInterest reverts when _asset is not accepted by aave", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         await expectRevert(
             this.poolTracker.claimInterest(this.aToken.address, knownAddress, false, {from: depositor}),
@@ -450,25 +454,62 @@ contract("Pool Tracker", async (accounts) => {
         );
     });
 
-    it("getValidator  returns validator address", async() => {
-        const validatorCheck = await this.poolTracker.getValidator();
-        assert.equal(validatorCheck, validator, "validator not correct");
+    it("getMultiSig returns MULTI_SIG address", async() => {
+        const validatorCheck = await this.poolTracker.getMultiSig();
+        assert.equal(validatorCheck, multiSig, "multiSig not correct");
+    });
+
+    it("getBpFee returns fee", async() => {
+        await this.poolTracker.setBpFee(2, {from: multiSig});
+        fee = (await this.poolTracker.getBpFee()).toString();
+        assert.strictEqual(fee, "20", "multiSig not correct");
+    });
+
+    it("setBpFee changes fee", async() => {
+        await this.poolTracker.setBpFee(0, {from: multiSig});
+        fee = (await this.poolTracker.getBpFee()).toString();
+        assert.strictEqual(fee, "0", "multiSig not correct");
+        await this.poolTracker.setBpFee(1, {from: multiSig});
+        fee = (await this.poolTracker.getBpFee()).toString();
+        assert.strictEqual(fee, "10", "multiSig not correct");
+        await this.poolTracker.setBpFee(2, {from: multiSig});
+        fee = (await this.poolTracker.getBpFee()).toString();
+        assert.strictEqual(fee, "20", "multiSig not correct");
+        await this.poolTracker.setBpFee(3, {from: multiSig});
+        fee = (await this.poolTracker.getBpFee()).toString();
+        assert.strictEqual(fee, "30", "multiSig not correct");
+        await this.poolTracker.setBpFee(4, {from: multiSig});
+        fee = (await this.poolTracker.getBpFee()).toString();
+        assert.strictEqual(fee, "40", "multiSig not correct");
+    });
+
+    it("setBpFee throws error when fee index out of bounds", async() => {
+        await expectRevert(
+            this.poolTracker.setBpFee(5, {from: multiSig}),
+            "Panic: Index out of bounds."
+        );
+    });
+
+    it("setBpFee throws error when set fee is called by anyone other than multiSig", async() => {
+        await expectRevert(
+            this.poolTracker.setBpFee(5, {from: depositor}),
+            "not the multiSig"
+        );
     });
 
     it("getPoolAddr  returns poolAddr address", async() => {
         const poolAddress = await this.poolTracker.getPoolAddr();
-        assert.equal(this.poolMock.address, poolAddress, "validator not correct");
+        assert.equal(this.poolMock.address, poolAddress, "multiSig not correct");
     });
 
     it("getReservesList returns reservesList address", async() => {
         const reservesList = (await this.poolTracker.getReservesList()).toString();
         const reservesListCheck = (await this.poolMock.getReservesList()).toString();
-        assert.strictEqual(reservesListCheck, reservesList, "validator not correct");
+        assert.strictEqual(reservesListCheck, reservesList, "multiSig not correct");
     });
 
     it("getBaseJCPoolAddress  returns base pool address", async() => {
         const basePoolAddress = await this.poolTracker.getBaseJCPoolAddress();
         assert.ok(basePoolAddress, "base pool address not valid");
     });
-
 });

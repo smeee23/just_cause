@@ -16,7 +16,7 @@ require("dotenv").config({path: "../.env"});
 
 contract("JCDepositorERC721", async (accounts) => {
 
-    const [validator, depositor, owner, receiver] = accounts;
+    const [multiSig, depositor, owner, receiver] = accounts;
 
     beforeEach(async() => {
         this.testToken = await TestToken.new();
@@ -26,13 +26,13 @@ contract("JCDepositorERC721", async (accounts) => {
         this.aToken = await aTestToken.new();
         this.aWethToken = await aTestToken.new();
         this.poolMock = await PoolMock.new();
-        await this.poolMock.setTestTokens(this.aToken.address, this.testToken.address, this.testToken_2.address, this.wethToken.address, this.aWethToken.address,  {from: validator});
+        await this.poolMock.setTestTokens(this.aToken.address, this.testToken.address, this.testToken_2.address, this.wethToken.address, this.aWethToken.address,  {from: multiSig});
 
         this.poolAddressesProviderMock = await PoolAddressesProviderMock.new();
-        await this.poolAddressesProviderMock.setPoolImpl(this.poolMock.address, {from: validator});
+        await this.poolAddressesProviderMock.setPoolImpl(this.poolMock.address, {from: multiSig});
 
         this.wethGateway = await WethGatewayTest.new();
-        await this.wethGateway.setValues(this.wethToken.address, this.aWethToken.address, {from: validator});
+        await this.wethGateway.setValues(this.wethToken.address, this.aWethToken.address, {from: multiSig});
 
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
@@ -41,7 +41,7 @@ contract("JCDepositorERC721", async (accounts) => {
     });
 
     it("addFunds reverts if any address but PoolTracker calls it", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, depositAmount);
@@ -58,7 +58,7 @@ contract("JCDepositorERC721", async (accounts) => {
     });
 
     it("addFunds updates deposits", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, web3.utils.toWei("3", "ether"));
@@ -83,7 +83,7 @@ contract("JCDepositorERC721", async (accounts) => {
     });
 
     it("withdrawFunds reverts if tokenId does not exist", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, web3.utils.toWei("3", "ether"));
@@ -97,7 +97,7 @@ contract("JCDepositorERC721", async (accounts) => {
     });
 
     it("withdrawFunds reverts if balance is insufficient", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const overAmount = web3.utils.toWei("2", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
@@ -105,12 +105,12 @@ contract("JCDepositorERC721", async (accounts) => {
         await this.testToken.mint(depositor, web3.utils.toWei("3", "ether"));
         await this.testToken.approve(this.poolTracker.address, approveAmount, {from: depositor});
 
-        await this.testToken.mint(validator, web3.utils.toWei("3", "ether"));
-        await this.testToken.approve(this.poolTracker.address, approveAmount, {from: validator});
+        await this.testToken.mint(multiSig, web3.utils.toWei("3", "ether"));
+        await this.testToken.approve(this.poolTracker.address, approveAmount, {from: multiSig});
 
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         await this.poolTracker.addDeposit(depositAmount, this.testToken.address, knownAddress, false, {from: depositor});
-        await this.poolTracker.addDeposit(overAmount, this.testToken.address, knownAddress, false, {from: validator});
+        await this.poolTracker.addDeposit(overAmount, this.testToken.address, knownAddress, false, {from: multiSig});
 
         await expectRevert(
             this.poolTracker.withdrawDeposit(overAmount, this.testToken.address, knownAddress, false, {from: depositor}),
@@ -119,7 +119,7 @@ contract("JCDepositorERC721", async (accounts) => {
     });
 
     it("withdrawDeposit updates deposits", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const withdrawAmount = web3.utils.toWei("10000000", "gwei");
         const approveAmount = web3.utils.toWei("1000000", "ether");
@@ -146,7 +146,7 @@ contract("JCDepositorERC721", async (accounts) => {
     });
 
     it("transferFrom reverts as token is non-transferrable", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const withdrawAmount = web3.utils.toWei("10000000", "gwei");
         const approveAmount = web3.utils.toWei("1000000", "ether");
@@ -168,9 +168,9 @@ contract("JCDepositorERC721", async (accounts) => {
         );
     });
     it("gets contributor pools", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool 1", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool 2", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool 3", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: validator})
+        await this.poolTracker.createJCPoolClone([this.testToken.address, this.wethToken.address], "Test Pool 1", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool 2", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
+        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool 3", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");
         await this.testToken.mint(depositor, web3.utils.toWei("3", "ether"));

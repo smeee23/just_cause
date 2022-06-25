@@ -47,7 +47,7 @@ contract PoolTracker is ReentrancyGuard {
     address[] private verifiedPools;
     uint256[5] private fees;
     uint256 bpFee;
-    address constant MULTI_SIG = address(0x78726673245fdb56425c8bd782f6FaA3E447625A);
+    address multiSig;
 
     address poolAddr;
     address wethGatewayAddr;
@@ -102,7 +102,7 @@ contract PoolTracker is ReentrancyGuard {
     * @dev Only multisig can call functions marked by this modifier.
     **/
     modifier onlyMultiSig(){
-        require(MULTI_SIG == msg.sender, "not the multi_sig");
+        require(multiSig == msg.sender, "not the multiSig");
         _;
     }
 
@@ -111,6 +111,7 @@ contract PoolTracker is ReentrancyGuard {
     * @dev Constructor.
     */
     constructor (address _poolAddressesProviderAddr, address _wethGatewayAddr) {
+        multiSig = msg.sender;
         baseJCPool = new JustCausePool();
         baseERC721 = new JCDepositorERC721();
 
@@ -190,7 +191,7 @@ contract PoolTracker is ReentrancyGuard {
         bool _isETH
     ) external onlyPools(_pool) nonReentrant() onlyAcceptedToken(_asset){
 
-        uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset, MULTI_SIG, _isETH, bpFee);
+        uint256 amount = IJustCausePool(_pool).withdrawDonations(_asset, multiSig, _isETH, bpFee);
         totalDonated[_asset] += amount;
         emit Claim(msg.sender, IJustCausePool(_pool).getRecipient(), _pool, _asset, amount);
     }
@@ -238,7 +239,7 @@ contract PoolTracker is ReentrancyGuard {
         address jcpChild = clone(address(baseJCPool));
         address erc721Child = clone(address(baseERC721));
         bool isVerified;
-        if(msg.sender == MULTI_SIG){
+        if(msg.sender == multiSig){
             verifiedPools.push(jcpChild);
             isVerified = true;
         }
@@ -255,7 +256,7 @@ contract PoolTracker is ReentrancyGuard {
     /**
     * @param feeKey accepts 0 - 4 as keys to set the fixed rate of fees
     **/
-    function setBasePointFee(uint256 feeKey) public onlyMultiSig() {
+    function setBpFee(uint256 feeKey) public onlyMultiSig() {
         bpFee = fees[feeKey];
     }
 
@@ -298,10 +299,10 @@ contract PoolTracker is ReentrancyGuard {
     }
 
     /**
-    * @return address of multi_sig
+    * @return address of multiSig
     **/
-    function getMultiSig() public pure returns(address){
-        return MULTI_SIG;
+    function getMultiSig() public view returns(address){
+        return multiSig;
     }
 
     /**

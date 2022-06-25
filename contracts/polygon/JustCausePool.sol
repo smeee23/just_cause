@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
 import { IERC20} from './interfaces/other/IERC20.sol';
@@ -192,7 +192,7 @@ contract JustCausePool is Initializable {
     * @param _assetAddress The address of the underlying asset of the reserve
     * @param _feeAddress The address that collects the 0.2% protocol fee
     * @param _isETH bool indicating if asset is the base token of network (eth/matic/...)
-    * @param _bpFee fee rate paid to the protocol
+    * @param _bpFee fee rate paid to the protocol 0 - 0.4%
     **/
     function withdrawDonations(
         address _assetAddress,

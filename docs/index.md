@@ -364,7 +364,12 @@ Function updates total deposits. Deposit interactions with the Aave Pool contrac
 ## withdraw
 
 ```solidity
-function withdraw(address _assetAddress, uint256 _amount, address _depositor, bool _isETH)...
+function withdraw(
+    address _assetAddress,
+    uint256 _amount,
+    address _depositor,
+    bool _isETH
+)...
 ```
 
 Function withdraws Contributor's funds from Aave pools, exchanging the JustCausePool's aTokens for reserve tokens and sending them to the Contributor's wallet.
@@ -386,7 +391,12 @@ Function withdraws Contributor's funds from Aave pools, exchanging the JustCause
 ## withdrawDonations
 
 ```solidity
-function withdrawDonations(address _assetAddress, address _feeAddress, bool _isETH)...
+function withdrawDonations(
+  address _assetAddress,
+  address _feeAddress,
+  bool _isETH,
+  uint256 _bpFee)
+external onlyPoolTracker returns(uint256){...
 ```
 
 Function claims donations for receiver. Calls Aave Pool contract, exchanging JustCausePool's aTokens for reserve tokens for interestEarned amount. Calculates interestEarned and subtracts 0.2% fee from claim amount for non-verified Pools. Sends interestEarned - fee to receiver and fee to protocol (or just sends interestEarned for verified Pools).
@@ -399,6 +409,13 @@ Function claims donations for receiver. Calls Aave Pool contract, exchanging Jus
 | _feeAddress | `address` | address that collects the 0.2% protocol fee |
 |--- | --- | --- |
 | _isETH | `bool` | indicating if asset is the base token of network (eth/matic/...) |
+|--- | --- | --- |
+| _bpFee | `uint256` | fee rate paid to the protocol 0 - 0.4% |
+|--- | --- | --- |
+
+| Return | Type | Description |
+|--- | --- | --- |
+| donated | `uint256` | amount donated to pool |
 |--- | --- | --- |
 
 ---
@@ -1056,6 +1073,22 @@ Function creates new JustCausePool and JCDepositorERC721 by proxy contract. Adds
 
 ---
 
+## setBpFee
+
+```solidity
+function setBpFee(uint256 feeKey)...
+```
+
+Function sets the basis point fee that is withdraw from donations (ranges from 0 - 0.4% of donations). Can only be called by the multiSig address.
+
+
+| Param | Type | Description |
+|--- | --- | --- |
+| feeKey | `uint256` | key to the array that stores valid protocol fee values |
+|--- | --- | --- |
+
+---
+
 
 # View Methods
 
@@ -1138,10 +1171,26 @@ Function returns the the list of pools that a given address is the receiver for.
 
 ---
 
-## getValidator
+## getBpFee
 
 ```solidity
- function getValidator() public view returns(address)...
+function getBpFee() public view returns(uint256)...
+```
+
+Function returns basis point fee that is withdraw from donations (ranges from 0 - 0.4% of donations).
+
+
+| Return | Type | Description |
+|--- | --- | --- |
+| bpFee | `uint256` | basis points (parts per 10,000) ex. 20 = 0.2% |
+|--- | --- | --- |
+
+---
+
+## getMultiSig
+
+```solidity
+ function getMultiSig() public view returns(address)...
 ```
 
 Function returns the address of the validator. This is the address that is allowed to create verified pools.
@@ -1149,7 +1198,7 @@ Function returns the address of the validator. This is the address that is allow
 
 | Return | Type | Description |
 |--- | --- | --- |
-| validator | `address` | address of ERC721 for depositors, created on deployment |
+| multiSig | `address` | address of multiSig, only address allowed to create pools and change fee rate |
 |--- | --- | --- |
 
 ---

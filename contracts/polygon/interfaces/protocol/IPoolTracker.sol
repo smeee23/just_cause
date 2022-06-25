@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
 interface IPoolTracker {
@@ -56,6 +56,16 @@ interface IPoolTracker {
       address _receiver
   ) external;
 
+    /**
+    * @param feeKey accepts 0 - 4 as keys to set the fixed rate of fees
+    **/
+    function setBpFee(uint256 feeKey) external;
+
+    /**
+    * @return bpFee current bpFee
+    **/
+    function getBpFee() external view returns(uint256);
+
   /**
   * @param _asset The address of the underlying asset of the reserve
   * @return tvl of the protocol for a given asset
@@ -82,7 +92,7 @@ interface IPoolTracker {
   /**
   * @return address of validator
   **/
-  function getValidator() external view returns(address);
+  function getMultiSig() external view returns(address);
 
   /**
   * @param _user The address of the underlying asset of the reserve

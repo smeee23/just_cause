@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
 import { IERC20} from './interfaces/other/IERC20.sol';
@@ -11,6 +11,7 @@ import { JCDepositorERC721 } from './JCDepositorERC721.sol';
 import { JustCausePool } from './JustCausePool.sol';
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/proxy/Clones.sol";
 
 /**
  * @title PoolTracker contract
@@ -197,26 +198,6 @@ contract PoolTracker is ReentrancyGuard {
     }
 
     /**
-     * @param basePool address of base contract
-     * @return instance proxy instance of JCP
-     * @dev Deploys and returns the address of a clone that mimics the behaviour of `implementation`.
-     *
-     * This function uses the create opcode, which should never revert.
-     *
-     * from OpenZeppelin Contracts v4.4.1 (proxy/Clones.sol)
-     **/
-    function clone(address basePool) internal returns (address instance) {
-        assembly {
-            let ptr := mload(0x40)
-            mstore(ptr, 0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000000000000000000000)
-            mstore(add(ptr, 0x14), shl(0x60, basePool))
-            mstore(add(ptr, 0x28), 0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000)
-            instance := create(0, ptr, 0x37)
-        }
-        require(instance != address(0), "ERC1167: create failed");
-    }
-
-    /**
     * @dev Emit AddPool
     * @notice Creates new JustCausePool and JCDepositorERC721 by proxy contract.
     * @param _acceptedTokens List of tokens to be accepted by JCP.
@@ -236,8 +217,8 @@ contract PoolTracker is ReentrancyGuard {
     ) external onlyAcceptedTokens(_acceptedTokens){
 
         require(names[_name] == address(0), "pool with name already exists");
-        address jcpChild = clone(address(baseJCPool));
-        address erc721Child = clone(address(baseERC721));
+        address jcpChild = Clones.clone(address(baseJCPool));
+        address erc721Child = Clones.clone(address(baseERC721));
         bool isVerified;
         if(msg.sender == multiSig){
             verifiedPools.push(jcpChild);
@@ -263,7 +244,7 @@ contract PoolTracker is ReentrancyGuard {
     /**
     * @return bpFee current bpFee
     **/
-    function getBpFee() public view onlyMultiSig() returns(uint256) {
+    function getBpFee() public view returns(uint256) {
         return bpFee;
     }
 

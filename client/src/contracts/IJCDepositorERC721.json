@@ -164,7 +164,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenOwner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_timeStamp\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_metaUri\",\"type\":\"string\"}],\"name\":\"addFunds\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"getDepositInfo\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timeStamp\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"internalType\":\"struct IJCDepositorERC721.Deposit\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPool\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"getUserBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenOwner\",\"type\":\"address\"}],\"name\":\"getUserTokens\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_jcPool\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenOwner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"withdrawFunds\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addFunds(address,uint256,uint256,address,string)\":{\"details\":\"Creates NFT for depositor if first deposit for pool and asset\",\"params\":{\"_asset\":\"The address of the underlying asset of the reserve\",\"_metaUri\":\"meta info uri for nft of JCP\",\"_timeStamp\":\"timeStamp of token creation\",\"_tokenOwner\":\"address of depositor\"},\"returns\":{\"_0\":\"tokenId unique tokenId keccak hash of depositor, pool and asset addresses*\"}},\"getDepositInfo(uint256)\":{\"params\":{\"_tokenId\":\"unique tokenId keccak hash of depositor, pool and asset addresses\"},\"returns\":{\"_0\":\"Deposit struct containing info about deposit*\"}},\"getPool()\":{\"returns\":{\"_0\":\"jcPool the pool associated with this ERC721 token*\"}},\"getUserBalance(uint256)\":{\"params\":{\"_tokenId\":\"unique tokenId keccak hash of depositor, pool and asset addresses\"},\"returns\":{\"_0\":\"asset balance of user in pool*\"}},\"getUserTokens(address)\":{\"details\":\"contract returns all token ids that this user has deposits for\",\"params\":{\"_tokenOwner\":\"owner to look for tokenId's\"},\"returns\":{\"_0\":\"asset balance of user in pool*\"}},\"initialize(address)\":{\"details\":\"Function is invoked by the PoolTacker contract when a Pool is created.\",\"params\":{\"_jcPool\":\"address of JustCause Pool that is associated with this contract.*\"}},\"withdrawFunds(address,uint256,address)\":{\"details\":\"Withdraw balance for depositor\",\"params\":{\"_amount\":\"amount to withdraw\",\"_asset\":\"The address of the underlying asset of the reserve*\",\"_tokenOwner\":\"address of depositor\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"initialize(address)\":{\"notice\":\"Initializes the JustCause Pool.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/polygon/interfaces/protocol/IJCDepositorERC721.sol\":\"IJCDepositorERC721\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/polygon/interfaces/protocol/IJCDepositorERC721.sol\":{\"keccak256\":\"0xae74df71e1f8fbba9c0fb588ded0c2025951a07390780030bf3889ed884a06cb\",\"license\":\"agpl-3.0\",\"urls\":[\"bzz-raw://9c7d48c8e0eaa7d4c64f937654fa74d3a8a83b305f605bc2f242e75c1b68a5be\",\"dweb:/ipfs/QmNn5uL8xuSmS325ByvDMvRVo3hoFESqGMWpcuokJiv5ZT\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenOwner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_timeStamp\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_metaUri\",\"type\":\"string\"}],\"name\":\"addFunds\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"getDepositInfo\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timeStamp\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"internalType\":\"struct IJCDepositorERC721.Deposit\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPool\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"getUserBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenOwner\",\"type\":\"address\"}],\"name\":\"getUserTokens\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_jcPool\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenOwner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"withdrawFunds\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addFunds(address,uint256,uint256,address,string)\":{\"details\":\"Creates NFT for depositor if first deposit for pool and asset\",\"params\":{\"_asset\":\"The address of the underlying asset of the reserve\",\"_metaUri\":\"meta info uri for nft of JCP\",\"_timeStamp\":\"timeStamp of token creation\",\"_tokenOwner\":\"address of depositor\"},\"returns\":{\"_0\":\"tokenId unique tokenId keccak hash of depositor, pool and asset addresses*\"}},\"getDepositInfo(uint256)\":{\"params\":{\"_tokenId\":\"unique tokenId keccak hash of depositor, pool and asset addresses\"},\"returns\":{\"_0\":\"Deposit struct containing info about deposit*\"}},\"getPool()\":{\"returns\":{\"_0\":\"jcPool the pool associated with this ERC721 token*\"}},\"getUserBalance(uint256)\":{\"params\":{\"_tokenId\":\"unique tokenId keccak hash of depositor, pool and asset addresses\"},\"returns\":{\"_0\":\"asset balance of user in pool*\"}},\"getUserTokens(address)\":{\"details\":\"contract returns all token ids that this user has deposits for\",\"params\":{\"_tokenOwner\":\"owner to look for tokenId's\"},\"returns\":{\"_0\":\"asset balance of user in pool*\"}},\"initialize(address)\":{\"details\":\"Function is invoked by the PoolTacker contract when a Pool is created.\",\"params\":{\"_jcPool\":\"address of JustCause Pool that is associated with this contract.*\"}},\"withdrawFunds(address,uint256,address)\":{\"details\":\"Withdraw balance for depositor\",\"params\":{\"_amount\":\"amount to withdraw\",\"_asset\":\"The address of the underlying asset of the reserve*\",\"_tokenOwner\":\"address of depositor\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"initialize(address)\":{\"notice\":\"Initializes the JustCause Pool.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/polygon/interfaces/protocol/IJCDepositorERC721.sol\":\"IJCDepositorERC721\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/polygon/interfaces/protocol/IJCDepositorERC721.sol\":{\"keccak256\":\"0xc43178236ab91a788fe37aa198ad3a596ebd4ce6912662794423c0d2b58c7fcd\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9513088c13e05a02700531cc80ad01823a5dc6244677d85c4ecf0e15894dc478\",\"dweb:/ipfs/QmbvDBbemzZTshokPjJL4Z4MYjwptk5PzH9gvbA8AqMg5v\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -172,28 +172,28 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: agpl-3.0\npragma solidity 0.8.9;\n\ninterface IJCDepositorERC721{\n\n    struct Deposit {\n        uint256 balance;\n        uint256 timeStamp;\n        address asset;\n    }\n\n    /**\n    * @notice Initializes the JustCause Pool.\n    * @dev Function is invoked by the PoolTacker contract when a Pool is created.\n    * @param _jcPool address of JustCause Pool that is associated with this contract.\n    **/\n    function initialize(address _jcPool) external;\n\n    /**\n    * @dev Creates NFT for depositor if first deposit for pool and asset\n    * @param _tokenOwner address of depositor\n    * @param _timeStamp timeStamp of token creation\n    * @param _metaUri meta info uri for nft of JCP\n    * @param _asset The address of the underlying asset of the reserve\n    * @return tokenId unique tokenId keccak hash of depositor, pool and asset addresses\n    **/\n    function addFunds(\n        address _tokenOwner,\n        uint256 _amount,\n        uint256 _timeStamp,\n        address _asset,\n        string memory _metaUri\n    ) external returns (bool);\n\n\n    /**\n    * @dev Withdraw balance for depositor\n    * @param _tokenOwner address of depositor\n    * @param _amount amount to withdraw\n    * @param _asset The address of the underlying asset of the reserve\n    **/\n    function withdrawFunds(\n        address _tokenOwner,\n        uint256 _amount,\n        address _asset\n    ) external;\n\n\n    /**\n    * @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses\n    * @return Deposit struct containing info about deposit\n    **/\n    function getDepositInfo(uint256 _tokenId) external view returns (Deposit memory);\n\n    /**\n    * @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses\n    * @return asset balance of user in pool\n    **/\n    function getUserBalance(uint256 _tokenId) external view returns (uint256);\n\n    /**\n    * @dev contract returns all token ids that this user has deposits for\n    * @param _tokenOwner owner to look for tokenId's\n    * @return asset balance of user in pool\n    **/\n    function getUserTokens(address _tokenOwner) external view returns(uint256[] memory);\n\n     /**\n    * @return jcPool the pool associated with this ERC721 token\n    **/\n    function getPool() external view returns(address);\n}",
-  "sourcePath": "/home/smeee/projects/just_cause/contracts/polygon/interfaces/protocol/IJCDepositorERC721.sol",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.9;\n\ninterface IJCDepositorERC721{\n\n    struct Deposit {\n        uint256 balance;\n        uint256 timeStamp;\n        address asset;\n    }\n\n    /**\n    * @notice Initializes the JustCause Pool.\n    * @dev Function is invoked by the PoolTacker contract when a Pool is created.\n    * @param _jcPool address of JustCause Pool that is associated with this contract.\n    **/\n    function initialize(address _jcPool) external;\n\n    /**\n    * @dev Creates NFT for depositor if first deposit for pool and asset\n    * @param _tokenOwner address of depositor\n    * @param _timeStamp timeStamp of token creation\n    * @param _metaUri meta info uri for nft of JCP\n    * @param _asset The address of the underlying asset of the reserve\n    * @return tokenId unique tokenId keccak hash of depositor, pool and asset addresses\n    **/\n    function addFunds(\n        address _tokenOwner,\n        uint256 _amount,\n        uint256 _timeStamp,\n        address _asset,\n        string memory _metaUri\n    ) external returns (bool);\n\n\n    /**\n    * @dev Withdraw balance for depositor\n    * @param _tokenOwner address of depositor\n    * @param _amount amount to withdraw\n    * @param _asset The address of the underlying asset of the reserve\n    **/\n    function withdrawFunds(\n        address _tokenOwner,\n        uint256 _amount,\n        address _asset\n    ) external;\n\n\n    /**\n    * @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses\n    * @return Deposit struct containing info about deposit\n    **/\n    function getDepositInfo(uint256 _tokenId) external view returns (Deposit memory);\n\n    /**\n    * @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses\n    * @return asset balance of user in pool\n    **/\n    function getUserBalance(uint256 _tokenId) external view returns (uint256);\n\n    /**\n    * @dev contract returns all token ids that this user has deposits for\n    * @param _tokenOwner owner to look for tokenId's\n    * @return asset balance of user in pool\n    **/\n    function getUserTokens(address _tokenOwner) external view returns(uint256[] memory);\n\n     /**\n    * @return jcPool the pool associated with this ERC721 token\n    **/\n    function getPool() external view returns(address);\n}",
+  "sourcePath": "/home/smeee/just_cause/contracts/polygon/interfaces/protocol/IJCDepositorERC721.sol",
   "ast": {
     "absolutePath": "project:/contracts/polygon/interfaces/protocol/IJCDepositorERC721.sol",
     "exportedSymbols": {
       "IJCDepositorERC721": [
-        6306
+        6390
       ]
     },
-    "id": 6307,
-    "license": "agpl-3.0",
+    "id": 6391,
+    "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 6234,
+        "id": 6318,
         "literals": [
           "solidity",
           "0.8",
           ".9"
         ],
         "nodeType": "PragmaDirective",
-        "src": "37:22:27"
+        "src": "32:22:28"
       },
       {
         "abstract": false,
@@ -202,27 +202,27 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 6306,
+        "id": 6390,
         "linearizedBaseContracts": [
-          6306
+          6390
         ],
         "name": "IJCDepositorERC721",
-        "nameLocation": "71:18:27",
+        "nameLocation": "66:18:28",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "canonicalName": "IJCDepositorERC721.Deposit",
-            "id": 6241,
+            "id": 6325,
             "members": [
               {
                 "constant": false,
-                "id": 6236,
+                "id": 6320,
                 "mutability": "mutable",
                 "name": "balance",
-                "nameLocation": "129:7:27",
+                "nameLocation": "124:7:28",
                 "nodeType": "VariableDeclaration",
-                "scope": 6241,
-                "src": "121:15:27",
+                "scope": 6325,
+                "src": "116:15:28",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -230,10 +230,10 @@
                   "typeString": "uint256"
                 },
                 "typeName": {
-                  "id": 6235,
+                  "id": 6319,
                   "name": "uint256",
                   "nodeType": "ElementaryTypeName",
-                  "src": "121:7:27",
+                  "src": "116:7:28",
                   "typeDescriptions": {
                     "typeIdentifier": "t_uint256",
                     "typeString": "uint256"
@@ -243,13 +243,13 @@
               },
               {
                 "constant": false,
-                "id": 6238,
+                "id": 6322,
                 "mutability": "mutable",
                 "name": "timeStamp",
-                "nameLocation": "154:9:27",
+                "nameLocation": "149:9:28",
                 "nodeType": "VariableDeclaration",
-                "scope": 6241,
-                "src": "146:17:27",
+                "scope": 6325,
+                "src": "141:17:28",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -257,10 +257,10 @@
                   "typeString": "uint256"
                 },
                 "typeName": {
-                  "id": 6237,
+                  "id": 6321,
                   "name": "uint256",
                   "nodeType": "ElementaryTypeName",
-                  "src": "146:7:27",
+                  "src": "141:7:28",
                   "typeDescriptions": {
                     "typeIdentifier": "t_uint256",
                     "typeString": "uint256"
@@ -270,13 +270,13 @@
               },
               {
                 "constant": false,
-                "id": 6240,
+                "id": 6324,
                 "mutability": "mutable",
                 "name": "asset",
-                "nameLocation": "181:5:27",
+                "nameLocation": "176:5:28",
                 "nodeType": "VariableDeclaration",
-                "scope": 6241,
-                "src": "173:13:27",
+                "scope": 6325,
+                "src": "168:13:28",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -284,10 +284,10 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 6239,
+                  "id": 6323,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
-                  "src": "173:7:27",
+                  "src": "168:7:28",
                   "stateMutability": "nonpayable",
                   "typeDescriptions": {
                     "typeIdentifier": "t_address",
@@ -298,40 +298,40 @@
               }
             ],
             "name": "Deposit",
-            "nameLocation": "103:7:27",
+            "nameLocation": "98:7:28",
             "nodeType": "StructDefinition",
-            "scope": 6306,
-            "src": "96:97:27",
+            "scope": 6390,
+            "src": "91:97:28",
             "visibility": "public"
           },
           {
             "documentation": {
-              "id": 6242,
+              "id": 6326,
               "nodeType": "StructuredDocumentation",
-              "src": "199:225:27",
+              "src": "194:225:28",
               "text": " @notice Initializes the JustCause Pool.\n @dev Function is invoked by the PoolTacker contract when a Pool is created.\n @param _jcPool address of JustCause Pool that is associated with this contract.*"
             },
             "functionSelector": "c4d66de8",
-            "id": 6247,
+            "id": 6331,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "initialize",
-            "nameLocation": "438:10:27",
+            "nameLocation": "433:10:28",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6245,
+              "id": 6329,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6244,
+                  "id": 6328,
                   "mutability": "mutable",
                   "name": "_jcPool",
-                  "nameLocation": "457:7:27",
+                  "nameLocation": "452:7:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6247,
-                  "src": "449:15:27",
+                  "scope": 6331,
+                  "src": "444:15:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -339,10 +339,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6243,
+                    "id": 6327,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "449:7:27",
+                    "src": "444:7:28",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -352,48 +352,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "448:17:27"
+              "src": "443:17:28"
             },
             "returnParameters": {
-              "id": 6246,
+              "id": 6330,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "474:0:27"
+              "src": "469:0:28"
             },
-            "scope": 6306,
-            "src": "429:46:27",
+            "scope": 6390,
+            "src": "424:46:28",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6248,
+              "id": 6332,
               "nodeType": "StructuredDocumentation",
-              "src": "481:392:27",
+              "src": "476:392:28",
               "text": " @dev Creates NFT for depositor if first deposit for pool and asset\n @param _tokenOwner address of depositor\n @param _timeStamp timeStamp of token creation\n @param _metaUri meta info uri for nft of JCP\n @param _asset The address of the underlying asset of the reserve\n @return tokenId unique tokenId keccak hash of depositor, pool and asset addresses*"
             },
             "functionSelector": "26a45ffb",
-            "id": 6263,
+            "id": 6347,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "addFunds",
-            "nameLocation": "887:8:27",
+            "nameLocation": "882:8:28",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6259,
+              "id": 6343,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6250,
+                  "id": 6334,
                   "mutability": "mutable",
                   "name": "_tokenOwner",
-                  "nameLocation": "913:11:27",
+                  "nameLocation": "908:11:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6263,
-                  "src": "905:19:27",
+                  "scope": 6347,
+                  "src": "900:19:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -401,10 +401,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6249,
+                    "id": 6333,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "905:7:27",
+                    "src": "900:7:28",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -415,13 +415,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6252,
+                  "id": 6336,
                   "mutability": "mutable",
                   "name": "_amount",
-                  "nameLocation": "942:7:27",
+                  "nameLocation": "937:7:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6263,
-                  "src": "934:15:27",
+                  "scope": 6347,
+                  "src": "929:15:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -429,10 +429,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6251,
+                    "id": 6335,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "934:7:27",
+                    "src": "929:7:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -442,13 +442,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6254,
+                  "id": 6338,
                   "mutability": "mutable",
                   "name": "_timeStamp",
-                  "nameLocation": "967:10:27",
+                  "nameLocation": "962:10:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6263,
-                  "src": "959:18:27",
+                  "scope": 6347,
+                  "src": "954:18:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -456,10 +456,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6253,
+                    "id": 6337,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "959:7:27",
+                    "src": "954:7:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -469,13 +469,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6256,
+                  "id": 6340,
                   "mutability": "mutable",
                   "name": "_asset",
-                  "nameLocation": "995:6:27",
+                  "nameLocation": "990:6:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6263,
-                  "src": "987:14:27",
+                  "scope": 6347,
+                  "src": "982:14:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -483,10 +483,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6255,
+                    "id": 6339,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "987:7:27",
+                    "src": "982:7:28",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -497,13 +497,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6258,
+                  "id": 6342,
                   "mutability": "mutable",
                   "name": "_metaUri",
-                  "nameLocation": "1025:8:27",
+                  "nameLocation": "1020:8:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6263,
-                  "src": "1011:22:27",
+                  "scope": 6347,
+                  "src": "1006:22:28",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -511,10 +511,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 6257,
+                    "id": 6341,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1011:6:27",
+                    "src": "1006:6:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -523,21 +523,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "895:144:27"
+              "src": "890:144:28"
             },
             "returnParameters": {
-              "id": 6262,
+              "id": 6346,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6261,
+                  "id": 6345,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6263,
-                  "src": "1058:4:27",
+                  "scope": 6347,
+                  "src": "1053:4:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -545,10 +545,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 6260,
+                    "id": 6344,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1058:4:27",
+                    "src": "1053:4:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -557,42 +557,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1057:6:27"
+              "src": "1052:6:28"
             },
-            "scope": 6306,
-            "src": "878:186:27",
+            "scope": 6390,
+            "src": "873:186:28",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6264,
+              "id": 6348,
               "nodeType": "StructuredDocumentation",
-              "src": "1071:210:27",
+              "src": "1066:210:28",
               "text": " @dev Withdraw balance for depositor\n @param _tokenOwner address of depositor\n @param _amount amount to withdraw\n @param _asset The address of the underlying asset of the reserve*"
             },
             "functionSelector": "47c6b45e",
-            "id": 6273,
+            "id": 6357,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "withdrawFunds",
-            "nameLocation": "1295:13:27",
+            "nameLocation": "1290:13:28",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6271,
+              "id": 6355,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6266,
+                  "id": 6350,
                   "mutability": "mutable",
                   "name": "_tokenOwner",
-                  "nameLocation": "1326:11:27",
+                  "nameLocation": "1321:11:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6273,
-                  "src": "1318:19:27",
+                  "scope": 6357,
+                  "src": "1313:19:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -600,10 +600,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6265,
+                    "id": 6349,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1318:7:27",
+                    "src": "1313:7:28",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -614,13 +614,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6268,
+                  "id": 6352,
                   "mutability": "mutable",
                   "name": "_amount",
-                  "nameLocation": "1355:7:27",
+                  "nameLocation": "1350:7:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6273,
-                  "src": "1347:15:27",
+                  "scope": 6357,
+                  "src": "1342:15:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -628,10 +628,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6267,
+                    "id": 6351,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1347:7:27",
+                    "src": "1342:7:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -641,13 +641,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 6270,
+                  "id": 6354,
                   "mutability": "mutable",
                   "name": "_asset",
-                  "nameLocation": "1380:6:27",
+                  "nameLocation": "1375:6:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6273,
-                  "src": "1372:14:27",
+                  "scope": 6357,
+                  "src": "1367:14:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -655,10 +655,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6269,
+                    "id": 6353,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1372:7:27",
+                    "src": "1367:7:28",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -668,48 +668,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1308:84:27"
+              "src": "1303:84:28"
             },
             "returnParameters": {
-              "id": 6272,
+              "id": 6356,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1401:0:27"
+              "src": "1396:0:28"
             },
-            "scope": 6306,
-            "src": "1286:116:27",
+            "scope": 6390,
+            "src": "1281:116:28",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6274,
+              "id": 6358,
               "nodeType": "StructuredDocumentation",
-              "src": "1409:158:27",
+              "src": "1404:158:28",
               "text": " @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses\n @return Deposit struct containing info about deposit*"
             },
             "functionSelector": "5328c2bf",
-            "id": 6282,
+            "id": 6366,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getDepositInfo",
-            "nameLocation": "1581:14:27",
+            "nameLocation": "1576:14:28",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6277,
+              "id": 6361,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6276,
+                  "id": 6360,
                   "mutability": "mutable",
                   "name": "_tokenId",
-                  "nameLocation": "1604:8:27",
+                  "nameLocation": "1599:8:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6282,
-                  "src": "1596:16:27",
+                  "scope": 6366,
+                  "src": "1591:16:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -717,10 +717,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6275,
+                    "id": 6359,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1596:7:27",
+                    "src": "1591:7:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -729,83 +729,83 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1595:18:27"
+              "src": "1590:18:28"
             },
             "returnParameters": {
-              "id": 6281,
+              "id": 6365,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6280,
+                  "id": 6364,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6282,
-                  "src": "1637:14:27",
+                  "scope": 6366,
+                  "src": "1632:14:28",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_Deposit_$6241_memory_ptr",
+                    "typeIdentifier": "t_struct$_Deposit_$6325_memory_ptr",
                     "typeString": "struct IJCDepositorERC721.Deposit"
                   },
                   "typeName": {
-                    "id": 6279,
+                    "id": 6363,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 6278,
+                      "id": 6362,
                       "name": "Deposit",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 6241,
-                      "src": "1637:7:27"
+                      "referencedDeclaration": 6325,
+                      "src": "1632:7:28"
                     },
-                    "referencedDeclaration": 6241,
-                    "src": "1637:7:27",
+                    "referencedDeclaration": 6325,
+                    "src": "1632:7:28",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Deposit_$6241_storage_ptr",
+                      "typeIdentifier": "t_struct$_Deposit_$6325_storage_ptr",
                       "typeString": "struct IJCDepositorERC721.Deposit"
                     }
                   },
                   "visibility": "internal"
                 }
               ],
-              "src": "1636:16:27"
+              "src": "1631:16:28"
             },
-            "scope": 6306,
-            "src": "1572:81:27",
+            "scope": 6390,
+            "src": "1567:81:28",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6283,
+              "id": 6367,
               "nodeType": "StructuredDocumentation",
-              "src": "1659:143:27",
+              "src": "1654:143:28",
               "text": " @param _tokenId unique tokenId keccak hash of depositor, pool and asset addresses\n @return asset balance of user in pool*"
             },
             "functionSelector": "2e0c3f3c",
-            "id": 6290,
+            "id": 6374,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getUserBalance",
-            "nameLocation": "1816:14:27",
+            "nameLocation": "1811:14:28",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6286,
+              "id": 6370,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6285,
+                  "id": 6369,
                   "mutability": "mutable",
                   "name": "_tokenId",
-                  "nameLocation": "1839:8:27",
+                  "nameLocation": "1834:8:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6290,
-                  "src": "1831:16:27",
+                  "scope": 6374,
+                  "src": "1826:16:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -813,10 +813,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6284,
+                    "id": 6368,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1831:7:27",
+                    "src": "1826:7:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -825,21 +825,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1830:18:27"
+              "src": "1825:18:28"
             },
             "returnParameters": {
-              "id": 6289,
+              "id": 6373,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6288,
+                  "id": 6372,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6290,
-                  "src": "1872:7:27",
+                  "scope": 6374,
+                  "src": "1867:7:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -847,10 +847,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6287,
+                    "id": 6371,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1872:7:27",
+                    "src": "1867:7:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -859,42 +859,42 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1871:9:27"
+              "src": "1866:9:28"
             },
-            "scope": 6306,
-            "src": "1807:74:27",
+            "scope": 6390,
+            "src": "1802:74:28",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6291,
+              "id": 6375,
               "nodeType": "StructuredDocumentation",
-              "src": "1887:182:27",
+              "src": "1882:182:28",
               "text": " @dev contract returns all token ids that this user has deposits for\n @param _tokenOwner owner to look for tokenId's\n @return asset balance of user in pool*"
             },
             "functionSelector": "519dc8d2",
-            "id": 6299,
+            "id": 6383,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getUserTokens",
-            "nameLocation": "2083:13:27",
+            "nameLocation": "2078:13:28",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6294,
+              "id": 6378,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6293,
+                  "id": 6377,
                   "mutability": "mutable",
                   "name": "_tokenOwner",
-                  "nameLocation": "2105:11:27",
+                  "nameLocation": "2100:11:28",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6299,
-                  "src": "2097:19:27",
+                  "scope": 6383,
+                  "src": "2092:19:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -902,10 +902,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6292,
+                    "id": 6376,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2097:7:27",
+                    "src": "2092:7:28",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -915,21 +915,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2096:21:27"
+              "src": "2091:21:28"
             },
             "returnParameters": {
-              "id": 6298,
+              "id": 6382,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6297,
+                  "id": 6381,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6299,
-                  "src": "2140:16:27",
+                  "scope": 6383,
+                  "src": "2135:16:28",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -938,18 +938,18 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 6295,
+                      "id": 6379,
                       "name": "uint256",
                       "nodeType": "ElementaryTypeName",
-                      "src": "2140:7:27",
+                      "src": "2135:7:28",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 6296,
+                    "id": 6380,
                     "nodeType": "ArrayTypeName",
-                    "src": "2140:9:27",
+                    "src": "2135:9:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -958,48 +958,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2139:18:27"
+              "src": "2134:18:28"
             },
-            "scope": 6306,
-            "src": "2074:84:27",
+            "scope": 6390,
+            "src": "2069:84:28",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 6300,
+              "id": 6384,
               "nodeType": "StructuredDocumentation",
-              "src": "2165:75:27",
+              "src": "2160:75:28",
               "text": " @return jcPool the pool associated with this ERC721 token*"
             },
             "functionSelector": "026b1d5f",
-            "id": 6305,
+            "id": 6389,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getPool",
-            "nameLocation": "2254:7:27",
+            "nameLocation": "2249:7:28",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 6301,
+              "id": 6385,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2261:2:27"
+              "src": "2256:2:28"
             },
             "returnParameters": {
-              "id": 6304,
+              "id": 6388,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6303,
+                  "id": 6387,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6305,
-                  "src": "2286:7:27",
+                  "scope": 6389,
+                  "src": "2281:7:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1007,10 +1007,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 6302,
+                    "id": 6386,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2286:7:27",
+                    "src": "2281:7:28",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1020,21 +1020,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2285:9:27"
+              "src": "2280:9:28"
             },
-            "scope": 6306,
-            "src": "2245:50:27",
+            "scope": 6390,
+            "src": "2240:50:28",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 6307,
-        "src": "61:2236:27",
+        "scope": 6391,
+        "src": "56:2236:28",
         "usedErrors": []
       }
     ],
-    "src": "37:2260:27"
+    "src": "32:2260:28"
   },
   "compiler": {
     "name": "solc",
@@ -1042,7 +1042,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-06-24T15:14:29.082Z",
+  "updatedAt": "2022-06-25T19:01:00.949Z",
   "devdoc": {
     "kind": "dev",
     "methods": {

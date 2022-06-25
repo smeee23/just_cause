@@ -70,7 +70,6 @@ contract("JCDepositorERC721", async (accounts) => {
         const erc721Instance = await JCDepositorERC721.at(erc721Address);
 
         const tokenIds = await erc721Instance.getUserTokens(depositor);
-        console.log("tokenId", tokenIds[0].toString(), tokenIds[1].toString());
         const tokenId = tokenIds[0];
         const depositInfo = await erc721Instance.getDepositInfo(tokenId);
 

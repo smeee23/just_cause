@@ -311,7 +311,7 @@ contract("Pool Tracker", async (accounts) => {
     });
 
     it("claimInterest updates totalDonated and fee is 0", async() => {
-        await this.poolTracker.setBpFee(4, {from: multiSig});
+        await this.poolTracker.setBpFee(0, {from: multiSig});
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");
         const approveAmount = web3.utils.toWei("1000000", "ether");

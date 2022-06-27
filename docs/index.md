@@ -137,7 +137,7 @@ The Aave Protocol has been audited, and has an ongoing bug bounty program. It se
 
 Through lossless donations, JustCause is able to charge no fees to Contributors. To donate users go to the Dashboard to see JustCause's Verified Pools. Alternatively, users search for user generated pools by name or contract address.
 
-Users share Causes they create or feel passionate about on social media by clicking the share icons in the  Pool. This creates a post with a link on the platform for friends to follow and contribute.
+Users share causes they create or feel passionate about on social media by clicking the share icons in the  Pool. This creates a post with a link on the platform for friends to follow and contribute.
 
 Contributors are able to see and withdraw deposits from pools they have contributed to under Contributions in the Dashboard tab. 
 
@@ -151,15 +151,15 @@ Another unique feature of JustCause is that the deposit information for the user
 
 # Your Cause
 
-We want to make it so anyone can create and fund a Cause on JustCause.
+We want to make it so anyone can create and fund a cause on JustCause.
 
-Every Cause on JustCause is funded through a Pool. Think of a Pool as a savings account that generates interest on deposits. Any interest generated gets automatically donated to the Cause. JustCause has two types of pools: Verified Pools and User pools.
+Every cause on JustCause is funded through a Pool. Think of a Pool as a savings account that generates interest on deposits. Any interest generated gets automatically donated to the cause. JustCause has two types of pools: Verified Pools and User pools.
 
 ### Verified Pools
 
 Verified pools are created by the team, and the recipient of the funds are known and established entities.  In short, any user who contributes knows where the donations are going.
 
-All verified pools can be found under Verified Causes in the Dashboard tab.
+All verified pools can be found under verified causes in the Dashboard tab.
 
 ### User Pools
 
@@ -190,7 +190,7 @@ JustCause is a decentralized non-custodial crowdfunding protocol where users par
 
 ### Where are my deposited funds stored?
 
-Your funds are allocated in a smart contract. The code of the smart contract is public, open source, and audited by third party auditors. You can withdraw your funds from the pool at any time.
+Your funds are allocated in a smart contract. The code of the smart contract is public, open source, and ++++NOT YET AUDITED++++audited by third party auditors. You can withdraw your funds from the pool at any time.
 
 ---
 
@@ -212,13 +212,13 @@ See: [Getting started on the Polygon PoS chain](https://wallet.polygon.technolog
 
 ### What is the cost of donating with JustCause protocol?
 
-Contributors receive their full deposit back upon withdrawal, minus fees. Interacting with the protocol requires transactions and thus transaction fees on the Polygon PoS blockchain.
+Contributors receive their full deposit back upon withdrawal, minus network transaction fees. Interacting with the protocol requires transactions and thus transaction fees on the Polygon PoS blockchain.
 
 ---
 
-### What fees does the protocol charge?
+### What fee does JustCause charge?
 
-to fund the protocol a fee of 0.2% is charged when the interest is paid to the cause for user created pools. In other words, for each $100 that is withdrawn as a donation JustCause receives $0.20. This fee is magnitudes lower than traditional crowdfunding sites. No fee is charged to the Contributor.
+To fund development and seed the treasury for the JustCauseDao a fee of 0.2% is charged when the interest is paid to the cause for all pools. In other words, for each $100 that is sent to the cause JustCause receives $0.20. No fee is charged to the Contributor. This rate can be raised to as high as 0.4% or lowered to 0 by the team to find an equilibrium that supports the causes as well as JustCause in the long run.
 
 
 ---
@@ -226,21 +226,28 @@ to fund the protocol a fee of 0.2% is charged when the interest is paid to the c
 
 ### Why use JustCause?
 
-  # Because we are awesome
-
 JustCause is an open source, permissionless and non-custodial protocol. This means that anyone has the freedom to create or contribute to pools.
 
 Crowdfunding mechanisms based on traditional financial payment networks are inherently permissioned and custodial. This leaves the funds and users of these systems vulnerable to financial censorship. We want to solve this problem.
 
 ---
 
+## What causes are allowed?
+
+Our mission is to give users the freedom to create and fund any cause they deem worthy. Our contracts are immutable and permissionless by design. Anyone has the right to create a user cause and publish it on our user interface (ui). While anyone can interact with our contracts and [github respository](https://github.com/smeee23/just_cause) we do reserve the right to remove causes from our team operated front end. This would only be done in extreme cases, eg. promotion of violence of any kind.
+
+The team has no control over user funds deposited into pools.
+
+---
+
 ### Is there any risk?
 
-The risks related to the JustCause platform are the smart contract risk (risk of a bug within the protocol code and the Aave protocol code) and liquidation risk (risk on the collateral liquidation process on Aave). Every possible step has been taken to minimize the risk as much as possible-- the protocol code is public and open source and it has been audited.
+The risks related to the JustCause platform are the smart contract risk (risk of a bug within the protocol code and the Aave protocol code) and liquidation risk (risk on the collateral liquidation process on Aave). Every possible step has been taken to minimize the risk as much as possible-- the protocol code is public and open source and it has been ++++NOT YET AUDITED++++audited.
 
 ---
 
 ### How much will my contributions donate?
+
 JustCause Pools receive continuous earnings from Aave that evolve with market conditions based on:
 
 The interest rate payment on loans – on Aave depositors share the interests paid by borrowers corresponding to the average borrow rate times the utilization rate. The higher the utilization of a reserve the higher the yield for depositors.
@@ -259,7 +266,7 @@ Users are able to deposit any amount they want, there is no minimum or maximum l
 
 ### What tokens are allowed to be deposited?
 
-JustCause Pools accept Polygon network MATIC, USDC, USDT, DAI, WBTC, WETH, AAVE, DPI, and LINK with more to be added.
+JustCause Pool creators choose what tokens to accept at pool creation. They can choose from Polygon network MATIC, USDC, USDT, DAI, WBTC, WETH, AAVE, DPI, and LINK with more to be added.
 
 ---
 
@@ -269,11 +276,20 @@ JustCause Pools accept Polygon network MATIC, USDC, USDT, DAI, WBTC, WETH, AAVE,
 
 # Risks
 
+### JustCause
+
+Every possible step has been taken to minimize the risk to user funds as much as possible. We have been ++++NOT YET AUDITED++++audited
+
+However, JustCause is a brand new social experiment. Before deciding to participate in JustCause, you should carefully consider your objectives, level of experience with crypto and risk appetite. Most importantly, do not deposit money with JustCause you cannot afford to lose. Crypto markets are very risky and you may lose all or some of your deposits.
+
+The risks related to the JustCause platform are the smart contract risk (risk of a bug within the protocol code and the Aave protocol code) and liquidation risk (risk on the collateral liquidation process on Aave).
+
 ### Aave
 
 The Aave Protocol has been audited, and has an ongoing bug bounty program. It secures tens of billions of dollars of value. The protocol is completely open source, allowing anyone to interact and build on top of it. Every possible step has been taken to minimize the risk as much as possible. However, no platform can be considered entirely risk free.
 
 ### Permanent loss of a peg
+
 If one of the stablecoins deposited in a JustCause pool goes significantly down below the peg of $1.00 and never returns to the peg, it could mean the loss of user funds.
 
 </div>

@@ -66,7 +66,7 @@ test
 
 # Documentation
 
-tba
+Please see our [docs](https://docs.justcause.finance/) page for more info, and smart contract descriptions.
 
 # Audits
 

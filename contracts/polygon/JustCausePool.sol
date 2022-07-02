@@ -38,8 +38,8 @@ contract JustCausePool is Initializable {
     mapping(address => uint256) private interestWithdrawn;
     bool private isBase;
 
-    IPoolAddressesProvider provider;
-    address poolAddr;
+    address poolAddressesProviderAddr;
+
     address wethGatewayAddr;
     address erc721Addr;
 
@@ -113,6 +113,9 @@ contract JustCausePool is Initializable {
     * @param _picHash ipfs hash of pic of JCP.
     * @param _metaUri meta info uri for nft of JCP.
     * @param _receiver address of receiver of JCP donations.
+    * @param _poolAddressesProviderAddr address of Aave pool addresses provider
+    * @param _wethGatewayAddr address of Aave WETH gateway
+    * @param _erc721Addr address of contributor pool NFT
     * @param _isVerified indicates whether JCP is verified
     **/
     function initialize(
@@ -122,7 +125,7 @@ contract JustCausePool is Initializable {
         string memory _picHash,
         string memory _metaUri,
         address _receiver,
-        address _poolAddr,
+        address _poolAddressesProviderAddr,
         address _wethGatewayAddr,
         address _erc721Addr,
         bool _isVerified
@@ -140,7 +143,7 @@ contract JustCausePool is Initializable {
         metaUri = _metaUri;
         isVerified = _isVerified;
 
-        poolAddr = _poolAddr;
+        poolAddressesProviderAddr = _poolAddressesProviderAddr;
         wethGatewayAddr = _wethGatewayAddr;
         erc721Addr = _erc721Addr;
         acceptedTokens = _acceptedTokens;
@@ -171,6 +174,7 @@ contract JustCausePool is Initializable {
         address _depositor,
         bool _isETH
     ) external onlyPoolTracker {
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         totalDeposits[_assetAddress] -= _amount;
         if(!_isETH){
             IPool(poolAddr).withdraw(_assetAddress, _amount, _depositor);
@@ -205,6 +209,7 @@ contract JustCausePool is Initializable {
         uint256 interestEarned = aTokenBalance - totalDeposits[_assetAddress];
         interestWithdrawn[_assetAddress] += interestEarned;
         uint256 donated = interestEarned;
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
 
         if(!_isETH){
             if(_bpFee == 0){
@@ -321,6 +326,7 @@ contract JustCausePool is Initializable {
     * @return aTokenAddress address of Aave's aToken for asset
     **/
     function getATokenAddress(address _assetAddress) public view returns(address aTokenAddress){
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         aTokenAddress = IPool(poolAddr).getReserveData(_assetAddress).aTokenAddress;
     }
 
@@ -364,6 +370,7 @@ contract JustCausePool is Initializable {
     * @return normalizedIncome reserve's normalized income
     */
     function getReserveNormalizedIncome(address _assetAddress) public view returns(uint256){
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         return IPool(poolAddr).getReserveNormalizedIncome(_assetAddress);
     }
 
@@ -372,6 +379,7 @@ contract JustCausePool is Initializable {
     * @return liquidityIndex reserve's liquidity index
     */
     function getAaveLiquidityIndex(address _assetAddress) public view returns(uint256 liquidityIndex){
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         liquidityIndex = IPool(poolAddr).getReserveData(_assetAddress).liquidityIndex;
     }
 

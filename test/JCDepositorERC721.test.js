@@ -36,7 +36,7 @@ contract("JCDepositorERC721", async (accounts) => {
 
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
-        this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
+        this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr, multiSig);
         this.INTEREST = "1000000000000000000";
     });
 

@@ -327,7 +327,7 @@ function initialize(
         string memory _picHash,
         string memory _metaUri,
         address _receiver,
-        address _poolAddr,
+        address _poolAddressesProviderAddr,
         address _wethGatewayAddr,
         address _erc721Addr,
         bool _isVerified
@@ -351,6 +351,10 @@ Initializes the JustCausePool proxy contracts. Function is invoked by the PoolTa
 | _metaUri | `string` | meta info uri for NFT of JCP |
 |--- | --- | --- |
 | _receiver | `address` | address of receiver of JCP donations |
+|--- | --- | --- |
+| _poolAddressesProviderAddr | `address` | address of Aave pool addresses provider |
+|--- | --- | --- |
+| _wethGatewayAddr | `address` | address of Aave WETH gateway |
 |--- | --- | --- |
 | _erc721Addr | `address` | address of nft contract for pool |
 |--- | --- | --- |

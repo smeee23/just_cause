@@ -36,7 +36,7 @@ contract("JustCausePool", async (accounts) => {
 
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
-        this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
+        this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr, multiSig);
         this.INTEREST = "1000000000000000000";
         this.RESERVE_NORMALIZED_INCOME = "7755432354";
         this.LIQUIDITY_INDEX = "1234"

@@ -15,7 +15,7 @@ interface IJustCausePool {
     * @param _erc721Addr address of nft contract for pool.
     * @param _isVerified indicates whether JCP is verified
     **/
-    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddr, address _wethGatewayAddr, address _erc721Addr, bool _isVerified) external;
+    function initialize(address[] memory _acceptedTokens, string memory _name, string memory _about, string memory _picHash, string memory _metaUri, address _receiver, address _poolAddressesProviderAddr, address _wethGatewayAddr, address _erc721Addr, bool _isVerified) external;
 
     /**
     * @notice Only called by PoolTracker.

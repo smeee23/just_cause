@@ -50,7 +50,7 @@ contract PoolTracker is ReentrancyGuard {
     uint256 bpFee;
     address multiSig;
 
-    address poolAddr;
+    address poolAddressesProviderAddr;
     address wethGatewayAddr;
 
     event AddPool(address pool, string name, address receiver);
@@ -71,6 +71,7 @@ contract PoolTracker is ReentrancyGuard {
     * @dev Only tokens that are accepted by Aave can be used in JCP creation
     **/
     modifier onlyAcceptedTokens(address[] memory causeAcceptedTokens){
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         address[] memory aaveAcceptedTokens = IPool(poolAddr).getReservesList();
         for(uint8 i = 0; i < causeAcceptedTokens.length; i++){
             bool found;
@@ -88,6 +89,7 @@ contract PoolTracker is ReentrancyGuard {
     * @dev Only tokens that are accepted by Aave can be passed to functions marked by this modifier.
     **/
     modifier onlyAcceptedToken(address _asset){
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         address[] memory aaveAcceptedTokens = IPool(poolAddr).getReservesList();
         bool found;
         for(uint8 j = 0; j < aaveAcceptedTokens.length; j++){
@@ -111,12 +113,12 @@ contract PoolTracker is ReentrancyGuard {
     /**
     * @dev Constructor.
     */
-    constructor (address _poolAddressesProviderAddr, address _wethGatewayAddr) {
-        multiSig = msg.sender;
+    constructor (address _poolAddressesProviderAddr, address _wethGatewayAddr, address _multiSig) {
+        multiSig = _multiSig;
         baseJCPool = new JustCausePool();
         baseERC721 = new JCDepositorERC721();
 
-        poolAddr = IPoolAddressesProvider(_poolAddressesProviderAddr).getPool();
+        poolAddressesProviderAddr =  _poolAddressesProviderAddr;
         wethGatewayAddr = address(_wethGatewayAddr);
 
         fees = [0, 10, 20, 30, 40];
@@ -138,19 +140,20 @@ contract PoolTracker is ReentrancyGuard {
     ) onlyPools(_pool) nonReentrant() external payable {
         tvl[_asset] += _amount;
         string memory _metaHash = IJustCausePool(_pool).getMetaUri();
-        address _poolAddr = poolAddr;
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
+
         if(_isETH){
             require(IWETHGateway(wethGatewayAddr).getWETHAddress() == _asset, "asset does not match WETHGateway");
             require(msg.value > 0, "msg.value cannot be zero");
-            IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(_poolAddr, _pool, 0);
+            IWETHGateway(wethGatewayAddr).depositETH{value: msg.value}(poolAddr, _pool, 0);
         }
         else {
             require(msg.value == 0, "msg.value is not zero");
             IERC20 token = IERC20(_asset);
             require(token.allowance(msg.sender, address(this)) >= _amount, "sender not approved");
             token.transferFrom(msg.sender, address(this), _amount);
-            token.approve(_poolAddr, _amount);
-            IPool(_poolAddr).deposit(address(token), _amount, _pool, 0);
+            token.approve(poolAddr, _amount);
+            IPool(poolAddr).deposit(address(token), _amount, _pool, 0);
         }
         IJustCausePool(_pool).deposit(_asset, _amount);
         bool isFirstDeposit = IJCDepositorERC721(IJustCausePool(_pool).getERC721Address()).addFunds(msg.sender, _amount, block.timestamp, _asset, _metaHash);
@@ -225,7 +228,18 @@ contract PoolTracker is ReentrancyGuard {
             isVerified = true;
         }
 
-        IJustCausePool(jcpChild).initialize(_acceptedTokens, _name, _about, _picHash, _metaUri, _receiver, poolAddr, wethGatewayAddr, erc721Child, isVerified);
+        IJustCausePool(jcpChild).initialize(
+            _acceptedTokens,
+            _name,
+            _about,
+            _picHash,
+            _metaUri,
+            _receiver,
+            poolAddressesProviderAddr,
+            wethGatewayAddr,
+            erc721Child,
+            isVerified
+        );
         IJCDepositorERC721(erc721Child).initialize(jcpChild);
         receivers[_receiver].push(jcpChild);
         names[_name] =  jcpChild;
@@ -298,6 +312,7 @@ contract PoolTracker is ReentrancyGuard {
     * @return address of aave pool
     **/
     function getPoolAddr() public view returns(address){
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         return poolAddr;
     }
 
@@ -305,6 +320,7 @@ contract PoolTracker is ReentrancyGuard {
     * @return address array of aave reserve list
     **/
     function getReservesList() public view returns(address[] memory){
+        address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         return IPool(poolAddr).getReservesList();
     }
 

@@ -36,7 +36,7 @@ contract("Pool Tracker", async (accounts) => {
 
         const poolAddressesProviderAddr = this.poolAddressesProviderMock.address;
         const wethGatewayAddr = this.wethGateway.address;
-        this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr);
+        this.poolTracker = await PoolTracker.new(poolAddressesProviderAddr, wethGatewayAddr, multiSig);
         this.INTEREST = "1000000000000000000";
     });
 
@@ -49,7 +49,6 @@ contract("Pool Tracker", async (accounts) => {
     it("should add each receiver to receivers mapping on pool creation", async() => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig});
         const receiverPools = await this.poolTracker.getReceiverPools(receiver);
-        console.log("receiverPools", receiverPools);
         assert.equal(receiverPools.length, 1, "receiver mapping not updated");
         const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
         assert.strictEqual(receiverPools[0], knownAddress, "The pool name did not return the correct address");
@@ -362,7 +361,6 @@ contract("Pool Tracker", async (accounts) => {
         const newReceiverBalance = await web3.eth.getBalance(receiver);
 
         const valueString = (new BN(origReceiverBalance)).add(web3.utils.toBN(this.INTEREST)).toString();
-        console.log('verified', valueString, newReceiverBalance);
         assert.strictEqual(valueString, newReceiverBalance, "tvl not updated");
     });
 
@@ -417,7 +415,6 @@ contract("Pool Tracker", async (accounts) => {
 
         const paidInterest = "998000000000000000"; //this.INTEREST - 0.2% fee
         const valueString = (new BN(origReceiverBalance)).add(web3.utils.toBN(paidInterest)).toString();
-        console.log('non-verified', valueString, newReceiverBalance);
         assert.strictEqual(valueString, newReceiverBalance, "tvl not updated");
     });
 

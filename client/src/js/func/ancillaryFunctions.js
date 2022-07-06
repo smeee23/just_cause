@@ -194,6 +194,7 @@ export const displayTVL = (id, label, tokenMap, cutOff) => {
 
     }
     const s = formatDollars(total);
+    if(s === "<$0.01") return label +  " $0"
     return label + ' ' + s.substring(0, s.length - cutOff);
   }
 }

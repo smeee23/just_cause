@@ -63,7 +63,7 @@ class Card extends Component {
 	}
 
 	displayClaim = (item, address) => {
-		if(item.unclaimedInterest > 0){
+		if(item.unclaimedInterest > 500){
 			let isDisabled = false;
 			if(this.props.pendingTx) isDisabled = true;
 			return <Button text="Claim Interest" disabled={isDisabled} callback={async() => await this.claim(address, item.address, this.props.poolTrackerAddress)}/>

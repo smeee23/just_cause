@@ -237,7 +237,7 @@ contract JustCausePool is Initializable {
                 donated = newValue;
             }
         }
-
+        
         return donated;
     }
 
@@ -248,7 +248,9 @@ contract JustCausePool is Initializable {
     * @return uint256 fee to be paid from amount
     **/
     function calcSplit(uint256 _amount, uint256 _bpFee) internal pure returns(uint256) {
-        return (_amount * _bpFee) / 10000; // % in basis points (parts per 10,000)
+        uint256 feeValue = (_amount * _bpFee) / 10000; // % in basis points (parts per 10,000)
+        require(feeValue != 0, "not enough funds to claim");
+        return feeValue;
     }
 
     /**

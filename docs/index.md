@@ -114,9 +114,9 @@ Our mission is to give users the freedom to create and fund any cause they deem 
 <div id="uml" class="hidden" markdown="1">
 
 # UML Diagram
-<div class="uml" markdown="1">
-  ![just_cause](https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png)
-</div>
+
+<img src="https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png" width="1200"/>
+
 </div>
 
 <div id="about" class="hidden" markdown="1">

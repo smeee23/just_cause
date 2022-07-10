@@ -1,3 +1,4 @@
+![just_cause](https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png)
 ---
 layout: default
 title: about

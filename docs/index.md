@@ -119,6 +119,36 @@ Our mission is to give users the freedom to create and fund any cause they deem 
 
 </div>
 
+<div id="summary" class="hidden" markdown="1">
+
+## Contract Overview
+
+PoolTracker, JustCausePool, and JCDepositorERC721 are the three contracts in the JustCause protocol. Together these contracts allow for four main processes: pool creation, deposit, withdraw, and claim
+
+PoolTracker coordinates all major functionality of the protocol. It is the only address with permission to execute the pool creation, deposit, withdraw, and claim processes in JustCause.
+
+### Pool Creation
+
+To create a new pool the `createJCPoolClone` method of PoolTracker is called. This method generates proxy contracts for both JustCausePool and JCDepositorERC721. In the JustCause protocol each pool/cause has its own JustCausePool smart contract clone and ERC721 token.
+
+The JustCausePool contract stores the user deposits in the form of [aTokens](https://docs.aave.com/developers/tokens/atoken) keeping track of the total deposits for each of the accepted assets.
+
+The JCDepositorERC721 contract acts as an on-chain receipt of user deposits into the JustCausePool. Individual contributor’s deposit information is stored and updated in the ERC721 contract.
+
+### Deposit
+
+When contributors deposit into pools the `addDeposit` method of PoolTracker is called. The PoolTracker contract is the point of contact for deposits into Aave liquidity pools. The JustCausePool and JCDepositorERC721 are sent the deposit information to update the balances accordingly.
+
+### Withdraw
+
+When contributors want to withdraw their deposits the `withdrawDeposit` method of PoolTracker is called. The JustCausePool contract is the point of contact for withdrawals from Aave liquidity pools. The contributor’s balance is updated in the JCDepositorERC721 contract.
+
+### Claim
+
+When any user wishes to claim the donations from Aave and send them to the receiver address the `claimInterest` method of PoolTracker is called. Claims work similar to withdrawals except that the amount withdrawn is the JustCausePool balance of aTokens subtracted by the total deposits for a given token.   
+
+</div>
+
 <div id="about" class="hidden" markdown="1">
 
 # About Us
@@ -329,7 +359,6 @@ The protocol uses Aave to generate interest for crowdfunding. JustCausePool is a
 
 
 # Write Methods
-
 
 ---
 

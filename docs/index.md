@@ -15,6 +15,11 @@ body {
   display: none;
 }
 
+.uml {
+  width: 600px;
+  height: auto;
+}
+
 .sidenav {
   height: 100%;
   width: 0;
@@ -105,12 +110,12 @@ Our mission is to give users the freedom to create and fund any cause they deem 
 
 </div>
 
-<div id="uml" class="hidden" markdown="1"> markdown="1">
+<div id="uml" class="hidden" markdown="1">
 
 # UML Diagram
-
-![just_cause](https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png)
-
+<div class="uml" markdown="1">
+  ![just_cause](https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png)
+</div>
 </div>
 
 <div id="about" class="hidden" markdown="1">

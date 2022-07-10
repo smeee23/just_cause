@@ -115,7 +115,7 @@ Our mission is to give users the freedom to create and fund any cause they deem 
 
 # UML Diagram
 
-<img src="https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png" width="1200" max-width="1200"/>
+<img src="https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png" width="1200px" max-width="1200px"/>
 
 </div>
 
@@ -145,7 +145,7 @@ When contributors want to withdraw their deposits the `withdrawDeposit` method o
 
 ### Claim
 
-When any user wishes to claim the donations from Aave and send them to the receiver address the `claimInterest` method of PoolTracker is called. Claims work similar to withdrawals except that the amount withdrawn is the JustCausePool balance of aTokens subtracted by the total deposits for a given token.   
+When any user wishes to claim the donations from Aave and send them to the receiver address the `claimInterest` method of PoolTracker is called. Claims work similar to withdrawals except that the amount withdrawn is the JustCausePool balance of aTokens subtracted by the total deposits for a given token.
 
 </div>
 

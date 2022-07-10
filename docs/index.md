@@ -16,7 +16,7 @@ body {
 }
 
 .uml {
-  width: 600px;
+  width: 1200px;
   height: auto;
 }
 

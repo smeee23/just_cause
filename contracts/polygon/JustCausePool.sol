@@ -72,8 +72,8 @@ contract JustCausePool is Initializable {
     /**
     * @dev Only Receiver can call functions marked by this modifier.
     **/
-    modifier onlyReceiver(address _sender){
-        require(receiver == _sender, "not the receiver");
+    modifier onlyReceiver(){
+        require(receiver == msg.sender, "not the receiver");
         _;
     }
 
@@ -237,7 +237,7 @@ contract JustCausePool is Initializable {
                 donated = newValue;
             }
         }
-        
+
         return donated;
     }
 
@@ -254,7 +254,21 @@ contract JustCausePool is Initializable {
     }
 
     /**
-    * @return acceptedTokens git
+    * @param _about new about reference for pool
+    **/
+    function setAbout(string memory _about) external onlyReceiver(){
+        about = _about;
+    }
+
+    /**
+    * @param _metaUri updated metaUri reference for pool
+    **/
+    function setMetaUri(string memory _metaUri) external onlyReceiver(){
+        metaUri = _metaUri;
+    }
+
+    /**
+    * @return acceptedTokens list of accepted tokens
     **/
     function getAcceptedTokens() external view returns(address[] memory){
         return acceptedTokens;

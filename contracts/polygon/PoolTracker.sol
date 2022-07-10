@@ -45,8 +45,8 @@ contract PoolTracker is ReentrancyGuard {
     mapping(address => uint256) private totalDonated;
     mapping(address => address[]) private contributors;
     mapping(address => address[]) private receivers;
-    address[] private verifiedPools;
-    uint256[5] private fees;
+    address[] verifiedPools;
+    uint256[5] fees;
     uint256 bpFee;
     address multiSig;
 

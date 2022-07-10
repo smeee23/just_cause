@@ -49,6 +49,16 @@ interface IJustCausePool {
     function withdrawDonations(address _assetAddress, address _feeAddress, bool _isETH, uint256 _bpFee) external returns(uint256);
 
     /**
+    * @param _about new about reference for pool
+    **/
+    function setAbout(string memory _about) external;
+
+    /**
+    * @param _metaUri updated metaUri reference for pool
+    **/
+    function setMetaUri(string memory _metaUri) external;
+
+    /**
     * @return acceptedTokens List of tokens to be accepted by JCP.
     **/
     function getAcceptedTokens() external view returns(address[] memory);

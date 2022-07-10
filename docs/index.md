@@ -485,6 +485,37 @@ Function claims donations for receiver. Calls Aave Pool contract, exchanging Jus
 
 ---
 
+## setAbout
+
+```solidity
+function setAbout(string memory _about) external onlyReceiver()...
+```
+
+Function allows the receiver to  change the reference to the description in the pool.
+
+
+| Return | Type | Description |
+|--- | --- | --- |
+| about | `string` | new ipfs hash of pool description of JCP. |
+|--- | --- | --- |
+
+---
+
+## setMetaUri
+
+```solidity
+function setMetaUri(string memory _metaUri) external onlyReceiver()...
+```
+
+Function allows the receiver to  change the reference to the metadata URI information for the ERC721 of the pool.
+
+
+| Return | Type | Description |
+|--- | --- | --- |
+| _metaUri | `string` | new ipfs hash of metaUri of JCP. |
+|--- | --- | --- |
+
+---
 
 # View Methods
 

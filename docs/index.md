@@ -248,7 +248,7 @@ Crowdfunding mechanisms based on traditional financial payment networks are inhe
 
 ---
 
-## What causes are allowed?
+### What causes are allowed?
 
 Our mission is to give users the freedom to create and fund any cause they deem worthy. Our contracts are immutable and permissionless by design. Anyone has the right to create a user cause and publish it on our user interface (ui). While anyone can interact with our contracts and [github respository](https://github.com/smeee23/just_cause) we do reserve the right to remove causes from our team operated front end. This would only be done in extreme cases, eg. promotion of violence of any kind.
 

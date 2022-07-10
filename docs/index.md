@@ -1,4 +1,3 @@
-![just_cause](https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png)
 ---
 layout: default
 title: about
@@ -77,9 +76,11 @@ body {
   <a href="#" onclick="setText('risks')">Risks</a>
 
   <p>Contracts</p>
+  <a href="#" onclick="setText('summary')">Contract Overview</a>
   <a href="#" onclick="setText('poolTracker')">PoolTacker</a>
   <a href="#" onclick="setText('depositorNFT')">JCDepositorERC721</a>
   <a href="#" onclick="setText('justCausePool')">JustCausePool</a>
+  <a href="#" onclick="setText('uml')">UML</a>
 </div>
 
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
@@ -101,6 +102,14 @@ Users participate as either Contributors or Pool Creators. Pool Creators generat
 JustCause is an open source, permissionless and non-custodial protocol. This means that anyone has the freedom to create or contribute to pools with a user interface or interact directly with the smart contracts on the network. This freedom lies at the heart of the difference between permissioned (closed) and permissionless (open) systems.
 
 Our mission is to give users the freedom to create and fund any cause they deem worthy. Crowdfunding mechanisms based on traditional financial payment networks are inherently permissioned and custodial. This leaves the funds and users of these systems vulnerable to financial censorship. We want to solve this problem.
+
+</div>
+
+<div id="uml" class="hidden" markdown="1"> markdown="1">
+
+# UML Diagram
+
+![just_cause](https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png)
 
 </div>
 

@@ -4,7 +4,7 @@ class MaticLogoLg extends Component {
 
 	render() {
 		return (
-            <svg width="150px" height="150px" viewBox="0 0 22 20">
+            <svg width="100px" height="100px" viewBox="0 0 22 20">
                 <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                     <g id="icons/crypto/matic" transform="translate(0.000000, -1.000000)" fill="#8247E5" fillRule="nonzero">
                         <g id="polygon-matic-logo" transform="translate(0.000000, 1.000000)">

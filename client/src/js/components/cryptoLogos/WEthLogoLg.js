@@ -4,7 +4,7 @@ class WEthLogoLg extends Component {
 
 	render() {
 		return (
-            <svg width="150px" height="150px" viewBox="0 0 22 22">
+            <svg width="100px" height="100px" viewBox="0 0 22 22">
                 <g id="icons/crypto/weth" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                     <g id="random" fillRule="nonzero">
                         <path d="M6.05517647,21.8705882 C11.6198824,21.8705882 11.6198824,21.7877647 12.5632941,21.5082353 C13.7952941,21.142 9.08211765,17.8788824 6.05517647,17.8788824 C3.02823529,17.8788824 0.574588235,18.7718235 0.574588235,19.8744118 C0.574588235,20.977 3.02823529,21.8705882 6.05517647,21.8705882 Z" id="Path" fill="#000000"></path>

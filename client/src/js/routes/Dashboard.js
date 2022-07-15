@@ -191,6 +191,7 @@ class Dashboard extends Component {
 					acceptedTokenInfo={item.acceptedTokenInfo}
 					about={item.about}
 					picHash={item.picHash}
+					isVerified={item.isVerified}
 				/>
 			);
 		}

@@ -265,7 +265,8 @@ class NewPoolModal extends Component {
 				</div>
 
 				<div style={{fontSize:11}} className="modal__body__column__three">
-					<p className="mr">2) Select an address to receive the interest earned by contributions to your cause. It does not have to be an address you own, and can be changed at anytime by you. The field defaults to the current account, but any valid address can be entered.  </p>
+					<p className="mr">2) Enter an address to receive the interest earned by contributions to your cause. It does not have to be an address you own. The field defaults to the current account, but any valid address can be entered. Take care, this address cannot be changed once the pool is created.</p>
+
 				</div>
 
 				<div style={{maxWidth: "330px"}} className="modal__body__column__four">

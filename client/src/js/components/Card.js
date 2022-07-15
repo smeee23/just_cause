@@ -90,6 +90,7 @@ class Card extends Component {
 		this.setState({
 			selectedTokenIndex: index,
 		});
+
 	}
 
 	createTokenButtons = (acceptedTokenInfo) => {
@@ -100,7 +101,7 @@ class Card extends Component {
 			const tokenName = acceptedTokenInfo[i].acceptedTokenString;
 			let isDisabled = false;
 			if(i === this.state.selectedTokenIndex) isDisabled = true;
-			buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
+			buttonHolder.push(<ButtonSmall className="card--token__switch" text={tokenName} logo={displayLogo(tokenName)} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
 		}
 		return buttonHolder;
 	}
@@ -116,48 +117,105 @@ class Card extends Component {
 		return <img alt="" style={{width:'auto', maxWidth:'300px', height:'auto'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
 	}
 
-	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title) => {
+	getIsVerified = (isVerified) => {
+		if(isVerified){
+			return <h3 style={{fontSize: 13, color: "green", marginLeft: "32px"}}>Verified</h3>
+		}
+		else{
+			return <h3 style={{fontSize: 13, marginLeft: "32px"}}>(User Pool)</h3>
+		}
+	}
+
+	getAPY = (depositAPY) => {
+		if(depositAPY){
+			return (<p>{" "+ depositAPY+'% APY'}</p>);
+		}
+	}
+	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified) => {
 		if (!acceptedTokenInfo) return '';
 		if (!this.props.tokenMap) return '';
 
 		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
+		const depositAPY = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].depositAPY;
 		const isETH = (item.acceptedTokenString === 'ETH' || item.acceptedTokenString === 'MATIC') ? true : false;
 
 		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
 
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
-				<div className="card__body__column_one">
+				<div className="card__body__column__one">
 					{this.getPoolImage(picHash)}
 				</div>
-				<div /*style={{fontSize:17}}*/ className="card__body__column__three">
-					<p>{"pool balance"}</p>
-					<p>{"your balance"}</p>
-					<p>{"claimed"}</p>
-					<p>{"unclaimed"}</p>
+				<div className="card__body__column__two">
+				<div style={{marginRight: "auto"}}>
+					<div style={{display: "flex", flexDirection: "column", gap: "1px"}}>
+						<h3 style={{marginLeft: "32px"}} className="mb0">
+							{title}
+						</h3>
+						{this.getIsVerified(isVerified)}
+					</div>
+					<TextLink /*style={{fontSize:17}}*/ text={"address "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
+					<TextLink /*style={{fontSize:17}}*/ text={"receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
+					</div>
 				</div>
-
 				<div className="card__body__column__six">
-					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
-					{this.displayWithdraw(item, address, item.acceptedTokenString)}
-					{this.displayClaim(item, address)}
-					<TextLink /*style={{fontSize:17}}*/ text={"address: "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
-					<TextLink /*style={{fontSize:17}}*/ text={"receiver: "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
+					<div style={{marginRight: "auto"}}>
+						{this.displayClaim(item, address)}
+						{this.displayWithdraw(item, address, item.acceptedTokenString)}
+						{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
+					</div>
 				</div>
 				<div className="card__body__column__nine">
-					<p /*style={{fontSize:17}}*/>{" "+ item.depositAPY+'% APY'}</p>
-					<h3 className="mb0"> {displayLogoLg(item.acceptedTokenString)} {item.acceptedTokenString} </h3>
+					<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+						<div style={{gridColumn: 1}}>
+							{displayLogoLg(item.acceptedTokenString)}
+						</div>
+						<div style={{gridColumn: 2, marginRight: "auto", marginTop: "auto"}}>
+							<h4 className="mb0">  {item.acceptedTokenString} </h4>
+							{this.getAPY(depositAPY)}
+						</div>
+					</div>
+					<div style={{display: "grid", gridTemplateColumns:"120px 1fr", paddingTop: "20px"}}>
+						<div style={{gridColumn: 1}}>
+							<p>{"pool balance"}</p>
+						</div>
+						<div style={{gridColumn: 2, width: "250px"}}>
+							<p>{numberWithCommas(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
+						</div>
+					</div>
+
+					<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+						<div style={{gridColumn: 1}}>
+							<p>{"your balance"}</p>
+						</div>
+						<div style={{gridColumn: 2, width: "250px"}}>
+							<p>{numberWithCommas(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+						</div>
+					</div>
+
+					<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+						<div style={{gridColumn: 1}}>
+							<p>{"claimed"}</p>
+						</div>
+						<div style={{gridColumn: 2, width: "250px"}}>
+							<p>{numberWithCommas(precise(item.claimedInterest, item.decimals))+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
+						</div>
+					</div>
+
+					<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+						<div style={{gridColumn: 1}}>
+							<p>{"unclaimed"}</p>
+						</div>
+						<div style={{gridColumn: 2, width: "250"}}>
+						<p>{numberWithCommas(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
+						</div>
+					</div>
 				</div>
 				<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
-					<p className="mr">{about}</p>
-					<Button share="share" callback={async() => await this.share(address, title )} />
-				</div>
-
-				<div /*style={{fontSize:17}}*/ className="card__body__column__seven">
-					<p>{numberWithCommas(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
-					<p>{numberWithCommas(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
-					<p>{numberWithCommas(precise(item.claimedInterest, item.decimals))+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
-					<p>{numberWithCommas(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
+					<p style={{marginTop: "20px"}} className="mr">{about}</p>
+					<div style={{bottom: "0px"}}>
+						<Button share="share" callback={async() => await this.share(address, title )} />
+					</div>
 				</div>
 			</div>
 		return tokenInfo;
@@ -297,7 +355,7 @@ class Card extends Component {
 	}
 
 	render() {
-		const { title, about, picHash, idx, address, receiver, acceptedTokenInfo} = this.props;
+		const { title, about, picHash, idx, address, receiver, acceptedTokenInfo, isVerified} = this.props;
 		const poolIcons = [
 			{ "name": "poolShape1", "color": palette("brand-red")},
 			{ "name": "poolShape2", "color": palette("brand-yellow")},
@@ -315,24 +373,24 @@ class Card extends Component {
 
 		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
-		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title);
+		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title, isVerified);
 
 		return (
 			<div className={classnames}>
 				<div className="card__header">
-				<Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>
+				{this.state.open ? "" : <Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>}
 				<h4 className="mb0">
-					{ title }
+					{this.state.open ? "" : title}
 				</h4>
 
-				<div style={{paddingLeft:"10px", display:"flex", flexWrap:"wrap"}}>
+				<div className="card__token__buttons" style={{paddingLeft:"10px", display:"flex", flexWrap:"wrap"}}>
 					{tokenButtons}
 				</div>
 
 				<div /*style={{fontSize:17}}*/ className="card__header--right">
-								<p className="mb0">{userBalance == "" ? "" : "your deposit: " + userBalance}</p>
-								<p className="mb0">{totalBalance == "" ? "" : "pool: "+ totalBalance}</p>
-								<p className="mb0">{interestEarned == "" ? "" : "total earned: "+ interestEarned}</p>
+								<p className="mb0">{userBalance === "" ? "" : "your deposit: " + userBalance}</p>
+								<p className="mb0">{totalBalance === "" ? "" : "pool: "+ totalBalance}</p>
+								<p className="mb0">{interestEarned === "" ? "" : "total earned: "+ interestEarned}</p>
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
 				</div>

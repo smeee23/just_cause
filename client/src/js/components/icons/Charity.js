@@ -5,7 +5,7 @@ class Charity extends Component {
 
 	render() {
 		return (
-            <svg width="150px" height="150px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <svg width="100px" height="100px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
             <g fill="none" fillRule="evenodd">
                 <path fill="#9C4D4D" d="M32,41 C52.336554,41 61,61 61,61 L3,61 C3,61 11.663446,41 32,41 Z"/>
                 <path fill="#80D25B" d="M32,28 C36.418278,28 40,24.418278 40,20 C40,15.581722 32,2 32,2 C32,2 24,15.581722 24,20 C24,24.418278 27.581722,28 32,28 Z"/>

@@ -170,7 +170,7 @@ import { getIpfsData } from "./ipfs";
 				const balance = (balances) ? balances[0] : 0;
 				const amountScaled = (balances) ? balances[1] : 0;
 				const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(acceptedTokens[j]).call();
-				console.log('grouped pool info', groupedPoolTokenInfo);
+				console.log('TOKEN MAP', tokenMap[tokenString], groupedPoolTokenInfo, (tokenMap[tokenString] && tokenMap[tokenString].depositAPY));
 				acceptedTokenInfo.push({
 					'totalDeposits': groupedPoolTokenInfo[5],
 					'userBalance':  balance,

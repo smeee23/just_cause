@@ -4,7 +4,7 @@ class DpiLogoLg extends Component {
 
 	render() {
 		return (
-            <svg width="150px" height="150px" viewBox="0 0 22 22">
+            <svg width="100px" height="100px" viewBox="0 0 22 22">
             <defs>
                 <polygon id="path-1" points="0.0494352941 0.057545098 21.9441804 0.057545098 21.9441804 22.0286431 0.0494352941 22.0286431"></polygon>
             </defs>

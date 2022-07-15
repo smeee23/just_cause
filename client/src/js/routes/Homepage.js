@@ -8,12 +8,28 @@ import Shapes from '../components/Shapes';
 
 import LogoCard from "../components/logos/LogoCard";
 import { Button } from '../components/Button';
+import ShareModal from "../components/modals/ShareModal";
+import {SmallModal } from "../components/Modal";
+import { updateShare } from  "../actions/share";
 
 class Homepage extends Component {
 	componentDidMount() {
 		window.scrollTo(0,0);
 	}
 
+	getShareModal = () => {
+		if(this.props.share){
+			console.log("reached 2");
+			let modal = <SmallModal isOpen={true}><ShareModal info={this.props.share}/></SmallModal>
+			return modal;
+		}
+	}
+
+	share = async() => {
+		console.log("reached 1");
+		await this.props.updateShare("");
+		await this.props.updateShare({poolAddress: "homepage", name: "JustCause"});
+	}
 	render() {
 		return (
 			<Fragment>
@@ -33,12 +49,15 @@ class Homepage extends Component {
 											<a href="https://github.com/smeee23/just_cause" target="_blank"><Button github="github"/></a>
 											<a style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank"><Button tweet="tweet"/></a>
 											<a style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button discord="discord"/></a>
-											<a style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button share="share"/></a>
+											<div style={{marginLeft: "20px"}}>
+												<Button share="share" callback={async() => await this.share()}/>
+											</div>
 										</div>
 									</div>
 							    </div>
 						</div>
 					</section>
+					{this.getShareModal()}
 			</Fragment>
 		);
 	}
@@ -48,9 +67,11 @@ const mapStateToProps = state => ({
 	tokenMap: state.tokenMap,
 	verifiedPoolAddrs: state.verifiedPoolAddrs,
 	verifiedPoolInfo: state.verifiedPoolInfo,
+	share: state.share,
 })
 
 const mapDispatchToProps = dispatch => ({
+	updateShare: (share) => dispatch(updateShare(share)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Homepage)

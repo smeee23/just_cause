@@ -172,19 +172,20 @@ class App extends Component {
 			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
 			const allowance = await getAllowance(erc20Instance, this.poolTrackerAddress, this.props.activeAccount);
 			tokenMap[key]['allowance'] = allowance > 0 ? true : false;
+
+			console.log(key);
+
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
 			console.log('liquidity', aaveTokenInfo.currentLiquidityRate,  aaveTokenInfo.liquidityIndex);
 			const apiKey = tokenMap[key] && tokenMap[key].apiKey;
 			tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
-			console.log(key, 'price usd', tokenMap[key]['priceUSD'])
+
 
 			const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
-			console.log(key, 'tvl', precise(tvl, tokenMap[key]['decimals']));
 			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
 
 			const totalDonated = await this.PoolTrackerInstance.methods.getTotalDonated(address).call();
-			console.log(key, 'totalDonated', precise(totalDonated, tokenMap[key]['decimals']));
 			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
 
 		}
@@ -197,6 +198,7 @@ class App extends Component {
 		const SECONDS_PER_YEAR = 31536000;
 		const depositAPR = liquidityRate/RAY;
 		//return 1+ (depositAPR / SECONDS_PER_YEAR);
+		console.log("APY TEST", liquidityRate, depositAPR);
 		return (((1 + (depositAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1)*100;
 	}
 

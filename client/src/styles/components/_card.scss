@@ -33,26 +33,44 @@ $baseclass: 'card';
     flex-wrap: wrap;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
     grid-auto-rows: minmax(100px, auto);
     max-height: 0;
     transition: max-height $duration-short $easing1;
     overflow: hidden;
   }
 
+  @keyframes zoominoutsinglefeatured {
+      0% {
+          transform: scale(1,1);
+      }
+      50% {
+          transform: scale(1.05,1.05);
+      }
+      100% {
+          transform: scale(1,1);
+      }
+  }
+
   &__body__column__one {
     grid-column: 1 ;
     grid-row: 1;
+    //transform: scale(0.85);
+    /* (B) ANIMATE ZOOM */
+    /* ease | ease-in | ease-out | linear */
+    //transition: transform ease-in-out 0.4s;
   }
   &__body__column__two {
-    grid-column: 5 ;
+    grid-column: 2/4 ;
     grid-row: 1 ;
+    border-right: 2px solid white;
     display: flex;
-    flex-direction: column-reverse;
+    align-items: flex-end;
+    flex-direction: column;
   }
   &__body__column__three {
-    grid-column: 3;
-    grid-row: 2/4;
+    grid-column: 4/6;
+    grid-row: 2/3;
+    margin-left: 32px;
   }
   &__body__column__four {
     grid-column: 3;
@@ -69,26 +87,42 @@ $baseclass: 'card';
     align-items: flex-end;
   }*/
   &__body__column__six {
-    grid-column: 5;
-    grid-row: 2/5;
+    grid-column: 4;
+    grid-row: 3/5;
     display: flex;
     flex-direction: column-reverse;
     align-items: flex-end;
     margin-bottom: 2 * $rem-base;
+    margin-left: 32px;
   }
   &__body__column__seven {
     grid-column: 4;
     grid-row: 2 / 4;
+
   }
   &__body__column__eight {
-    grid-column: 1/3;
+    grid-column: 1/4;
     grid-row: 2/5;
+    border-right: 2px solid white;
+    margin-bottom: 2 * $rem-base;
   }
   &__body__column__nine {
-    grid-column: 3;
-    grid-row: 1;
+    grid-column: 4/6;
+    grid-row: 1/3;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
+    margin: auto;
+    padding-top: 3 * $rem-base;
+    margin-left: 32px;
+  }
+
+  &__token__buttons {
+    padding-left: 10px;
+    display: flex;
+    flex-wrap: wrap;
+
+    transition: transform $easing1 $duration-short;
+    cursor: pointer;
   }
   &__body__column {
     margin-right: 4 * $rem-base;
@@ -132,6 +166,11 @@ $baseclass: 'card';
     cursor: pointer;
   }
 
+  &--token__switch {
+    .#{$baseclass}__body__column__nine {
+      transform: scale(1.0);
+    }
+  }
   &--open {
     .#{$baseclass}__body {
       max-height: 1500px;
@@ -139,6 +178,31 @@ $baseclass: 'card';
     .#{$baseclass}__open-button {
       transform: rotate(-45deg);
     }
+
+    .#{$baseclass}__body__column__one {
+      //animation: zoominoutsinglefeatured 1s;
+    }
+
+    .#{$baseclass}__body__column__nine {
+      animation: zoominoutsinglefeatured 1s;
+    }
+
+    .#{$baseclass}__body__column__eight {
+      transform: scale(1.0);
+    }
+
+    .#{$baseclass}__body__column__six {
+      animation: zoominoutsinglefeatured 1s;
+    }
+
+    .#{$baseclass}__body__column__two {
+      transform: scale(1.0);
+    }
+
+    .#{$baseclass}__token__buttons {
+      transform: scale(1.0);
+    }
+
   }
 
   @media screen and (max-width: $bp-medium) {

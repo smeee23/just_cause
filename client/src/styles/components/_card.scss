@@ -87,7 +87,7 @@ $baseclass: 'card';
     align-items: flex-end;
   }*/
   &__body__column__six {
-    grid-column: 4;
+    grid-column: 4/6;
     grid-row: 3/5;
     display: flex;
     flex-direction: column-reverse;

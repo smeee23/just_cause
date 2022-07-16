@@ -119,7 +119,7 @@ class Card extends Component {
 
 	getIsVerified = (isVerified) => {
 		if(isVerified){
-			return <h3 style={{fontSize: 13, color: "green", marginLeft: "32px"}}>Verified</h3>
+			return <h3 style={{fontSize: 13, color: "green", marginLeft: "32px"}}>(Verified Pool)</h3>
 		}
 		else{
 			return <h3 style={{fontSize: 13, marginLeft: "32px"}}>(User Pool)</h3>

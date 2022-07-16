@@ -11,7 +11,8 @@ import FemaleTwo from "../components/icons/FemaleTwo";
 import Arrow from "../components/icons/Arrow";
 import Charity from "../components/icons/Charity";
 import LogoCard from "../components/logos/LogoCard";
-import AaveLogo from "../components/cryptoLogos/AaveLogoLg"
+import AGD from "../components/logos/AGD";
+import AaveLogo from "../components/cryptoLogos/AaveLogoXL"
 
 import EthLogo from "../components/cryptoLogos/EthLogo"
 import MaticLogo from "../components/cryptoLogos/MaticLogo"
@@ -30,7 +31,7 @@ class Homepage extends Component {
 
 	getSlide = () => {
 		const graphic =
-				<div style={{marginTop:"100px", paddingtop:"100px", display: "flex", alignItems:"center", justifyContent:"center"}}>
+				<div style={{marginTop:"10px", paddingtop:"100px", display: "flex", alignItems:"center", justifyContent:"center"}}>
 					<div style={{gridColumn: "2", gridRow: "1", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
 						<h2 style={{fontSize:60, marginTop: "30px"}}>Lossless Donations</h2>
 					<div style={{flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(7, auto)", gap: "5px", gridTemplateRows: "repeat(2, auto)", alignItems:"center", justifyContent:"center"}}>
@@ -73,10 +74,14 @@ class Homepage extends Component {
 		return (
 			<Fragment>
 				<Footer/>
+
 				<article>
-						<div style={{marginBottom:"10px",  alignItems:"center", justifyContent:"center"}}>
-							{this.getSlide()}
-						</div>
+					<div style={{marginTop: "100px", marginLeft: "100px"}}>
+						<AGD/>
+					</div>
+					<div style={{marginBottom:"10px",  alignItems:"center", justifyContent:"center"}}>
+						{this.getSlide()}
+					</div>
 					<section className="page-section horizontal-padding">
 						<h2 style={{margin:'auto', fontSize:50, paddingBottom: "50px"}}>different approach to fundraising</h2>
 						<div style={{margin:'auto'}} className="grid">

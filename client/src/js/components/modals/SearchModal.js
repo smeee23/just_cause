@@ -35,7 +35,10 @@ class SearchModal extends Component {
 
   getModalBody = (poolInfo) => {
     if(!this.state.pending && !this.props.linkAddress){
-      return <TextField ref="searchTerm" label="Name or Address" placeholder="Enter Name or Address"/>
+
+      return (
+          <TextField ref="searchTerm" label="Name or Address" placeholder="Enter Name or Address"/>
+      );
     }
     return <p>Searching...</p>
   }
@@ -49,16 +52,16 @@ class SearchModal extends Component {
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">Enter Pool Contract Address or Name to Search (must be exact match, case sensitive):</h2>
+          <h2 className="mb0">Search Pool</h2>
         </ModalHeader>
-        <ModalBody>
-          {this.getModalBody(poolInfo)}
-        </ModalBody>
         <ModalCtas>
-          <Button text="Find Pool"
-		  	disabled={this.checkValues()}
-			callback={() => this.setValue(this.refs.searchTerm.getValue())}
-		 />
+          <div style={{fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
+            <p className="mr">Enter pool contract address or name to search. Must be exact match, case sensitive.</p>
+            {this.getModalBody(poolInfo)}
+          </div>
+          <div style={{marginLeft: "10px"}}>
+            <Button text="Find Pool" disabled={this.checkValues()} callback={() => this.setValue(this.refs.searchTerm.getValue())}/>
+          </div>
         </ModalCtas>
       </Fragment>
 		);

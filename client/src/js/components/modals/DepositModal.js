@@ -129,7 +129,6 @@ class DepositModal extends Component {
 	}
 
   displayDepositNotice = (depositInfo) => {
-	console.log("Verified Poola", this.props.verifiedPoolAddrs)
 	const contractInfo = depositInfo.contractInfo;
 	let userWarning;
 	if(!contractInfo[2]){

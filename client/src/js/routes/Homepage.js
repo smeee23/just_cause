@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import Shapes from '../components/Shapes';
 
 import LogoCard from "../components/logos/LogoCard";
+import AGD from "../components/logos/AGD";
 import { Button } from '../components/Button';
 import ShareModal from "../components/modals/ShareModal";
 import {SmallModal } from "../components/Modal";
@@ -34,7 +35,7 @@ class Homepage extends Component {
 		return (
 			<Fragment>
 				<Shapes/>
-
+				
 				<Footer/>
 					<section className="page-section page-section--center horizontal-padding">
 						<div style={{width:500, height:window.innerHeight/1.2, /*background: "#3FA7D6", border:"20px", borderRadius:"50%",*/ display:"flex", gap:"2", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>

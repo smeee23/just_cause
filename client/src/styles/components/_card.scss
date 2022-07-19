@@ -7,6 +7,7 @@ $baseclass: 'card';
 
   &__header, &__bar, &__body {
     border-radius: 8px;
+    max-width: 1000px;
   }
 
   &__header, &__body {
@@ -30,10 +31,10 @@ $baseclass: 'card';
     border-top: 0;
     border-radius: 0;
     display: flex;
-    flex-wrap: wrap;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-auto-rows: minmax(100px, auto);
+    flex-direction: wrap;
+    //display: grid;
+    //grid-template-columns: repeat(5, 1fr);
+    //grid-auto-rows: minmax(100px, auto);
     max-height: 0;
     transition: max-height $duration-short $easing1;
     overflow: hidden;
@@ -54,6 +55,7 @@ $baseclass: 'card';
   &__body__column__one {
     grid-column: 1 ;
     grid-row: 1;
+    //width: min-content;
     //transform: scale(0.85);
     /* (B) ANIMATE ZOOM */
     /* ease | ease-in | ease-out | linear */
@@ -62,12 +64,13 @@ $baseclass: 'card';
   &__body__column__two {
     grid-column: 2/4 ;
     grid-row: 1 ;
-    border-right: 2px solid white;
+    //border-right: 2px solid white;
     display: flex;
-    align-items: flex-end;
     flex-direction: column;
+    //text-align: center;
+    width: "auto";
   }
-  &__body__column__three {
+  /*&__body__column__three {
     grid-column: 4/6;
     grid-row: 2/3;
     margin-left: 32px;
@@ -95,15 +98,15 @@ $baseclass: 'card';
     margin-bottom: 2 * $rem-base;
     margin-left: 32px;
   }
-  &__body__column__seven {
+  /*&__body__column__seven {
     grid-column: 4;
     grid-row: 2 / 4;
 
-  }
+  }*/
   &__body__column__eight {
     grid-column: 1/4;
     grid-row: 2/5;
-    border-right: 2px solid white;
+    //border-right: 2px solid white;
     margin-bottom: 2 * $rem-base;
   }
   &__body__column__nine {
@@ -111,9 +114,10 @@ $baseclass: 'card';
     grid-row: 1/3;
     display: flex;
     flex-direction: column;
-    margin: auto;
+    margin: 0 auto;
     padding-top: 3 * $rem-base;
     margin-left: 32px;
+    margin-bottom: 2 * $rem-base;
   }
 
   &__token__buttons {

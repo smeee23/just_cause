@@ -119,10 +119,10 @@ class Card extends Component {
 
 	getIsVerified = (isVerified) => {
 		if(isVerified){
-			return <h3 style={{fontSize: 13, color: "green", marginLeft: "32px"}}>(Verified Pool)</h3>
+			return <h3 style={{fontSize: 13, color: "green"}}>(Verified Pool)</h3>
 		}
 		else{
-			return <h3 style={{fontSize: 13, marginLeft: "32px"}}>(User Pool)</h3>
+			return <h3 style={{fontSize: 13}}>(User Pool)</h3>
 		}
 	}
 
@@ -143,80 +143,86 @@ class Card extends Component {
 
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
-				<div className="card__body__column__one">
-					{this.getPoolImage(picHash)}
+				<div style={{display: "flex", flexDirection: "column", borderRight: "double"}}>
+					<div style={{display: "flex", flexDirection: "wrap", flex: 1}}>
+						<div className="card__body__column__one">
+							{this.getPoolImage(picHash)}
+						</div>
+						<div className="card__body__column__two">
+						<div >
+							<div style={{display: "flex", flexDirection: "column", gap: "1px", marginLeft: "32px"}}>
+								<h4 className="mb0">
+									{title}
+								</h4>
+								{this.getIsVerified(isVerified)}
+							</div>
+							<TextLink text={"address "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
+							<TextLink text={"receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
+						</div>
+						</div>
+					</div>
+					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
+						<p style={{marginTop: "20px"}} className="mr">{about}</p>
+						<div style={{bottom: "0px"}}>
+							<Button share="share" callback={async() => await this.share(address, title )} />
+						</div>
+					</div>
 				</div>
-				<div className="card__body__column__two">
-				<div style={{marginRight: "auto"}}>
-					<div style={{display: "flex", flexDirection: "column", gap: "1px"}}>
-						<h3 style={{marginLeft: "32px"}} className="mb0">
-							{title}
-						</h3>
-						{this.getIsVerified(isVerified)}
-					</div>
-					<TextLink /*style={{fontSize:17}}*/ text={"address "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
-					<TextLink /*style={{fontSize:17}}*/ text={"receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
-					</div>
-				</div>
-				<div className="card__body__column__six">
-					<div style={{marginRight: "auto"}}>
-						{this.displayClaim(item, address)}
-						{this.displayWithdraw(item, address, item.acceptedTokenString)}
-						{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
-					</div>
-				</div>
-				<div className="card__body__column__nine">
-					<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
-						<div style={{gridColumn: 1}}>
-							{displayLogoLg(item.acceptedTokenString)}
-						</div>
-						<div style={{gridColumn: 2, marginRight: "auto", marginTop: "auto"}}>
-							<h4 className="mb0">  {item.acceptedTokenString} </h4>
-							{this.getAPY(depositAPY)}
-						</div>
-					</div>
-					<div style={{display: "grid", gridTemplateColumns:"120px 1fr", paddingTop: "20px"}}>
-						<div style={{gridColumn: 1}}>
-							<p>{"pool balance"}</p>
-						</div>
-						<div style={{gridColumn: 2, width: "250px"}}>
-							<p>{numberWithCommas(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
-						</div>
-					</div>
 
-					<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
-						<div style={{gridColumn: 1}}>
-							<p>{"your balance"}</p>
+				<div style={{display: "grid", width: "330px", flex: "0 0 330"}}>
+					<div className="card__body__column__nine">
+						<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+							<div style={{gridColumn: 1}}>
+								{displayLogoLg(item.acceptedTokenString)}
+							</div>
+							<div style={{gridColumn: 2, marginRight: "auto", marginTop: "auto"}}>
+								<h5 className="mb0">  {item.acceptedTokenString} </h5>
+								{this.getAPY(depositAPY)}
+							</div>
 						</div>
-						<div style={{gridColumn: 2, width: "250px"}}>
-							<p>{numberWithCommas(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+						<div style={{display: "grid", gridTemplateColumns:"120px 1fr", paddingTop: "20px"}}>
+							<div style={{gridColumn: 1}}>
+								<p>{"pool balance"}</p>
+							</div>
+							<div style={{gridColumn: 2, width: "250px"}}>
+								<p>{numberWithCommas(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
+							</div>
 						</div>
-					</div>
 
-					<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
-						<div style={{gridColumn: 1}}>
-							<p>{"claimed"}</p>
+						<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+							<div style={{gridColumn: 1}}>
+								<p>{"your balance"}</p>
+							</div>
+							<div style={{gridColumn: 2, width: "250px"}}>
+								<p>{numberWithCommas(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+							</div>
 						</div>
-						<div style={{gridColumn: 2, width: "250px"}}>
-							<p>{numberWithCommas(precise(item.claimedInterest, item.decimals))+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
-						</div>
-					</div>
 
-					<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
-						<div style={{gridColumn: 1}}>
-							<p>{"unclaimed"}</p>
+						<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+							<div style={{gridColumn: 1}}>
+								<p>{"claimed"}</p>
+							</div>
+							<div style={{gridColumn: 2, width: "250px"}}>
+								<p>{numberWithCommas(precise(item.claimedInterest, item.decimals))+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
+							</div>
 						</div>
-						<div style={{gridColumn: 2, width: "250"}}>
-						<p>{numberWithCommas(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
+
+						<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+							<div style={{gridColumn: 1}}>
+								<p>{"unclaimed"}</p>
+							</div>
+							<div style={{gridColumn: 2, width: "250"}}>
+							<p>{numberWithCommas(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
+							</div>
+						</div>
+						<div style={{marginRight: "auto"}}>
+							{this.displayClaim(item, address)}
+							{this.displayWithdraw(item, address, item.acceptedTokenString)}
+							{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
 						</div>
 					</div>
 				</div>
-				<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
-					<p style={{marginTop: "20px"}} className="mr">{about}</p>
-					<div style={{bottom: "0px"}}>
-						<Button share="share" callback={async() => await this.share(address, title )} />
-					</div>
-				</div>
+
 			</div>
 		return tokenInfo;
 		/*

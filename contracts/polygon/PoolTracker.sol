@@ -10,6 +10,7 @@ import { IJCDepositorERC721 } from './interfaces/protocol/IJCDepositorERC721.sol
 import { JCDepositorERC721 } from './JCDepositorERC721.sol';
 import { JustCausePool } from './JustCausePool.sol';
 
+import { SafeERC20 } from './libraries/SafeERC20.sol';
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
@@ -35,8 +36,10 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract PoolTracker is ReentrancyGuard {
 
-    JustCausePool baseJCPool;
-    JCDepositorERC721 baseERC721;
+    using SafeERC20 for IERC20;
+
+    JustCausePool immutable baseJCPool;
+    JCDepositorERC721 immutable baseERC721;
 
     //contract addresses will point to bool if they exist
     mapping(address => bool) private isPool;
@@ -45,19 +48,18 @@ contract PoolTracker is ReentrancyGuard {
     mapping(address => uint256) private totalDonated;
     mapping(address => address[]) private contributors;
     mapping(address => address[]) private receivers;
-    address[] verifiedPools;
+    address[] private verifiedPools;
     uint256[5] fees;
     uint256 bpFee;
-    address multiSig;
+    address immutable multiSig;
 
-    address poolAddressesProviderAddr;
-    address wethGatewayAddr;
+    address immutable poolAddressesProviderAddr;
+    address immutable wethGatewayAddr;
 
     event AddPool(address pool, string name, address receiver);
     event AddDeposit(address userAddr, address pool, address asset, uint256 amount);
     event WithdrawDeposit(address userAddr, address pool, address asset, uint256 amount);
     event Claim(address userAddr, address receiver, address pool, address asset, uint256 amount);
-    event Test(address[] aaveAccepted, address[] causeAccepted );
 
     /**
     * @dev Only address that are a pool can be passed to functions marked by this modifier.
@@ -71,6 +73,7 @@ contract PoolTracker is ReentrancyGuard {
     * @dev Only tokens that are accepted by Aave can be used in JCP creation
     **/
     modifier onlyAcceptedTokens(address[] memory causeAcceptedTokens){
+        require(causeAcceptedTokens.length <= 10, "token list must be 10 or less");
         address poolAddr = IPoolAddressesProvider(poolAddressesProviderAddr).getPool();
         address[] memory aaveAcceptedTokens = IPool(poolAddr).getReservesList();
         for(uint8 i = 0; i < causeAcceptedTokens.length; i++){
@@ -151,8 +154,9 @@ contract PoolTracker is ReentrancyGuard {
             require(msg.value == 0, "msg.value is not zero");
             IERC20 token = IERC20(_asset);
             require(token.allowance(msg.sender, address(this)) >= _amount, "sender not approved");
-            token.transferFrom(msg.sender, address(this), _amount);
-            token.approve(poolAddr, _amount);
+            token.safeTransferFrom(msg.sender, address(this), _amount);
+            token.safeApprove(poolAddr, 0);
+            token.safeApprove(poolAddr, _amount);
             IPool(poolAddr).deposit(address(token), _amount, _pool, 0);
         }
         IJustCausePool(_pool).deposit(_asset, _amount);

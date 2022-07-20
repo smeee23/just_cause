@@ -79,19 +79,6 @@ contract("JustCausePool", async (accounts) => {
         );
     });
 
-    it("JustCausePool deposit can only be with tokens accepted by JCPool", async() => {
-        await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
-        const depositAmount = web3.utils.toWei("1", "ether");
-        const approveAmount = web3.utils.toWei("1000000", "ether");
-        await this.testToken_2.mint(depositor, depositAmount);
-        await this.testToken_2.approve(this.poolTracker.address, approveAmount, {from: depositor});
-        const knownAddress = (await this.poolTracker.getVerifiedPools())[0];
-        await expectRevert(
-            this.poolTracker.addDeposit(depositAmount, this.testToken_2.address, knownAddress, false, {from: depositor}),
-            "token not accepted by jcpool"
-        );
-    });
-
     it("add deposit updates totalDeposits for that asset", async() => {
         await this.poolTracker.createJCPoolClone([this.testToken.address], "Test Pool", "ABOUT_HASH", "picHash", "metaUri", receiver, {from: multiSig})
         const depositAmount = web3.utils.toWei("1", "ether");

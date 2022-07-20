@@ -34,6 +34,8 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract JustCausePool is Initializable {
 
+    using SafeERC20 for IERC20;
+
     mapping(address => uint256) private totalDeposits;
     mapping(address => uint256) private interestWithdrawn;
     bool private isBase;
@@ -183,7 +185,8 @@ contract JustCausePool is Initializable {
             address wethAddress = IWETHGateway(wethGatewayAddr).getWETHAddress();
             require(wethAddress == _assetAddress, "asset does not match WETHGateway");
             address aTokenAddress = getATokenAddress(wethAddress);
-            IERC20(aTokenAddress).approve(wethGatewayAddr, _amount);
+            IERC20(aTokenAddress).safeApprove(wethGatewayAddr, 0);
+            IERC20(aTokenAddress).safeApprove(wethGatewayAddr, _amount);
             IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, _amount, _depositor);
         }
     }
@@ -225,7 +228,8 @@ contract JustCausePool is Initializable {
         }
         else{
             require(IWETHGateway(wethGatewayAddr).getWETHAddress() == _assetAddress, "asset does not match WETHGateway");
-            IERC20(aTokenAddress).approve(wethGatewayAddr, interestEarned);
+            IERC20(aTokenAddress).safeApprove(wethGatewayAddr, 0);
+            IERC20(aTokenAddress).safeApprove(wethGatewayAddr, interestEarned);
             if(_bpFee == 0){
                 IWETHGateway(wethGatewayAddr).withdrawETH(poolAddr, interestEarned, receiver);
             }

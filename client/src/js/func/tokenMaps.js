@@ -28,7 +28,7 @@ export const polygonMumbaiV3TokenMap = {
     USDT: {address:'0x21C561e551638401b937b03fE5a0a0652B99B7DD',decimals: 6, apiKey: "tether"},
     WBTC: {address:'0x85E44420b6137bbc75a85CAB5c9A3371af976FdE',decimals: 8, apiKey: "bitcoin"},
     WETH: {address:'0xd575d4047f8c667E064a4ad433D04E25187F40BB', decimals: 18, apiKey: "ethereum"},
-    MATIC: {address:'0xb685400156cF3CBE8725958DeAA61436727A30c3', decimals: 9, apiKey: "matic-network"},
+    MATIC: {address:'0xb685400156cF3CBE8725958DeAA61436727A30c3', decimals: 18, apiKey: "matic-network"},
     DPI: {address:'0x56e0507A53Ee252947a1E55D84Dc4032F914DD98', decimals: 18, apiKey: "defipulse-index"},
     LINK: {address:'0xD9E7e5dd6e122dDE11244e14A60f38AbA93097f2', decimals: 18, apiKey: "chainlink"},
 }

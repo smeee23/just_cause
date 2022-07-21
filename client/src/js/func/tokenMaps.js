@@ -1,5 +1,5 @@
 
-export const kovanTokenMap = {
+const kovanTokenMap = {
     AAVE: {address: "0xB597cd8D3217ea6477232F9217fa70837ff667Af", decimals: 18, apiKey: "aave"},
     BAT: {address: "0x2d12186Fbb9f9a8C28B3FfdD4c42920f8539D738", decimals: 18, apiKey: "bat"},
     BUSD: {address: "0x4c6E1EFC12FDfD568186b7BAEc0A43fFfb4bCcCf", decimals: 18, apiKey: "busd"},
@@ -21,7 +21,7 @@ export const kovanTokenMap = {
     AMPL: {address:"0x3E0437898a5667a4769B1Ca5A34aAB1ae7E81377",decimals: 9, apiKey: "ampl"},
 }
 
-export const polygonMumbaiV3TokenMap = {
+const polygonMumbaiV3TokenMap = {
     AAVE: {address: '0x0AB1917A0cf92cdcf7F7b637EaC3A46BBBE41409', decimals: 18, apiKey: "aave"},
     DAI: {address:'0x9A753f0F7886C9fbF63cF59D0D4423C5eFaCE95B', decimals: 18, apiKey: "dai"},
     USDC: {address:'0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2',decimals: 6, apiKey: "usd-coin"},
@@ -33,5 +33,30 @@ export const polygonMumbaiV3TokenMap = {
     LINK: {address:'0xD9E7e5dd6e122dDE11244e14A60f38AbA93097f2', decimals: 18, apiKey: "chainlink"},
 }
 
-export const aaveOraclePolygonMumbaiV3Address = '0x520D14AE678b41067f029Ad770E2870F85E76588';
-export const aavePoolAddressesProviderPolygonMumbaiV3Address = '0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6';
+const polygonMainetTokenMap = {
+    AAVE: {address: '0xD6DF932A45C0f255f85145f286eA0b292B21C90B', decimals: 18, apiKey: "aave"},
+    DAI: {address:'0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063', decimals: 18, apiKey: "dai"},
+    USDC: {address:'0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',decimals: 6, apiKey: "usd-coin"},
+    USDT: {address:'0xc2132D05D31c914a87C6611C10748AEb04B58e8F',decimals: 6, apiKey: "tether"},
+    WBTC: {address:'0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',decimals: 8, apiKey: "bitcoin"},
+    WETH: {address:'0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', decimals: 18, apiKey: "ethereum"},
+    MATIC: {address:'0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', decimals: 18, apiKey: "matic-network"},
+    DPI: {address:'0x85955046DF4668e1DD369D2DE9f3AEB98DD2A369', decimals: 18, apiKey: "defipulse-index"},
+    LINK: {address:'0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39', decimals: 18, apiKey: "chainlink"},
+}
+
+const aavePoolAddressesProviderPolygonMumbaiV3Address = '0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6';
+const aavePoolAddressesProviderPolygonMainnetAddress = '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb';
+
+export const getTokenMap = (networkId) =>{
+
+    if(networkId === 80001) return polygonMumbaiV3TokenMap;
+
+    if(networkId === 137) return polygonMainetTokenMap;
+}
+
+export const getAaveAddressProvider = (networkId) => {
+    if(networkId === 80001) return aavePoolAddressesProviderPolygonMumbaiV3Address;
+
+    if(networkId === 137) return aavePoolAddressesProviderPolygonMainnetAddress;
+}

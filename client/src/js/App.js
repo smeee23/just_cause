@@ -21,7 +21,7 @@ import { updateNetworkId } from "./actions/networkId"
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
-import { kovanTokenMap, polygonMumbaiV3TokenMap, aavePoolAddressesProviderPolygonMumbaiV3Address } from "./func/tokenMaps.js";
+import { getTokenMap, getAaveAddressProvider } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
@@ -63,10 +63,11 @@ class App extends Component {
 
 					console.log("poolTrackerAddress1", this.poolTrackerAddress)
 					this.setPoolTrackAddress(this.poolTrackerAddress);
-					const tokenMap = this.getTokenMapFromNetwork();
+					const tokenMap = getTokenMap(this.networkId);
 					this.setTokenMapState(tokenMap);
 					this.setPoolState(activeAccount);
-					this.setAavePoolAddress(aavePoolAddressesProviderPolygonMumbaiV3Address)
+					const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
+					this.setAavePoolAddress(aaveAddressesProvider)
 					console.log("poolTrackerAddress2", this.poolTrackerAddress)
 					//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
 
@@ -151,14 +152,6 @@ class App extends Component {
 		console.log('activeAccount', activeAccount);
 		this.props.updateActiveAccount(activeAccount);
 	}
-	getTokenMapFromNetwork = () => {
-		if(this.networkId === 42){
-			return kovanTokenMap;
-		}
-		else if(this.networkId === 80001){
-			return polygonMumbaiV3TokenMap;
-		}
-	}
 	setTokenMapState = async(tokenMap) => {
 		let acceptedTokens = Object.keys(tokenMap);
 		const geckoPriceData = await getPriceFromCoinGecko(this.networkId);
@@ -167,7 +160,7 @@ class App extends Component {
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
 
-			const aaveTokenInfo = await getLiquidityIndexFromAave(address, aavePoolAddressesProviderPolygonMumbaiV3Address);
+			const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId));
 			console.log('aaveTokenInfo', aaveTokenInfo);
 			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
 			const allowance = await getAllowance(erc20Instance, this.poolTrackerAddress, this.props.activeAccount);
@@ -216,10 +209,10 @@ class App extends Component {
 		const userDepositPools = depositBalancePools.depositPools;
 		const userBalancePools = depositBalancePools.balances;
 
-		const verifiedPoolInfo = await getPoolInfo(verifiedPools, this.getTokenMapFromNetwork(), userBalancePools);
+		const verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools);
 		console.log('reached');
-		const ownerPoolInfo = await getPoolInfo(ownerPools, this.getTokenMapFromNetwork(), userBalancePools);
-		const userDepositPoolInfo = await getPoolInfo(userDepositPools, this.getTokenMapFromNetwork(), userBalancePools);
+		const ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools);
+		const userDepositPoolInfo = await getPoolInfo(userDepositPools, getTokenMap(this.networkId),  userBalancePools);
 
 		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
 		console.log('---------ownerPoolInfo--------', ownerPoolInfo);

@@ -69,7 +69,7 @@ class App extends Component {
 			console.log("href app.js", window.location.href);
 			console.log("check", checkLocationForAppDeploy());
 
-			if(this.props.activeAccount){
+			if("inApp" === checkLocationForAppDeploy()){
 				await this.getAccounts();
 				const activeAccount =  this.props.activeAccount;
 				if (activeAccount){

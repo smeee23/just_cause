@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from "react";
 import { connect } from "react-redux"
+import Web3Modal from "web3modal";
 
 import Logo from "./Logo";
 import { Button, ButtonSmall } from "./Button";
@@ -9,32 +10,24 @@ import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
 import { checkLocationForAppDeploy, displayTVL } from "../func/ancillaryFunctions"
+import { connectToWeb3 } from "../func/web3ModalConnect"
+
+const providerOptions = {
+	/* See Provider Options Section */
+};
+
+const web3Modal = new Web3Modal({
+	//network: "mainnet", // optional
+	//cacheProvider: true, // optional
+	providerOptions // required
+});
 
 class Header extends Component {
 
-  isMetaMaskInstalled = () => {
-		//Have to check the ethereum binding on the window object to see if it's installed
-		const { ethereum } = window;
-		return Boolean(ethereum && ethereum.isMetaMask);
-	}
-
-	connectToWeb3 = async() => {
-		if(this.isMetaMaskInstalled()){
-			try {
-				// Will open the MetaMask UI
-				// You should disable this button while the request is pending!
-				const { ethereum } = window;
-				let request = await ethereum.request({ method: 'eth_requestAccounts' });
-        this.props.updateActiveAccount(request[0]);
-				console.log('request', request);
-
-        window.location.reload(false);
-
-			}
-			catch (error) {
-				console.error(error);
-			}
-		}
+	connectToWeb3Hit = async() => {
+    const {addresses, provider} = await connectToWeb3();
+    this.props.updateActiveAccount(addresses[0]);
+    window.location.reload(false);
 	}
 
   generateNav = () => {
@@ -92,12 +85,12 @@ class Header extends Component {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
         <NavLink exact to={"/dashboard"}>
-          <ButtonSmall text={"Lauch App"} icon={"poolShape5"} callback={this.connectToWeb3}/>
+          <ButtonSmall text={"Lauch App"} icon={"poolShape5"} callback={this.connectToWeb3Hit}/>
         </NavLink>
         )
     }
     else{
-      return <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3}/>
+      return <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3Hit}/>
     }
   }
   displayAddress = (address) => {

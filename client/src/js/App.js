@@ -25,6 +25,7 @@ import { getTokenMap, getAaveAddressProvider } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
+import { connectToWeb3 } from './func/web3ModalConnect'
 import {getAbout, getIpfsData} from './func/ipfs';
 
 class App extends Component {
@@ -38,17 +39,8 @@ class App extends Component {
 			console.log("check", checkLocationForAppDeploy());
 
 			if("inApp" === checkLocationForAppDeploy()){
-				let activeAccount = await this.getAccounts();
-				//this.web3 = await getWeb3();
-				this.accounts = await this.web3.eth.getAccounts();
-
-				if(!activeAccount){
-					console.log('accounts' , this.accounts, this.accounts[0]);
-					activeAccount = this.accounts[0];
-				}
-
-				console.log('account', activeAccount);
-				activeAccount =  activeAccount[0];
+				await this.getAccounts();
+				const activeAccount =  this.props.activeAccount;
 				if (activeAccount){
 					this.setActiveAccountState(activeAccount);
 					this.networkId = await this.web3.eth.net.getId();
@@ -111,20 +103,12 @@ class App extends Component {
 		return Boolean(ethereum && ethereum.isMetaMask);
 	}
 
+
 	getAccounts = async() => {
-		let request;
-		if(this.isMetaMaskInstalled()){
-			try {
-				const { ethereum } = window;
-				this.web3 = new Web3(ethereum);
-				request = await ethereum.request({ method: 'eth_requestAccounts' });
-				console.log('requests', request);
-			}
-			catch (error) {
-				console.error(error);
-			}
-		}
-		return request;
+		const {addresses, provider} = await connectToWeb3();
+		this.web3 = new Web3(provider);
+		console.log("provider", this.web3);
+    	await this.props.updateActiveAccount(addresses[0]);
 	}
 
 	getAaveData = async() => {
@@ -134,23 +118,23 @@ class App extends Component {
 
 	setAavePoolAddress = async(aavePoolAddressesProviderAddress) => {
 		const aavePoolAddress = await getAavePoolAddress(aavePoolAddressesProviderAddress);
-		this.props.updateAavePoolAddress(aavePoolAddress);
+		await this.props.updateAavePoolAddress(aavePoolAddress);
 		console.log('aavePoolAddress', this.props.aavePoolAddress);
 
 	}
 
-	setNetworkId = (networkId) => {
-		this.props.updateNetworkId(networkId);
+	setNetworkId = async(networkId) => {
+		await this.props.updateNetworkId(networkId);
 		console.log('networkId', this.props.networkId);
 	}
 
-	setPoolTrackAddress = (poolTrackerAddress) => {
-		this.props.updatePoolTrackerAddress(poolTrackerAddress);
+	setPoolTrackAddress = async(poolTrackerAddress) => {
+		await this.props.updatePoolTrackerAddress(poolTrackerAddress);
 	}
 
-	setActiveAccountState = (activeAccount) => {
+	setActiveAccountState = async(activeAccount) => {
 		console.log('activeAccount', activeAccount);
-		this.props.updateActiveAccount(activeAccount);
+		await this.props.updateActiveAccount(activeAccount);
 	}
 	setTokenMapState = async(tokenMap) => {
 		let acceptedTokens = Object.keys(tokenMap);
@@ -183,7 +167,7 @@ class App extends Component {
 
 		}
 		console.log('updated tokenMap', tokenMap, typeof tokenMap);
-		this.props.updateTokenMap(tokenMap);
+		await this.props.updateTokenMap(tokenMap);
 	}
 
 	calculateAPY = (liquidityRate) => {
@@ -218,13 +202,13 @@ class App extends Component {
 		console.log('---------ownerPoolInfo--------', ownerPoolInfo);
 		console.log('---------userDepositPoolInfo--------', userDepositPoolInfo);
 
-		this.props.updateVerifiedPoolAddrs(verifiedPools);
-		this.props.updateOwnerPoolAddrs(ownerPools);
-		this.props.updateUserDepositPoolAddrs(userDepositPools);
+		await this.props.updateVerifiedPoolAddrs(verifiedPools);
+		await this.props.updateOwnerPoolAddrs(ownerPools);
+		await this.props.updateUserDepositPoolAddrs(userDepositPools);
 
-		this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
-		this.props.updateOwnerPoolInfo(ownerPoolInfo);
-		this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
+		await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
+		await this.props.updateOwnerPoolInfo(ownerPoolInfo);
+		await this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
 	}
 
 	render() {

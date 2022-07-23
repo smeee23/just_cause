@@ -10,7 +10,6 @@ import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import NewPoolModal from "../components/modals/NewPoolModal";
-import Logo from "../components/Logo";
 
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
@@ -22,6 +21,7 @@ import { updateWithdrawAmount } from  "../actions/withdrawAmount";
 
 
 import { updatePoolInfo, addDeployedPool } from '../func/contractInteractions';
+import { getHeaderValuesInUSD } from '../func/ancillaryFunctions';
 
 class Dashboard extends Component {
 
@@ -30,6 +30,7 @@ class Dashboard extends Component {
 
 		this.state = {
 			selectedTokenIndex: 0,
+			hideLowBalance: false,
 		}
 	}
 	componentDidMount = async () => {
@@ -166,13 +167,48 @@ class Dashboard extends Component {
 		let info;
 		if(this.state.selectedTokenIndex === 0) info = "The recipients of verified pools are known and established entities";
 		else if (this.state.selectedTokenIndex === 1) info = "Causes for which you are the receiving address";
-		else if (this.state.selectedTokenIndex === 2) info = "Causes you have contributed to";
+		else if (this.state.selectedTokenIndex === 2) info = "Causes to which you have contributed";
 		return (
 			<div style={{marginTop: "25px", maxWidth: "300px", alignItems:"center", justifyContent:"center"}}>
 				<p className="mr">{info}</p>
 			</div>
 		);
 	}
+
+	setHideLowBalances = () => {
+		let orig = this.state.hideLowBalance;
+
+		this.setState({
+			hideLowBalance: (!orig)
+		});
+	}
+	getApplicationLink = () => {
+		if(this.state.selectedTokenIndex === 0){
+			return (
+				<div style={{paddingBottom:"5px"}}>
+					<Button text={"Apply for Verified Pool"} callback={() => this.redirectWindowGoogleApplication()}/>
+				</div>
+			);
+		}
+		else if (this.state.selectedTokenIndex === 1){
+			return (
+				<div style={{paddingBottom:"64.5px"}}>
+
+				</div>
+			);
+		}
+		else if (this.state.selectedTokenIndex === 2){
+			return (
+				<div style={{paddingBottom:"5px"}}>
+					<Button text={this.state.hideLowBalance ? "Show All" : "Hide Zero/Low Balances"} callback={() => this.setHideLowBalances()}/>
+				</div>
+			);
+		}
+	}
+
+	redirectWindowGoogleApplication = () => {
+		window.open("https://docs.google.com/forms/d/e/1FAIpQLSfvejwW-3zNhy4H3hvcIDZ2WGUH422Zj1_yVouRH4tTN8kQFg/viewform?usp=sf_link", "_blank")
+	  }
 	createCardInfo = () => {
 		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.selectedTokenIndex];
 
@@ -181,19 +217,43 @@ class Dashboard extends Component {
 		for(let i = 0; i < poolInfo.length; i++){
 			console.log('a', (poolInfo[i].name));
 			const item = poolInfo[i];
-			cardHolder.push(
-				<Card
-					key={item.address}
-					title={item.name}
-					idx={i}
-					receiver={item.receiver}
-					address={item.address}
-					acceptedTokenInfo={item.acceptedTokenInfo}
-					about={item.about}
-					picHash={item.picHash}
-					isVerified={item.isVerified}
-				/>
-			);
+
+			const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
+			console.log("userBalance", userBalance);
+
+			if(this.state.hideLowBalance && this.state.selectedTokenIndex === 2){
+				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){
+					cardHolder.push(
+						<Card
+							key={item.address}
+							title={item.name}
+							idx={i}
+							receiver={item.receiver}
+							address={item.address}
+							acceptedTokenInfo={item.acceptedTokenInfo}
+							about={item.about}
+							picHash={item.picHash}
+							isVerified={item.isVerified}
+						/>
+					);
+				}
+			}
+			else{
+				cardHolder.push(
+					<Card
+						key={item.address}
+						title={item.name}
+						idx={i}
+						receiver={item.receiver}
+						address={item.address}
+						acceptedTokenInfo={item.acceptedTokenInfo}
+						about={item.about}
+						picHash={item.picHash}
+						isVerified={item.isVerified}
+					/>
+				);
+			}
+			console.log("CARD", cardHolder[cardHolder.length - 1]);
 		}
 		return cardHolder;
 	}
@@ -215,14 +275,15 @@ class Dashboard extends Component {
 							{this.getTabInfo()}
 						</div>
 					</section>
-					<section className="page-section horizontal-padding bw0">
+					<section className="page-section_no_vert_padding horizontal-padding bw0">
 						{this.getPendingTxModal()}
 						{this.getTxResultModal()}
 						{this.getDeployTxModal()}
 						{this.getNewPoolModal()}
+						{this.getApplicationLink()}
 						{cardHolder}
 					</section>
-					<section className="page-section page-section--center horizontal-padding bw0" >
+					<section className="page-section page-section--center horizontal-padding bw0" style={{paddingTop:"0px"}} >
 
 					</section>
 				</article>

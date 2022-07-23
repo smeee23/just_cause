@@ -57,6 +57,7 @@ const web3Modal = new Web3Modal({
 	cacheProvider: true, // optional
     disableInjectedProvider: false,
 	providerOptions, // required
+	theme: "dark",
 });
 
 class App extends Component {

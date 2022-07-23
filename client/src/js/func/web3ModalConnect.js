@@ -1,6 +1,7 @@
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
+import Authereum from "authereum";
+
 
 const providerOptions = {
     walletconnect: {
@@ -11,6 +12,9 @@ const providerOptions = {
             80001: "https://polygon-mumbai.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
           },
         }
+    },
+    authereum: {
+        package: Authereum // required
     }
 };
 

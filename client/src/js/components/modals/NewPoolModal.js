@@ -69,8 +69,14 @@ class NewPoolModal extends Component {
 		console.log('this.props.poolTrackerAddress', this.props.poolTrackerAddress);
 		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, aboutHash, this.state.fileUploadHash, metaUri, receiver).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
-			txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver};
-			this.props.updateDeployTxResult(txInfo);
+			if(!err){
+				txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver};
+				this.props.updateDeployTxResult(txInfo);
+			}
+			else{
+				console.log("MESSAGE", txInfo);
+				txInfo = "";
+			}
 		});
 		txInfo.poolAddress = result.events.AddPool.returnValues.pool;
 		txInfo.status = 'success';
@@ -78,10 +84,13 @@ class NewPoolModal extends Component {
 		console.log('txInfo', txInfo);
 	}
 	catch (error) {
-		txInfo.status = 'failed';
 		console.error(error);
+		txInfo = "";
 	}
-	this.displayDeployInfo(txInfo);
+
+	if(txInfo){
+		this.displayDeployInfo(txInfo);
+	}
   }
 
 	displayDeployInfo = async(txInfo) => {

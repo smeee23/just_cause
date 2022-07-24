@@ -39,9 +39,15 @@ class ApproveModal extends Component {
                 const amount = '10000000000000000000000000000000';
                 txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress};
                 result = await erc20Instance.methods.approve(this.props.poolTrackerAddress, amount).send(parameter, (err, transactionHash) => {
-                    console.log('Transaction Hash :', transactionHash);
-                    this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress});
-                    txInfo.txHash = transactionHash;
+                    console.log('Transaction Hash :', transactionHash, err);
+					if(!err){
+						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress});
+						txInfo.txHash = transactionHash;
+					}
+					else{
+						console.log("MESSAGE", txInfo);
+						txInfo = "";
+					}
                 });
                 txInfo.success = true;
 
@@ -51,9 +57,14 @@ class ApproveModal extends Component {
 			}
 			catch (error) {
 				console.error(error);
+				console.error("ERROR HIT");
+				txInfo = "";
 			}
 
-			this.displayTxInfo(txInfo);
+			console.log("MESSAGE ggggggggggggggggggg", txInfo);
+			if(txInfo){
+				this.displayTxInfo(txInfo);
+			}
 	}
 
   displayDepositNotice = (txInfo) => {
@@ -69,6 +80,7 @@ class ApproveModal extends Component {
   }
 
   displayTxInfo = async(txInfo) => {
+		console.log("MESSAGE ggggggggggggggggggg");
 		this.props.updatePendingTx('');
 		this.props.updateTxResult(txInfo);
 		await delay(5000);

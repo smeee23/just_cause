@@ -41,16 +41,25 @@ class ClaimModal extends Component {
                 txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress};
                 result = await PoolTrackerInstance.methods.claimInterest(tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
                     console.log('Transaction Hash :', transactionHash);
-                    this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress});
-                    txInfo.txHash = transactionHash;
+					if(!err){
+						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress});
+						txInfo.txHash = transactionHash;
+					}
+					else{
+						console.log("MESSAGE", txInfo);
+						txInfo = "";
+					}
                 });
                 txInfo.success = true;
 			}
 			catch (error) {
 				console.error(error);
+				txInfo = "";
 			}
 
-			this.displayTxInfo(txInfo);
+			if(txInfo){
+				this.displayTxInfo(txInfo);
+			}
 	}
 
   displayDepositNotice = (txInfo) => {

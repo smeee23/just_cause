@@ -128,6 +128,9 @@ class Card extends Component {
 
 	getAPY = (depositAPY) => {
 		if(depositAPY){
+			if(depositAPY.includes("e-")){
+				depositAPY = "0.000"
+			}
 			return (<p>{" "+ depositAPY+'% APY'}</p>);
 		}
 	}
@@ -225,10 +228,6 @@ class Card extends Component {
 
 			</div>
 		return tokenInfo;
-		/*
-		<p>{"amountScaled: "+item.amountScaled}</p>
-		<p>{"liq Index: "+item.liquidityIndex}</p>
-		*/
 	}
 	getDepositAmountModal = () => {
 		if(this.props.depositAmount){

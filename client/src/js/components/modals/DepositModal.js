@@ -101,9 +101,14 @@ class DepositModal extends Component {
 				console.log('amountInBase', typeof amountInBase, amountInBase);
 				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
 					console.log('Transaction Hash :', transactionHash);
-					this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress});
-					txInfo.txHash = transactionHash;
-
+					if(!err){
+						this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress});
+						txInfo.txHash = transactionHash;
+					}
+					else{
+						console.log("MESSAGE", txInfo);
+						txInfo = "";
+					}
 				});
 				txInfo.success = true;
 				console.log('deposit', result);
@@ -124,8 +129,12 @@ class DepositModal extends Component {
 			}
 			catch (error) {
 				console.error(error);
+				txInfo = "";
 			}
-			this.displayTxInfo(txInfo);
+
+			if(txInfo){
+				this.displayTxInfo(txInfo);
+			}
 	}
 
   displayDepositNotice = (depositInfo) => {

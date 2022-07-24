@@ -1,6 +1,18 @@
 import React, {Component, Fragment} from "react"
 import { ModalHeader, ModalBodyTx} from "../Modal";
 
+import DaiLogo from "../cryptoLogos/DaiLogo";
+import WbtcLogo from "../cryptoLogos/WbtcLogo";
+import UsdcLogo from "../cryptoLogos/UsdcLogo";
+import TetherLogo from "../cryptoLogos/TetherLogo";
+import EthLogo from "../cryptoLogos/EthLogo";
+import AaveLogo from "../cryptoLogos/AaveLogo";
+import MaticLogo from "../cryptoLogos/MaticLogo";
+import WEthLogo from "../cryptoLogos/WEthLogo";
+import LinkLogo from "../cryptoLogos/LinkLogo";
+import DpiLogo from "../cryptoLogos/DpiLogo";
+import Logo from "../Logo"
+
 import TextLink from '../TextLink'
 import { redirectWindowBlockExplorer, getBlockExplorerUrl } from '../../func/ancillaryFunctions';
 
@@ -11,6 +23,45 @@ export default class TxResultModal extends Component {
     return 'FAILED'
   }
 
+  displayLogo = (acceptedTokenString) => {
+    let logo = '';
+    if(acceptedTokenString === 'ETH'){
+      logo = <EthLogo/>;
+    }
+    else if (acceptedTokenString === 'USDT'){
+      logo = <TetherLogo/>;
+    }
+    else if (acceptedTokenString === 'USDC'){
+      logo = <UsdcLogo/>;
+    }
+    else if (acceptedTokenString === 'WBTC'){
+      logo = <WbtcLogo/>;
+    }
+    else if (acceptedTokenString === 'DAI'){
+      logo = <DaiLogo/>;
+    }
+    else if (acceptedTokenString === 'AAVE'){
+      logo = <AaveLogo/>;
+    }
+    else if(acceptedTokenString === 'WETH'){
+      logo = <WEthLogo/>;
+    }
+    else if(acceptedTokenString === 'MATIC'){
+      logo = <MaticLogo/>;
+    }
+    else if(acceptedTokenString === 'LINK'){
+      logo = <LinkLogo/>;
+    }
+    else if(acceptedTokenString === 'DPI'){
+      logo = <DpiLogo/>;
+    }
+    else{
+      logo = <Logo/>
+    }
+
+    return logo;
+  }
+
   render() {
       const { txDetails } = this.props;
       if(txDetails.success){
@@ -19,7 +70,7 @@ export default class TxResultModal extends Component {
 		return (
       <Fragment>
       <ModalHeader>
-        <h2 className="mb0">{txDetails.type + " " + txDetails.amount + " " + txDetails.tokenString + " " + this.successOrFail(txDetails.success)}</h2>
+        <h2 className="mb0">{txDetails.type} {txDetails.amount} {this.displayLogo(txDetails.tokenString)} {txDetails.tokenString}  this.successOrFail(txDetails.success)</h2>
       </ModalHeader>
       <ModalBodyTx>
         <p>

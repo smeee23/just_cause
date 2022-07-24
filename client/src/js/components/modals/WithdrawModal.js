@@ -77,16 +77,25 @@ class WithdrawModal extends Component {
             console.log('amountInBase', typeof amountInBase, amountInBase, typeof amountInBase_test, amountInBase_test);
             result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
                 console.log('Transaction Hash :', transactionHash);
-                this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress});
-                txInfo.txHash = transactionHash;
+                if(!err){
+                  this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress});
+                  txInfo.txHash = transactionHash;
+                }
+                else{
+                  txInfo = "";
+                }
             });
             txInfo.success = true;
             console.log('withdraw', result)
 		}
-        catch (error) {
-            console.error(error);
-        }
-        this.displayTxInfo(txInfo);
+    catch (error) {
+      console.error(error);
+      txInfo = "";
+    }
+
+    if(txInfo){
+      this.displayTxInfo(txInfo);
+    }
 	}
 
   displayWithdrawNotice = (name) => {

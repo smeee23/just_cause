@@ -99,7 +99,7 @@ class Search extends Component {
 	}
 
 	getSearchModal = () => {
-		if(!this.props.searchInfo || this.state.openModal){
+		if((!this.props.searchInfo || this.state.openModal) && this.props.activeAccount){
 			let modal = <Modal isOpen={true}><SearchModal linkAddress={this.state.linkAddress}/></Modal>;
 			return modal;
 		}

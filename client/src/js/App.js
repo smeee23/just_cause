@@ -71,8 +71,8 @@ class App extends Component {
 			console.log("href app.js", window.location.href);
 			console.log("check", checkLocationForAppDeploy());
 
-				if("inApp" === checkLocationForAppDeploy()){
-					if(web3Modal.cachedProvider){
+				if("inApp" === checkLocationForAppDeploy() || "inSearch" === checkLocationForAppDeploy() ){
+					if(web3Modal.cachedProvider || "inSearch" === checkLocationForAppDeploy() ){
 						await this.getAccounts();
 
 						if (this.props.activeAccount){

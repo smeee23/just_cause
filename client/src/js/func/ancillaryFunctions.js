@@ -246,6 +246,8 @@ export const checkLocationForAppDeploy = () => {
 
   if(urls.includes(window.location.href)) return "outsideApp";
 
+  else if((window.location.href).includes("search?address=")) return "inSearch"
+
   return "inApp";
 }
 

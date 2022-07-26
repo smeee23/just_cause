@@ -76,13 +76,13 @@ class Search extends Component {
 		//}
 	}
 	getSearchResults = () => {
-			if(this.props.searchInfo && this.props.activeAccount){
+			if(this.props.searchInfo && this.props.activeAccount !== "Connect"){
 				//if(this.state.openModel === true) this.closeModal();
 				const searchResults = this.createCardInfo(this.props.searchInfo)
 				//this.props.updateSearchInfo('');
 				return searchResults;
 			}
-			else if(this.props.activeAccount){
+			else if(this.props.activeAccount !== "Connect"){
 				let modal = <Modal isOpen={true}><SearchModal linkAddress={this.state.linkAddress}/></Modal>;
 				return modal;
 			}
@@ -99,7 +99,7 @@ class Search extends Component {
 	}
 
 	getSearchModal = () => {
-		if((!this.props.searchInfo || this.state.openModal) && this.props.activeAccount){
+		if((!this.props.searchInfo || this.state.openModal) && this.props.activeAccount !== "Connect"){
 			let modal = <Modal isOpen={true}><SearchModal linkAddress={this.state.linkAddress}/></Modal>;
 			return modal;
 		}

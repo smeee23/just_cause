@@ -54,31 +54,31 @@ class Card extends Component {
 		window.scrollTo(0,0);
 	}
 
-	displayWithdraw = (item, address, tokenString) => {
+	displayWithdraw = (item, address, tokenString, title) => {
 	if(item.userBalance > 0){
 		let isDisabled = false;
 		if(this.props.pendingTx) isDisabled = true;
-		return <Button text={"Withdraw "+tokenString} disabled={isDisabled} callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/>
+		return <div title={"withdraw deposit"}><Button text={"Withdraw "+tokenString} disabled={isDisabled} callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
 		}
 	}
 
-	displayClaim = (item, address) => {
+	displayClaim = (item, address, title) => {
 		if(item.unclaimedInterest > 500){
 			let isDisabled = false;
 			if(this.props.pendingTx) isDisabled = true;
-			return <Button text="Claim Interest" disabled={isDisabled} callback={async() => await this.claim(address, item.address, this.props.poolTrackerAddress)}/>
+			return <div title={"send to "+title}><Button text="Claim Interest" disabled={isDisabled} callback={async() => await this.claim(address, item.address, this.props.poolTrackerAddress)}/></div>
 		}
 	}
-	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance) => {
+	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance, title) => {
 		let isDisabled = false;
 		if(this.props.pendingTx) isDisabled = true;
 		if(isEth){
-			return <Button text={"Deposit "+tokenString} disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
+			return  <div title={"earn donations for "+title}><Button text={"Deposit "+tokenString} disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		}
 		if(Number(allowance) === 0){
-			return <Button text={"Approve "+tokenString} disabled={isDisabled} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/>
+			return <div title={"required before deposit"}><Button text={"Approve "+tokenString} disabled={isDisabled} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 		}
-		return <Button text={"Deposit "+tokenString} disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/>
+		return <div title={"earn donations for "+title}><Button text={"Deposit "+tokenString} disabled={isDisabled} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 	}
 	toggleCardOpen = () => {
 		this.setState({
@@ -159,14 +159,16 @@ class Card extends Component {
 								</h4>
 								{this.getIsVerified(isVerified)}
 							</div>
+							<div title="view on block explorer">
 							<TextLink text={"address "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address', this.props.networkId)}/>
 							<TextLink text={"receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address', this.props.networkId)}/>
+							</div>
 						</div>
 						</div>
 					</div>
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
 						<p style={{marginTop: "20px"}} className="mr">{about}</p>
-						<div style={{bottom: "0px"}}>
+						<div title={"share "+ title} style={{bottom: "0px"}}>
 							<Button share="share" callback={async() => await this.share(address, title )} />
 						</div>
 					</div>
@@ -219,9 +221,9 @@ class Card extends Component {
 							</div>
 						</div>
 						<div style={{marginRight: "auto"}}>
-							{this.displayClaim(item, address)}
-							{this.displayWithdraw(item, address, item.acceptedTokenString)}
-							{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance)}
+							{this.displayClaim(item, address, title)}
+							{this.displayWithdraw(item, address, item.acceptedTokenString, title)}
+							{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance, title)}
 						</div>
 					</div>
 				</div>

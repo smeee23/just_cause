@@ -262,7 +262,7 @@ class NewPoolModal extends Component {
 
 		display = <Fragment>
 			<ModalHeader>
-          		<h2 className="mb0">Create Cause</h2>
+          		<h2 className="mb0">Let's Get Started</h2>
        		 </ModalHeader>
 			<ModalBodyDeploy>
 				<div  style={{fontSize:11}}  className="modal__body__column__one">
@@ -304,7 +304,7 @@ class NewPoolModal extends Component {
 
 		display = <Fragment>
 			<ModalHeader>
-          		<h2 className="mb0">Create Cause</h2>
+          		<h2 className="mb0">Just a Couple more things...</h2>
        		 </ModalHeader>
 			<ModalBodyDeploy>
 			<div /*style={{fontSize:17}}*/ className="modal__body__column__one">

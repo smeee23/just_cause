@@ -10,6 +10,7 @@ import Discord from "./logos/Discord";
 import Facebook from "./logos/Facebook";
 import LinkedIn from "./logos/LinkedIn";
 import Share from "./logos/Share";
+import Copy from "./logos/Copy"
 
 class ButtonExtraSmall extends Component {
 
@@ -21,7 +22,7 @@ class ButtonExtraSmall extends Component {
     }
   }
 	render() {
-		const { text, icon, tweet, href, callback, disabled, lg, logo, github } = this.props;
+		const { text, icon, tweet, href, callback, disabled, lg, logo, github, info } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -31,7 +32,7 @@ class ButtonExtraSmall extends Component {
     })
 
 		return (
-      <button className={classnames} href={href} onClick={callback}>
+      <button title={info} className={classnames} href={href} onClick={callback}>
         <div className="button__items">
           { text ? (
             <div className="button__itemxsm button__text">
@@ -67,7 +68,7 @@ class ButtonSmall extends Component {
     }
   }
 	render() {
-		const { text, icon, tweet, href, callback, disabled, lg, logo } = this.props;
+		const { text, icon, tweet, href, callback, disabled, lg, logo, info } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -77,7 +78,7 @@ class ButtonSmall extends Component {
     })
 
 		return (
-      <button className={classnames} href={href} onClick={callback}>
+      <button title={info} className={classnames} href={href} onClick={callback}>
         <div className="button__items">
           { text ? (
             <div className="button__itemsm button__text">
@@ -102,15 +103,15 @@ class ButtonSmall extends Component {
 
 class Button extends Component {
 
-  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d) => {
-    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d){
+  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d, copy) => {
+    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d && !copy){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
     }
   }
 	render() {
-		const { text, icon, tweet, tweet_d, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo } = this.props;
+		const { text, icon, tweet, tweet_d, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo, copy, info } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -120,7 +121,7 @@ class Button extends Component {
     })
 
 		return (
-      <button className={classnames} href={href} onClick={callback}>
+      <button title={info} className={classnames} href={href} onClick={callback}>
         <div className="button__items">
           { text ? (
             <div className="button__item button__text">
@@ -154,8 +155,11 @@ class Button extends Component {
           { share ? (
               <Share/>
           ) : null }
+          { copy ? (
+              <Copy/>
+          ) : null }
         </div>
-        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d)}
+        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, copy)}
       </button>
 		);
 	}

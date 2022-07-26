@@ -117,7 +117,7 @@ class Header extends Component {
         )
     }
     else{
-      return <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3Hit}/>
+      return <div title={this.displayInfo(this.props.activeAccount)}> <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3Hit}/> </div>
     }
   }
   displayAddress = (address) => {
@@ -125,6 +125,13 @@ class Header extends Component {
       return address;
 
     return address.slice(0, 6) + "..."+address.slice(-4);
+  }
+
+  displayInfo= (address) => {
+    if(address === 'Connect')
+      return "connect wallet";
+
+    return "view on block explorer";
   }
 
 	render() {

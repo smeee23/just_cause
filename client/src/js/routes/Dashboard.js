@@ -138,13 +138,14 @@ class Dashboard extends Component {
 	createOptionButtons = () => {
 		let buttonHolder = [];
 		const buttonStrings = ['Verified Causes', 'Your Causes', 'Contributions'];
+		const infoStrings = ['team verified pools', 'receiving pools', 'your donations'];
 		for(let i = 0; i < buttonStrings.length; i++){
-			const tokenName = buttonStrings[i];
+			const name = buttonStrings[i];
 			let isDisabled = false;
 			if(i === this.state.selectedTokenIndex) isDisabled = true;
-			buttonHolder.push(<Button text={tokenName} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
+			buttonHolder.push(<div title={infoStrings[i]}><Button text={name} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/></div>)
 		}
-		buttonHolder.push(<Button key={4} text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/>);
+		buttonHolder.push(<div style={{marginLeft: "30px"}} title="create your own cause"><Button key={4} text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/></div>);
 		return buttonHolder;
 	}
 
@@ -186,8 +187,8 @@ class Dashboard extends Component {
 		if(this.state.selectedTokenIndex === 0){
 			return (
 				<div style={{paddingBottom:"5px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
-					<div style={{margin: "auto"}}>
-						<ButtonSmall text={"Apply for Verified Pool"} callback={() => this.redirectWindowGoogleApplication()}/>
+					<div title="apply to create a verified pool" style={{margin: "auto"}}>
+						<ButtonSmall text={"Apply"} callback={() => this.redirectWindowGoogleApplication()}/>
 					</div>
 				</div>
 			);
@@ -201,7 +202,7 @@ class Dashboard extends Component {
 		}
 		else if (this.state.selectedTokenIndex === 2){
 			return (
-				<div style={{paddingBottom:"5px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
+				<div title={this.state.hideLowBalance ? "show all pools contributed to" : "hide inactive pools"} style={{paddingBottom:"5px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
 					<ButtonSmall text={this.state.hideLowBalance ? "Show All" : "Hide Zero/Low Balances"} callback={() => this.setHideLowBalances()}/>
 				</div>
 			);

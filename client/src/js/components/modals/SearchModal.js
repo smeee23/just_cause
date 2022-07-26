@@ -40,6 +40,7 @@ class SearchModal extends Component {
           <TextField ref="searchTerm" label="Name or Address" placeholder="Enter Name or Address"/>
       );
     }
+    console.log("ACTIVE ACCOUNT", this.props.activeAccount);
     return <p>Searching...</p>
   }
 

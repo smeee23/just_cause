@@ -76,13 +76,13 @@ class Search extends Component {
 		//}
 	}
 	getSearchResults = () => {
-			if(this.props.searchInfo){
+			if(this.props.searchInfo && this.props.activeAccount){
 				//if(this.state.openModel === true) this.closeModal();
 				const searchResults = this.createCardInfo(this.props.searchInfo)
 				//this.props.updateSearchInfo('');
 				return searchResults;
 			}
-			else{
+			else if(this.props.activeAccount){
 				let modal = <Modal isOpen={true}><SearchModal linkAddress={this.state.linkAddress}/></Modal>;
 				return modal;
 			}

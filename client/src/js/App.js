@@ -38,6 +38,7 @@ const providerOptions = {
         options: {
           rpc: {
             80001: "https://polygon-mumbai.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
+			137: "https://polygon-mainnet.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
           },
         }
     },
@@ -70,10 +71,10 @@ class App extends Component {
 			console.log("href app.js", window.location.href);
 			console.log("check", checkLocationForAppDeploy());
 
-				//web3Modal.toggleModal()
 				if("inApp" === checkLocationForAppDeploy()){
 					if(web3Modal.cachedProvider){
 						await this.getAccounts();
+
 						if (this.props.activeAccount){
 							this.setUpConnection();
 						}
@@ -121,9 +122,17 @@ class App extends Component {
 		this.setPoolState(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
 		this.setAavePoolAddress(aaveAddressesProvider)
-		console.log("poolTrackerAddress2", this.poolTrackerAddress)
+		console.log("poolTrackerAddress2", this.poolTrackerAddress, aaveAddressesProvider)
 		//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
 
+		const PoolTrackerInstance = new this.web3.eth.Contract(
+			PoolTracker.abi,
+			this.poolTrackerAddress,
+		);
+
+		console.log("getAddressFromName");
+		const result = await PoolTrackerInstance.methods.getReservesList().call();
+		console.log("TESTTTTTT", result);
 		await getAbout('test');
 		await getIpfsData('QmPTsBwAC1x4Qhr7Ckd4Vt2GJGR4CcL8bp7WSgeChfCMY2');
 
@@ -133,12 +142,6 @@ class App extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener('resize', this.props.detectMobile);
-	}
-
-	isMetaMaskInstalled = () => {
-		//Have to check the ethereum binding on the window object to see if it's installed
-		const { ethereum } = window;
-		return Boolean(ethereum && ethereum.isMetaMask);
 	}
 
 	connectToWeb3 = async() => {
@@ -157,10 +160,20 @@ class App extends Component {
 		return {addresses, provider};
 	}
 
+	disconnect = async () => {
+		console.log("DISCONNECT");
+		/*await web3Modal.clearCachedProvider();
+		this.props.updateActiveAccount("");
+
+		window.location.reload(false);*/
+	};
 	getAccounts = async() => {
 		const {addresses, provider} = await this.connectToWeb3();
-		this.web3 = new Web3(provider);
-		console.log("provider", this.web3);
+		this.provider = provider;
+
+		this.web3 = new Web3(this.provider);
+
+		console.log("provider", provider);
     	await this.props.updateActiveAccount(addresses[0]);
 	}
 
@@ -238,7 +251,6 @@ class App extends Component {
 	}
 
 	setPoolState = async(activeAccount) => {
-		console.log('e')
 		//const { verifiedPools, ownerPools, userDepositPools, verifiedPoolInfo, ownerPoolInfo, userDepositPoolInfo } = getPoolStateFromChain(activeAccount, this.getTokenMapFromNetwork, this.networkId);
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
 		const ownerPools = await this.getOwnerAddress(activeAccount); //await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
@@ -265,7 +277,7 @@ class App extends Component {
 	}
 
 	render() {
-		let history;
+				let history;
 		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
 			history = this.props.history;
 		} else {

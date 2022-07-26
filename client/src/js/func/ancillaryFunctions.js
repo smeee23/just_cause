@@ -49,13 +49,15 @@ export const facebookShare = (purl,poolAddress) => {
   window.open(url, "_blank");
 }
 
-export const getBlockExplorerUrl = (label) => {
+export const getBlockExplorerUrl = (label, networkId) => {
   label = '/'+label+'/';
-  const urlBase = 'https://mumbai.polygonscan.com'
+  let urlBase;
+  if(networkId === 80001) urlBase = 'https://mumbai.polygonscan.com'
+  else if (networkId === 137) urlBase = 'https://mumbai.polygonscan.com'
   return urlBase + label;
 }
-export const redirectWindowBlockExplorer = (hash, label) => {
-  let url = getBlockExplorerUrl(label);
+export const redirectWindowBlockExplorer = (hash, label, networkId) => {
+  let url = getBlockExplorerUrl(label, networkId);
   let newPageUrl = url + hash;
   window.open(newPageUrl, "_blank")
 }

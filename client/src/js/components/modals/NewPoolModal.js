@@ -59,7 +59,7 @@ class NewPoolModal extends Component {
 		const parameter = {
 			from: activeAccount,
 			gas: web3.utils.toHex(1200000),
-			gasPrice: web3.utils.toHex(web3.utils.toWei('1.500000025', 'gwei'))
+			gasPrice: web3.utils.toHex(web3.utils.toWei('110.500000025', 'gwei'))
 		};
 
 		let PoolTrackerInstance = new web3.eth.Contract(
@@ -68,9 +68,9 @@ class NewPoolModal extends Component {
 		);
 		console.log('this.props.poolTrackerAddress', this.props.poolTrackerAddress);
 		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, aboutHash, this.state.fileUploadHash, metaUri, receiver).send(parameter , (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash);
+			console.log('Transaction Hash :', transactionHash, tokenAddrs);
 			if(!err){
-				txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver};
+				txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver, networkId: this.props.networkId};
 				this.props.updateDeployTxResult(txInfo);
 			}
 			else{
@@ -357,6 +357,7 @@ const mapStateToProps = state => ({
 	poolTrackerAddress: state.poolTrackerAddress,
  	depositAmount: state.depositAmount,
 	activeAccount: state.activeAccount,
+	networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({

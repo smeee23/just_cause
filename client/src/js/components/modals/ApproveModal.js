@@ -37,7 +37,7 @@ class ApproveModal extends Component {
                     };
 
                 const amount = '10000000000000000000000000000000';
-                txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress};
+                txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress, networkId: this.props.networkId};
                 result = await erc20Instance.methods.approve(this.props.poolTrackerAddress, amount).send(parameter, (err, transactionHash) => {
                     console.log('Transaction Hash :', transactionHash, err);
 					if(!err){
@@ -111,6 +111,7 @@ const mapStateToProps = state => ({
 	poolTrackerAddress: state.poolTrackerAddress,
  	approve: state.approve,
 	activeAccount: state.activeAccount,
+	networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({

@@ -74,7 +74,22 @@ module.exports = {
                             return provider;
       },
       network_id: "80001"
-    }
+    },
+    matic_main: {
+      provider: () => {
+        let provider = new HDWalletProvider({mnemonic: key,
+                              providerOrUrl:"https://polygon-mainnet.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
+                              addressIndex: AccountIndex,
+                              network_id: 137,
+                              confirmations: 2,
+                              timeoutBlocks: 200,
+                              skipDryRun: true,
+                              chainId: 137
+                            });
+                            return provider;
+      },
+      network_id: "137"
+    },
   },
   compilers: {
     solc: {

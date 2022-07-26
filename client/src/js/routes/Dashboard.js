@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 import Card from '../components/Card';
 import { Modal, LargeModal } from "../components/Modal";
-import { Button } from '../components/Button';
+import { Button, ButtonSmall, ButtonExtraSmall} from '../components/Button';
 import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
@@ -185,8 +185,10 @@ class Dashboard extends Component {
 	getApplicationLink = () => {
 		if(this.state.selectedTokenIndex === 0){
 			return (
-				<div style={{paddingBottom:"5px"}}>
-					<Button text={"Apply for Verified Pool"} callback={() => this.redirectWindowGoogleApplication()}/>
+				<div style={{paddingBottom:"5px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
+					<div style={{margin: "auto"}}>
+						<ButtonSmall text={"Apply for Verified Pool"} callback={() => this.redirectWindowGoogleApplication()}/>
+					</div>
 				</div>
 			);
 		}
@@ -199,8 +201,8 @@ class Dashboard extends Component {
 		}
 		else if (this.state.selectedTokenIndex === 2){
 			return (
-				<div style={{paddingBottom:"5px"}}>
-					<Button text={this.state.hideLowBalance ? "Show All" : "Hide Zero/Low Balances"} callback={() => this.setHideLowBalances()}/>
+				<div style={{paddingBottom:"5px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
+					<ButtonSmall text={this.state.hideLowBalance ? "Show All" : "Hide Zero/Low Balances"} callback={() => this.setHideLowBalances()}/>
 				</div>
 			);
 		}

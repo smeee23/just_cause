@@ -46,7 +46,7 @@ class Header extends Component {
       window.location.reload(false);
     }
     else{
-      redirectWindowBlockExplorer(this.props.activeAccount, 'address');
+      redirectWindowBlockExplorer(this.props.activeAccount, 'address', this.props.networkId);
     }
 	}
 
@@ -153,6 +153,7 @@ const mapStateToProps = state => ({
 	isMobile: state.isMobile,
   activeAccount: state.activeAccount,
   tokenMap: state.tokenMap,
+  networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({

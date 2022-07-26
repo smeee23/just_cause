@@ -159,8 +159,8 @@ class Card extends Component {
 								</h4>
 								{this.getIsVerified(isVerified)}
 							</div>
-							<TextLink text={"address "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address')}/>
-							<TextLink text={"receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address')}/>
+							<TextLink text={"address "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address', this.props.networkId)}/>
+							<TextLink text={"receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address', this.props.networkId)}/>
 						</div>
 						</div>
 					</div>
@@ -427,6 +427,7 @@ const mapStateToProps = state => ({
 	claim: state.claim,
 	approve: state.approve,
 	share: state.share,
+	networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({

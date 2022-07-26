@@ -72,7 +72,7 @@ class WithdrawModal extends Component {
                 this.props.poolTrackerAddress,
             );
 
-            txInfo = {txHash: '', success: false, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress};
+            txInfo = {txHash: '', success: false, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress, networkId: this.props.networkId};
 
             console.log('amountInBase', typeof amountInBase, amountInBase, typeof amountInBase_test, amountInBase_test);
             result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
@@ -159,6 +159,7 @@ const mapStateToProps = state => ({
 	  poolTrackerAddress: state.poolTrackerAddress,
     withdrawAmount: state.withdrawAmount,
     activeAccount: state.activeAccount,
+    networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({

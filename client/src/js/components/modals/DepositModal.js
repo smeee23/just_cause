@@ -96,7 +96,7 @@ class DepositModal extends Component {
 
 				console.log('poolTracker', this.props.poolTrackerAddress);
 				console.log(PoolTrackerInstance.options.address);
-				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress};
+				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, networkId: this.props.networkId};
 
 				console.log('amountInBase', typeof amountInBase, amountInBase);
 				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
@@ -216,6 +216,7 @@ const mapStateToProps = state => ({
  	depositAmount: state.depositAmount,
 	activeAccount: state.activeAccount,
 	userDepositPoolInfo: state.userDepositPoolInfo,
+	networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({

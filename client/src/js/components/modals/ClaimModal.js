@@ -38,7 +38,7 @@ class ClaimModal extends Component {
                     PoolTracker.abi,
                     this.props.poolTrackerAddress,
                 );
-                txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress};
+                txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress, networkId: this.props.networkId};
                 result = await PoolTrackerInstance.methods.claimInterest(tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
                     console.log('Transaction Hash :', transactionHash);
 					if(!err){
@@ -106,6 +106,7 @@ const mapStateToProps = state => ({
 	poolTrackerAddress: state.poolTrackerAddress,
  	claim: state.claim,
 	activeAccount: state.activeAccount,
+	networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({

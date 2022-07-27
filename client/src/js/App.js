@@ -148,16 +148,14 @@ class App extends Component {
 		let addresses;
 		let provider;
 		try {
-			// Will open the MetaMask UI
-			// You should disable this button while the request is pending!
-
 			provider = await web3Modal.connect();
-			addresses = await provider.request({ method: 'eth_requestAccounts' });
+			//addresses = await provider.request({ method: 'eth_requestAccounts' });
 		}
 		catch (error) {
 			console.error(error);
 		}
-		return {addresses, provider};
+		//return {addresses, provider};
+		return provider;
 	}
 
 	disconnect = async () => {
@@ -168,13 +166,16 @@ class App extends Component {
 		window.location.reload(false);*/
 	};
 	getAccounts = async() => {
-		const {addresses, provider} = await this.connectToWeb3();
+		//const {addresses, provider} = await this.connectToWeb3();
+		const provider = await this.connectToWeb3();
 		this.provider = provider;
 
 		this.web3 = new Web3(this.provider);
+		console.log("requestAccounts");
+		const accounts = await this.web3.eth.getAccounts();
 
 		console.log("provider", provider);
-    	await this.props.updateActiveAccount(addresses[0]);
+    	await this.props.updateActiveAccount(accounts[0]);
 	}
 
 	getAaveData = async() => {

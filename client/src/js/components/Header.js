@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react";
 import { connect } from "react-redux"
-import Web3Modal from "web3modal";
+import Web3 from "web3";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Authereum from "authereum";
 
@@ -26,18 +26,21 @@ class Header extends Component {
 			// You should disable this button while the request is pending!
 
 			provider = await web3Modal.connect();
-			addresses = await provider.request({ method: 'eth_requestAccounts' });
+			//addresses = await provider.request({ method: 'eth_requestAccounts' });
 		}
 		catch (error) {
 			console.error(error);
       console.log("ERROR REACHED");
 		}
-		return {addresses, provider};
+		//return {addresses, provider};
+    return provider;
 	}
 
 	connectToWeb3Hit = async() => {
     if(this.props.activeAccount === "Connect"){
-      const {addresses, } = await this.connectToWeb3();
+      const provider = await this.connectToWeb3();
+      const web3 = new Web3(provider);
+		  const addresses = await web3.eth.getAccounts();
       if(addresses){
         this.props.updateActiveAccount(addresses[0]);
         this.props.updateConnect(true);

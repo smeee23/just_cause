@@ -30,7 +30,6 @@ class Header extends Component {
 		}
 		catch (error) {
 			console.error(error);
-      console.log("ERROR REACHED");
 		}
 		//return {addresses, provider};
     return provider;

@@ -1,4 +1,5 @@
 import getWeb3 from "../../getWeb3NotOnLoad";
+import Web3 from "web3";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
@@ -6,7 +7,6 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
 import Pool from "../../contracts/IPool.json";
 import { getIpfsData } from "./ipfs";
-
 
 	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
 		const web3 = await getWeb3();

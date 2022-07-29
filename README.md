@@ -70,4 +70,4 @@ Please see our [docs](https://docs.justcause.finance/) page for more info, and s
 
 # Audits
 
-tba
+We have undergone audits from PeckShield and EtherAuthority. Reports can be found [here](https://github.com/smeee23/just_cause/tree/main/security/audits).

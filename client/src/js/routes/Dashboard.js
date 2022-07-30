@@ -143,7 +143,7 @@ class Dashboard extends Component {
 			const name = buttonStrings[i];
 			let isDisabled = false;
 			if(i === this.state.selectedTokenIndex) isDisabled = true;
-			buttonHolder.push(<div title={infoStrings[i]}><Button text={name} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/></div>)
+			buttonHolder.push(<div title={infoStrings[i]} key={i}><Button text={name} disabled={isDisabled} callback={() => this.setSelectedToken(i)}/></div>)
 		}
 		buttonHolder.push(<div style={{marginLeft: "30px"}} title="create your own cause"><Button key={4} text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/></div>);
 		return buttonHolder;

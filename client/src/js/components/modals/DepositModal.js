@@ -65,6 +65,7 @@ class DepositModal extends Component {
 				//const amountInBase_test = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
 				//const amountInBase = web3.utils.toWei(String(amount), "ether");
 				const amountInBase = getTokenBaseAmount(amount, this.props.tokenMap[tokenString].decimals);
+				const gasPrice = (await web3.eth.getGasPrice()).toString();
 
 				let parameter = {};
 				if(!isETH){
@@ -76,7 +77,7 @@ class DepositModal extends Component {
 					parameter = {
 						from: activeAccount,
 						gas: web3.utils.toHex(1500000),
-						gasPrice: web3.utils.toHex(web3.utils.toWei('50', 'gwei'))
+						gasPrice: web3.utils.toHex(gasPrice)
 					};
 				}
 
@@ -84,7 +85,7 @@ class DepositModal extends Component {
 					parameter = {
 						from: activeAccount,
 						gas: web3.utils.toHex(1500000),
-						gasPrice: web3.utils.toHex(web3.utils.toWei('50', 'gwei')),
+						gasPrice: web3.utils.toHex(gasPrice),
 						value: amountInBase
 					};
 				}

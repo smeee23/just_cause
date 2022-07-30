@@ -25,13 +25,13 @@ class ClaimModal extends Component {
 				const tokenString = this.props.claim.tokenString;
 				const isETH = (tokenString === 'ETH' || tokenString === 'MATIC');
 				const activeAccount = this.props.activeAccount;
-
+				const gasPrice = (await web3.eth.getGasPrice()).toString();
                 this.props.updateClaim('');
 
 				const parameter = {
                     from: activeAccount,
                     gas: web3.utils.toHex(1500000),
-                    gasPrice: web3.utils.toHex(web3.utils.toWei('50', 'gwei'))
+                    gasPrice: web3.utils.toHex(gasPrice)
                 };
 
                 let PoolTrackerInstance = new web3.eth.Contract(

@@ -57,14 +57,14 @@ class WithdrawModal extends Component {
 
             const amount = this.props.withdrawAmount.amount;
             this.props.updateWithdrawAmount('');
-
             const amountInBase_test = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);
             const amountInBase = getTokenBaseAmount(amount, this.props.tokenMap[tokenString].decimals);
+            const gasPrice = (await web3.eth.getGasPrice()).toString();
 
             const parameter = {
                 from: activeAccount,
                 gas: web3.utils.toHex(1500000),
-                gasPrice: web3.utils.toHex(web3.utils.toWei('50', 'gwei'))
+                gasPrice: web3.utils.toHex(gasPrice)
             };
 
             let PoolTrackerInstance = new web3.eth.Contract(

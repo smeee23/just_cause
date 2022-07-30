@@ -26,14 +26,14 @@ class ApproveModal extends Component {
 				const tokenString = this.props.approve.tokenString;
 
 				const activeAccount = this.props.activeAccount;
-
+				const gasPrice = (await web3.eth.getGasPrice()).toString();
                 this.props.updateApprove('');
 
 				const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
                 const parameter = {
                     from: activeAccount ,
                     gas: web3.utils.toHex(1500000),
-                    gasPrice: web3.utils.toHex(web3.utils.toWei('50', 'gwei'))
+                    gasPrice: web3.utils.toHex(gasPrice)
                     };
 
                 const amount = '10000000000000000000000000000000';

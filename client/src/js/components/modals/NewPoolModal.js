@@ -52,14 +52,13 @@ class NewPoolModal extends Component {
 		for(let i = 0; i < acceptedTokens.length; i++){
 			tokenAddrs.push(this.props.tokenMap[acceptedTokens[i]].address);
 		}
-		console.log('poolTrackerAddress', this.props.poolTrackerAddress);
-		console.log("receiver", receiver, typeof receiver);
-		console.log("token addresses", tokenAddrs);
+
+		const gasPrice = (await web3.eth.getGasPrice()).toString();
 
 		const parameter = {
 			from: activeAccount,
 			gas: web3.utils.toHex(1200000),
-			gasPrice: web3.utils.toHex(web3.utils.toWei('50', 'gwei'))
+			gasPrice: web3.utils.toHex(gasPrice)
 		};
 
 		let PoolTrackerInstance = new web3.eth.Contract(

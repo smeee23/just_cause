@@ -53,7 +53,7 @@ class SearchModal extends Component {
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">Search Pool</h2>
+          <h2 className="mb0">Find a Pool by Address or Name</h2>
         </ModalHeader>
         <ModalCtas>
           <div style={{fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>

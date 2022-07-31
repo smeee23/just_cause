@@ -71,12 +71,16 @@ class Header extends Component {
       return (
         <Fragment>
           <NavLink exact to={"/dashboard"}>
+            <div title="create and fund causes">
             <TextLink text="Dashboard"/>
+            </div>
           </NavLink>
           <NavLink exact to={"/search"}>
-            <TextLink text="Search"/>
+          <div title="find a pool by name or address">
+            <TextLink text="Find Pool"/>
+          </div>
           </NavLink>
-          <a href="https://docs.justcause.finance/" target="_blank">
+          <a title="user documentation" href="https://docs.justcause.finance/" target="_blank">
             <TextLink text="Docs"/>
           </a>
         </Fragment>

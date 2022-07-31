@@ -209,13 +209,13 @@ class NewPoolModal extends Component {
 	let buttonHolder = [];
 	for(let i = 0; i < tokenStrings.length; i++){
 		const tokenName = tokenStrings[i];
-		if(!this.state.acceptedTokens.includes(tokenName)){
-			buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} icon={"plus"} key={i} callback={() => this.addToken(tokenName)}/>);
-		}
-		else{
-			buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} icon={"check"} key={i} callback={() => this.removeToken(tokenName)}/>);
-		}
-
+		if(!["AAVE", "DPI"].includes(tokenName) )
+			if(!this.state.acceptedTokens.includes(tokenName)){
+				buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} icon={"plus"} key={i} callback={() => this.addToken(tokenName)}/>);
+			}
+			else{
+				buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} icon={"check"} key={i} callback={() => this.removeToken(tokenName)}/>);
+			}
 	}
 	return buttonHolder;
   }

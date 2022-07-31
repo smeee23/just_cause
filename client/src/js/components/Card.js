@@ -147,7 +147,7 @@ class Card extends Component {
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
 				<div style={{display: "flex", flexDirection: "column", borderRight: "double"}}>
-					<div style={{display: "flex", flexDirection: "wrap", flex: 1}}>
+					<div style={{display: "flex", flexDirection: "wrap"}}>
 						<div className="card__body__column__one">
 							{this.getPoolImage(picHash)}
 						</div>

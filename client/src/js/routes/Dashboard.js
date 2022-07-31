@@ -19,7 +19,7 @@ import {updateDeployInfo} from "../actions/deployInfo";
 import { updateDepositAmount } from  "../actions/depositAmount";
 import { updateWithdrawAmount } from  "../actions/withdrawAmount";
 
-
+import LogoCard from "../components/logos/LogoCard";
 import { updatePoolInfo, addDeployedPool } from '../func/contractInteractions';
 import { getHeaderValuesInUSD } from '../func/ancillaryFunctions';
 
@@ -213,6 +213,18 @@ class Dashboard extends Component {
 		window.open("https://docs.google.com/forms/d/e/1FAIpQLSfvejwW-3zNhy4H3hvcIDZ2WGUH422Zj1_yVouRH4tTN8kQFg/viewform?usp=sf_link", "_blank")
 	  }
 	createCardInfo = () => {
+		if(this.props.activeAccount === "Connect"){
+			return(
+			<div style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
+				<LogoCard/>
+				<div style={{display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
+
+					<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
+					<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Connect to Polygon</h2>
+				</div>
+			</div>
+			);
+		}
 		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.selectedTokenIndex];
 
 		if(poolInfo === "No Verified Pools") return

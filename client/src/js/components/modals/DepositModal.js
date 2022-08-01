@@ -103,7 +103,7 @@ class DepositModal extends Component {
 				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
 					console.log('Transaction Hash :', transactionHash);
 					if(!err){
-						this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress});
+						this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, networkId: this.props.networkId});
 						txInfo.txHash = transactionHash;
 					}
 					else{

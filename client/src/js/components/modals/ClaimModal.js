@@ -42,7 +42,7 @@ class ClaimModal extends Component {
                 result = await PoolTrackerInstance.methods.claimInterest(tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
                     console.log('Transaction Hash :', transactionHash);
 					if(!err){
-						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress});
+						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress, networkId: this.props.networkId});
 						txInfo.txHash = transactionHash;
 					}
 					else{

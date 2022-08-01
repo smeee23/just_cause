@@ -41,7 +41,7 @@ class ApproveModal extends Component {
                 result = await erc20Instance.methods.approve(this.props.poolTrackerAddress, amount).send(parameter, (err, transactionHash) => {
                     console.log('Transaction Hash :', transactionHash, err);
 					if(!err){
-						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress});
+						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress, networkId: this.props.networkId});
 						txInfo.txHash = transactionHash;
 					}
 					else{

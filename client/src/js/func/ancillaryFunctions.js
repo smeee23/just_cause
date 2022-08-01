@@ -54,6 +54,7 @@ export const getBlockExplorerUrl = (label, networkId) => {
   let urlBase;
   if(networkId === 80001) urlBase = 'https://mumbai.polygonscan.com'
   else if (networkId === 137) urlBase = 'https://polygonscan.com'
+  console.log("url", (urlBase + label), networkId);
   return urlBase + label;
 }
 export const redirectWindowBlockExplorer = (hash, label, networkId) => {

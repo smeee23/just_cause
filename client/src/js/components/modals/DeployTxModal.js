@@ -28,8 +28,8 @@ export default class DeployTxModal extends Component {
         <ModalBody>
             <p>{txDetails.poolName}<br/>
                {this.showPoolButton(txDetails)}
-               <TextLink text={"- RECEIVER: "+txDetails.receiver.slice(0, 6) + "..."+txDetails.receiver.slice(-4) +"          view on block explorer"} href={getBlockExplorerUrl('address')+txDetails.receiver} callback={() => redirectWindowBlockExplorer(txDetails.receiver, 'address', txDetails.networkId)}/>
-              <TextLink text={"- TX HASH: "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4) +"          view on block explorer"} href={getBlockExplorerUrl('tx')+txDetails.txHash} callback={() => redirectWindowBlockExplorer(txDetails.txHash, 'tx', txDetails.networkId)}/>
+               <TextLink text={"- RECEIVER: "+txDetails.receiver.slice(0, 6) + "..."+txDetails.receiver.slice(-4) +"          view on block explorer"} href={getBlockExplorerUrl('address', txDetails.networkId)+txDetails.receiver} callback={() => redirectWindowBlockExplorer(txDetails.receiver, 'address', txDetails.networkId)}/>
+              <TextLink text={"- TX HASH: "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4) +"          view on block explorer"} href={getBlockExplorerUrl('tx', txDetails.networkId)+txDetails.txHash} callback={() => redirectWindowBlockExplorer(txDetails.txHash, 'tx', txDetails.networkId)}/>
             </p>
         </ModalBody>
       </Fragment>

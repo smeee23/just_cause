@@ -35,7 +35,7 @@ class Header extends Component {
     return provider;
 	}
 
-	connectToWeb3Hit = async() => {
+	connectButtonHit = async() => {
     if(this.props.activeAccount === "Connect"){
       const provider = await this.connectToWeb3();
       const web3 = new Web3(provider);
@@ -48,7 +48,18 @@ class Header extends Component {
       window.location.reload(false);
     }
     else{
-      redirectWindowBlockExplorer(this.props.activeAccount, 'address', this.props.networkId);
+      //redirectWindowBlockExplorer(this.props.activeAccount, 'address', this.props.networkId);
+      //if(provider.close) {
+        //await provider.close();
+
+        // If the cached provider is not cleared,
+        // WalletConnect will default to the existing session
+        // and does not allow to re-scan the QR code with a new wallet.
+        // Depending on your use case you may want or want not his behavior.
+        await web3Modal.clearCachedProvider();
+        window.location.reload(false);
+        //provider = null;
+      //}
     }
 	}
 
@@ -123,7 +134,7 @@ class Header extends Component {
         )
     }
     else{
-      return <div title={this.displayInfo(this.props.activeAccount)}> <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectToWeb3Hit}/> </div>
+      return <div title={this.displayInfo(this.props.activeAccount)}> <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/> </div>
     }
   }
   displayAddress = (address) => {
@@ -137,7 +148,7 @@ class Header extends Component {
     if(address === 'Connect')
       return "connect wallet";
 
-    return "view on block explorer";
+    return "disconnect wallet";
   }
 
 	render() {

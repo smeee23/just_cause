@@ -48,18 +48,9 @@ class Header extends Component {
       window.location.reload(false);
     }
     else{
-      //redirectWindowBlockExplorer(this.props.activeAccount, 'address', this.props.networkId);
-      //if(provider.close) {
-        //await provider.close();
-
-        // If the cached provider is not cleared,
-        // WalletConnect will default to the existing session
-        // and does not allow to re-scan the QR code with a new wallet.
-        // Depending on your use case you may want or want not his behavior.
+      console.log("active Account:", this.props.activeAccount, web3Modal.cachedProvider);
         await web3Modal.clearCachedProvider();
         window.location.reload(false);
-        //provider = null;
-      //}
     }
 	}
 
@@ -119,7 +110,7 @@ class Header extends Component {
 
   getLaunchButton = () => {
     if(web3Modal.cachedProvider)
-      return <ButtonSmall text={"Lauch App"} icon={"poolShape5"} callback={this.connectToWeb3Hit}/>;
+      return <ButtonSmall text={"Lauch App"} icon={"poolShape5"} callback={this.connectButtonHit}/>;
 
     return <ButtonSmall text={"Lauch App"} icon={"poolShape5"}/>;
   }

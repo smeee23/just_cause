@@ -23,6 +23,8 @@ import LogoCard from "../components/logos/LogoCard";
 import { updatePoolInfo, addDeployedPool } from '../func/contractInteractions';
 import { getHeaderValuesInUSD } from '../func/ancillaryFunctions';
 
+import web3Modal from "../App";
+
 class Dashboard extends Component {
 
 	constructor(props) {
@@ -205,14 +207,17 @@ class Dashboard extends Component {
 		window.open("https://docs.google.com/forms/d/e/1FAIpQLSfvejwW-3zNhy4H3hvcIDZ2WGUH422Zj1_yVouRH4tTN8kQFg/viewform?usp=sf_link", "_blank")
 	  }
 	createCardInfo = () => {
-		if(this.props.activeAccount === "Connect"){
+		if(this.props.activeAccount === "Connect" && !web3Modal.cachedProvider){
 			return(
 			<div style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
 				<LogoCard/>
 				<div style={{display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
 
 					<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
-					<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Connect to Polygon</h2>
+
+					<a title="link to Polygon POS Bridge" href="https://docs.justcause.finance/" target="_blank">
+						<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >On Polygon POS Network</h2>
+					</a>
 				</div>
 			</div>
 			);

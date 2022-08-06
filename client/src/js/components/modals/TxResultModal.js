@@ -70,7 +70,7 @@ export default class TxResultModal extends Component {
 		return (
       <Fragment>
       <ModalHeader>
-        <h2 className="mb0">{txDetails.type} {txDetails.amount} {this.displayLogo(txDetails.tokenString)} {txDetails.tokenString}  this.successOrFail(txDetails.success)</h2>
+        <h2 className="mb0">{txDetails.type} {txDetails.amount} {this.displayLogo(txDetails.tokenString)} {txDetails.tokenString}  {this.successOrFail(txDetails.success)}</h2>
       </ModalHeader>
       <ModalBodyTx>
         <p>

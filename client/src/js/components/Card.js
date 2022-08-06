@@ -371,6 +371,7 @@ class Card extends Component {
 		const classnames = classNames({
 			"card": true,
 			"card--open": this.state.open,
+			"card__cardholder_slide": true,
 		})
 
 		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);

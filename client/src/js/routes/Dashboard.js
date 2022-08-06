@@ -180,7 +180,7 @@ class Dashboard extends Component {
 	getApplicationLink = () => {
 		if(this.state.selectedTokenIndex === 0){
 			return (
-				<div style={{paddingBottom:"5px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
+				<div style={{paddingBottom:"20px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
 					<div title="apply to create a verified pool" style={{margin: "auto"}}>
 						<ButtonSmall text={"Apply"} callback={() => this.redirectWindowGoogleApplication()}/>
 					</div>
@@ -189,14 +189,14 @@ class Dashboard extends Component {
 		}
 		else if (this.state.selectedTokenIndex === 1){
 			return (
-				<div style={{paddingBottom:"64.5px"}}>
+				<div style={{paddingBottom:"62.5px"}}>
 
 				</div>
 			);
 		}
 		else if (this.state.selectedTokenIndex === 2){
 			return (
-				<div title={this.state.hideLowBalance ? "show all pools contributed to" : "hide inactive pools"} style={{paddingBottom:"5px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
+				<div title={this.state.hideLowBalance ? "show all pools contributed to" : "hide inactive pools"} style={{paddingBottom:"20px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
 					<ButtonSmall text={this.state.hideLowBalance ? "Show All" : "Hide Zero/Low Balances"} callback={() => this.setHideLowBalances()}/>
 				</div>
 			);
@@ -209,13 +209,13 @@ class Dashboard extends Component {
 	createCardInfo = () => {
 		if(this.props.activeAccount === "Connect" && !web3Modal.cachedProvider){
 			return(
-			<div style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
+			<div className="card__cardholder_slide" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
 				<LogoCard/>
 				<div style={{display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
 
 					<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
 
-					<a title="link to Polygon POS Bridge" href="https://docs.justcause.finance/" target="_blank">
+					<a style={{ textDecoration: "none"}} title="link to Polygon POS Bridge" href="https://docs.justcause.finance/" target="_blank">
 						<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >On Polygon POS Network</h2>
 					</a>
 				</div>

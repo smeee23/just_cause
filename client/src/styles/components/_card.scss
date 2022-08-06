@@ -56,6 +56,20 @@ $baseclass: 'card';
       }
   }
 
+  @keyframes wait {
+    from { transform: translateY(-1500000px); }
+    to { transform: translateY(-150000px); }
+  }
+
+  @keyframes slideInFromLeft {
+    from { transform: translateX(-100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  &__cardholder_slide {
+    animation: 3s ease-out 0s 1 wait, 0.21s ease-out 3s 1 slideInFromLeft;
+  }
+
   &__body__column__one {
     grid-column: 1 ;
     grid-row: 1;

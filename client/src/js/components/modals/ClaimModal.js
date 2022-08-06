@@ -46,7 +46,6 @@ class ClaimModal extends Component {
 						txInfo.txHash = transactionHash;
 					}
 					else{
-						console.log("MESSAGE", txInfo);
 						txInfo = "";
 					}
                 });
@@ -63,7 +62,6 @@ class ClaimModal extends Component {
 	}
 
   displayDepositNotice = (txInfo) => {
-	console.log("Verified Poola", this.props.verifiedPoolAddrs)
 	const contractInfo = txInfo.contractInfo;
 
 	return(
@@ -84,7 +82,6 @@ class ClaimModal extends Component {
 
   render() {
         const { claimInfo } = this.props;
-		console.log("claimInfo", claimInfo);
 		return (
       <Fragment>
         <ModalHeader>

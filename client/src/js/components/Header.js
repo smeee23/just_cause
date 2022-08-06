@@ -64,7 +64,6 @@ class Header extends Component {
 	}
 
   generateNav = () => {
-    console.log("pathname header", window.location.pathname);
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
         <Fragment>

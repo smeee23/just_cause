@@ -87,7 +87,6 @@ class Dashboard extends Component {
 			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;
 
 			if(this.props.deployTxResult.status === 'success'){
-				console.log('deployTxResult', this.props.deployTxResult);
 				let poolLists = addDeployedPool(this.props.deployTxResult.poolAddress,
 												this.props.activeAccount,
 												this.props.poolTrackerAddress,
@@ -95,26 +94,21 @@ class Dashboard extends Component {
 												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo]);
 				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
 				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
-				console.log('(poolLists 3', poolLists);
 			}
 
 			return modal;
 		}
 	}
 	getNewPoolModal = () => {
-		console.log('deployInfo outer', this.props.deployInfo);
 		if(this.props.deployInfo){
-			console.log('deployInfo', this.props.deployInfo);
 			let modal = <LargeModal isOpen={true}><NewPoolModal poolInfo={this.props.deployInfo}/></LargeModal>;
 			return modal;
 		}
 	}
 	deploy = async() => {
 		await this.props.updateDeployInfo('');
-		console.log('deploy reached', this.props.deployInfo);
 		const activeAccount = this.props.activeAccount;
 		this.props.updateDeployInfo({activeAccount: activeAccount});
-		console.log('deploy reached 22', this.props.deployInfo);
 	}
 
 	displayDeployInfo = async(txInfo) => {
@@ -150,7 +144,6 @@ class Dashboard extends Component {
 	}
 
 	getTabTitle = () => {
-		console.log("spot", this.state.selectedTokenIndex );
 		let title;
 		if(this.state.selectedTokenIndex === 0) title = "Verified Pools"
 		else if (this.state.selectedTokenIndex === 1) title = "Your Causes"
@@ -163,7 +156,6 @@ class Dashboard extends Component {
 	}
 
 	getTabInfo = () => {
-		console.log("spot", this.state.selectedTokenIndex );
 
 		let info;
 		if(this.state.selectedTokenIndex === 0) info = "The recipients of verified pools are known and established entities";
@@ -230,11 +222,9 @@ class Dashboard extends Component {
 		if(poolInfo === "No Verified Pools") return
 		let cardHolder = [];
 		for(let i = 0; i < poolInfo.length; i++){
-			console.log('a', (poolInfo[i].name));
 			const item = poolInfo[i];
 
 			const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
-			console.log("userBalance", userBalance);
 
 			if(this.state.hideLowBalance && this.state.selectedTokenIndex === 2){
 				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){
@@ -268,14 +258,11 @@ class Dashboard extends Component {
 					/>
 				);
 			}
-			console.log("CARD", cardHolder[cardHolder.length - 1]);
 		}
 		return cardHolder;
 	}
 
 	render() {
-
-		console.log("*********verifiedPoolInfo:", this.props.verifiedPoolInfo);
 		const cardHolder = this.createCardInfo();
 		const optionButtons = this.createOptionButtons();
 

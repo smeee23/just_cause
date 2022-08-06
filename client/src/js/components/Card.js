@@ -247,7 +247,6 @@ class Card extends Component {
 			const activeAccount = this.props.activeAccount;
 			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount);
 			const contractInfo = await getContractInfo(poolAddress);
-			console.log('tokenString', tokenString);
 			await this.props.updateDepositAmount({tokenString: tokenString, tokenAddress: tokenAddress, userBalance: userBalance, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount, amount: ''});
 			//this.updatePoolInfo(this.props.depositAmount.poolAddress, this.props.depositAmount.activeAccount);
 		}
@@ -271,9 +270,6 @@ class Card extends Component {
 			const activeAccount = this.props.activeAccount;
 			const contractInfo = await getContractInfo(poolAddress);
 			let formatBalance = precise(rawBalance, tokenMap[tokenString].decimals);
-			console.log('compare', rawBalance, formatBalance);
-			//formatBalance = Number.parseFloat(formatBalance).toPrecision(6);
-			console.log('compare', rawBalance /10**tokenMap[tokenString].decimals, formatBalance);
 			if(rawBalance /10**tokenMap[tokenString].decimals < formatBalance){
 				alert('withdraw amount issue');
 			}
@@ -306,7 +302,6 @@ class Card extends Component {
 		catch (error) {
 			console.error(error);
 		}
-		console.log('claim result', result);
 	}
 
 	getApproveModal = () => {
@@ -317,6 +312,7 @@ class Card extends Component {
 	}
 
 	approve = async(tokenAddress, tokenString, poolAddress) => {
+		console.log("approve clicked", result);
 		await this.props.updateApprove('');
 		let result;
 		try{
@@ -327,7 +323,6 @@ class Card extends Component {
 		catch (error) {
 			console.error(error);
 		}
-		console.log("approve", result);
 	}
 
 	getShareModal = () => {

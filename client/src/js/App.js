@@ -67,9 +67,6 @@ class App extends Component {
 		try {
 
 			window.addEventListener('resize', this.props.detectMobile);
-			console.log("path app.js", window.location.pathname);
-			console.log("href app.js", window.location.href);
-			console.log("check", checkLocationForAppDeploy());
 
 				if("inApp" === checkLocationForAppDeploy() || "inSearch" === checkLocationForAppDeploy() ){
 					if(web3Modal.cachedProvider || "inSearch" === checkLocationForAppDeploy() ){
@@ -114,30 +111,22 @@ class App extends Component {
 		);
 
 		this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
-
-		console.log("poolTrackerAddress1", this.poolTrackerAddress)
 		this.setPoolTrackAddress(this.poolTrackerAddress);
 		const tokenMap = getTokenMap(this.networkId);
 		this.setTokenMapState(tokenMap);
 		this.setPoolState(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
 		this.setAavePoolAddress(aaveAddressesProvider)
-		console.log("poolTrackerAddress2", this.poolTrackerAddress, aaveAddressesProvider)
-		//let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
 
 		const PoolTrackerInstance = new this.web3.eth.Contract(
 			PoolTracker.abi,
 			this.poolTrackerAddress,
 		);
 
-		console.log("getAddressFromName");
 		const result = await PoolTrackerInstance.methods.getReservesList().call();
-		console.log("TESTTTTTT", result);
 		await getAbout('test');
 		await getIpfsData('QmPTsBwAC1x4Qhr7Ckd4Vt2GJGR4CcL8bp7WSgeChfCMY2');
-
 		await getIpfsData('bafybeic4sjo4mwkxqz3gpvflmqys2kkq7dow2pvtl2n5ncgt6fih46osgu');
-		console.log("poolTrackerAddress3", this.poolTrackerAddress)
 	}
 
 	componentWillUnmount() {
@@ -158,41 +147,29 @@ class App extends Component {
 		return provider;
 	}
 
-	disconnect = async () => {
-		console.log("DISCONNECT");
-		/*await web3Modal.clearCachedProvider();
-		this.props.updateActiveAccount("");
-
-		window.location.reload(false);*/
-	};
 	getAccounts = async() => {
 		//const {addresses, provider} = await this.connectToWeb3();
 		const provider = await this.connectToWeb3();
 		this.provider = provider;
 
 		this.web3 = new Web3(this.provider);
-		console.log("requestAccounts");
 		const accounts = await this.web3.eth.getAccounts();
 
-		console.log("provider", provider);
     	await this.props.updateActiveAccount(accounts[0]);
 	}
 
 	getAaveData = async() => {
 		let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
-		console.log('aave protocol data response', results);
 	}
 
 	setAavePoolAddress = async(aavePoolAddressesProviderAddress) => {
 		const aavePoolAddress = await getAavePoolAddress(aavePoolAddressesProviderAddress);
 		await this.props.updateAavePoolAddress(aavePoolAddress);
-		console.log('aavePoolAddress', this.props.aavePoolAddress);
 
 	}
 
 	setNetworkId = async(networkId) => {
 		await this.props.updateNetworkId(networkId);
-		console.log('networkId', this.props.networkId);
 	}
 
 	setPoolTrackAddress = async(poolTrackerAddress) => {
@@ -200,7 +177,6 @@ class App extends Component {
 	}
 
 	setActiveAccountState = async(activeAccount) => {
-		console.log('activeAccount', activeAccount);
 		await this.props.updateActiveAccount(activeAccount);
 	}
 	setTokenMapState = async(tokenMap) => {
@@ -212,16 +188,12 @@ class App extends Component {
 			const address =  tokenMap[key] && tokenMap[key].address;
 
 			const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId));
-			console.log('aaveTokenInfo', aaveTokenInfo);
 			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
 			const allowance = await getAllowance(erc20Instance, this.poolTrackerAddress, this.props.activeAccount);
 			tokenMap[key]['allowance'] = allowance > 0 ? true : false;
 
-			console.log(key);
-
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
-			console.log('liquidity', aaveTokenInfo.currentLiquidityRate,  aaveTokenInfo.liquidityIndex);
 			const apiKey = tokenMap[key] && tokenMap[key].apiKey;
 			tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
 
@@ -233,7 +205,6 @@ class App extends Component {
 			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
 
 		}
-		console.log('updated tokenMap', tokenMap, typeof tokenMap);
 		await this.props.updateTokenMap(tokenMap);
 	}
 
@@ -242,7 +213,6 @@ class App extends Component {
 		const SECONDS_PER_YEAR = 31536000;
 		const depositAPR = liquidityRate/RAY;
 		//return 1+ (depositAPR / SECONDS_PER_YEAR);
-		console.log("APY TEST", liquidityRate, depositAPR);
 		return (((1 + (depositAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1)*100;
 	}
 
@@ -260,13 +230,8 @@ class App extends Component {
 		const userBalancePools = depositBalancePools.balances;
 
 		const verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools);
-		console.log('reached');
 		const ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools);
 		const userDepositPoolInfo = await getPoolInfo(userDepositPools, getTokenMap(this.networkId),  userBalancePools);
-
-		console.log('---------verifiedPoolInfo--------', verifiedPoolInfo);
-		console.log('---------ownerPoolInfo--------', ownerPoolInfo);
-		console.log('---------userDepositPoolInfo--------', userDepositPoolInfo);
 
 		await this.props.updateVerifiedPoolAddrs(verifiedPools);
 		await this.props.updateOwnerPoolAddrs(ownerPools);

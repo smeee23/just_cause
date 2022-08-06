@@ -33,7 +33,6 @@ import { getIpfsData } from "./ipfs";
 			poolAddr,
 		);
 		let aaveTokenInfo = await PoolInstance.methods.getReserveData(tokenAddress).call();
-		console.log('result', aaveTokenInfo.liquidityIndex);
 		return aaveTokenInfo;
 	}
 
@@ -50,7 +49,6 @@ import { getIpfsData } from "./ipfs";
 	}
 
 	export const getAmountBase = (amount, decimals) => {
-		console.log('amount in base', amount*10**decimals);
 		return (amount*10**decimals).toString();
 	}
 
@@ -58,14 +56,12 @@ import { getIpfsData } from "./ipfs";
 		if(tokenString === 'ETH' || tokenString === 'MATIC'){
 			const web3 = await getWeb3()
 			let balance = await web3.eth.getBalance(activeAccount);
-			console.log('balance', balance);
 			balance = await web3.utils.fromWei(balance, "ether");
 			return Number.parseFloat(balance).toPrecision(6);
 		}
 		else{
 			let balance = await getWalletBalance(tokenAddress, activeAccount);
 			balance = balance / 10**decimals;
-			console.log('balance', balance);
 			return Number.parseFloat(balance).toPrecision(6);
 		}
 	}
@@ -77,14 +73,13 @@ import { getIpfsData } from "./ipfs";
 
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
 
-		console.log('poolLists 1', poolLists)
+
 		for(let i = 0; i < poolLists.length; i++){
 			if(i !== 0 || poolInfo[0].isVerified){
 				poolLists[i].push(poolInfo[0]);
 			}
 		}
 
-		console.log('poolLists 2', poolLists)
 		return poolLists;
 	}
 
@@ -100,7 +95,6 @@ import { getIpfsData } from "./ipfs";
 		const userBalancePools = depositBalancePools.balances;
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
 		userDepositPoolInfo.push(poolInfo[0]);
-		console.log(' userDepositPoolInfo', userDepositPoolInfo);
 		return userDepositPoolInfo;
 	}
 
@@ -110,20 +104,15 @@ import { getIpfsData } from "./ipfs";
 		const userBalancePools = depositBalancePools.balances;
 
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
-		console.log('poolLists');
 		for(let i=0; i < poolLists.length; i++){
 			if(poolLists[i]){
 				for(let j=0; j < poolLists[i].length; j++){
 					if(poolLists[i][j].address === poolAddress){
-						console.log(poolLists[i][j].address);
-						console.log(poolInfo[0]);
-						console.log(poolLists[i][j]);
 						poolLists[i][j] = poolInfo[0];
 					}
 				}
 			}
 		}
-		console.log('poolLists', poolLists)
 		return poolLists;
 	}
 
@@ -140,8 +129,6 @@ import { getIpfsData } from "./ipfs";
 
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools) => {
 		const web3 = await getWeb3();
-
-		console.log('poolTracker', poolTracker);
 
 		let poolInfo = [];
 		for(let i=0; i < poolTracker.length; i++){
@@ -160,7 +147,6 @@ import { getIpfsData } from "./ipfs";
 			const picHash =  groupedPoolInfo[4];
 			const name = groupedPoolInfo[6];
 
-			console.log('grouped pool info', groupedPoolInfo, aboutHash);
 			let acceptedTokenStrings = [];
 			let acceptedTokenInfo = [];
 
@@ -170,7 +156,6 @@ import { getIpfsData } from "./ipfs";
 				const balance = (balances) ? balances[0] : 0;
 				const amountScaled = (balances) ? balances[1] : 0;
 				const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(acceptedTokens[j]).call();
-				console.log('TOKEN MAP', tokenMap[tokenString], groupedPoolTokenInfo, (tokenMap[tokenString] && tokenMap[tokenString].depositAPY));
 				acceptedTokenInfo.push({
 					'totalDeposits': groupedPoolTokenInfo[5],
 					'userBalance':  balance,
@@ -200,7 +185,6 @@ import { getIpfsData } from "./ipfs";
 							acceptedTokenInfo: acceptedTokenInfo,
 			});
 		}
-		console.log('end');
 		return poolInfo;
 	}
 
@@ -210,7 +194,6 @@ import { getIpfsData } from "./ipfs";
 			PoolTracker.abi,
 			poolTrackerAddress,
 		);
-		console.log("getAddressFromName");
 		const result = await PoolTrackerInstance.methods.getAddressFromName(poolName).call();
 		if(result !== '0x0000000000000000000000000000000000000000'){
 			return "Pool Name already exists, please choose another";
@@ -226,7 +209,6 @@ import { getIpfsData } from "./ipfs";
 			const poolName = input.poolName;
 			const receiver = input.receiver;
 			const about = input.about;
-			console.log("input", poolName, receiver, about);
 
 			if(!poolName) return "Pool Name cannot be blank"
 			if(poolName.length > 30) return "Pool Name cannot exceed 30 characters"
@@ -260,12 +242,10 @@ import { getIpfsData } from "./ipfs";
 
 		if(searchAddr !== '0x0000000000000000000000000000000000000000'){
 			const found = await PoolTrackerInstance.methods.checkPool(searchAddr).call();
-			console.log('searchResult', found);
 			if(found){
 				const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
 				const userBalancePools = depositBalancePools.balances;
 				const resultPool = await getPoolInfo([searchAddr], tokenMap, userBalancePools);
-				console.log('searchResult', resultPool);
 				return resultPool
 			}
 			else{
@@ -287,7 +267,6 @@ import { getIpfsData } from "./ipfs";
 			PoolTracker.abi,
 			poolTrackerAddress,
 		);
-		console.log('poolTrackerAddress', poolTrackerAddress);
 		//const ERCAddr = await PoolTrackerInstance.methods.getDepositorERC721Address().call();
 		const depositList = await PoolTrackerInstance.methods.getContributions(activeAccount).call();
 
@@ -297,7 +276,6 @@ import { getIpfsData } from "./ipfs";
 				depositList[i],
 			);
 
-			console.log("result_______", JCPoolInstance);
 			const ercAddr = await JCPoolInstance.methods.getERC721Address().call();
 			//const assets = await JCPoolInstance.getAcceptedTokens().call();
 			const ERCInstance = new web3.eth.Contract(

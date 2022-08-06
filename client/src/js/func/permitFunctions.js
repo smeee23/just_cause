@@ -78,8 +78,6 @@ const signData = async(fromAddress, typeData) => {
       from: fromAddress,
     });
 
-    console.log('result', result);
-
     const r = result.result.slice(0, 66);
     const s = "0x" + result.result.slice(66, 130);
     const v = Number("0x" + result.result.slice(130, 132));

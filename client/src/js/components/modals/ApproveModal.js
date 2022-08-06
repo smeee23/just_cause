@@ -45,7 +45,6 @@ class ApproveModal extends Component {
 						txInfo.txHash = transactionHash;
 					}
 					else{
-						console.log("MESSAGE", txInfo);
 						txInfo = "";
 					}
                 });
@@ -60,15 +59,12 @@ class ApproveModal extends Component {
 				console.error("ERROR HIT");
 				txInfo = "";
 			}
-
-			console.log("MESSAGE ggggggggggggggggggg", txInfo);
 			if(txInfo){
 				this.displayTxInfo(txInfo);
 			}
 	}
 
   displayDepositNotice = (txInfo) => {
-	console.log("Verified Poola", this.props.verifiedPoolAddrs)
 
 	return(
 		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
@@ -80,7 +76,6 @@ class ApproveModal extends Component {
   }
 
   displayTxInfo = async(txInfo) => {
-		console.log("MESSAGE ggggggggggggggggggg");
 		this.props.updatePendingTx('');
 		this.props.updateTxResult(txInfo);
 		await delay(5000);
@@ -89,7 +84,6 @@ class ApproveModal extends Component {
 
   render() {
         const { approveInfo } = this.props;
-		console.log("approveInfo", approveInfo);
 		return (
       <Fragment>
         <ModalHeader>

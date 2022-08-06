@@ -20,14 +20,12 @@ class Homepage extends Component {
 
 	getShareModal = () => {
 		if(this.props.share){
-			console.log("reached 2");
 			let modal = <SmallModal isOpen={true}><ShareModal info={this.props.share}/></SmallModal>
 			return modal;
 		}
 	}
 
 	share = async() => {
-		console.log("reached 1");
 		await this.props.updateShare("");
 		await this.props.updateShare({poolAddress: "homepage", name: "JustCause"});
 	}

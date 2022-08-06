@@ -95,11 +95,8 @@ class DepositModal extends Component {
 					this.props.poolTrackerAddress,
 				);
 
-				console.log('poolTracker', this.props.poolTrackerAddress);
-				console.log(PoolTrackerInstance.options.address);
 				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, networkId: this.props.networkId};
 
-				console.log('amountInBase', typeof amountInBase, amountInBase);
 				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
 					console.log('Transaction Hash :', transactionHash);
 					if(!err){
@@ -107,25 +104,19 @@ class DepositModal extends Component {
 						txInfo.txHash = transactionHash;
 					}
 					else{
-						console.log("MESSAGE", txInfo);
 						txInfo = "";
 					}
 				});
 				txInfo.success = true;
-				console.log('deposit', result);
 
 				const tempPoolInfo = await addUserDepositedPool(poolAddress,
 													this.props.activeAccount,
 													this.props.poolTrackerAddress,
 													this.props.tokenMap,
 													this.props.userDepositPoolInfo);
-				console.log('tempPoolInfo', tempPoolInfo);
+
 				if(tempPoolInfo){
-					console.log('tempPoolInfo', tempPoolInfo);
 					this.props.updateUserDepositPoolInfo(tempPoolInfo);
-				}
-				else{
-					console.log('userDepositPoolInfo', this.props.userDepositPoolInfo);
 				}
 			}
 			catch (error) {
@@ -165,9 +156,7 @@ class DepositModal extends Component {
 	}
 
 	getTextField = (userBalance) => {
-		console.log("val", this.state.val);
 		let tf = <TextField ref="myField" label="amount to deposit:" value={this.state.val} />;
-		console.log('tf', tf);
 		return tf;
 	}
 
@@ -183,7 +172,6 @@ class DepositModal extends Component {
   }
   render() {
         const { depositInfo } = this.props;
-		console.log("depositInfo", depositInfo);
 		return (
       <Fragment>
         <ModalHeader>

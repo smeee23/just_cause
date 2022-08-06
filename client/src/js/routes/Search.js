@@ -31,8 +31,6 @@ class Search extends Component {
 
 	componentDidMount = async () => {
 		window.scrollTo(0,0);
-		//const info = await this.getExternalLink();
-		//console.log('info', info);
 	}
 
 	componentDidUpdate = () => {
@@ -69,9 +67,7 @@ class Search extends Component {
 	getExternalLink = async() => {
 		//if(this.props.poolTrackerAddress && this.props.activeAccount && this.props.tokenMap && this.state.linkAddress){
 		const info = await getExternalPoolInfo(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap, this.state.linkAddress);
-		console.log('info', info)
-		const results = this.createCardInfo(info)
-		console.log('results', results)
+		const results = this.createCardInfo(info);
 		return results;
 		//}
 	}
@@ -108,7 +104,6 @@ class Search extends Component {
 		if(poolInfo === "") return
 		let cardHolder = [];
 		for(let i = 0; i < poolInfo.length; i++){
-			console.log('a', (poolInfo[i].name));
 			const item = poolInfo[i];
 			cardHolder.push(
 				<Card
@@ -135,8 +130,6 @@ class Search extends Component {
 			}
 			else if(window.location.href.includes('?address=') && !this.state.linkAddress){
 				let addr = window.location.href;
-				console.log('linkAddress', linkAddress, this.props, window.location.href);
-				console.log('addr', typeof addr, addr)
 				addr = addr.substring(addr.length - 42);
 				this.setState({linkAddress: addr});
 			}

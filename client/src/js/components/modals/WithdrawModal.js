@@ -73,8 +73,6 @@ class WithdrawModal extends Component {
             );
 
             txInfo = {txHash: '', success: false, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress, networkId: this.props.networkId};
-
-            console.log('amountInBase', typeof amountInBase, amountInBase, typeof amountInBase_test, amountInBase_test);
             result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
                 console.log('Transaction Hash :', transactionHash);
                 if(!err){
@@ -86,7 +84,6 @@ class WithdrawModal extends Component {
                 }
             });
             txInfo.success = true;
-            console.log('withdraw', result)
 		}
     catch (error) {
       console.error(error);

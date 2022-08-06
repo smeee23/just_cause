@@ -43,11 +43,9 @@ class NewPoolModal extends Component {
 		const nftResult = await this.uploadNftMetaData(poolName, aboutText, this.state.fileUploadHash);
 		const metaUri = 'https://ipfs.io/ipfs/'+nftResult.hash;
 
-		console.log('nftResult', nftResult);
 		this.props.updateDeployInfo('');
 		const web3 = await getWeb3();
 		const activeAccount = this.props.activeAccount;
-		console.log("acceptedTokens", acceptedTokens, this.props.tokenMap);
 		let tokenAddrs = [];
 		for(let i = 0; i < acceptedTokens.length; i++){
 			tokenAddrs.push(this.props.tokenMap[acceptedTokens[i]].address);
@@ -65,7 +63,6 @@ class NewPoolModal extends Component {
 			PoolTracker.abi,
 			this.props.poolTrackerAddress,
 		);
-		console.log('this.props.poolTrackerAddress', this.props.poolTrackerAddress);
 		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, aboutHash, this.state.fileUploadHash, metaUri, receiver).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash, tokenAddrs);
 			if(!err){
@@ -73,14 +70,11 @@ class NewPoolModal extends Component {
 				this.props.updateDeployTxResult(txInfo);
 			}
 			else{
-				console.log("MESSAGE", txInfo);
 				txInfo = "";
 			}
 		});
 		txInfo.poolAddress = result.events.AddPool.returnValues.pool;
 		txInfo.status = 'success';
-		console.log('deploy', result);
-		console.log('txInfo', txInfo);
 	}
 	catch (error) {
 		console.error(error);
@@ -109,7 +103,6 @@ class NewPoolModal extends Component {
 	  }*/
 
 	  const uploadResult = await upload(this.state.about);
-	  console.log('pool info', this.state.poolName, this.state.receiver, uploadResult.hash, this.state.acceptedTokens);
 	  const aboutHash = uploadResult.hash;
 	  await this.deployOnChain(this.state.poolName, this.state.receiver, aboutHash, this.state.about, this.state.acceptedTokens);
   }
@@ -119,19 +112,9 @@ class NewPoolModal extends Component {
     reader.onloadend = async() => {
         const buf = Buffer(reader.result) // Convert data into buffer
 		const uploadResult = await upload(buf);
-		console.log('upload photo', uploadResult);
 		this.setState({
 			fileUploadHash: uploadResult.hash
 		});
-
-		/*const bufs = await getIpfsDataBuffer(this.state.fileUploadHash);
-
-		const data = Buffer.concat(bufs)
-
-		let blob = new Blob([data], {type:"image/jpg"})
-		let img = document.getElementById("target") // the img tag you want it in
-		img.src = window.URL.createObjectURL(blob)
-		console.log('img', img);*/
     }
     const photo = document.getElementById("photo");
     reader.readAsArrayBuffer(photo.files[0]); // Read Provided File
@@ -150,16 +133,12 @@ class NewPoolModal extends Component {
         "image": "https://ipfs.io/ipfs/"+picHash,
     }
 
-    console.log("uri", JSON.stringify(uri));
-
     const buf = Buffer.from(JSON.stringify(uri)); // Convert data into buffer
 	const uploadResult = await upload(buf);
-	console.log('upload json', uploadResult, buf);
 	return uploadResult;
 }
 
   fileUploadButton = () => {
-	console.log('fileUploadButton 1');
 	document.getElementById('photo').click();
 	document.getElementById('photo').onchange = () =>{
 		this.uploadPicToIpfs();
@@ -235,7 +214,6 @@ class NewPoolModal extends Component {
 		const poolTracker = this.props.poolTrackerAddress;
 		const inputError = await checkInputError(obj, poolTracker);
 		this.setState({inputError});
-		console.log('inputError', inputError)
 		if(!this.state.inputError){
 			this.setState({
 				step: 1,
@@ -342,7 +320,6 @@ class NewPoolModal extends Component {
   }
   render() {
     const { poolInfo } = this.props;
-	console.log('props', this.props);
 		return (
 			<Fragment>
 				{this.handleInputSwitch(poolInfo)}

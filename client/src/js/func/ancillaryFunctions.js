@@ -52,9 +52,8 @@ export const facebookShare = (purl,poolAddress) => {
 export const getBlockExplorerUrl = (label, networkId) => {
   label = '/'+label+'/';
   let urlBase;
-  if(networkId === 80001) urlBase = 'https://mumbai.polygonscan.com'
-  else if (networkId === 137) urlBase = 'https://polygonscan.com'
-  console.log("url", (urlBase + label), networkId);
+  if(networkId === 80001) urlBase = 'https://mumbai.polygonscan.com';
+  else if (networkId === 137) urlBase = 'https://polygonscan.com';
   return urlBase + label;
 }
 export const redirectWindowBlockExplorer = (hash, label, networkId) => {
@@ -73,7 +72,6 @@ export const getTokenBaseAmount = (amount, dec) => {
     amount = String(amount);
     let pos = amount.indexOf('.');
 
-    console.log('pos', pos, amount.length);
     let len = (pos === -1) ? dec : dec - (amount.length-1 - pos);
     for(var i=0;i<len;i++){
       stringf = stringf+"0";

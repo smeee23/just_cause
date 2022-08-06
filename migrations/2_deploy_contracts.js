@@ -11,10 +11,9 @@ module.exports = async function(deployer, network, accounts){
   let poolAddressesProviderAddr;
   let wethGatewayAddr;
   let multiSig;
-  console.log('log', network);
+  console.log('network', network);
 
   if(network === "matic_main"){
-    console.log("ENTERED CORRECTLY");
     poolAddressesProviderAddr = "0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb";
     wethGatewayAddr = "0x9BdB5fcc80A49640c7872ac089Cc0e00A98451B6";
     multiSig = "0xed8C646e1d73847dBb799D39f193C185D6A8A010";
@@ -35,7 +34,6 @@ module.exports = async function(deployer, network, accounts){
     wethGatewayTest = await WethGatewayTest.deployed();
     poolAddressesProviderMock = await PoolAddressesProviderMock.deployed();
     await poolAddressesProviderMock.setPoolImpl(PoolMock.address);
-    console.log("address", wethGatewayTest.address);
     poolAddressesProviderAddr = poolAddressesProviderMock.address;
     //poolAddressesProviderAddr = "0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6";
     wethGatewayAddr = wethGatewayTest.address;

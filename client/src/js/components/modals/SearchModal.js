@@ -40,13 +40,11 @@ class SearchModal extends Component {
           <TextField ref="searchTerm" label="Name or Address" placeholder="Enter Name or Address"/>
       );
     }
-    console.log("ACTIVE ACCOUNT", this.props.activeAccount);
     return <p>Searching...</p>
   }
 
   render() {
     const { poolInfo } = this.props;
-    console.log('props search modal', this.props);
     if(this.props.linkAddress && !this.state.pending && this.props.poolTrackerAddress && this.props.activeAccount && this.props.tokenMap){
       this.setValue(this.props.linkAddress);
     }

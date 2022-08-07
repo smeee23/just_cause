@@ -3,7 +3,6 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Authereum from "authereum";
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
-
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { ConnectedRouter } from 'connected-react-router'
@@ -31,6 +30,8 @@ import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAav
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
 import {getAbout, getIpfsData} from './func/ipfs';
+
+var cors = require('cors')
 
 const providerOptions = {
     walletconnect: {

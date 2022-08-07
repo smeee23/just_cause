@@ -264,7 +264,11 @@ class Dashboard extends Component {
 				);
 			}
 		}
-		return cardHolder;
+		return (
+			<div className="card__cardholder_slide">
+				{cardHolder}
+			</div>
+		);
 	}
 
 	render() {

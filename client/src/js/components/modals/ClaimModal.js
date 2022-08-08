@@ -11,7 +11,7 @@ import { updatePendingTx } from "../../actions/pendingTx";
 import { updateTxResult } from  "../../actions/txResult";
 import { updateClaim } from "../../actions/claim";
 
-import {delay, displayLogo} from '../../func/ancillaryFunctions';
+import {delay, displayLogo, getFormatUSD, numberWithCommas, precise} from '../../func/ancillaryFunctions';
 
 class ClaimModal extends Component {
 
@@ -63,11 +63,14 @@ class ClaimModal extends Component {
 
   displayDepositNotice = (txInfo) => {
 	const contractInfo = txInfo.contractInfo;
+	const priceUSD = this.props.tokenMap[txInfo.tokenString] && this.props.tokenMap[txInfo.tokenString].priceUSD;
+	const decimals = this.props.tokenMap[txInfo.tokenString] && this.props.tokenMap[txInfo.tokenString].decimals;
 
 	return(
 		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Calls made to the claim function will harvest interest and send the amount as a donation to the receiver of {contractInfo[6]}.</p>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Anyone can call this function and send donations to {contractInfo[6]} Cause.</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Calls made to the claim function will harvest interest already donated and send the amount to the receiver of {contractInfo[6]}.</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Anyone can call this function and claim funds for {contractInfo[6]}</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">{displayLogo(txInfo.tokenString)} {txInfo.tokenString}: {numberWithCommas(precise(txInfo.unclaimedInterest, decimals)) +"  (" +getFormatUSD(precise(txInfo.unclaimedInterest, decimals), priceUSD)+")"}</p>
 		</div>
 	)
 

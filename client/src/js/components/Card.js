@@ -66,7 +66,7 @@ class Card extends Component {
 		if(item.unclaimedInterest > 500){
 			let isDisabled = false;
 			if(this.props.pendingTx) isDisabled = true;
-			return <div title={"send to "+title}><Button text="Claim Interest" disabled={isDisabled} callback={async() => await this.claim(address, item.address, this.props.poolTrackerAddress)}/></div>
+			return <div title={"send to "+title}><Button text="Claim Interest" disabled={isDisabled} callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
 		}
 	}
 	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance, title) => {
@@ -287,7 +287,7 @@ class Card extends Component {
 		}
 	}
 
-	claim = async(poolAddress, tokenAddress, poolTrackerAddress) => {
+	claim = async(poolAddress, tokenAddress, unclaimedInterest) => {
 		await this.props.updateClaim('');
 		let result;
 		console.log('claim interest clicked', poolAddress);
@@ -296,7 +296,7 @@ class Card extends Component {
 			const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === tokenAddress);
 			const contractInfo = await getContractInfo(poolAddress);
 
-			await this.props.updateClaim({tokenString: tokenString, tokenAddress: tokenAddress, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount});
+			await this.props.updateClaim({tokenString: tokenString, tokenAddress: tokenAddress, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount, unclaimedInterest: unclaimedInterest});
 
 		}
 		catch (error) {

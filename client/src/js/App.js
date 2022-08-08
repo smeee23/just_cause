@@ -115,19 +115,10 @@ class App extends Component {
 		this.setPoolTrackAddress(this.poolTrackerAddress);
 		const tokenMap = getTokenMap(this.networkId);
 		this.setTokenMapState(tokenMap);
-		this.setPoolState(this.props.activeAccount);
+		this.setPoolStateVerified(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
 		this.setAavePoolAddress(aaveAddressesProvider)
-
-		const PoolTrackerInstance = new this.web3.eth.Contract(
-			PoolTracker.abi,
-			this.poolTrackerAddress,
-		);
-
-		const result = await PoolTrackerInstance.methods.getReservesList().call();
-		await getAbout('test');
-		await getIpfsData('QmPTsBwAC1x4Qhr7Ckd4Vt2GJGR4CcL8bp7WSgeChfCMY2');
-		await getIpfsData('bafybeic4sjo4mwkxqz3gpvflmqys2kkq7dow2pvtl2n5ncgt6fih46osgu');
+		this.setPoolStateOthers(this.props.activeAccount);
 	}
 
 	componentWillUnmount() {
@@ -222,23 +213,30 @@ class App extends Component {
 		return userOwnedPools;
 	}
 
-	setPoolState = async(activeAccount) => {
-		//const { verifiedPools, ownerPools, userDepositPools, verifiedPoolInfo, ownerPoolInfo, userDepositPoolInfo } = getPoolStateFromChain(activeAccount, this.getTokenMapFromNetwork, this.networkId);
+	setPoolStateVerified = async(activeAccount) => {
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
-		const ownerPools = await this.getOwnerAddress(activeAccount); //await this.PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
-		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address); //await this.PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();
-		const userDepositPools = depositBalancePools.depositPools;
+		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address);
 		const userBalancePools = depositBalancePools.balances;
 
 		const verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools);
+
+		await this.props.updateVerifiedPoolAddrs(verifiedPools);
+
+		await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
+	}
+
+	setPoolStateOthers = async(activeAccount) => {
+		const ownerPools = await this.getOwnerAddress(activeAccount);
+		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address);
+		const userDepositPools = depositBalancePools.depositPools;
+		const userBalancePools = depositBalancePools.balances;
+
 		const ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools);
 		const userDepositPoolInfo = await getPoolInfo(userDepositPools, getTokenMap(this.networkId),  userBalancePools);
 
-		await this.props.updateVerifiedPoolAddrs(verifiedPools);
 		await this.props.updateOwnerPoolAddrs(ownerPools);
 		await this.props.updateUserDepositPoolAddrs(userDepositPools);
 
-		await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
 		await this.props.updateOwnerPoolInfo(ownerPoolInfo);
 		await this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
 	}

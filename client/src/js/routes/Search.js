@@ -155,7 +155,6 @@ class Search extends Component {
 }
 
 const mapStateToProps = state => ({
-	daiAddress: state.daiAddress,
 	activeAccount: state.activeAccount,
 	tokenMap: state.tokenMap,
 	ownerPoolAddrs: state.ownerPoolAddrs,

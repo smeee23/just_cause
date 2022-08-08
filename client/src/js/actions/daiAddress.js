@@ -1,4 +1,4 @@
-export const updateDaiAddress = (value) => ({
-	type: 'UPDATE_DAI_ADDRESS',
+export const updateLoading = (value) => ({
+	type: 'UPDATE_LOADING',
 	value,
 })

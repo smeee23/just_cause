@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 import { connectRouter } from 'connected-react-router'
 
 import mobileReducer from './mobile'
-import daiAddressReducer from './daiAddress'
+import loadingReducer from './loading'
 import activeAccountReducer from './activeAccount'
 import tokenMapReducer from './tokenMap'
 import verifiedPoolAddrsReducer from './verifiedPoolAddrs'
@@ -28,7 +28,7 @@ import connectReducer from './connect'
 
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
-	daiAddress: daiAddressReducer,
+	loading: loadingReducer,
 	activeAccount: activeAccountReducer,
 	tokenMap: tokenMapReducer,
 	verifiedPoolAddrs: verifiedPoolAddrsReducer,

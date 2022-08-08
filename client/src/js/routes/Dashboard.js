@@ -225,6 +225,12 @@ class Dashboard extends Component {
 		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.selectedTokenIndex];
 
 		if(poolInfo === "No Verified Pools") return
+
+		if(!this.props.verifiedPoolInfo){
+			return (<div className="card__cardholder_slide" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
+					<h2>Loading Pools...</h2>
+				   </div>);
+				}
 		let cardHolder = [];
 		for(let i = 0; i < poolInfo.length; i++){
 			const item = poolInfo[i];
@@ -305,7 +311,6 @@ class Dashboard extends Component {
 }
 
 const mapStateToProps = state => ({
-	daiAddress: state.daiAddress,
 	activeAccount: state.activeAccount,
 	tokenMap: state.tokenMap,
 	verifiedPoolAddrs: state.verifiedPoolAddrs,

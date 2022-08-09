@@ -260,7 +260,7 @@ class NewPoolModal extends Component {
 				</div>
 
 				<div style={{fontSize:11}} className="modal__body__column__five">
-					<p className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. we want to give you the tools to fund it and share your inspiration with the world.</p>
+					<p className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. We want to give you the tools to fund it and share your inspiration with the world.</p>
 				</div>
 
 				<div className="modal__body__column__six">

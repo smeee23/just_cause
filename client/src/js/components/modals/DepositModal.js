@@ -140,7 +140,7 @@ class DepositModal extends Component {
 	}
 	return(
 		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Deposits into {contractInfo[6]} pool are supplied to Aave lending pools to generate interest. The deposit is redeemable in full at anytime. Any interest earned is donated to {contractInfo[6]} Cause by sending it to the receiver address.</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Deposits into {contractInfo[6]} pool are supplied to Aave lending pools to generate interest. The deposit is redeemable in full at any time. Any interest earned is donated to {contractInfo[6]} Cause by sending it to the receiver address.</p>
 			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">An NFT is minted for Contributors to the pool. The Contributor’s token acts as an on-chain receipt by storing deposit information. It cannot be sold or transferred.</p>
 			{userWarning}
 		</div>

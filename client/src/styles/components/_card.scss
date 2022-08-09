@@ -72,8 +72,8 @@ $baseclass: 'card';
     margin-right: auto;
   }
 
-  &__loading_slide {
-    animation: 0.1s ease-out 0s 1 wait, 0.21s ease-out 0.1s 1 slideInFromLeft;
+  &__loading_wait {
+    animation: 2s ease-out 0s 1 wait;
     margin-left: auto;
     margin-right: auto;
   }

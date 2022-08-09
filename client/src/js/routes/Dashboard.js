@@ -226,7 +226,7 @@ class Dashboard extends Component {
 
 		if(poolInfo === "No Verified Pools") return
 
-		if(!this.props.verifiedPoolInfo){
+		if(!this.props.tokenMap){
 			return (<div className="card__cardholder_slide" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
 					<h2>Loading Pools...</h2>
 				   </div>);

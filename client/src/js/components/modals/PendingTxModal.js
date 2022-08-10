@@ -75,7 +75,7 @@ class PendingTxModal extends Component {
     if(txDetails.type === "DEPOSIT"){
       return(
         <div title={"share your donation"} style={{display:"flex", flex:"flex-wrap", gap:"16px"}}>
-          <h4 style={{fontSize: 15, marginBottom: "auto", marginTop: "auto"}}>Proud of your donation? Share it</h4>
+          <h4 style={{fontSize: 15, marginBottom: "auto", marginTop: "auto"}}>Proud of your donation? Why not share it?</h4>
           <Button share_d="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails )} />
         </div>
       );
@@ -97,13 +97,13 @@ class PendingTxModal extends Component {
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">{txDetails.type} {txDetails.amount} {this.displayLogo(txDetails.tokenString)} {txDetails.tokenString} SUBMITTED TO CHAIN</h2>
+          <h2 className="mb0">{txDetails.type} {txDetails.amount} {this.displayLogo(txDetails.tokenString)} {txDetails.tokenString} SUBMITTED</h2>
         </ModalHeader>
         <ModalBodyTx>
             {this.getShareButton(txDetails)}
             <p>
-               <TextLink text={"- TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)+"          view on block explorer"} href={getBlockExplorerUrl('tx', txDetails.networkId)+txDetails.txHash} callback={() => redirectWindowBlockExplorer(txDetails.txHash, 'tx', txDetails.networkId)}/>
-               <TextLink text={"- POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)+"          view on block explorer"} href={getBlockExplorerUrl('address', txDetails.networkId)+txDetails.poolAddress} callback={() => redirectWindowBlockExplorer(txDetails.poolAddress, 'address', txDetails.networkId)}/>
+               <TextLink text={"TX HASH "+txDetails.txHash.slice(0, 6) + "..."+txDetails.txHash.slice(-4)+"          view on block explorer"} href={getBlockExplorerUrl('tx', txDetails.networkId)+txDetails.txHash} callback={() => redirectWindowBlockExplorer(txDetails.txHash, 'tx', txDetails.networkId)}/>
+               <TextLink text={"POOL CONTRACT: "+txDetails.poolAddress.slice(0, 6) + "..."+txDetails.poolAddress.slice(-4)+"          view on block explorer"} href={getBlockExplorerUrl('address', txDetails.networkId)+txDetails.poolAddress} callback={() => redirectWindowBlockExplorer(txDetails.poolAddress, 'address', txDetails.networkId)}/>
             </p>
         </ModalBodyTx>
       </Fragment>

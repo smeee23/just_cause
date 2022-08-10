@@ -152,8 +152,8 @@ class Header extends Component {
           { nav }
         </Takeover>
         {this.getHomeLink()}
-          <h2 title="approximate USD value donated by JustCause" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingLeft: "32px", paddingRight: "0px"}}>{  displayTVL('totalDonated', 'Donated:', this.props.tokenMap, 3) }</h2>
-          <h2 title="approximate USD value deposited" className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
+          <h2 title="USD value donated by JustCause (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingLeft: "32px", paddingRight: "0px"}}>{  displayTVL('totalDonated', 'Donated:', this.props.tokenMap, 3) }</h2>
+          <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
         <nav className="app-bar__items">
           { nav }
         {this.getConnectButton()}

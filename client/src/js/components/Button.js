@@ -5,6 +5,7 @@ import Icon from "./Icon";
 
 import TwitterLight from "./logos/TwitterLight";
 import TwitterDark from "./logos/TwitterDark";
+import ShareDark from "./logos/ShareDark";
 import Github from "./logos/Github";
 import Discord from "./logos/Discord";
 import Facebook from "./logos/Facebook";
@@ -111,7 +112,7 @@ class Button extends Component {
     }
   }
 	render() {
-		const { text, icon, tweet, tweet_d, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo, copy, info } = this.props;
+		const { text, icon, tweet, tweet_d, share_d, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo, copy, info } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -140,6 +141,9 @@ class Button extends Component {
           { tweet_d ? (
               <TwitterDark/>
           ) : null }
+          { share_d ? (
+              <ShareDark/>
+          ) : null }
           { github ? (
               <Github/>
           ) : null }
@@ -159,7 +163,7 @@ class Button extends Component {
               <Copy/>
           ) : null }
         </div>
-        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, copy)}
+        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, share_d, copy)}
       </button>
 		);
 	}

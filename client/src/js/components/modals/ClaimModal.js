@@ -12,7 +12,7 @@ import { updateTxResult } from  "../../actions/txResult";
 import { updateClaim } from "../../actions/claim";
 
 import {delay, displayLogo, getFormatUSD, numberWithCommas, precise} from '../../func/ancillaryFunctions';
-
+import { getContractInfo } from '../../func/contractInteractions';
 class ClaimModal extends Component {
 
     claim = async() => {
@@ -38,11 +38,13 @@ class ClaimModal extends Component {
                     PoolTracker.abi,
                     this.props.poolTrackerAddress,
                 );
-                txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress, networkId: this.props.networkId};
+
+				const poolName = await getContractInfo(poolAddress);
+                txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId};
                 result = await PoolTrackerInstance.methods.claimInterest(tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
                     console.log('Transaction Hash :', transactionHash);
 					if(!err){
-						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress, networkId: this.props.networkId});
+						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId});
 						txInfo.txHash = transactionHash;
 					}
 					else{

@@ -14,7 +14,7 @@ import { updateTxResult } from  "../../actions/txResult";
 import { updateDepositAmount } from  "../../actions/depositAmount";
 import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 
-import {getAllowance, addUserDepositedPool} from '../../func/contractInteractions';
+import {getAllowance, addUserDepositedPool, getContractInfo} from '../../func/contractInteractions';
 import {delay, getTokenBaseAmount, displayLogo} from '../../func/ancillaryFunctions';
 
 class DepositModal extends Component {
@@ -95,12 +95,14 @@ class DepositModal extends Component {
 					this.props.poolTrackerAddress,
 				);
 
-				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, networkId: this.props.networkId};
+				const poolName = await getContractInfo(poolAddress);
+				console.log("poolName", poolName, poolName[6])
+				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId};
 
 				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
 					console.log('Transaction Hash :', transactionHash);
 					if(!err){
-						this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, networkId: this.props.networkId});
+						this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId});
 						txInfo.txHash = transactionHash;
 					}
 					else{

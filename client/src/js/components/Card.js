@@ -312,7 +312,7 @@ class Card extends Component {
 	}
 
 	approve = async(tokenAddress, tokenString, poolAddress) => {
-		console.log("approve clicked", result);
+		console.log("approve clicked");
 		await this.props.updateApprove('');
 		let result;
 		try{

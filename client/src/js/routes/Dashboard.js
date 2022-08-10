@@ -180,18 +180,12 @@ class Dashboard extends Component {
 	getApplicationLink = () => {
 		if(this.state.selectedTokenIndex === 0){
 			return (
-				<div style={{paddingBottom:"20px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
-					<div title="apply to create a verified pool" style={{margin: "auto"}}>
-						<ButtonSmall text={"Apply"} callback={() => this.redirectWindowGoogleApplication()}/>
-					</div>
-				</div>
+				<div style={{paddingBottom:"62.5px"}}/>
 			);
 		}
 		else if (this.state.selectedTokenIndex === 1){
 			return (
-				<div style={{paddingBottom:"62.5px"}}>
-
-				</div>
+				<div style={{paddingBottom:"62.5px"}}/>
 			);
 		}
 		else if (this.state.selectedTokenIndex === 2){

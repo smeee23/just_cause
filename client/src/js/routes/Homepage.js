@@ -34,7 +34,7 @@ class Homepage extends Component {
 			<Fragment>
 				<Shapes/>
 
-				<Footer/>
+				
 					<section className="page-section page-section--center horizontal-padding">
 						<div style={{width:500, height:window.innerHeight/1.2, /*background: "#3FA7D6", border:"20px", borderRadius:"50%",*/ display:"flex", gap:"2", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
 

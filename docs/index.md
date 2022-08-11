@@ -23,13 +23,12 @@ body {
 
 .sidenav {
   height: 100%;
-  width: 0;
+  width: 250px;
   position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
   background-color: #111;
-  overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;
 }
@@ -88,8 +87,6 @@ body {
   <a href="#" onclick="setText('justCausePool')">JustCausePool</a>
   <a href="#" onclick="setText('uml')">UML</a>
 </div>
-
-<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
 
 <div id="logo" markdown="1">
   ![jc_logo](https://user-images.githubusercontent.com/85646760/170550529-6cd84d59-b1c6-496c-810c-0242cf9eb843.png)

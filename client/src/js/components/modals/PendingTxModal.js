@@ -97,7 +97,7 @@ class PendingTxModal extends Component {
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">{txDetails.type} {txDetails.amount} {this.displayLogo(txDetails.tokenString)} {txDetails.tokenString} SUBMITTED</h2>
+          <h2 className="mb0">{txDetails.type === "CLAIM" ? "HARVEST" : txDetails.type} {txDetails.amount} {this.displayLogo(txDetails.tokenString)} {txDetails.tokenString} SUBMITTED</h2>
         </ModalHeader>
         <ModalBodyTx>
             {this.getShareButton(txDetails)}

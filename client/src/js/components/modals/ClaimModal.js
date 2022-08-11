@@ -70,7 +70,7 @@ class ClaimModal extends Component {
 
 	return(
 		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Calls made to the claim function will harvest interest already donated and send the amount to the receiver of {contractInfo[6]}.</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Calls made to the claim function will harvest donations already earned and send the amount to the receiver of {contractInfo[6]}.</p>
 			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Anyone can call this function and claim funds for {contractInfo[6]}</p>
 			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">{displayLogo(txInfo.tokenString)} {txInfo.tokenString}: {numberWithCommas(precise(txInfo.unclaimedInterest, decimals)) +"  (" +getFormatUSD(precise(txInfo.unclaimedInterest, decimals), priceUSD)+")"}</p>
 		</div>
@@ -90,12 +90,12 @@ class ClaimModal extends Component {
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">Claim {displayLogo(claimInfo.tokenString)} {claimInfo.tokenString} for {claimInfo.contractInfo[6]}</h2>
+          <h2 className="mb0">Harvest {displayLogo(claimInfo.tokenString)} {claimInfo.tokenString} for {claimInfo.contractInfo[6]}</h2>
         </ModalHeader>
         <ModalCtas>
 			{this.displayDepositNotice(claimInfo)}
 			<div style={{marginLeft: "auto", marginTop:"auto", paddingBottom:"25px"}}>
-          		<Button style={{marginLeft: "auto", marginTop:"auto"}} text="Claim" callback={() => this.claim()}/>
+          		<Button style={{marginLeft: "auto", marginTop:"auto"}} text="Harvest Donations" callback={() => this.claim()}/>
 		  	</div>
         </ModalCtas>
       </Fragment>

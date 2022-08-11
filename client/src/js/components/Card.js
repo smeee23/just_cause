@@ -67,7 +67,7 @@ class Card extends Component {
 		if(item.unclaimedInterest > 500){
 			let isDisabled = false;
 			if(this.props.pendingTx) isDisabled = true;
-			return <div title={"send to "+title}><Button text="Claim Interest" disabled={isDisabled} callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
+			return <div title={"send to "+title}><Button text="Harvest Donations" disabled={isDisabled} callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
 		}
 	}
 	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance, title) => {

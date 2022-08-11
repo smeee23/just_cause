@@ -62,6 +62,10 @@ export const redirectWindowBlockExplorer = (hash, label, networkId) => {
   window.open(newPageUrl, "_blank")
 }
 
+export const redirectWindowUrl = (url) => {
+  window.open(url, "_blank")
+}
+
 export const redirectWindowHash = (url, hash) => {
   let newPageUrl = url + hash;
   window.open(newPageUrl, "_blank")

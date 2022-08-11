@@ -27,7 +27,8 @@ import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateShare } from  "../actions/share";
 
 import { getBalance, getContractInfo } from '../func/contractInteractions';
-import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, numberWithCommas} from '../func/ancillaryFunctions';
+import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, numberWithCommas} from '../func/ancillaryFunctions';
+import { verifiedPoolMap } from '../func/verifiedPoolMap';
 import { Modal, SmallModal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
@@ -134,6 +135,20 @@ class Card extends Component {
 			return (<p>{" "+ depositAPY+'% APY'}</p>);
 		}
 	}
+
+	getVerifiedLinks = (isVerified, poolName) => {
+		if(!poolName) return;
+		if(isVerified){
+			console.log("verifiedPoolMap", verifiedPoolMap[poolName.replace(/\s+/g, '')])
+			const url = (verifiedPoolMap[poolName.replace(/\s+/g, '')] && verifiedPoolMap[poolName.replace(/\s+/g, '')]).siteUrl;
+			return(
+				<div title="view site">
+					<Button text="More About Organization" callback={() => redirectWindowUrl(url)}/>
+				</div>
+			);
+		}
+
+	}
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified) => {
 		if (!acceptedTokenInfo) return '';
 		if (!this.props.tokenMap) return '';
@@ -149,28 +164,32 @@ class Card extends Component {
 				<div style={{display: "flex", flexDirection: "column", borderRight: "double"}}>
 					<div style={{display: "flex", flexDirection: "wrap"}}>
 						<div className="card__body__column__one">
-							{this.getPoolImage(picHash)}
-						</div>
-						<div className="card__body__column__two">
 						<div >
-							<div style={{display: "flex", flexDirection: "column", gap: "1px", marginLeft: "32px"}}>
+							<div style={{display: "flex", flexDirection: "column", gap: "1px", marginLeft: "8px"}}>
 								<h4 className="mb0">
 									{title}
 								</h4>
 								{this.getIsVerified(isVerified)}
 							</div>
-							<div title="view on block explorer">
-							<TextLink text={"address "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address', this.props.networkId)}/>
-							<TextLink text={"receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address', this.props.networkId)}/>
+							<div title="view on block explorer" style={{marginLeft: "8px"}}>
+								<Button text={"Pool "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address', this.props.networkId)}/>
+								<Button text={"Receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address', this.props.networkId)}/>
 							</div>
 						</div>
+						</div>
+						<div className="card__body__column__two">
+							{this.getPoolImage(picHash)}
 						</div>
 					</div>
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
 						<p style={{marginTop: "20px"}} className="mr">{about}</p>
-						<div title={"share "+ title} style={{bottom: "0px"}}>
-							<Button share="share" callback={async() => await this.share(address, title )} />
+						<div style={{display: "flex", flexDirection: "wrap", gap: "32px"}}>
+							<div title={"share "+ title} style={{bottom: "0px"}}>
+								<Button share="share" callback={async() => await this.share(address, title )} />
+							</div>
+							{this.getVerifiedLinks(isVerified, title)}
 						</div>
+
 					</div>
 				</div>
 

@@ -23,7 +23,7 @@ body {
 
 .sidenav {
   height: 100%;
-  width: 250px;
+  width: 200px;
   position: fixed;
   z-index: 1;
   top: 0;
@@ -72,7 +72,6 @@ body {
 <body>
 
 <div id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <p>General</p>
   <a href="#" onclick="setText('about')">About</a>
   <a href="#" onclick="setText('donations')">Lossless Donations</a>

@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from "react"
 import classNames from 'classnames'
 
-import LogoBlackRing from "./LogoBlackRing";
+import Logo from "./Logo";
 
 class ModalHeader extends Component {
   render() {
@@ -10,7 +10,7 @@ class ModalHeader extends Component {
         <Fragment>
             { this.props.children }
             <div className="modal__close-btn" onClick={this.closeModal}>
-              <LogoBlackRing/>
+              <Logo/>
             </div>
         </Fragment>
       </div>

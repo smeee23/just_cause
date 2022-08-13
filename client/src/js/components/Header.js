@@ -61,6 +61,9 @@ class Header extends Component {
           <a className="theme--white" href="https://docs.justcause.finance/" target="_blank">
             <TextLink text="Docs"/>
           </a>
+          <a className="theme--white" href="https://github.com/smeee23/just_cause/tree/main/security/audits" target="_blank">
+            <TextLink text="Audits"/>
+          </a>
 
         </Fragment>
       )

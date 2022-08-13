@@ -219,7 +219,7 @@ JustCause is a decentralized non-custodial crowdfunding protocol where users par
 
 ### Where are my deposited funds stored?
 
-Your funds are allocated in a smart contract. The code of the smart contract is public, open source, and ++++NOT YET AUDITED++++audited by third party auditors. You can withdraw your funds from the pool at any time.
+Your funds are allocated in a smart contract. The code of the smart contract is public, open source, and audited by third party auditors. You can withdraw your funds from the pool at any time.
 
 ---
 
@@ -271,7 +271,7 @@ The team has no control over user funds deposited into pools.
 
 ### Is there any risk?
 
-The risks related to the JustCause platform are the smart contract risk (risk of a bug within the protocol code and the Aave protocol code) and liquidation risk (risk on the collateral liquidation process on Aave). Every possible step has been taken to minimize the risk as much as possible-- the protocol code is public and open source and it has been ++++NOT YET AUDITED++++audited.
+The risks related to the JustCause platform are the smart contract risk (risk of a bug within the protocol code and the Aave protocol code) and liquidation risk (risk on the collateral liquidation process on Aave). Every possible step has been taken to minimize the risk as much as possible-- the protocol code is public and open source and it has been audited.
 
 ---
 
@@ -307,7 +307,7 @@ JustCause Pool creators choose what tokens to accept at pool creation. They can 
 
 ### JustCause
 
-Every possible step has been taken to minimize the risk to user funds as much as possible. We have been ++++NOT YET AUDITED++++audited
+Every possible step has been taken to minimize the risk to user funds as much as possible. We have been audited
 
 However, JustCause is a brand new social experiment. Before deciding to participate in JustCause, you should carefully consider your objectives, level of experience with crypto and risk appetite. Most importantly, do not deposit money with JustCause you cannot afford to lose. Crypto markets are very risky and you may lose all or some of your deposits.
 

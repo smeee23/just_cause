@@ -139,9 +139,6 @@ class Dashboard extends Component {
 		if(this.props.approve) await this.props.updateApprove('');
 		if(this.props.share) await this.props.updateShare("");
 		if(this.props.claim)  await this.props.updateClaim('');
-
-		console.log("claim", this.props.claim);
-
 		this.setState({
 			selectedTokenIndex: index,
 		});

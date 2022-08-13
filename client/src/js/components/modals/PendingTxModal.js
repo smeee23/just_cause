@@ -92,7 +92,6 @@ class PendingTxModal extends Component {
 
   render() {
       const { txDetails } = this.props;
-      console.log("txDetails", txDetails);
 
 		return (
       <Fragment>

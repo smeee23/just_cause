@@ -15,12 +15,6 @@ body {
   display: none;
 }
 
-.uml {
-  width: 1000px;
-  max-width: 1000px;
-  height: auto;
-}
-
 .sidenav {
   height: 100%;
   width: 200px;
@@ -84,7 +78,6 @@ body {
   <a href="#" onclick="setText('poolTracker')">PoolTacker</a>
   <a href="#" onclick="setText('depositorNFT')">JCDepositorERC721</a>
   <a href="#" onclick="setText('justCausePool')">JustCausePool</a>
-  <a href="#" onclick="setText('uml')">UML</a>
 </div>
 
 <div id="logo" markdown="1">
@@ -107,13 +100,7 @@ Our mission is to give users the freedom to create and fund any cause they deem 
 
 </div>
 
-<div id="uml" class="hidden" markdown="1">
 
-# UML Diagram
-
-<img class="uml" src="https://user-images.githubusercontent.com/85646760/178153931-e3ef7568-39db-417f-a46d-33bfcba2ab6c.png"/>
-
-</div>
 
 <div id="summary" class="hidden" markdown="1">
 

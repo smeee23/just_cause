@@ -96,7 +96,6 @@ class DepositModal extends Component {
 				);
 
 				const poolName = await getContractInfo(poolAddress);
-				console.log("poolName", poolName, poolName[6])
 				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId};
 
 				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {

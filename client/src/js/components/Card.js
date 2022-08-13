@@ -155,7 +155,6 @@ class Card extends Component {
 	getVerifiedLinks = (isVerified, poolName) => {
 		if(!poolName) return;
 		if(isVerified && this.props.networkId === 137){
-			console.log("verifiedPoolMap", verifiedPoolMap[poolName.replace(/\s+/g, '')])
 			const url = (verifiedPoolMap[poolName.replace(/\s+/g, '')] && verifiedPoolMap[poolName.replace(/\s+/g, '')]).siteUrl;
 			return(
 				<div title="view site">
@@ -317,7 +316,6 @@ class Card extends Component {
 
 	getClaimModal = () => {
 		if(this.props.claim){
-			console.log("modal", this.props.claim);
 			let modal = <SmallModal isOpen={true}><ClaimModal claimInfo={this.props.claim}/></SmallModal>
 			return modal;
 		}

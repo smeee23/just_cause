@@ -46,7 +46,6 @@ class Header extends Component {
       window.location.reload(false);
     }
     else{
-      console.log("active Account:", this.props.activeAccount, web3Modal.cachedProvider);
         await web3Modal.clearCachedProvider();
         window.location.reload(false);
     }

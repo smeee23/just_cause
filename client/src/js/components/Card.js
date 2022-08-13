@@ -155,12 +155,17 @@ class Card extends Component {
 	getVerifiedLinks = (isVerified, poolName) => {
 		if(!poolName) return;
 		if(isVerified && this.props.networkId === 137){
-			const url = (verifiedPoolMap[poolName.replace(/\s+/g, '')] && verifiedPoolMap[poolName.replace(/\s+/g, '')]).siteUrl;
-			return(
-				<div title="view site">
-					<Button text="More About Organization" callback={() => redirectWindowUrl(url)}/>
-				</div>
-			);
+			const name = poolName.replace(/\s+/g, '');
+			const keys = Object.keys(verifiedPoolMap)
+			console.log("keys", keys, name);
+			if(keys.includes(name)){
+			const url = (verifiedPoolMap[name] && verifiedPoolMap[name]).siteUrl;
+				return(
+					<div title="view site">
+						<Button text="More About Organization" callback={() => redirectWindowUrl(url)}/>
+					</div>
+				);
+			}
 		}
 
 	}

@@ -54,11 +54,11 @@ class Header extends Component {
   generateNav = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
-        <Fragment>
-          <NavLink exact to={"/howitworks"}>
-            <TextLink text="How it works"/>
+        <Fragment className="theme--white">
+          <NavLink className="theme--white" exact to={"/howitworks"}>
+            <TextLink className="theme--white" text="How it works"/>
           </NavLink>
-          <a href="https://docs.justcause.finance/" target="_blank">
+          <a className="theme--white" href="https://docs.justcause.finance/" target="_blank">
             <TextLink text="Docs"/>
           </a>
 
@@ -68,17 +68,17 @@ class Header extends Component {
     else{
       return (
         <Fragment>
-          <NavLink exact to={"/dashboard"}>
+          <NavLink className="theme--white" exact to={"/dashboard"}>
             <div title="create and fund causes">
             <TextLink text="Dashboard"/>
             </div>
           </NavLink>
-          <NavLink exact to={"/search"}>
+          <NavLink className="theme--white" exact to={"/search"}>
           <div title="find a pool by name or address">
             <TextLink text="Find Pool"/>
           </div>
-          </NavLink>
-          <a title="user documentation" href="https://docs.justcause.finance/" target="_blank">
+          </NavLink >
+          <a className="theme--white" title="user documentation" href="https://docs.justcause.finance/" target="_blank">
             <TextLink text="Docs"/>
           </a>
         </Fragment>
@@ -89,7 +89,7 @@ class Header extends Component {
   getHomeLink = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
-        <NavLink exact to={"/"} className="app-bar__left tdn">
+        <NavLink exact to={"/"} className="app-bar__left tdn theme--white">
           <Logo/>
             <h2 className="mb0">JustCause</h2>
         </NavLink>
@@ -97,7 +97,7 @@ class Header extends Component {
     }
     else{
       return (
-        <div className="app-bar__left tdn">
+        <div className="app-bar__left tdn theme--white">
           <Logo/>
           <h2 className="mb0">JustCause</h2>
         </div>
@@ -115,7 +115,7 @@ class Header extends Component {
   getConnectButton = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
-        <NavLink exact to={"/dashboard"}>
+        <NavLink className="theme--white" exact to={"/dashboard"}>
           {this.getLaunchButton()}
         </NavLink>
         )
@@ -144,7 +144,7 @@ class Header extends Component {
     const nav = this.generateNav();
 
 		return (
-      <header className="app-bar horizontal-padding">
+      <header className="app-bar horizontal-padding theme--white">
         <Takeover>
           { nav }
         </Takeover>

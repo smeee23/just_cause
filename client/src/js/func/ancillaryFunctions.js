@@ -183,6 +183,16 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
   return {userBalance, interestEarned, totalBalance}
 }
 
+export const getConnection = (tokenMap, networkId) => {
+  if(tokenMap){
+    let netName;
+    if(networkId === 80001) netName = 'Mumbai Testnet';
+    else if (networkId === 137) netName = 'Polygon';
+
+    return netName;
+  }
+}
+
 export const displayTVL = (id, label, tokenMap, cutOff) => {
   if(tokenMap){
     let total = 0.0;

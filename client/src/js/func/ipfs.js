@@ -11,7 +11,6 @@ export const upload = async(data) => {
         }
 
         result = await fleek.upload(input);
-        console.log('fleek upload', result);
     }
     catch (error) {
         console.error(error);
@@ -29,7 +28,6 @@ export const getAbout = async(key) => {
             getOptions: ['hash', 'data', 'publicUrl', 'key'],
         }
         result = await fleek.get(input);
-        console.log('fleek get', result);
     }
     catch (error) {
         console.error(error);
@@ -41,7 +39,6 @@ export const getIpfsData = async(hash) => {
     let result;
     try{
         result = await fleek.getFileFromHash({hash: hash});
-        console.log('fleek getFileFromHash', result);
     }
     catch (error) {
         console.error(error);

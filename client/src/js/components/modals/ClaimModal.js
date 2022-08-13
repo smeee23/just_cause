@@ -61,6 +61,7 @@ class ClaimModal extends Component {
 			if(txInfo){
 				this.displayTxInfo(txInfo);
 			}
+			this.props.updateClaim('');
 	}
 
   displayDepositNotice = (txInfo) => {

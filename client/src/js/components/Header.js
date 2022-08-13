@@ -1,8 +1,6 @@
 import React, {Component, Fragment} from "react";
 import { connect } from "react-redux"
 import Web3 from "web3";
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import Authereum from "authereum";
 
 import Logo from "./Logo";
 import { Button, ButtonSmall } from "./Button";
@@ -12,7 +10,7 @@ import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
 import { updateConnect } from "../actions/connect"
-import { checkLocationForAppDeploy, displayTVL, redirectWindowBlockExplorer } from "../func/ancillaryFunctions"
+import { checkLocationForAppDeploy, displayTVL, getConnection } from "../func/ancillaryFunctions"
 
 import { web3Modal } from "../App"
 
@@ -153,7 +151,8 @@ class Header extends Component {
         </Takeover>
         {this.getHomeLink()}
           <h2 title="USD value donated by JustCause (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingLeft: "32px", paddingRight: "0px"}}>{  displayTVL('totalDonated', 'Donated:', this.props.tokenMap, 3) }</h2>
-          <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
+          <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px"}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
+          <h2 title="connected" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px", color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
         <nav className="app-bar__items">
           { nav }
         {this.getConnectButton()}

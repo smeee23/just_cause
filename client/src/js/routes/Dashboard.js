@@ -18,6 +18,9 @@ import { updateDeployTxResult } from  "../actions/deployTxResult";
 import {updateDeployInfo} from "../actions/deployInfo";
 import { updateDepositAmount } from  "../actions/depositAmount";
 import { updateWithdrawAmount } from  "../actions/withdrawAmount";
+import { updateClaim } from "../actions/claim";
+import { updateApprove } from "../actions/approve";
+import { updateShare } from  "../actions/share";
 
 import LogoCard from "../components/logos/LogoCard";
 import { updatePoolInfo, addDeployedPool } from '../func/contractInteractions';
@@ -38,11 +41,12 @@ class Dashboard extends Component {
 	componentDidMount = async () => {
 		try{
 			window.scrollTo(0,0);
-			if(this.props.deployInfo) this.props.updateDeployInfo('');
-
-			if(this.props.depositAmount) this.props.updateDepositAmount('');
-
-			if(this.props.withdrawAmount) this.props.updateWithdrawAmount('');
+			if(this.props.deployInfo) await this.props.updateDeployInfo('');
+			if(this.props.depositAmount) await this.props.updateDepositAmount('');
+			if(this.props.withdrawAmount) await this.props.updateWithdrawAmount('');
+			if(this.props.approve) await this.props.updateApprove('');
+			if(this.props.share) await this.props.updateShare("");
+			if(this.props.claim)  await this.props.updateClaim('');
 		}
 		catch (error) {
 			// Catch any errors for any of the above operations.
@@ -126,7 +130,18 @@ class Dashboard extends Component {
 		  }, delayInms);
 		});
 	}
-	setSelectedToken = (index) => {
+	setSelectedToken = async(index) => {
+
+		if(this.props.deployInfo) await this.props.updateDeployInfo('');
+		if(this.props.depositAmount) await this.props.updateDepositAmount('');
+		if(this.props.withdrawAmount) await this.props.updateWithdrawAmount('');
+
+		if(this.props.approve) await this.props.updateApprove('');
+		if(this.props.share) await this.props.updateShare("");
+		if(this.props.claim)  await this.props.updateClaim('');
+
+		console.log("claim", this.props.claim);
+
 		this.setState({
 			selectedTokenIndex: index,
 		});
@@ -327,7 +342,9 @@ const mapDispatchToProps = dispatch => ({
 	updateDeployInfo: (res) => dispatch(updateDeployInfo(res)),
 	updateDepositAmount: (amnt) => dispatch(updateDepositAmount(amnt)),
 	updateWithdrawAmount: (amount) => dispatch(updateWithdrawAmount(amount)),
-
+	updateClaim: (txInfo) => dispatch(updateClaim(txInfo)),
+	updateApprove: (txInfo) => dispatch(updateApprove(txInfo)),
+	updateShare: (share) => dispatch(updateShare(share)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

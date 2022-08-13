@@ -51,8 +51,24 @@ class Card extends Component {
 		}
 	}
 
-  componentDidMount() {
+  componentDidMount = async () => {
 		window.scrollTo(0,0);
+		try{
+			window.scrollTo(0,0);
+			if(this.props.deployInfo) await this.props.updateDeployInfo('');
+			if(this.props.depositAmount) await this.props.updateDepositAmount('');
+			if(this.props.withdrawAmount) await this.props.updateWithdrawAmount('');
+			if(this.props.approve) await this.props.updateApprove('');
+			if(this.props.share) await this.props.updateShare("");
+			if(this.props.claim)  await this.props.updateClaim('');
+		}
+		catch (error) {
+			// Catch any errors for any of the above operations.
+			alert(
+				error,
+			);
+			console.error(error);
+		}
 	}
 
 	displayWithdraw = (item, address, tokenString, title) => {
@@ -138,7 +154,7 @@ class Card extends Component {
 
 	getVerifiedLinks = (isVerified, poolName) => {
 		if(!poolName) return;
-		if(isVerified){
+		if(isVerified && this.props.networkId === 137){
 			console.log("verifiedPoolMap", verifiedPoolMap[poolName.replace(/\s+/g, '')])
 			const url = (verifiedPoolMap[poolName.replace(/\s+/g, '')] && verifiedPoolMap[poolName.replace(/\s+/g, '')]).siteUrl;
 			return(
@@ -301,6 +317,7 @@ class Card extends Component {
 
 	getClaimModal = () => {
 		if(this.props.claim){
+			console.log("modal", this.props.claim);
 			let modal = <SmallModal isOpen={true}><ClaimModal claimInfo={this.props.claim}/></SmallModal>
 			return modal;
 		}
@@ -332,7 +349,7 @@ class Card extends Component {
 
 	approve = async(tokenAddress, tokenString, poolAddress) => {
 		console.log("approve clicked");
-		await this.props.updateApprove('');
+		this.props.updateApprove('');
 		let result;
 		try{
 			const activeAccount = this.props.activeAccount;
@@ -352,8 +369,8 @@ class Card extends Component {
 	}
 
 	share = async(poolAddress, name) => {
-		await this.props.updateShare("");
-		await this.props.updateShare({poolAddress: poolAddress, name: name});
+		this.props.updateShare("");
+		this.props.updateShare({poolAddress: poolAddress, name: name});
 	}
 	displayTxInfo = async(txInfo,) => {
 		this.props.updatePendingTx('');

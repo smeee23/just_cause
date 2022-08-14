@@ -70,12 +70,11 @@ class Card extends Component {
 			console.error(error);
 		}
 	}
-
 	displayWithdraw = (item, address, tokenString, title) => {
 	if(item.userBalance > 0){
 		let isDisabled = false;
 		if(this.props.pendingTx) isDisabled = true;
-		return <div title={"withdraw deposit"}><Button text={"Withdraw "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
+		return <div title={"withdraw deposit"}><Button logo={displayLogo(tokenString)} text={"Withdraw "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
 		}
 	}
 
@@ -83,19 +82,19 @@ class Card extends Component {
 		if(item.unclaimedInterest > 500){
 			let isDisabled = false;
 			if(this.props.pendingTx) isDisabled = true;
-			return <div title={"send to "+title}><Button text="Harvest Donations" /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
+			return <div title={"harvest donations for "+title}><Button logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
 		}
 	}
 	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance, title) => {
 		let isDisabled = false;
 		if(this.props.pendingTx) isDisabled = true;
 		if(isEth){
-			return  <div title={"earn donations for "+title}><Button text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+			return  <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		}
 		if(Number(allowance) === 0){
-			return <div title={"required before deposit"}><Button text={"Approve "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
+			return <div title={"required before deposit"}><Button logo={displayLogo(tokenString)} text={"Approve "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 		}
-		return <div title={"earn donations for "+title}><Button text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+		return <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 	}
 	toggleCardOpen = () => {
 		this.setState({
@@ -203,7 +202,7 @@ class Card extends Component {
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
 						<p style={{marginTop: "20px"}} className="mr">{about}</p>
 						<div style={{display: "flex", flexDirection: "wrap", gap: "32px"}}>
-							<div title={"share "+ title} style={{bottom: "0px"}}>
+							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>
 								<Button share="share" callback={async() => await this.share(address, title )} />
 							</div>
 							{this.getVerifiedLinks(isVerified, title)}
@@ -281,7 +280,7 @@ class Card extends Component {
 		console.log('deposit clicked');
 		try{
 			const tokenMap = this.props.tokenMap;
-			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);;
+			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 			const activeAccount = this.props.activeAccount;
 			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount);
 			const contractInfo = await getContractInfo(poolAddress);

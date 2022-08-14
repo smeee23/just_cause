@@ -73,10 +73,9 @@ class Homepage extends Component {
 	render() {
 		return (
 			<Fragment>
-				<Footer/>
 
 				<article>
-					<div style={{marginTop: "100px", marginLeft: "100px"}}>
+					<div style={{marginTop: "120px", marginLeft: "100px"}}>
 						<AGD/>
 					</div>
 					<div style={{marginBottom:"10px",  alignItems:"center", justifyContent:"center"}}>

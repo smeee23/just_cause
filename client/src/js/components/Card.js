@@ -157,7 +157,6 @@ class Card extends Component {
 		if(isVerified && this.props.networkId === 137){
 			const name = poolName.replace(/\s+/g, '');
 			const keys = Object.keys(verifiedPoolMap)
-			console.log("keys", keys, name);
 			if(keys.includes(name)){
 			const url = (verifiedPoolMap[name] && verifiedPoolMap[name]).siteUrl;
 				return(

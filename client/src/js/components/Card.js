@@ -370,7 +370,7 @@ class Card extends Component {
 	}
 
 	share = async(poolAddress, name) => {
-		this.props.updateShare("");
+		await this.props.updateShare('');
 		this.props.updateShare({poolAddress: poolAddress, name: name});
 	}
 	displayTxInfo = async(txInfo,) => {

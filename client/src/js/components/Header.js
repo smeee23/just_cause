@@ -5,7 +5,7 @@ import Web3 from "web3";
 import Logo from "./Logo";
 import { Button, ButtonSmall } from "./Button";
 import TextLink from "./TextLink";
-import { NavLink } from 'react-router-dom'
+import { NavHashLink } from 'react-router-dom'
 import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
@@ -55,9 +55,9 @@ class Header extends Component {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
         <Fragment className="theme--white">
-          <NavLink className="theme--white" exact to={"/howitworks"}>
+          <NavHashLink className="theme--white" exact to={"/howitworks"}>
             <TextLink className="theme--white" text="How it works"/>
-          </NavLink>
+          </NavHashLink>
           <a className="theme--white" href="https://docs.justcause.finance/" target="_blank">
             <TextLink text="Docs"/>
           </a>
@@ -71,16 +71,16 @@ class Header extends Component {
     else{
       return (
         <Fragment>
-          <NavLink className="theme--white" exact to={"/dashboard"}>
+          <NavHashLink className="theme--white" exact to={"/dashboard"}>
             <div title="create and fund causes">
             <TextLink text="Dashboard"/>
             </div>
-          </NavLink>
-          <NavLink className="theme--white" exact to={"/search"}>
+          </NavHashLink>
+          <NavHashLink className="theme--white" exact to={"/search"}>
           <div title="find a pool by name or address">
             <TextLink text="Find Pool"/>
           </div>
-          </NavLink >
+          </NavHashLink >
           <a className="theme--white" title="user documentation" href="https://docs.justcause.finance/" target="_blank">
             <TextLink text="Docs"/>
           </a>
@@ -92,10 +92,10 @@ class Header extends Component {
   getHomeLink = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
-        <NavLink exact to={"/"} className="app-bar__left tdn theme--white">
+        <NavHashLink exact to={"/"} className="app-bar__left tdn theme--white">
           <Logo/>
             <h2 className="mb0">JustCause</h2>
-        </NavLink>
+        </NavHashLink>
       );
     }
     else{
@@ -118,9 +118,9 @@ class Header extends Component {
   getConnectButton = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
-        <NavLink className="theme--white" exact to={"/dashboard"}>
+        <NavHashLink className="theme--white" exact to={"/dashboard"}>
           {this.getLaunchButton()}
-        </NavLink>
+        </NavHashLink>
         )
     }
     else{

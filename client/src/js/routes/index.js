@@ -11,10 +11,10 @@ import Header from '../components/Header'
 const routes = (
 	<main>
 		<Switch>
-			<Route exact path={"/"} component={Homepage}/>
-			<Route exact path={"/howitworks"} component={HowItWorks}/>
-			<Route exact path={"/dashboard"} component={Dashboard}/>
-			<Route exact path={"/search"} component={Search}/>
+			<Route path={"/"} component={Homepage}/>
+			<Route path={"/howitworks"} component={HowItWorks}/>
+			<Route path={"/dashboard"} component={Dashboard}/>
+			<Route path={"/search"} component={Search}/>
 			<Route exact path={"/search:address"} component={Search}/>
 		</Switch>
 		<Header/>

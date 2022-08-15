@@ -71,12 +71,12 @@ class Header extends Component {
     else{
       return (
         <Fragment>
-          <NavLink className="theme--white" exact to={"#dashboard"}>
+          <NavLink className="theme--white" exact to={"/dashboard"}>
             <div title="create and fund causes">
             <TextLink text="Dashboard"/>
             </div>
           </NavLink>
-          <NavLink className="theme--white" exact to={"#search"}>
+          <NavLink className="theme--white" exact to={"/search"}>
           <div title="find a pool by name or address">
             <TextLink text="Find Pool"/>
           </div>

@@ -95,7 +95,7 @@ class Header extends Component {
   generateNav = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
-        <Fragment className="theme--white">
+        <Fragment>
           <NavLink className="theme--white" exact to={"/howitworks"}>
             <TextLink className="theme--white" text="How it works"/>
           </NavLink>

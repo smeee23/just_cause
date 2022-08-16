@@ -21,7 +21,7 @@ $baseclass: 'takeover';
     &__line {
       width: 100%;
       height: 3px;
-      background: white;
+      background: $brand-grey-dark;
       transform-origin: center;
       transition: transform $easing2 $duration-short;
     }

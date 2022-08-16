@@ -213,7 +213,7 @@ class Card extends Component {
 
 				<div style={{display: "grid", width: "330px", flex: "0 0 330"}}>
 					<div className="card__body__column__nine">
-						<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+						<div style={{display: "grid", gridTemplateColumns:"108px 1fr"}}>
 							<div style={{gridColumn: 1}}>
 								{displayLogoLg(item.acceptedTokenString)}
 							</div>
@@ -222,41 +222,40 @@ class Card extends Component {
 								{this.getAPY(depositAPY)}
 							</div>
 						</div>
-						<div style={{display: "grid", gridTemplateColumns:"120px 1fr", paddingTop: "20px"}}>
+
+						<div title="user balance" style={{display: "grid", gridTemplateColumns:"70px 1fr", paddingTop: "20px"}}>
 							<div style={{gridColumn: 1}}>
-								<p>{"pool balance"}</p>
+								<p>{"Balance"}</p>
+							</div>
+							<div style={{gridColumn: 2, width: "250px"}}>
+								<p >{numberWithCommas(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+							</div>
+						</div>
+						<div title="pool balance" style={{display: "grid", gridTemplateColumns:"70px 1fr"}}>
+							<div style={{gridColumn: 1}}>
+								<p>{"Pool"}</p>
 							</div>
 							<div style={{gridColumn: 2, width: "250px"}}>
 								<p>{numberWithCommas(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
 							</div>
 						</div>
-
-						<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+						<div title={"unharvested "+item.acceptedTokenString+" for "+title} style={{display: "grid", gridTemplateColumns:"70px 1fr"}}>
 							<div style={{gridColumn: 1}}>
-								<p>{"your balance"}</p>
+								<p>{"Earned"}</p>
 							</div>
-							<div style={{gridColumn: 2, width: "250px"}}>
-								<p>{numberWithCommas(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+							<div style={{gridColumn: 2, width: "250"}}>
+							<p>{numberWithCommas(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
 							</div>
 						</div>
-
-						<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
+						<div title={item.acceptedTokenString+" harvested and sent to "+title} style={{display: "grid", gridTemplateColumns:"70px 1fr"}}>
 							<div style={{gridColumn: 1}}>
-								<p>{"claimed"}</p>
+								<p>{"Donated"}</p>
 							</div>
 							<div style={{gridColumn: 2, width: "250px"}}>
 								<p>{numberWithCommas(precise(item.claimedInterest, item.decimals))+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
 							</div>
 						</div>
 
-						<div style={{display: "grid", gridTemplateColumns:"120px 1fr"}}>
-							<div style={{gridColumn: 1}}>
-								<p>{"unclaimed"}</p>
-							</div>
-							<div style={{gridColumn: 2, width: "250"}}>
-							<p>{numberWithCommas(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
-							</div>
-						</div>
 						<div style={{marginRight: "auto"}}>
 							{this.displayClaim(item, address, title)}
 							{this.displayWithdraw(item, address, item.acceptedTokenString, title)}
@@ -427,9 +426,9 @@ class Card extends Component {
 				</div>
 
 				<div className="card__header--right">
-								<p title="USD value of your deposited tokens (approx.)" className="mb0">{userBalance === "" ? "" : "balance: " + userBalance}</p>
-								<p title="USD value of all pool tokens (approx.)" className="mb0">{totalBalance === "" ? "" : "pool: "+ totalBalance}</p>
-								<p title="USD value of all claimed and unclaimed donations (approx.)" className="mb0">{interestEarned === "" ? "" : "total earned: "+ interestEarned}</p>
+								<p title="USD value of your deposited tokens (approx.)" className="mb0">{userBalance === "" ? "" : "Balance: " + userBalance}</p>
+								<p title="USD value of all pool tokens (approx.)" className="mb0">{totalBalance === "" ? "" : "Pool: "+ totalBalance}</p>
+								<p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{interestEarned === "" ? "" : "Total Donated: "+ interestEarned}</p>
 								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 				</div>
 				</div>

@@ -19,25 +19,44 @@ class Header extends Component {
   constructor(props) {
 		super(props);
 
-		this.state = {
-			navIndex: this.getNavIndex(),
-		}
+    const loc = window.location.href;
+    let index;
+    if(loc.includes("dashboard")) index = 0;
+    if(loc.includes("search")) index = 1;
+
+    this.state = {
+      index: this.getNavIndex(index),
+    }
 	}
 
   getNavIndex = (index) => {
+    let i;
     if("inApp" === checkLocationForAppDeploy()){
       const loc = window.location.href;
       console.log("loc", loc, loc.includes("dashboard"));
       if(loc.includes("search") && index === 1){
         console.log("search", loc);
-        return 1;
+        i = 1;
       }
       else if (loc.includes("dashboard") && index === 0){
-        return 0;
+        i = 0;
       }
     }
-    return false;
+    return i;
   }
+
+  resetNavDash = ()=> {
+    this.setState({
+      index: 0,
+    })
+  }
+
+  resetNavSearch = () => {
+    this.setState({
+      index: 1,
+    })
+  }
+
   connectToWeb3 = async() => {
 		let addresses;
 		let provider;
@@ -95,12 +114,12 @@ class Header extends Component {
         <Fragment>
           <NavLink className="theme--white" exact to={"/dashboard"}>
             <div title="create and fund causes">
-            <TextLink text="Dashboard" navOn={this.getNavIndex(0)}/>
+            <TextLink text="Dashboard" navOn={this.state.index === 0 ? "on" : "off"} callback={() => this.resetNavDash()}/>
             </div>
           </NavLink>
           <NavLink className="theme--white" exact to={"/search"}>
             <div title="find a pool by name or address">
-              <TextLink text="Find Pool" navOn={this.getNavIndex(1)}/>
+              <TextLink text="Find Pool" navOn={this.state.index === 1 ? "on" : "off"} callback={() => this.resetNavSearch()}/>
             </div>
           </NavLink >
           <a className="theme--white" title="user documentation" href="https://docs.justcause.finance/" target="_blank">

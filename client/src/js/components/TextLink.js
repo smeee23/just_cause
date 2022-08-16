@@ -4,12 +4,15 @@ class TextLink extends Component {
 
   getNavHighlight = (navOn) => {
     console.log("navOn", navOn);
-    if(0 === navOn || 1 === navOn){
+    if(navOn === "on"){
       return(
         <div className="button__bar--outer">
           <div className="button__bar--inner-nav"/>
         </div>
       );
+    }
+    else if(navOn === "off"){
+      return;
     }
     else {
       return(

@@ -16,6 +16,28 @@ import { web3Modal } from "../App"
 
 class Header extends Component {
 
+  constructor(props) {
+		super(props);
+
+		this.state = {
+			navIndex: this.getNavIndex(),
+		}
+	}
+
+  getNavIndex = (index) => {
+    if("inApp" === checkLocationForAppDeploy()){
+      const loc = window.location.href;
+      console.log("loc", loc, loc.includes("dashboard"));
+      if(loc.includes("search") && index === 1){
+        console.log("search", loc);
+        return 1;
+      }
+      else if (loc.includes("dashboard") && index === 0){
+        return 0;
+      }
+    }
+    return false;
+  }
   connectToWeb3 = async() => {
 		let addresses;
 		let provider;
@@ -73,13 +95,13 @@ class Header extends Component {
         <Fragment>
           <NavLink className="theme--white" exact to={"/dashboard"}>
             <div title="create and fund causes">
-            <TextLink text="Dashboard"/>
+            <TextLink text="Dashboard" navOn={this.getNavIndex(0)}/>
             </div>
           </NavLink>
           <NavLink className="theme--white" exact to={"/search"}>
-          <div title="find a pool by name or address">
-            <TextLink text="Find Pool"/>
-          </div>
+            <div title="find a pool by name or address">
+              <TextLink text="Find Pool" navOn={this.getNavIndex(1)}/>
+            </div>
           </NavLink >
           <a className="theme--white" title="user documentation" href="https://docs.justcause.finance/" target="_blank">
             <TextLink text="Docs"/>

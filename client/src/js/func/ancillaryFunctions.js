@@ -250,7 +250,8 @@ export const displayLogo = (acceptedTokenString) => {
     logo = <Logo/>
   }
 
-  return <div style={{marginRight: "2px"}}>{logo}</div>
+  //return <div style={{marginRight: "2px"}}>{logo}</div>
+  return logo
 }
 
 export const checkLocationForAppDeploy = () => {

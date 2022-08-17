@@ -46,13 +46,30 @@ class Card extends Component {
 
 		this.state = {
 			open: false,
-			selectedTokenIndex: 0,
+			selectedTokenIndex: this.highestDeposit(this.props.acceptedTokenInfo),
 			tokenButtons: []
 		}
 	}
 
-  componentDidMount = async () => {
+	highestDeposit = (acceptedTokenInfo) =>{
+		let highVal = 0.0;
+		let highIndex = 0;
+		for(let i = 0; i <  acceptedTokenInfo.length; i++){
+			const item = acceptedTokenInfo[i];
+			const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
+			console.log("item", item.userBalance, priceUSD, getFormatUSD(precise(item.userBalance, item.decimals), priceUSD));
+			const usdAmount = precise(item.userBalance, item.decimals) * priceUSD;
+			if(usdAmount > highVal){
+				highVal = usdAmount;
+				highIndex = i;
+			}
+		}
+		return highIndex;
+	}
+
+  	componentDidMount = async () => {
 		window.scrollTo(0,0);
+		console.log("token info 2", this.props.acceptedTokenInfo);
 		try{
 			window.scrollTo(0,0);
 			if(this.props.deployInfo) await this.props.updateDeployInfo('');

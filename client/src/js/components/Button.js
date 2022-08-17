@@ -83,7 +83,7 @@ class ButtonSmall extends Component {
         <div className="button__items">
           { text ? (
             <div className="button__itemsm button__text">
-              {logo}
+             <div style={{paddingRight: "5px"}}> {logo} </div>
               <p className="mb0">{ text }</p>
             </div>
           ) : null }
@@ -126,7 +126,7 @@ class Button extends Component {
         <div className="button__items">
           { text ? (
             <div className="button__item button__text">
-              {logo}
+              <div style={{paddingRight: "5px"}}>{logo}</div>
               <p className="mb0">{ text }</p>
             </div>
           ) : null }

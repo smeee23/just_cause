@@ -34,7 +34,7 @@ class Homepage extends Component {
 			<Fragment>
 				<Shapes/>
 
-				
+
 					<section className="page-section page-section--center horizontal-padding">
 						<div style={{width:500, height:window.innerHeight/1.2, /*background: "#3FA7D6", border:"20px", borderRadius:"50%",*/ display:"flex", gap:"2", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
 
@@ -47,7 +47,7 @@ class Homepage extends Component {
 										<div style={{marginBottom: "5px", marginLeft: "20px", display:"flex", flexDirection: "wrap", alignItems:"left", justifyContent:"left"}}>
 											<a title="source code" href="https://github.com/smeee23/just_cause" target="_blank"><Button github="github"/></a>
 											<a title="Twitter" style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank"><Button tweet="tweet"/></a>
-											<a title="Discord" style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button discord="discord"/></a>
+											{/*<a title="Discord" style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button discord="discord"/></a>*/}
 											<div title="share JustCause" style={{marginLeft: "20px"}}>
 												<Button share="share" callback={async() => await this.share()}/>
 											</div>

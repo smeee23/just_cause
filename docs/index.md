@@ -9,6 +9,7 @@ title: about
 <style>
 body {
   font-family: "Lato", sans-serif;
+  margin-left: 220px;
 }
 
 .hidden {

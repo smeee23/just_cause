@@ -15,7 +15,7 @@ import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateDeployTxResult } from  "../actions/deployTxResult";
-import {updateDeployInfo} from "../actions/deployInfo";
+import { updateDeployInfo} from "../actions/deployInfo";
 import { updateDepositAmount } from  "../actions/depositAmount";
 import { updateWithdrawAmount } from  "../actions/withdrawAmount";
 import { updateClaim } from "../actions/claim";
@@ -34,13 +34,19 @@ class Dashboard extends Component {
 		super(props);
 
 		this.state = {
-			selectedTokenIndex: 0,
+			openTabIndex: 0,
 			hideLowBalance: false,
 		}
 	}
 	componentDidMount = async () => {
 		try{
 			window.scrollTo(0,0);
+			let currentTab = Number(localStorage.getItem('openTabIndex'));
+			if(currentTab){
+				this.setState({
+					openTabIndex: currentTab
+				});
+			}
 			if(this.props.deployInfo) await this.props.updateDeployInfo('');
 			if(this.props.depositAmount) await this.props.updateDepositAmount('');
 			if(this.props.withdrawAmount) await this.props.updateWithdrawAmount('');
@@ -61,6 +67,18 @@ class Dashboard extends Component {
 		console.log('component did update');
 	}
 
+	updateVerifiedPoolInfo = async(info) => {
+		await this.props.updateVerifiedPoolInfo(info);
+	}
+
+	updateOwnerPoolInfo = async(info) => {
+		await this.props.updateOwnerPoolInfo(info);
+	}
+
+	updateUserDepositPoolInfo = async(info) => {
+		await this.props.updateUserDepositPoolInfo(info);
+	}
+
 	getTxResultModal = () => {
 		if(this.props.txResult){
 			let modal = <Modal isOpen={true}>
@@ -75,9 +93,18 @@ class Dashboard extends Component {
 												this.props.tokenMap,
 												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo, this.props.userDepositPoolInfo]);
 
-				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
-				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
-				if(poolLists[2]) this.props.updateUserDepositPoolInfo(poolLists[2]);
+				if(poolLists[0]){
+					this.updateVerifiedPoolInfo(poolLists[0]);
+					localStorage.setItem("verifiedPoolInfo", JSON.stringify(poolLists[0]));
+				}
+				if(poolLists[1]){
+					this.updateOwnerPoolInfo(poolLists[1]);
+					localStorage.setItem("ownerPoolInfo", JSON.stringify(poolLists[1]));
+				}
+				if(poolLists[2]){
+					this.updateUserDepositPoolInfo(poolLists[2]);
+					localStorage.setItem("userDepositPoolInfo", JSON.stringify(poolLists[2]));
+				}
 			}
 			return modal;
 		}
@@ -98,13 +125,20 @@ class Dashboard extends Component {
 												this.props.poolTrackerAddress,
 												this.props.tokenMap,
 												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo]);
-				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
-				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
+				if(poolLists[0]) {
+					this.updateVerifiedPoolInfo(poolLists[0]);
+					localStorage.setItem("verifiedPoolInfo", JSON.stringify(poolLists[0]));
+				}
+				if(poolLists[1]){
+					this.updateOwnerPoolInfo(poolLists[1]);
+					localStorage.setItem("ownerPoolInfo", JSON.stringify(poolLists[1]));
+				}
 			}
 
 			return modal;
 		}
 	}
+
 	getNewPoolModal = () => {
 		if(this.props.deployInfo){
 			let modal = <LargeModal isOpen={true}><NewPoolModal poolInfo={this.props.deployInfo}/></LargeModal>;
@@ -140,8 +174,9 @@ class Dashboard extends Component {
 		if(this.props.share) await this.props.updateShare("");
 		if(this.props.claim)  await this.props.updateClaim('');
 		this.setState({
-			selectedTokenIndex: index,
+			openTabIndex: index,
 		});
+		localStorage.setItem('openTabIndex', index);
 	}
 	createOptionButtons = () => {
 		let buttonHolder = [];
@@ -150,7 +185,9 @@ class Dashboard extends Component {
 		for(let i = 0; i < buttonStrings.length; i++){
 			const name = buttonStrings[i];
 			let isDisabled = false;
-			if(i === this.state.selectedTokenIndex) isDisabled = true;
+			if(i === this.state.openTabIndex){
+				isDisabled = true;
+			}
 			buttonHolder.push(<div title={infoStrings[i]} key={i}><Button text={name} disabled={isDisabled} callback={() => this.setSelectedToken(i)}/></div>)
 		}
 		buttonHolder.push(<div style={{marginLeft: "30px"}} key={4} title="create your own cause"><Button text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/></div>);
@@ -159,9 +196,9 @@ class Dashboard extends Component {
 
 	getTabTitle = () => {
 		let title;
-		if(this.state.selectedTokenIndex === 0) title = "Verified Pools"
-		else if (this.state.selectedTokenIndex === 1) title = "Your Causes"
-		else if (this.state.selectedTokenIndex === 2) title = "Contributions"
+		if(this.state.openTabIndex === 0) title = "Verified Pools";
+		else if (this.state.openTabIndex === 1) title = "Your Causes";
+		else if (this.state.openTabIndex === 2) title = "Contributions";
 		return (
 			<div style={{marginTop: "100px", display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center"}}>
 				<h2 style={{marginTop: "50px"}}> {title}</h2>
@@ -172,9 +209,9 @@ class Dashboard extends Component {
 	getTabInfo = () => {
 
 		let info;
-		if(this.state.selectedTokenIndex === 0) info = "The recipients of verified pools are known and established entities";
-		else if (this.state.selectedTokenIndex === 1) info = "Causes for which you are the receiving address";
-		else if (this.state.selectedTokenIndex === 2) info = "Causes to which you have contributed";
+		if(this.state.openTabIndex === 0) info = "The recipients of verified pools are known and established entities";
+		else if (this.state.openTabIndex === 1) info = "Causes for which you are the receiving address";
+		else if (this.state.openTabIndex === 2) info = "Causes to which you have contributed";
 		return (
 			<div style={{marginTop: "25px", maxWidth: "300px", alignItems:"center", justifyContent:"center"}}>
 				<p className="mr">{info}</p>
@@ -190,17 +227,17 @@ class Dashboard extends Component {
 		});
 	}
 	getApplicationLink = () => {
-		if(this.state.selectedTokenIndex === 0){
+		if(this.state.openTabIndex === 0){
 			return (
 				<div style={{paddingBottom:"62.5px"}}/>
 			);
 		}
-		else if (this.state.selectedTokenIndex === 1){
+		else if (this.state.openTabIndex === 1){
 			return (
 				<div style={{paddingBottom:"62.5px"}}/>
 			);
 		}
-		else if (this.state.selectedTokenIndex === 2){
+		else if (this.state.openTabIndex === 2){
 			return (
 				<div title={this.state.hideLowBalance ? "show all pools contributed to" : "hide inactive pools"} style={{paddingBottom:"20px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
 					<ButtonSmall text={this.state.hideLowBalance ? "Show All" : "Hide Zero/Low Balances"} callback={() => this.setHideLowBalances()}/>
@@ -211,7 +248,7 @@ class Dashboard extends Component {
 
 	redirectWindowGoogleApplication = () => {
 		window.open("https://docs.google.com/forms/d/e/1FAIpQLSfvejwW-3zNhy4H3hvcIDZ2WGUH422Zj1_yVouRH4tTN8kQFg/viewform?usp=sf_link", "_blank")
-	  }
+	}
 	createCardInfo = () => {
 		if(this.props.activeAccount === "Connect" && !web3Modal.cachedProvider){
 			return(
@@ -221,29 +258,38 @@ class Dashboard extends Component {
 
 					<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
 
-					<a style={{ textDecoration: "none"}} title="link to Polygon POS Bridge" href="https://docs.justcause.finance/" target="_blank">
-						<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >On Polygon POS Network</h2>
+					<a style={{ textDecoration: "none"}} title="New to Polygon? Follow link to learn more" href="https://polygon.technology/" target="_blank">
+						<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Connect to Polygon to view causes</h2>
 					</a>
 				</div>
 			</div>
 			);
 		}
-		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.selectedTokenIndex];
+		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.openTabIndex];
 
-		if(poolInfo === "No Verified Pools") return
 
-		if(!this.props.tokenMap){
+		//if(poolInfo === "No Verified Pools") return
+
+		if(!this.props.tokenMap || !poolInfo){
 			return (<div className="card__loader_wait" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
 					<h2>Loading Pools...</h2>
 				   </div>);
 				}
+
+		if((this.props.verifiedPoolAddrs.length > 5 && this.state.openTabIndex === 0) ||
+		   (this.props.ownerPoolAddrs.length > 5 && this.state.openTabIndex === 1) ||
+		   (this.props.userDepositPoolAddrs.length > 5 && this.state.openTabIndex === 2)){
+
+			console.log("length hit", this.state.openTabIndex)
+		}
+
 		let cardHolder = [];
 		for(let i = 0; i < poolInfo.length; i++){
 			const item = poolInfo[i];
 
 			const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
 
-			if(this.state.hideLowBalance && this.state.selectedTokenIndex === 2){
+			if(this.state.hideLowBalance && this.state.openTabIndex === 2){
 				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){
 					cardHolder.push(
 						<Card
@@ -322,7 +368,9 @@ const mapStateToProps = state => ({
 	verifiedPoolAddrs: state.verifiedPoolAddrs,
 	verifiedPoolInfo: state.verifiedPoolInfo,
 	ownerPoolInfo: state.ownerPoolInfo,
+	ownerPoolAddrs: state.ownerPoolAddrs,
 	userDepositPoolInfo: state.userDepositPoolInfo,
+	userDepositPoolAddrs: state.userDepositPoolAddrs,
 	poolTrackerAddress: state.poolTrackerAddress,
 	pendingTx: state.pendingTx,
 	txResult: state.txResult,

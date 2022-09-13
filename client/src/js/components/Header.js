@@ -10,7 +10,8 @@ import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
 import { updateConnect } from "../actions/connect"
-import { checkLocationForAppDeploy, displayTVL, getConnection } from "../func/ancillaryFunctions"
+import { checkLocationForAppDeploy, displayTVL, getConnection, redirectWindowBlockExplorer } from "../func/ancillaryFunctions"
+import Close from "./logos/Close"
 
 import { web3Modal } from "../App"
 
@@ -87,10 +88,13 @@ class Header extends Component {
       window.location.reload(false);
     }
     else{
-        await web3Modal.clearCachedProvider();
-        window.location.reload(false);
+        redirectWindowBlockExplorer(this.props.activeAccount, 'address', this.props.networkId);
     }
 	}
+  disconnectButtonHit = async() => {
+    await web3Modal.clearCachedProvider();
+    window.location.reload(false);
+  }
 
   generateNav = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
@@ -156,6 +160,28 @@ class Header extends Component {
     return <ButtonSmall text={"Lauch App"} icon={"poolShape5"}/>;
   }
 
+  getAccountButtons = () => {
+    if(this.props.activeAccount === "Connect"){
+      return(
+        <div title={"connect wallet"}>
+          <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"people"} callback={this.connectButtonHit}/>
+        </div>
+      );
+    }
+    else{
+      return(
+        <div style={{display: "flex", flexDirection: "wrap", gap: "2px"}}>
+          <div title={"view address on block explorer"} >
+            <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/>
+          </div>
+            <div title={"disconnect wallet"} style={{marginTop: "-5px"}}>
+              <Button close="close" callback={this.disconnectButtonHit}/>
+            </div>
+        </div>
+      );
+    }
+  }
+
   getConnectButton = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
@@ -165,7 +191,7 @@ class Header extends Component {
         )
     }
     else{
-      return <div title={this.displayInfo(this.props.activeAccount)}> <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/> </div>
+      return this.getAccountButtons();
     }
   }
   displayAddress = (address) => {

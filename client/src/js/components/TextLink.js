@@ -3,7 +3,6 @@ import React, {Component} from "react"
 class TextLink extends Component {
 
   getNavHighlight = (navOn) => {
-    console.log("navOn", navOn);
     if(navOn === "on"){
       return(
         <div className="button__bar--outer">

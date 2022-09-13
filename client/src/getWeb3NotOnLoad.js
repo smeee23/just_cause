@@ -1,4 +1,3 @@
-import { web3 } from "@openzeppelin/test-helpers/src/setup";
 import Web3 from "web3";
 
 import { web3Modal } from "./js/App"

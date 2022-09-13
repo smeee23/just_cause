@@ -5,18 +5,37 @@ import { Button } from '../Button'
 
 import { updateTokenMap } from "../../actions/tokenMap"
 
-import {twitterShare, facebookShare, linkedInShare} from '../../func/ancillaryFunctions';
+import {twitterShare, facebookShare, linkedInShare, copyToClipboard} from '../../func/ancillaryFunctions';
 
 class ShareModal extends Component {
 
-  copyToClipboard = (str) => {
-    if (navigator && navigator.clipboard && navigator.clipboard.writeText)
-    if(navigator.clipboard.writeText(str)){
-      alert("url copied to clipboard")
-      return navigator.clipboard.writeText(str);
-    }
-    return Promise.reject('The Clipboard API is not available.');
-  }
+
+  constructor(props) {
+		super(props);
+
+		this.state = {
+			copied: false,
+		}
+	}
+
+  copyToClipboard = (receiver) => {
+		copyToClipboard(receiver);
+
+		this.setState({
+			copied: true,
+		});
+	}
+
+  getCopyButton = (url) => {
+		if(this.state.copied){
+			return (
+        <div title="copy receiving address to clipboard"><Button copyPaste_check="copy" disable="true" callback={() => this.copyToClipboard(url)}/></div>
+      );
+		}
+		return (
+			<div title="copy receiving address to clipboard"><Button copyPaste="copy" disable="true" callback={() => this.copyToClipboard(url)}/></div>
+		);
+	}
 
   getBody = (info) => {
     if(info.poolAddress === "homepage"){
@@ -26,7 +45,7 @@ class ShareModal extends Component {
             <Button tweet_d="tweet_d" callback={() => twitterShare("https://www.justcause.finance/#/", "Create and donate to fundraisers without spending your hard earned crypto with JustCause \n @JustCauseDev \n", "")}/>
             <Button facebook="facebook" callback={() => facebookShare("https://www.justcause.finance/#/", "")} />
             <Button linkedin="linkedin" callback={() => linkedInShare("https://www.justcause.finance/#/", "Create and donate to fundraisers without spending your hard earned crypto with JustCause \n @JustCauseDev \n", "", "test")}/>
-            <div title="copy link to main page"><Button copy="copy" disable="true" callback={() => this.copyToClipboard("https://www.justcause.finance/#/")}/></div>
+            {this.getCopyButton("https://www.justcause.finance/#/")}
           </div>
       );
     }
@@ -37,7 +56,7 @@ class ShareModal extends Component {
             <Button tweet_d="tweet_d" callback={() => twitterShare("https://www.justcause.finance/#/just_cause/search?address=", "Donate to "+info.name+" with lossless donations at JustCause crowdfunding \n @JustCauseDev \n", info.poolAddress)}/>
             <Button facebook="facebook" callback={() => facebookShare("https://www.justcause.finance/#/just_cause/search?address=", info.poolAddress)} />
             <Button linkedin="linkedin" callback={() => linkedInShare("https://www.justcause.finance/#/just_cause/search?address=", "Donate to "+info.name, info.poolAddress, "test")}/>
-            <div title="copy link to pool"><Button copy="copy"  callback={() => this.copyToClipboard("https://www.justcause.finance/#/just_cause/search?address="+info.poolAddress)}/></div>
+            {this.getCopyButton("https://www.justcause.finance/#/just_cause/search?address="+info.poolAddress)}
           </div>
       );
     }

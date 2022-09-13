@@ -256,13 +256,23 @@ export const displayLogo = (acceptedTokenString) => {
 
 export const checkLocationForAppDeploy = () => {
   const urls = ["https://www.justcause.finance/#/", "https://www.justcause.finance/#/just_cause/howitworks", "https://www.justcause.finance/#/just_cause/",
-              "https://www.justcause.finance/#/just_cause", "http://localhost:3000/", "http://localhost:3000/howitworks"];
+              "https://www.justcause.finance/#/just_cause"];
 
-  if(urls.includes(window.location.href)) return "outsideApp";
+  const pathnames = ["/howitworks", "/just_cause", "/"]
+  if(urls.includes(window.location.href) || pathnames.includes(window.location.pathname)) return "outsideApp";
 
   else if((window.location.href).includes("search?address=")) return "inSearch"
 
   return "inApp";
+}
+
+export const copyToClipboard = (str) => {
+  if (navigator && navigator.clipboard && navigator.clipboard.writeText)
+  if(navigator.clipboard.writeText(str)){
+    //alert(str + " copied to clipboard")
+    return navigator.clipboard.writeText(str);
+  }
+  return Promise.reject('The Clipboard API is not available.');
 }
 
 export const displayLogoLg = (acceptedTokenString) => {

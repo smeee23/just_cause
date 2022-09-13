@@ -1,6 +1,5 @@
 import React, {Component} from "react"
 import classNames from "classnames";
-//import { Fragment } from "react";
 
 import { connect } from "react-redux";
 
@@ -8,11 +7,6 @@ import Icon from "./Icon";
 import palette from "../utils/palette";
 
 import { Button, ButtonSmall } from '../components/Button';
-import TextLink from "./TextLink";
-
-import getWeb3 from "../../getWeb3NotOnLoad";
-import PoolTracker from "../../contracts/PoolTracker.json";
-import ERC20Instance from "../../contracts/IERC20.json";
 
 import { updatePendingTx } from "../actions/pendingTx";
 import { updateTxResult } from  "../actions/txResult";
@@ -27,7 +21,7 @@ import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateShare } from  "../actions/share";
 
 import { getBalance, getContractInfo } from '../func/contractInteractions';
-import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, numberWithCommas} from '../func/ancillaryFunctions';
+import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, numberWithCommas, copyToClipboard} from '../func/ancillaryFunctions';
 import { verifiedPoolMap } from '../func/verifiedPoolMap';
 import { Modal, SmallModal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
@@ -47,7 +41,8 @@ class Card extends Component {
 		this.state = {
 			open: false,
 			selectedTokenIndex: this.highestDeposit(this.props.acceptedTokenInfo),
-			tokenButtons: []
+			tokenButtons: [],
+			copied: false,
 		}
 	}
 
@@ -57,7 +52,6 @@ class Card extends Component {
 		for(let i = 0; i <  acceptedTokenInfo.length; i++){
 			const item = acceptedTokenInfo[i];
 			const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
-			console.log("item", item.userBalance, priceUSD, getFormatUSD(precise(item.userBalance, item.decimals), priceUSD));
 			const usdAmount = precise(item.userBalance, item.decimals) * priceUSD;
 			if(usdAmount > highVal){
 				highVal = usdAmount;
@@ -69,7 +63,6 @@ class Card extends Component {
 
   	componentDidMount = async () => {
 		window.scrollTo(0,0);
-		console.log("token info 2", this.props.acceptedTokenInfo);
 		try{
 			window.scrollTo(0,0);
 			if(this.props.deployInfo) await this.props.updateDeployInfo('');
@@ -126,6 +119,13 @@ class Card extends Component {
 
 	}
 
+	copyToClipboard = (receiver) => {
+		copyToClipboard(receiver);
+
+		this.setState({
+			copied: true,
+		});
+	}
 	createTokenButtons = (acceptedTokenInfo) => {
 		if(!this.state.open) return;
 		if (!acceptedTokenInfo) return 'no data';
@@ -142,10 +142,13 @@ class Card extends Component {
 	notifyLoad = () => {
 		console.log('image Loaded')
 	}
-	getPoolImage = (picHash) => {
+	getPoolImage = (picHash, header) => {
 		if(!picHash){
 			//default JustCause image
 			picHash = "bafybeigop55rl4tbkhwt4k4cvd544kz2zfkpdoovrsflqqkal2v4ucixxu"
+		}
+		if(header){
+			return <img alt="" style={{width:'auto', maxWidth:'32px', height:'auto'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
 		}
 		return <img alt="" style={{width:'auto', maxWidth:'300px', height:'auto'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
 	}
@@ -184,6 +187,18 @@ class Card extends Component {
 		}
 
 	}
+
+	getCopyButton = (receiver) => {
+		if(this.state.copied){
+			return (
+				<div title="copy receiving address to clipboard"><Button copy_white_check="copy" disable="true" callback={() => this.copyToClipboard(receiver)}/></div>
+			);
+		}
+		return (
+			<div title="copy receiving address to clipboard"><Button copy_white="copy" disable="true" callback={() => this.copyToClipboard(receiver)}/></div>
+		);
+	}
+
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified) => {
 		if (!acceptedTokenInfo) return '';
 		if (!this.props.tokenMap) return '';
@@ -207,8 +222,11 @@ class Card extends Component {
 								{this.getIsVerified(isVerified)}
 							</div>
 							<div title="view on block explorer" style={{marginLeft: "8px"}}>
+								<div style={{display: "flex", flexDirection: "wrap", gap: "3px"}}>
+									<Button text={"Receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address', this.props.networkId)}/>
+									{this.getCopyButton(receiver)}
+								</div>
 								<Button text={"Pool "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address', this.props.networkId)}/>
-								<Button text={"Receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address', this.props.networkId)}/>
 							</div>
 						</div>
 						</div>
@@ -218,11 +236,11 @@ class Card extends Component {
 					</div>
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
 						<p style={{marginTop: "20px"}} className="mr">{about}</p>
-						<div style={{display: "flex", flexDirection: "wrap", gap: "32px"}}>
+						<div style={{display: "flex", flexDirection: "wrap", gap: "6px"}}>
+							{this.getVerifiedLinks(isVerified, title)}
 							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>
 								<Button share="share" callback={async() => await this.share(address, title )} />
 							</div>
-							{this.getVerifiedLinks(isVerified, title)}
 						</div>
 
 					</div>
@@ -429,25 +447,25 @@ class Card extends Component {
 		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
 		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title, isVerified);
-
+		
 		return (
 			<div className={classnames}>
 				<div className="card__header">
 				{this.state.open ? "" : <Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>}
-				<h4 className="mb0">
-					{this.state.open ? "" : title}
-				</h4>
+					<h4 className="mb0">
+						{this.state.open ? "" : title}
+					</h4>
 
-				<div className="card__token__buttons" style={{paddingLeft:"10px", display:"flex", flexWrap:"wrap"}}>
-					{tokenButtons}
-				</div>
+					<div className="card__token__buttons" style={{paddingLeft:"10px", display:"flex", flexWrap:"wrap"}}>
+						{tokenButtons}
+					</div>
 
-				<div className="card__header--right">
-								<p title="USD value of your deposited tokens (approx.)" className="mb0">{userBalance === "" ? "" : "Balance: " + userBalance}</p>
-								<p title="USD value of all pool tokens (approx.)" className="mb0">{totalBalance === "" ? "" : "Pool: "+ totalBalance}</p>
-								<p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{interestEarned === "" ? "" : "Total Donated: "+ interestEarned}</p>
-								<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
-				</div>
+					<div className="card__header--right">
+									<p title="USD value of your deposited tokens (approx.)" className="mb0">{userBalance === "" ? "" : "Balance: " + userBalance}</p>
+									<p title="USD value of all pool tokens (approx.)" className="mb0">{totalBalance === "" ? "" : "Pool: "+ totalBalance}</p>
+									<p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{interestEarned === "" ? "" : "Total Donated: "+ interestEarned}</p>
+									<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
+					</div>
 				</div>
 				{tokenInfo}
 				<div className="card__bar"/>

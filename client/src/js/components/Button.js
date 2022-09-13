@@ -11,7 +11,11 @@ import Discord from "./logos/Discord";
 import Facebook from "./logos/Facebook";
 import LinkedIn from "./logos/LinkedIn";
 import Share from "./logos/Share";
-import Copy from "./logos/Copy"
+import Copy from "./logos/Copy";
+import CopyCheck from "./logos/CopyCheck";
+import CopyWhite from "./logos/CopyWhite";
+import CopyWhiteCheck from "./logos/CopyWhiteCheck"
+import Close from "./logos/Close"
 
 class ButtonExtraSmall extends Component {
 
@@ -104,15 +108,15 @@ class ButtonSmall extends Component {
 
 class Button extends Component {
 
-  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d, copy) => {
-    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d && !copy){
+  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close) => {
+    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d && !copyPaste && !copy_white && !copy_white_check && !copyPaste_check && !close){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
     }
   }
 	render() {
-		const { text, icon, tweet, tweet_d, share_d, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo, copy, info } = this.props;
+		const { text, icon, tweet, tweet_d, share_d, close, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo, copyPaste, info, copy_white , copy_white_check, copyPaste_check} = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -159,11 +163,23 @@ class Button extends Component {
           { share ? (
               <Share/>
           ) : null }
-          { copy ? (
+          { copyPaste ? (
               <Copy/>
           ) : null }
+          { copyPaste_check ? (
+              <CopyCheck/>
+          ) : null }
+          { copy_white ? (
+              <CopyWhite/>
+          ) : null }
+          { copy_white_check ? (
+              <CopyWhiteCheck/>
+          ) : null }
+          { close ? (
+              <Close/>
+          ) : null }
         </div>
-        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, share_d, copy)}
+        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close)}
       </button>
 		);
 	}

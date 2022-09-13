@@ -29,13 +29,10 @@ import { getTokenMap, getAaveAddressProvider } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
-import {getAbout, getIpfsData} from './func/ipfs';
-
-var cors = require('cors')
 
 const providerOptions = {
     walletconnect: {
-        package: WalletConnectProvider, // required
+        package: WalletConnectProvider,
         options: {
           rpc: {
             80001: "https://polygon-mumbai.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
@@ -44,14 +41,14 @@ const providerOptions = {
         }
     },
 	coinbasewallet: {
-		package: CoinbaseWalletSDK, // Required
+		package: CoinbaseWalletSDK,
 		options: {
-		  appName: "JustCause", // Required
-		  infuraId: "c6e0956c0fb4432aac74aaa7dfb7687e", // Optional if `infuraId` is provided; otherwise it's required
+		  appName: "JustCause",
+		  infuraId: "c6e0956c0fb4432aac74aaa7dfb7687e",
 		}
 	},
     authereum: {
-        package: Authereum // required
+        package: Authereum
     }
 };
 
@@ -71,6 +68,30 @@ class App extends Component {
 
 				if("inApp" === checkLocationForAppDeploy() || "inSearch" === checkLocationForAppDeploy() ){
 					if(web3Modal.cachedProvider || "inSearch" === checkLocationForAppDeploy() ){
+						const verifiedPoolInfo = localStorage.getItem("verifiedPoolInfo");
+						if(verifiedPoolInfo){
+							await this.props.updateVerifiedPoolInfo(JSON.parse(verifiedPoolInfo));
+							console.log("verifiedPoolInfo from storage", typeof JSON.parse(verifiedPoolInfo));
+						}
+
+						const ownerPoolInfo = localStorage.getItem("ownerPoolInfo");
+						if(ownerPoolInfo){
+							await this.props.updateOwnerPoolInfo(JSON.parse(ownerPoolInfo));
+							console.log("ownerPoolInfo from storage", typeof JSON.parse(ownerPoolInfo));
+						}
+
+						const userDepositPoolInfo = localStorage.getItem("userDepositPoolInfo");
+						console.log("userDeposit", userDepositPoolInfo)
+						if(userDepositPoolInfo){
+							await this.props.updateUserDepositPoolInfo(JSON.parse(userDepositPoolInfo));
+							console.log("userDepositPoolInfo from storage", typeof JSON.parse(userDepositPoolInfo));
+						}
+
+						const tokenMap = localStorage.getItem("tokenMap");
+						if(tokenMap){
+							await this.props.updateTokenMap(JSON.parse(tokenMap));
+							console.log("tokenMap from storage", JSON.parse(tokenMap));
+						}
 						await this.getAccounts();
 
 						if (this.props.activeAccount){
@@ -94,7 +115,7 @@ class App extends Component {
 			}
 			else{
 				alert(
-				`Failed to load web3, accounts, or contract. Check console for details. If not connected to site please select the Connect Button`,
+					`Failed to load web3, accounts, or contract. Check console for details. If not connected to site please select the Connect Button`,
 			);
 			}
 			console.error(error);
@@ -115,10 +136,10 @@ class App extends Component {
 		this.setPoolTrackAddress(this.poolTrackerAddress);
 		const tokenMap = getTokenMap(this.networkId);
 		this.setTokenMapState(tokenMap);
-		this.setPoolStateVerified(this.props.activeAccount);
+		this.setPoolStateFront(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
 		this.setAavePoolAddress(aaveAddressesProvider)
-		this.setPoolStateOthers(this.props.activeAccount);
+		this.setPoolStateAll(this.props.activeAccount);
 	}
 
 	componentWillUnmount() {
@@ -126,21 +147,17 @@ class App extends Component {
 	}
 
 	connectToWeb3 = async() => {
-		let addresses;
 		let provider;
 		try {
 			provider = await web3Modal.connect();
-			//addresses = await provider.request({ method: 'eth_requestAccounts' });
 		}
 		catch (error) {
 			console.error(error);
 		}
-		//return {addresses, provider};
 		return provider;
 	}
 
 	getAccounts = async() => {
-		//const {addresses, provider} = await this.connectToWeb3();
 		const provider = await this.connectToWeb3();
 		this.provider = provider;
 
@@ -152,6 +169,7 @@ class App extends Component {
 
 	getAaveData = async() => {
 		let results = await this.AaveProtocolDataProviderInstance.methods.getAllATokens().call();
+		return results;
 	}
 
 	setAavePoolAddress = async(aavePoolAddressesProviderAddress) => {
@@ -198,6 +216,7 @@ class App extends Component {
 
 		}
 		await this.props.updateTokenMap(tokenMap);
+		localStorage.setItem("tokenMap", JSON.stringify(tokenMap));
 	}
 
 	calculateAPY = (liquidityRate) => {
@@ -213,32 +232,75 @@ class App extends Component {
 		return userOwnedPools;
 	}
 
-	setPoolStateVerified = async(activeAccount) => {
+	setPoolStateFront = async(activeAccount) => {
+		const front = 10;
 		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
-		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address);
-		const userBalancePools = depositBalancePools.balances;
-
-		const verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools);
-
-		await this.props.updateVerifiedPoolAddrs(verifiedPools);
-
-		await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
-	}
-
-	setPoolStateOthers = async(activeAccount) => {
 		const ownerPools = await this.getOwnerAddress(activeAccount);
 		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address);
 		const userDepositPools = depositBalancePools.depositPools;
 		const userBalancePools = depositBalancePools.balances;
 
-		const ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools);
-		const userDepositPoolInfo = await getPoolInfo(userDepositPools, getTokenMap(this.networkId),  userBalancePools);
+		let frontPools = verifiedPools.length > front ? verifiedPools.slice(0, front) : verifiedPools;
+		const verifiedPoolInfo = await getPoolInfo(frontPools, getTokenMap(this.networkId), userBalancePools);
+
+		frontPools = ownerPools.length > front ? ownerPools.slice(0, front) : ownerPools;
+		const ownerPoolInfo = await getPoolInfo(frontPools, getTokenMap(this.networkId), userBalancePools, this.props.verifiedPoolInfo);
+
+		let knownPools = ownerPoolInfo;
+		for(const key in this.props.verifiedPoolInfo){
+			knownPools[("v_"+key)] = this.props.verifiedPoolInfo[key];
+		}
+
+		frontPools = userDepositPools.length > front ? userDepositPools.slice(0, front) : userDepositPools;
+		const userDepositPoolInfo = await getPoolInfo(frontPools, getTokenMap(this.networkId),  userBalancePools, knownPools);
+
+		await this.props.updateVerifiedPoolAddrs(verifiedPools);
+		await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
 
 		await this.props.updateOwnerPoolAddrs(ownerPools);
 		await this.props.updateUserDepositPoolAddrs(userDepositPools);
 
 		await this.props.updateOwnerPoolInfo(ownerPoolInfo);
 		await this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
+
+		localStorage.setItem("verifiedPoolInfo", JSON.stringify(verifiedPoolInfo));
+		localStorage.setItem("ownerPoolInfo", JSON.stringify(ownerPoolInfo));
+		localStorage.setItem("userDepositPoolInfo", JSON.stringify(userDepositPoolInfo));
+	}
+
+	setPoolStateAll = async(activeAccount) => {
+		let front = 10;
+		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
+		const ownerPools = await this.getOwnerAddress(activeAccount);
+		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address);
+		const userDepositPools = depositBalancePools.depositPools;
+		const userBalancePools = depositBalancePools.balances;
+
+		let verifiedPoolInfo;
+		if(verifiedPools.length > front){
+			verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools);
+			await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
+			localStorage.setItem("verifiedPoolInfo", JSON.stringify(verifiedPoolInfo));
+		}
+
+		let ownerPoolInfo;
+		if(ownerPools.length > front){
+			ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools, this.props.verifiedPoolInfo);
+			await this.props.updateUserDepositPoolAddrs(userDepositPools);
+			localStorage.setItem("ownerPoolInfo", JSON.stringify(ownerPoolInfo));
+		}
+
+		let userDepositPoolInfo;
+		if(userDepositPools.length > front){
+			let knownPools = ownerPoolInfo;
+			for(const key in this.props.verifiedPoolInfo){
+				knownPools[("v_"+key)] = this.props.verifiedPoolInfo[key];
+			}
+
+			userDepositPoolInfo = await getPoolInfo(userDepositPools, getTokenMap(this.networkId),  userBalancePools, knownPools);
+			await this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
+			localStorage.setItem("userDepositPoolInfo", JSON.stringify(userDepositPoolInfo));
+		}
 	}
 
 	render() {

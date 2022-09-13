@@ -127,63 +127,75 @@ import { getIpfsData } from "./ipfs";
 		return await JCPoolInstance.methods.getPoolInfo().call();
 	}
 
-	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools) => {
+	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools, knownPoolInfo) => {
 		const web3 = await getWeb3();
+		let knownAddrs = [];
+		if(knownPoolInfo){
+			for(const key in knownPoolInfo){
+				knownAddrs.push(knownPoolInfo[key].address);
+			}
+		}
 
 		let poolInfo = [];
 		for(let i=0; i < poolTracker.length; i++){
-			let JCPoolInstance = new web3.eth.Contract(
-				JCPool.abi,
-				poolTracker[i],
-			);
-
-			const groupedPoolInfo = await JCPoolInstance.methods.getPoolInfo().call();
-
-			let acceptedTokens = groupedPoolInfo[0];
-			const receiver = groupedPoolInfo[1];
-			const isVerified = groupedPoolInfo[2];
-			let aboutHash = groupedPoolInfo[5];
-			const about = await getIpfsData(aboutHash);
-			const picHash =  groupedPoolInfo[4];
-			const name = groupedPoolInfo[6];
-
-			let acceptedTokenStrings = [];
-			let acceptedTokenInfo = [];
-
-			for(let j = 0; j < acceptedTokens.length; j++){
-				const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
-				let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];
-				const balance = (balances) ? balances[0] : 0;
-				const amountScaled = (balances) ? balances[1] : 0;
-				const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(acceptedTokens[j]).call();
-				acceptedTokenInfo.push({
-					'totalDeposits': groupedPoolTokenInfo[5],
-					'userBalance':  balance,
-					'amountScaled':  amountScaled,
-					'unclaimedInterest': groupedPoolTokenInfo[4],
-					'claimedInterest': groupedPoolTokenInfo[3],
-					'reserveNormalizedIncome': groupedPoolTokenInfo[1],
-					'aTokenAddress': groupedPoolTokenInfo[2],
-					'liquidityIndex': groupedPoolTokenInfo[0],
-					'acceptedTokenString': tokenString,
-					'decimals': tokenMap[tokenString].decimals,
-					'depositAPY': tokenMap[tokenString] && tokenMap[tokenString].depositAPY,
-					'address': acceptedTokens[j],
-					'allowance': tokenMap[tokenString].allowance,
-				});
-				acceptedTokenStrings.push(tokenString);
+			if(knownPoolInfo && knownAddrs.includes(poolTracker[i])){
+				const key = Object.keys(knownPoolInfo).find(key => knownPoolInfo[key].address === poolTracker[i]);
+				poolInfo.push(knownPoolInfo[key]);
 			}
+			else{
+				let JCPoolInstance = new web3.eth.Contract(
+					JCPool.abi,
+					poolTracker[i],
+				);
 
-			poolInfo.push({
-							receiver: receiver,
-							name: name,
-							about: about,
-							picHash: picHash,
-							isVerified: isVerified,
-							address: poolTracker[i],
-							acceptedTokens: acceptedTokenStrings,
-							acceptedTokenInfo: acceptedTokenInfo,
-			});
+				const groupedPoolInfo = await JCPoolInstance.methods.getPoolInfo().call();
+
+				let acceptedTokens = groupedPoolInfo[0];
+				const receiver = groupedPoolInfo[1];
+				const isVerified = groupedPoolInfo[2];
+				let aboutHash = groupedPoolInfo[5];
+				const about = await getIpfsData(aboutHash);
+				const picHash =  groupedPoolInfo[4];
+				const name = groupedPoolInfo[6];
+
+				let acceptedTokenStrings = [];
+				let acceptedTokenInfo = [];
+
+				for(let j = 0; j < acceptedTokens.length; j++){
+					const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
+					let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];
+					const balance = (balances) ? balances[0] : 0;
+					const amountScaled = (balances) ? balances[1] : 0;
+					const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(acceptedTokens[j]).call();
+					acceptedTokenInfo.push({
+						'totalDeposits': groupedPoolTokenInfo[5],
+						'userBalance':  balance,
+						'amountScaled':  amountScaled,
+						'unclaimedInterest': groupedPoolTokenInfo[4],
+						'claimedInterest': groupedPoolTokenInfo[3],
+						'reserveNormalizedIncome': groupedPoolTokenInfo[1],
+						'aTokenAddress': groupedPoolTokenInfo[2],
+						'liquidityIndex': groupedPoolTokenInfo[0],
+						'acceptedTokenString': tokenString,
+						'decimals': tokenMap[tokenString].decimals,
+						'depositAPY': tokenMap[tokenString] && tokenMap[tokenString].depositAPY,
+						'address': acceptedTokens[j],
+						'allowance': tokenMap[tokenString].allowance,
+					});
+					acceptedTokenStrings.push(tokenString);
+				}
+
+				poolInfo.push({
+								receiver: receiver,
+								name: name,
+								about: about,
+								picHash: picHash,
+								isVerified: isVerified,
+								address: poolTracker[i],
+								acceptedTokens: acceptedTokenStrings,
+								acceptedTokenInfo: acceptedTokenInfo,
+				});
+			}
 		}
 		return poolInfo;
 	}

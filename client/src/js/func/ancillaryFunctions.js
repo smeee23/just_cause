@@ -260,7 +260,7 @@ export const checkLocationForAppDeploy = () => {
 
   const pathnames = ["/howitworks", "/just_cause", "/"]
 
-  console.log("testttt", urls.includes(window.location.href), window.location.href);
+  console.log("testttt", urls.includes(window.location.href), window.location.href, window.location.pathname);
 
   if(urls.includes(window.location.href) || pathnames.includes(window.location.pathname)) return "outsideApp";
 

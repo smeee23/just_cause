@@ -108,8 +108,8 @@ class ButtonSmall extends Component {
 
 class Button extends Component {
 
-  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close) => {
-    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d && !copyPaste && !copy_white && !copy_white_check && !copyPaste_check && !close){
+  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close, share_d) => {
+    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d && !copyPaste && !copy_white && !copy_white_check && !copyPaste_check && !close && !share_d){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
@@ -179,7 +179,7 @@ class Button extends Component {
               <Close/>
           ) : null }
         </div>
-        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close)}
+        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close, share_d)}
       </button>
 		);
 	}

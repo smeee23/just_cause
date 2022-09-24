@@ -179,8 +179,8 @@ class Card extends Component {
 			if(keys.includes(name)){
 			const url = (verifiedPoolMap[name] && verifiedPoolMap[name]).siteUrl;
 				return(
-					<div title="view site">
-						<Button text="More About Organization" callback={() => redirectWindowUrl(url)}/>
+					<div title="more about organaization">
+						<Button link="link" callback={() => redirectWindowUrl(url)}/>
 					</div>
 				);
 			}
@@ -236,7 +236,7 @@ class Card extends Component {
 					</div>
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
 						<p style={{marginTop: "20px"}} className="mr">{about}</p>
-						<div style={{display: "flex", flexDirection: "wrap", gap: "6px"}}>
+						<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
 							{this.getVerifiedLinks(isVerified, title)}
 							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>
 								<Button share="share" callback={async() => await this.share(address, title )} />
@@ -447,7 +447,7 @@ class Card extends Component {
 		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
 		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title, isVerified);
-		
+
 		return (
 			<div className={classnames}>
 				<div className="card__header">

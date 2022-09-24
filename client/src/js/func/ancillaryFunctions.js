@@ -249,8 +249,6 @@ export const displayLogo = (acceptedTokenString) => {
   else{
     logo = <Logo/>
   }
-
-  //return <div style={{marginRight: "2px"}}>{logo}</div>
   return logo
 }
 

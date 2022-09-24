@@ -14,8 +14,9 @@ import Share from "./logos/Share";
 import Copy from "./logos/Copy";
 import CopyCheck from "./logos/CopyCheck";
 import CopyWhite from "./logos/CopyWhite";
-import CopyWhiteCheck from "./logos/CopyWhiteCheck"
-import Close from "./logos/Close"
+import CopyWhiteCheck from "./logos/CopyWhiteCheck";
+import Close from "./logos/Close";
+import Link from "./logos/Link"
 
 class ButtonExtraSmall extends Component {
 
@@ -108,15 +109,15 @@ class ButtonSmall extends Component {
 
 class Button extends Component {
 
-  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close, share_d) => {
-    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d && !copyPaste && !copy_white && !copy_white_check && !copyPaste_check && !close && !share_d){
+  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close, share_d, link) => {
+    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d && !copyPaste && !copy_white && !copy_white_check && !copyPaste_check && !close && !share_d && !link){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
     }
   }
 	render() {
-		const { text, icon, tweet, tweet_d, share_d, close, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo, copyPaste, info, copy_white , copy_white_check, copyPaste_check} = this.props;
+		const { text, icon, tweet, tweet_d, share_d, close, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo, copyPaste, info, copy_white , copy_white_check, copyPaste_check, link} = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -178,8 +179,11 @@ class Button extends Component {
           { close ? (
               <Close/>
           ) : null }
+          { link ? (
+              <Link/>
+          ) : null }
         </div>
-        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close, share_d)}
+        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close, share_d, link)}
       </button>
 		);
 	}

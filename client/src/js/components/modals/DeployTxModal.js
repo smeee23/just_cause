@@ -23,7 +23,7 @@ export default class DeployTxModal extends Component {
       return(
         <div title={"share "+txDetails.poolName} style={{display:"flex", flex:"flex-wrap", gap:"16px"}}>
             <h4 style={{fontSize: 15}}>Congratulations, now share your pool and get some funding!</h4>
-            <Button share_d="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails )} />
+            <Button isLogo="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails )} />
           </div>
       );
     }

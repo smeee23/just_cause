@@ -180,7 +180,7 @@ class Card extends Component {
 			const url = (verifiedPoolMap[name] && verifiedPoolMap[name]).siteUrl;
 				return(
 					<div title="more about organaization">
-						<Button link="link" callback={() => redirectWindowUrl(url)}/>
+						<Button isLogo="link" callback={() => redirectWindowUrl(url)}/>
 					</div>
 				);
 			}
@@ -191,11 +191,11 @@ class Card extends Component {
 	getCopyButton = (receiver) => {
 		if(this.state.copied){
 			return (
-				<div title="copy receiving address to clipboard"><Button copy_white_check="copy" disable="true" callback={() => this.copyToClipboard(receiver)}/></div>
+				<div title="copy receiving address to clipboard"><Button isLogo="copy_white_check" disable="true" callback={() => this.copyToClipboard(receiver)}/></div>
 			);
 		}
 		return (
-			<div title="copy receiving address to clipboard"><Button copy_white="copy" disable="true" callback={() => this.copyToClipboard(receiver)}/></div>
+			<div title="copy receiving address to clipboard"><Button isLogo="copy_white" disable="true" callback={() => this.copyToClipboard(receiver)}/></div>
 		);
 	}
 
@@ -239,7 +239,7 @@ class Card extends Component {
 						<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
 							{this.getVerifiedLinks(isVerified, title)}
 							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>
-								<Button share="share" callback={async() => await this.share(address, title )} />
+								<Button isLogo="share" callback={async() => await this.share(address, title )} />
 							</div>
 						</div>
 

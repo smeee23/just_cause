@@ -45,11 +45,11 @@ class Homepage extends Component {
 										<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
 										<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Future of crowdfunding</h2>
 										<div style={{marginBottom: "5px", marginLeft: "20px", display:"flex", flexDirection: "wrap", alignItems:"left", justifyContent:"left"}}>
-											<a title="source code" href="https://github.com/smeee23/just_cause" target="_blank"><Button github="github"/></a>
-											<a title="Twitter" style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank"><Button tweet="tweet"/></a>
-											{/*<a title="Discord" style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button discord="discord"/></a>*/}
+											<a title="source code" href="https://github.com/smeee23/just_cause" target="_blank"><Button isLogo="github"/></a>
+											<a title="Twitter" style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank"><Button isLogo="tweet"/></a>
+											{/*<a title="Discord" style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button isLogo="discord"/></a>*/}
 											<div title="share JustCause" style={{marginLeft: "20px"}}>
-												<Button share="share" callback={async() => await this.share()}/>
+												<Button isLogo="share" callback={async() => await this.share()}/>
 											</div>
 										</div>
 									</div>

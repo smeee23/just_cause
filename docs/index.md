@@ -201,7 +201,7 @@ User pools can be found by searching by name or contract address.
 
 ### Your Cause
 
-Donations must be claimed through a transaction on the blockchain. User pools are charged a fee of 0.2% when the claim function is called. In other words for each $100 that is donated JustCause receives $0.20. No fee is charged to Contributors by JustCause.
+Donations must be claimed through a transaction on the blockchain. No fee is charged by JustCause.
 
 
 </div>
@@ -248,7 +248,7 @@ Contributors receive their full deposit back upon withdrawal, minus network tran
 
 ### What fee does JustCause charge?
 
-To fund development and seed the treasury for the JustCauseDao a fee of 0.2% is charged when the interest is paid to the cause for all pools. In other words, for each $100 that is sent to the cause JustCause receives $0.20. No fee is charged to the Contributor. This rate can be raised to as high as 0.4% or lowered to 0 by the team to find an equilibrium that supports the causes as well as JustCause in the long run.
+No fee is charged by JustCause. However, a fee mechanism is built into the contracts. This rate can be raised to as high as 0.4% or lowered to 0 by the team to find an equilibrium that supports the causes as well as JustCause in the long run. This can only be done by the team multisig address. There are no plans to turn on the fee mechanism. 
 
 
 ---

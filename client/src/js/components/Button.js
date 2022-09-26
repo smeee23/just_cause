@@ -109,15 +109,15 @@ class ButtonSmall extends Component {
 
 class Button extends Component {
 
-  displayLine = (tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close, share_d, link) => {
-    if(!tweet && !github && !discord && !facebook && !linkedin && !share && !tweet_d && !copyPaste && !copy_white && !copy_white_check && !copyPaste_check && !close && !share_d && !link){
+  displayLine = (isLogo) => {
+    if(!isLogo){
       return  <div className="button__bar--outer">
                 <div className="button__bar--inner"/>
               </div>
     }
   }
 	render() {
-		const { text, icon, tweet, tweet_d, share_d, close, github, discord, facebook, linkedin, share, href, callback, disabled, lg, logo, copyPaste, info, copy_white , copy_white_check, copyPaste_check, link} = this.props;
+		const { isLogo, text, icon, href, callback, disabled, lg, logo, info} = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -140,50 +140,50 @@ class Button extends Component {
               <Icon name={icon} size={lg ? 64 : 32}/>
             </div>
           ) : null }
-          { tweet ? (
+          { isLogo === "tweet" ? (
               <TwitterLight/>
           ) : null }
-          { tweet_d ? (
+          { isLogo === "tweet_d" ? (
               <TwitterDark/>
           ) : null }
-          { share_d ? (
+          { isLogo === "share_d" ? (
               <ShareDark/>
           ) : null }
-          { github ? (
+          { isLogo === "github" ? (
               <Github/>
           ) : null }
-          { discord ? (
+          { isLogo === "discord" ? (
               <Discord/>
           ) : null }
-          { facebook ? (
+          { isLogo === "facebook" ? (
               <Facebook/>
           ) : null }
-          { linkedin ? (
+          { isLogo === "linkedin" ? (
               <LinkedIn/>
           ) : null }
-          { share ? (
+          { isLogo === "share" ? (
               <Share/>
           ) : null }
-          { copyPaste ? (
+          { isLogo === "copyPaste" ? (
               <Copy/>
           ) : null }
-          { copyPaste_check ? (
+          { isLogo === "copyPaste_check" ? (
               <CopyCheck/>
           ) : null }
-          { copy_white ? (
+          { isLogo === "copy_white" ? (
               <CopyWhite/>
           ) : null }
-          { copy_white_check ? (
+          { isLogo === "copy_white_check" ? (
               <CopyWhiteCheck/>
           ) : null }
-          { close ? (
+          { isLogo === "close" ? (
               <Close/>
           ) : null }
-          { link ? (
+          { isLogo === "link" ? (
               <Link/>
           ) : null }
         </div>
-        {this.displayLine(tweet, github, discord, facebook, linkedin, share, tweet_d, copyPaste, copy_white, copy_white_check, copyPaste_check, close, share_d, link)}
+        {this.displayLine(isLogo)}
       </button>
 		);
 	}

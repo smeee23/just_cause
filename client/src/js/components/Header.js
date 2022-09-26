@@ -175,7 +175,7 @@ class Header extends Component {
             <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/>
           </div>
             <div title={"disconnect wallet"} style={{marginTop: "-5px"}}>
-              <Button close="close" callback={this.disconnectButtonHit}/>
+              <Button isLogo="close" callback={this.disconnectButtonHit}/>
             </div>
         </div>
       );

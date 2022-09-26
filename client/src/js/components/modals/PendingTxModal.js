@@ -75,7 +75,7 @@ class PendingTxModal extends Component {
       return(
         <div title={"share your donation"} style={{display:"flex", flex:"flex-wrap", gap:"16px", paddingBottom:"32px"}}>
           <h4 style={{fontSize: 15, marginBottom: "auto", marginTop: "auto"}}>Proud of your donation? Why not share it?</h4>
-          <Button share_d="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails )} />
+          <Button isLogo="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails )} />
         </div>
       );
     }
@@ -83,7 +83,7 @@ class PendingTxModal extends Component {
       return(
         <div title={"share"} style={{display:"flex", flex:"flex-wrap", gap:"16px", paddingBottom:"32px"}}>
           <h4 style={{fontSize: 15, marginBottom: "auto", marginTop: "auto"}}>Thank you for harvesting donations for {txDetails.poolName}!</h4>
-          <Button share_d="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails)}/>
+          <Button isLogo="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails)}/>
         </div>
       );
     }

@@ -1,0 +1,1124 @@
+{
+  "contractName": "IOffsetHelper",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "who",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "poolToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address[]",
+          "name": "tco2s",
+          "type": "address[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "Redeemed",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_depositedToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_poolToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amountToOffset",
+          "type": "uint256"
+        }
+      ],
+      "name": "autoOffsetUsingToken",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "tco2s",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_poolToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amountToOffset",
+          "type": "uint256"
+        }
+      ],
+      "name": "autoOffsetUsingETH",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "tco2s",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_poolToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amountToOffset",
+          "type": "uint256"
+        }
+      ],
+      "name": "autoOffsetUsingPoolToken",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "tco2s",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_fromToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_toToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "calculateNeededTokenAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"poolToken\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address[]\",\"name\":\"tco2s\",\"type\":\"address[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\"}],\"name\":\"Redeemed\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_poolToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amountToOffset\",\"type\":\"uint256\"}],\"name\":\"autoOffsetUsingETH\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tco2s\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_poolToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amountToOffset\",\"type\":\"uint256\"}],\"name\":\"autoOffsetUsingPoolToken\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tco2s\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_depositedToken\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_poolToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amountToOffset\",\"type\":\"uint256\"}],\"name\":\"autoOffsetUsingToken\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"tco2s\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_fromToken\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_toToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"calculateNeededTokenAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"Redeemed(address,address,address[],uint256[])\":{\"params\":{\"amounts\":\"An array of the amounts of each TCO2 that were redeemed\",\"poolToken\":\"The address of the Toucan pool token used in the redemption, for example, NCT or BCT\",\"tco2s\":\"An array of the TCO2 addresses that were redeemed\",\"who\":\"The sender of the transaction\"}}},\"kind\":\"dev\",\"methods\":{\"autoOffsetUsingETH(address,uint256)\":{\"details\":\"If the user sends much MATIC, the leftover amount will be sent back to the user.\",\"params\":{\"_amountToOffset\":\"The amount of TCO2 to offset.\",\"_poolToken\":\"The address of the Toucan pool token that the user wants to use, for example, NCT or BCT.\"},\"returns\":{\"amounts\":\"An array of the amounts of each TCO2 that were redeemed\",\"tco2s\":\"An array of the TCO2 addresses that were redeemed\"}},\"autoOffsetUsingPoolToken(address,uint256)\":{\"params\":{\"_amountToOffset\":\"The amount of TCO2 to offset.\",\"_poolToken\":\"The address of the Toucan pool token that the user wants to use, for example, NCT or BCT.\"},\"returns\":{\"amounts\":\"An array of the amounts of each TCO2 that were redeemed\",\"tco2s\":\"An array of the TCO2 addresses that were redeemed\"}},\"autoOffsetUsingToken(address,address,uint256)\":{\"details\":\"When automatically redeeming pool tokens for the lowest quality TCO2s there are no fees and you receive exactly 1 TCO2 token for 1 pool token.\",\"params\":{\"_amountToOffset\":\"The amount of TCO2 to offset\",\"_depositedToken\":\"The address of the ERC20 token that the user sends (must be one of USDC, WETH, WMATIC)\",\"_poolToken\":\"The address of the Toucan pool token that the user wants to use, for example, NCT or BCT\"},\"returns\":{\"amounts\":\"An array of the amounts of each TCO2 that were redeemed\",\"tco2s\":\"An array of the TCO2 addresses that were redeemed\"}},\"calculateNeededTokenAmount(address,address,uint256)\":{\"params\":{\"_amount\":\"The desired amount of pool token to receive\",\"_fromToken\":\"The address of the ERC20 token used for the swap\",\"_toToken\":\"The address of the pool token to swap for, for example, NCT or BCT\"},\"returns\":{\"_0\":\"amountsIn The amount of the ERC20 token required in order to swap for the specified amount of the pool token\"}}},\"title\":\"Toucan Protocol Offset Helpers\",\"version\":1},\"userdoc\":{\"events\":{\"Redeemed(address,address,address[],uint256[])\":{\"notice\":\"Emitted upon successful redemption of TCO2 tokens from a Toucan pool token such as BCT or NCT.\"}},\"kind\":\"user\",\"methods\":{\"autoOffsetUsingETH(address,uint256)\":{\"notice\":\"Retire carbon credits using the lowest quality (oldest) TCO2 tokens available from the specified Toucan token pool by sending MATIC. Use `calculateNeededETHAmount()` first in order to find out how much MATIC is required to retire the specified quantity of TCO2. This function: 1. Swaps the Matic sent to the contract for the specified pool token. 2. Redeems the pool token for the poorest quality TCO2 tokens available. 3. Retires the TCO2 tokens.\"},\"autoOffsetUsingPoolToken(address,uint256)\":{\"notice\":\"Retire carbon credits using the lowest quality (oldest) TCO2 tokens available by sending Toucan pool tokens, for example, BCT or NCT. This function: 1. Redeems the pool token for the poorest quality TCO2 tokens available. 2. Retires the TCO2 tokens. Note: The client must approve the pool token that is sent.\"},\"autoOffsetUsingToken(address,address,uint256)\":{\"notice\":\"Retire carbon credits using the lowest quality (oldest) TCO2 tokens available from the specified Toucan token pool by sending ERC20 tokens (USDC, WETH, WMATIC). Use `calculateNeededTokenAmount` first in order to find out how much of the ERC20 token is required to retire the specified quantity of TCO2. This function: 1. Swaps the ERC20 token sent to the contract for the specified pool token. 2. Redeems the pool token for the poorest quality TCO2 tokens available. 3. Retires the TCO2 tokens. Note: The client must approve the ERC20 token that is sent to the contract.\"},\"calculateNeededTokenAmount(address,address,uint256)\":{\"notice\":\"Return how much of the specified ERC20 token is required in order to swap for the desired amount of a Toucan pool token, for example, BCT or NCT.\"}},\"notice\":\"Helper functions that simplify the carbon offsetting (retirement) process. Retiring carbon tokens requires multiple steps and interactions with Toucan Protocol's main contracts: 1. Obtain a Toucan pool token such as BCT or NCT (by performing a token    swap). 2. Redeem the pool token for a TCO2 token. 3. Retire the TCO2 token. These steps are combined in each of the following \\\"auto offset\\\" methods implemented in `OffsetHelper` to allow a retirement within one transaction: - `autoOffsetUsingPoolToken()` if the user already owns a Toucan pool   token such as BCT or NCT, - `autoOffsetUsingETH()` if the user would like to perform a retirement   using MATIC, - `autoOffsetUsingToken()` if the user would like to perform a retirement   using an ERC20 token: USDC, WETH or WMATIC. In these methods, \\\"auto\\\" refers to the fact that these methods use `autoRedeem()` in order to automatically choose a TCO2 token corresponding to the oldest tokenized carbon project in the specfified token pool. There are no fees incurred by the user when using `autoRedeem()`, i.e., the user receives 1 TCO2 token for each pool token (BCT/NCT) redeemed. There are two `view` helper functions `calculateNeededETHAmount()` and `calculateNeededTokenAmount()` that should be called before using `autoOffsetUsingETH()` and `autoOffsetUsingToken()`, to determine how much  MATIC, respectively how much of the ERC20 token must be sent to the `OffsetHelper` contract in order to retire the specified amount of carbon.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/polygon/interfaces/toucan/IOffsetHelper.sol\":\"IOffsetHelper\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/polygon/interfaces/toucan/IOffsetHelper.sol\":{\"keccak256\":\"0x07b6f5028e1f7c5c853a50260050553ebef6491a5cd04d244e235c0776f81439\",\"license\":\"Unlicense\",\"urls\":[\"bzz-raw://9351a802a5d20f023e469972313125ce7f5acfd17c4ccacd0e43f9b539447c9c\",\"dweb:/ipfs/QmTdeHF13mtyNzMYPW4Vr2E6UTwxX6Z9bfNaXLqfZyBDpX\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "//SPDX-License-Identifier: Unlicense\npragma solidity 0.8.9;\n\n/**\n * @title Toucan Protocol Offset Helpers\n * @notice Helper functions that simplify the carbon offsetting (retirement)\n * process.\n *\n * Retiring carbon tokens requires multiple steps and interactions with\n * Toucan Protocol's main contracts:\n * 1. Obtain a Toucan pool token such as BCT or NCT (by performing a token\n *    swap).\n * 2. Redeem the pool token for a TCO2 token.\n * 3. Retire the TCO2 token.\n *\n * These steps are combined in each of the following \"auto offset\" methods\n * implemented in `OffsetHelper` to allow a retirement within one transaction:\n * - `autoOffsetUsingPoolToken()` if the user already owns a Toucan pool\n *   token such as BCT or NCT,\n * - `autoOffsetUsingETH()` if the user would like to perform a retirement\n *   using MATIC,\n * - `autoOffsetUsingToken()` if the user would like to perform a retirement\n *   using an ERC20 token: USDC, WETH or WMATIC.\n *\n * In these methods, \"auto\" refers to the fact that these methods use\n * `autoRedeem()` in order to automatically choose a TCO2 token corresponding\n * to the oldest tokenized carbon project in the specfified token pool.\n * There are no fees incurred by the user when using `autoRedeem()`, i.e., the\n * user receives 1 TCO2 token for each pool token (BCT/NCT) redeemed.\n *\n * There are two `view` helper functions `calculateNeededETHAmount()` and\n * `calculateNeededTokenAmount()` that should be called before using\n * `autoOffsetUsingETH()` and `autoOffsetUsingToken()`, to determine how much\n *  MATIC, respectively how much of the ERC20 token must be sent to the\n * `OffsetHelper` contract in order to retire the specified amount of carbon.\n */\ninterface IOffsetHelper {\n    /**\n     * @notice Contract constructor. Should specify arrays of ERC20 symbols and\n     * addresses that can used by the contract.\n     *\n     * @dev See `isEligible()` for a list of tokens that can be used in the\n     * contract. These can be modified after deployment by the contract owner\n     * using `setEligibleTokenAddress()` and `deleteEligibleTokenAddress()`.\n     *\n     * @param _eligibleTokenSymbols A list of token symbols.\n     * @param _eligibleTokenAddresses A list of token addresses corresponding\n     * to the provided token symbols.\n     */\n\n    /**\n     * @notice Emitted upon successful redemption of TCO2 tokens from a Toucan\n     * pool token such as BCT or NCT.\n     *\n     * @param who The sender of the transaction\n     * @param poolToken The address of the Toucan pool token used in the\n     * redemption, for example, NCT or BCT\n     * @param tco2s An array of the TCO2 addresses that were redeemed\n     * @param amounts An array of the amounts of each TCO2 that were redeemed\n     */\n    event Redeemed(\n        address who,\n        address poolToken,\n        address[] tco2s,\n        uint256[] amounts\n    );\n\n    /**\n     * @notice Retire carbon credits using the lowest quality (oldest) TCO2\n     * tokens available from the specified Toucan token pool by sending ERC20\n     * tokens (USDC, WETH, WMATIC). Use `calculateNeededTokenAmount` first in\n     * order to find out how much of the ERC20 token is required to retire the\n     * specified quantity of TCO2.\n     *\n     * This function:\n     * 1. Swaps the ERC20 token sent to the contract for the specified pool token.\n     * 2. Redeems the pool token for the poorest quality TCO2 tokens available.\n     * 3. Retires the TCO2 tokens.\n     *\n     * Note: The client must approve the ERC20 token that is sent to the contract.\n     *\n     * @dev When automatically redeeming pool tokens for the lowest quality\n     * TCO2s there are no fees and you receive exactly 1 TCO2 token for 1 pool\n     * token.\n     *\n     * @param _depositedToken The address of the ERC20 token that the user sends\n     * (must be one of USDC, WETH, WMATIC)\n     * @param _poolToken The address of the Toucan pool token that the\n     * user wants to use, for example, NCT or BCT\n     * @param _amountToOffset The amount of TCO2 to offset\n     *\n     * @return tco2s An array of the TCO2 addresses that were redeemed\n     * @return amounts An array of the amounts of each TCO2 that were redeemed\n     */\n    function autoOffsetUsingToken(\n        address _depositedToken,\n        address _poolToken,\n        uint256 _amountToOffset\n    ) external returns (address[] memory tco2s, uint256[] memory amounts);\n\n    /**\n     * @notice Retire carbon credits using the lowest quality (oldest) TCO2\n     * tokens available from the specified Toucan token pool by sending MATIC.\n     * Use `calculateNeededETHAmount()` first in order to find out how much\n     * MATIC is required to retire the specified quantity of TCO2.\n     *\n     * This function:\n     * 1. Swaps the Matic sent to the contract for the specified pool token.\n     * 2. Redeems the pool token for the poorest quality TCO2 tokens available.\n     * 3. Retires the TCO2 tokens.\n     *\n     * @dev If the user sends much MATIC, the leftover amount will be sent back\n     * to the user.\n     *\n     * @param _poolToken The address of the Toucan pool token that the\n     * user wants to use, for example, NCT or BCT.\n     * @param _amountToOffset The amount of TCO2 to offset.\n     *\n     * @return tco2s An array of the TCO2 addresses that were redeemed\n     * @return amounts An array of the amounts of each TCO2 that were redeemed\n     */\n    function autoOffsetUsingETH(address _poolToken, uint256 _amountToOffset)\n        external\n        payable\n        returns (address[] memory tco2s, uint256[] memory amounts);\n\n    /**\n     * @notice Retire carbon credits using the lowest quality (oldest) TCO2\n     * tokens available by sending Toucan pool tokens, for example, BCT or NCT.\n     *\n     * This function:\n     * 1. Redeems the pool token for the poorest quality TCO2 tokens available.\n     * 2. Retires the TCO2 tokens.\n     *\n     * Note: The client must approve the pool token that is sent.\n     *\n     * @param _poolToken The address of the Toucan pool token that the\n     * user wants to use, for example, NCT or BCT.\n     * @param _amountToOffset The amount of TCO2 to offset.\n     *\n     * @return tco2s An array of the TCO2 addresses that were redeemed\n     * @return amounts An array of the amounts of each TCO2 that were redeemed\n     */\n    function autoOffsetUsingPoolToken(\n        address _poolToken,\n        uint256 _amountToOffset\n    ) external returns (address[] memory tco2s, uint256[] memory amounts);\n    /**\n     * @notice Return how much of the specified ERC20 token is required in\n     * order to swap for the desired amount of a Toucan pool token, for\n     * example, BCT or NCT.\n     *\n     * @param _fromToken The address of the ERC20 token used for the swap\n     * @param _toToken The address of the pool token to swap for,\n     * for example, NCT or BCT\n     * @param _amount The desired amount of pool token to receive\n     * @return amountsIn The amount of the ERC20 token required in order to\n     * swap for the specified amount of the pool token\n     */\n    function calculateNeededTokenAmount(\n        address _fromToken,\n        address _toToken,\n        uint256 _amount\n    ) external view returns (uint256);\n}",
+  "sourcePath": "/home/smeee/projects/just_cause/contracts/polygon/interfaces/toucan/IOffsetHelper.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/polygon/interfaces/toucan/IOffsetHelper.sol",
+    "exportedSymbols": {
+      "IOffsetHelper": [
+        7228
+      ]
+    },
+    "id": 7229,
+    "license": "Unlicense",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 7157,
+        "literals": [
+          "solidity",
+          "0.8",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "37:22:33"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IOffsetHelper",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": {
+          "id": 7158,
+          "nodeType": "StructuredDocumentation",
+          "src": "61:1638:33",
+          "text": " @title Toucan Protocol Offset Helpers\n @notice Helper functions that simplify the carbon offsetting (retirement)\n process.\n Retiring carbon tokens requires multiple steps and interactions with\n Toucan Protocol's main contracts:\n 1. Obtain a Toucan pool token such as BCT or NCT (by performing a token\n    swap).\n 2. Redeem the pool token for a TCO2 token.\n 3. Retire the TCO2 token.\n These steps are combined in each of the following \"auto offset\" methods\n implemented in `OffsetHelper` to allow a retirement within one transaction:\n - `autoOffsetUsingPoolToken()` if the user already owns a Toucan pool\n   token such as BCT or NCT,\n - `autoOffsetUsingETH()` if the user would like to perform a retirement\n   using MATIC,\n - `autoOffsetUsingToken()` if the user would like to perform a retirement\n   using an ERC20 token: USDC, WETH or WMATIC.\n In these methods, \"auto\" refers to the fact that these methods use\n `autoRedeem()` in order to automatically choose a TCO2 token corresponding\n to the oldest tokenized carbon project in the specfified token pool.\n There are no fees incurred by the user when using `autoRedeem()`, i.e., the\n user receives 1 TCO2 token for each pool token (BCT/NCT) redeemed.\n There are two `view` helper functions `calculateNeededETHAmount()` and\n `calculateNeededTokenAmount()` that should be called before using\n `autoOffsetUsingETH()` and `autoOffsetUsingToken()`, to determine how much\n  MATIC, respectively how much of the ERC20 token must be sent to the\n `OffsetHelper` contract in order to retire the specified amount of carbon."
+        },
+        "fullyImplemented": false,
+        "id": 7228,
+        "linearizedBaseContracts": [
+          7228
+        ],
+        "name": "IOffsetHelper",
+        "nameLocation": "1710:13:33",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": {
+              "id": 7159,
+              "nodeType": "StructuredDocumentation",
+              "src": "2297:447:33",
+              "text": " @notice Emitted upon successful redemption of TCO2 tokens from a Toucan\n pool token such as BCT or NCT.\n @param who The sender of the transaction\n @param poolToken The address of the Toucan pool token used in the\n redemption, for example, NCT or BCT\n @param tco2s An array of the TCO2 addresses that were redeemed\n @param amounts An array of the amounts of each TCO2 that were redeemed"
+            },
+            "id": 7171,
+            "name": "Redeemed",
+            "nameLocation": "2755:8:33",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 7170,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7161,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "who",
+                  "nameLocation": "2781:3:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7171,
+                  "src": "2773:11:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7160,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2773:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7163,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "poolToken",
+                  "nameLocation": "2802:9:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7171,
+                  "src": "2794:17:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7162,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2794:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7166,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "tco2s",
+                  "nameLocation": "2831:5:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7171,
+                  "src": "2821:15:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 7164,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2821:7:33",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 7165,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2821:9:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7169,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "amounts",
+                  "nameLocation": "2856:7:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7171,
+                  "src": "2846:17:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 7167,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2846:7:33",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 7168,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2846:9:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2763:106:33"
+            },
+            "src": "2749:121:33"
+          },
+          {
+            "documentation": {
+              "id": 7172,
+              "nodeType": "StructuredDocumentation",
+              "src": "2876:1318:33",
+              "text": " @notice Retire carbon credits using the lowest quality (oldest) TCO2\n tokens available from the specified Toucan token pool by sending ERC20\n tokens (USDC, WETH, WMATIC). Use `calculateNeededTokenAmount` first in\n order to find out how much of the ERC20 token is required to retire the\n specified quantity of TCO2.\n This function:\n 1. Swaps the ERC20 token sent to the contract for the specified pool token.\n 2. Redeems the pool token for the poorest quality TCO2 tokens available.\n 3. Retires the TCO2 tokens.\n Note: The client must approve the ERC20 token that is sent to the contract.\n @dev When automatically redeeming pool tokens for the lowest quality\n TCO2s there are no fees and you receive exactly 1 TCO2 token for 1 pool\n token.\n @param _depositedToken The address of the ERC20 token that the user sends\n (must be one of USDC, WETH, WMATIC)\n @param _poolToken The address of the Toucan pool token that the\n user wants to use, for example, NCT or BCT\n @param _amountToOffset The amount of TCO2 to offset\n @return tco2s An array of the TCO2 addresses that were redeemed\n @return amounts An array of the amounts of each TCO2 that were redeemed"
+            },
+            "functionSelector": "781ae710",
+            "id": 7187,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "autoOffsetUsingToken",
+            "nameLocation": "4208:20:33",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 7179,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7174,
+                  "mutability": "mutable",
+                  "name": "_depositedToken",
+                  "nameLocation": "4246:15:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7187,
+                  "src": "4238:23:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7173,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4238:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7176,
+                  "mutability": "mutable",
+                  "name": "_poolToken",
+                  "nameLocation": "4279:10:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7187,
+                  "src": "4271:18:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7175,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4271:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7178,
+                  "mutability": "mutable",
+                  "name": "_amountToOffset",
+                  "nameLocation": "4307:15:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7187,
+                  "src": "4299:23:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7177,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4299:7:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4228:100:33"
+            },
+            "returnParameters": {
+              "id": 7186,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7182,
+                  "mutability": "mutable",
+                  "name": "tco2s",
+                  "nameLocation": "4364:5:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7187,
+                  "src": "4347:22:33",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 7180,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4347:7:33",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 7181,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4347:9:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7185,
+                  "mutability": "mutable",
+                  "name": "amounts",
+                  "nameLocation": "4388:7:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7187,
+                  "src": "4371:24:33",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 7183,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4371:7:33",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 7184,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4371:9:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4346:50:33"
+            },
+            "scope": 7228,
+            "src": "4199:198:33",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 7188,
+              "nodeType": "StructuredDocumentation",
+              "src": "4403:983:33",
+              "text": " @notice Retire carbon credits using the lowest quality (oldest) TCO2\n tokens available from the specified Toucan token pool by sending MATIC.\n Use `calculateNeededETHAmount()` first in order to find out how much\n MATIC is required to retire the specified quantity of TCO2.\n This function:\n 1. Swaps the Matic sent to the contract for the specified pool token.\n 2. Redeems the pool token for the poorest quality TCO2 tokens available.\n 3. Retires the TCO2 tokens.\n @dev If the user sends much MATIC, the leftover amount will be sent back\n to the user.\n @param _poolToken The address of the Toucan pool token that the\n user wants to use, for example, NCT or BCT.\n @param _amountToOffset The amount of TCO2 to offset.\n @return tco2s An array of the TCO2 addresses that were redeemed\n @return amounts An array of the amounts of each TCO2 that were redeemed"
+            },
+            "functionSelector": "82168f4b",
+            "id": 7201,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "autoOffsetUsingETH",
+            "nameLocation": "5400:18:33",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 7193,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7190,
+                  "mutability": "mutable",
+                  "name": "_poolToken",
+                  "nameLocation": "5427:10:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7201,
+                  "src": "5419:18:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7189,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5419:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7192,
+                  "mutability": "mutable",
+                  "name": "_amountToOffset",
+                  "nameLocation": "5447:15:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7201,
+                  "src": "5439:23:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7191,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5439:7:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5418:45:33"
+            },
+            "returnParameters": {
+              "id": 7200,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7196,
+                  "mutability": "mutable",
+                  "name": "tco2s",
+                  "nameLocation": "5531:5:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7201,
+                  "src": "5514:22:33",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 7194,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5514:7:33",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 7195,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5514:9:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7199,
+                  "mutability": "mutable",
+                  "name": "amounts",
+                  "nameLocation": "5555:7:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7201,
+                  "src": "5538:24:33",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 7197,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5538:7:33",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 7198,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5538:9:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5513:50:33"
+            },
+            "scope": 7228,
+            "src": "5391:173:33",
+            "stateMutability": "payable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 7202,
+              "nodeType": "StructuredDocumentation",
+              "src": "5570:730:33",
+              "text": " @notice Retire carbon credits using the lowest quality (oldest) TCO2\n tokens available by sending Toucan pool tokens, for example, BCT or NCT.\n This function:\n 1. Redeems the pool token for the poorest quality TCO2 tokens available.\n 2. Retires the TCO2 tokens.\n Note: The client must approve the pool token that is sent.\n @param _poolToken The address of the Toucan pool token that the\n user wants to use, for example, NCT or BCT.\n @param _amountToOffset The amount of TCO2 to offset.\n @return tco2s An array of the TCO2 addresses that were redeemed\n @return amounts An array of the amounts of each TCO2 that were redeemed"
+            },
+            "functionSelector": "612e2feb",
+            "id": 7215,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "autoOffsetUsingPoolToken",
+            "nameLocation": "6314:24:33",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 7207,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7204,
+                  "mutability": "mutable",
+                  "name": "_poolToken",
+                  "nameLocation": "6356:10:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7215,
+                  "src": "6348:18:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7203,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "6348:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7206,
+                  "mutability": "mutable",
+                  "name": "_amountToOffset",
+                  "nameLocation": "6384:15:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7215,
+                  "src": "6376:23:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7205,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "6376:7:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "6338:67:33"
+            },
+            "returnParameters": {
+              "id": 7214,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7210,
+                  "mutability": "mutable",
+                  "name": "tco2s",
+                  "nameLocation": "6441:5:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7215,
+                  "src": "6424:22:33",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 7208,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "6424:7:33",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 7209,
+                    "nodeType": "ArrayTypeName",
+                    "src": "6424:9:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7213,
+                  "mutability": "mutable",
+                  "name": "amounts",
+                  "nameLocation": "6465:7:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7215,
+                  "src": "6448:24:33",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 7211,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "6448:7:33",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 7212,
+                    "nodeType": "ArrayTypeName",
+                    "src": "6448:9:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "6423:50:33"
+            },
+            "scope": 7228,
+            "src": "6305:169:33",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 7216,
+              "nodeType": "StructuredDocumentation",
+              "src": "6479:561:33",
+              "text": " @notice Return how much of the specified ERC20 token is required in\n order to swap for the desired amount of a Toucan pool token, for\n example, BCT or NCT.\n @param _fromToken The address of the ERC20 token used for the swap\n @param _toToken The address of the pool token to swap for,\n for example, NCT or BCT\n @param _amount The desired amount of pool token to receive\n @return amountsIn The amount of the ERC20 token required in order to\n swap for the specified amount of the pool token"
+            },
+            "functionSelector": "1a0fdecc",
+            "id": 7227,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "calculateNeededTokenAmount",
+            "nameLocation": "7054:26:33",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 7223,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7218,
+                  "mutability": "mutable",
+                  "name": "_fromToken",
+                  "nameLocation": "7098:10:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7227,
+                  "src": "7090:18:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7217,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "7090:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7220,
+                  "mutability": "mutable",
+                  "name": "_toToken",
+                  "nameLocation": "7126:8:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7227,
+                  "src": "7118:16:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7219,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "7118:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7222,
+                  "mutability": "mutable",
+                  "name": "_amount",
+                  "nameLocation": "7152:7:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7227,
+                  "src": "7144:15:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7221,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "7144:7:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "7080:85:33"
+            },
+            "returnParameters": {
+              "id": 7226,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7225,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7227,
+                  "src": "7189:7:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7224,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "7189:7:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "7188:9:33"
+            },
+            "scope": 7228,
+            "src": "7045:153:33",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 7229,
+        "src": "1700:5500:33",
+        "usedErrors": []
+      }
+    ],
+    "src": "37:7163:33"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.7",
+  "updatedAt": "2022-10-01T03:08:27.454Z",
+  "devdoc": {
+    "events": {
+      "Redeemed(address,address,address[],uint256[])": {
+        "params": {
+          "amounts": "An array of the amounts of each TCO2 that were redeemed",
+          "poolToken": "The address of the Toucan pool token used in the redemption, for example, NCT or BCT",
+          "tco2s": "An array of the TCO2 addresses that were redeemed",
+          "who": "The sender of the transaction"
+        }
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "autoOffsetUsingETH(address,uint256)": {
+        "details": "If the user sends much MATIC, the leftover amount will be sent back to the user.",
+        "params": {
+          "_amountToOffset": "The amount of TCO2 to offset.",
+          "_poolToken": "The address of the Toucan pool token that the user wants to use, for example, NCT or BCT."
+        },
+        "returns": {
+          "amounts": "An array of the amounts of each TCO2 that were redeemed",
+          "tco2s": "An array of the TCO2 addresses that were redeemed"
+        }
+      },
+      "autoOffsetUsingPoolToken(address,uint256)": {
+        "params": {
+          "_amountToOffset": "The amount of TCO2 to offset.",
+          "_poolToken": "The address of the Toucan pool token that the user wants to use, for example, NCT or BCT."
+        },
+        "returns": {
+          "amounts": "An array of the amounts of each TCO2 that were redeemed",
+          "tco2s": "An array of the TCO2 addresses that were redeemed"
+        }
+      },
+      "autoOffsetUsingToken(address,address,uint256)": {
+        "details": "When automatically redeeming pool tokens for the lowest quality TCO2s there are no fees and you receive exactly 1 TCO2 token for 1 pool token.",
+        "params": {
+          "_amountToOffset": "The amount of TCO2 to offset",
+          "_depositedToken": "The address of the ERC20 token that the user sends (must be one of USDC, WETH, WMATIC)",
+          "_poolToken": "The address of the Toucan pool token that the user wants to use, for example, NCT or BCT"
+        },
+        "returns": {
+          "amounts": "An array of the amounts of each TCO2 that were redeemed",
+          "tco2s": "An array of the TCO2 addresses that were redeemed"
+        }
+      },
+      "calculateNeededTokenAmount(address,address,uint256)": {
+        "params": {
+          "_amount": "The desired amount of pool token to receive",
+          "_fromToken": "The address of the ERC20 token used for the swap",
+          "_toToken": "The address of the pool token to swap for, for example, NCT or BCT"
+        },
+        "returns": {
+          "_0": "amountsIn The amount of the ERC20 token required in order to swap for the specified amount of the pool token"
+        }
+      }
+    },
+    "title": "Toucan Protocol Offset Helpers",
+    "version": 1
+  },
+  "userdoc": {
+    "events": {
+      "Redeemed(address,address,address[],uint256[])": {
+        "notice": "Emitted upon successful redemption of TCO2 tokens from a Toucan pool token such as BCT or NCT."
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "autoOffsetUsingETH(address,uint256)": {
+        "notice": "Retire carbon credits using the lowest quality (oldest) TCO2 tokens available from the specified Toucan token pool by sending MATIC. Use `calculateNeededETHAmount()` first in order to find out how much MATIC is required to retire the specified quantity of TCO2. This function: 1. Swaps the Matic sent to the contract for the specified pool token. 2. Redeems the pool token for the poorest quality TCO2 tokens available. 3. Retires the TCO2 tokens."
+      },
+      "autoOffsetUsingPoolToken(address,uint256)": {
+        "notice": "Retire carbon credits using the lowest quality (oldest) TCO2 tokens available by sending Toucan pool tokens, for example, BCT or NCT. This function: 1. Redeems the pool token for the poorest quality TCO2 tokens available. 2. Retires the TCO2 tokens. Note: The client must approve the pool token that is sent."
+      },
+      "autoOffsetUsingToken(address,address,uint256)": {
+        "notice": "Retire carbon credits using the lowest quality (oldest) TCO2 tokens available from the specified Toucan token pool by sending ERC20 tokens (USDC, WETH, WMATIC). Use `calculateNeededTokenAmount` first in order to find out how much of the ERC20 token is required to retire the specified quantity of TCO2. This function: 1. Swaps the ERC20 token sent to the contract for the specified pool token. 2. Redeems the pool token for the poorest quality TCO2 tokens available. 3. Retires the TCO2 tokens. Note: The client must approve the ERC20 token that is sent to the contract."
+      },
+      "calculateNeededTokenAmount(address,address,uint256)": {
+        "notice": "Return how much of the specified ERC20 token is required in order to swap for the desired amount of a Toucan pool token, for example, BCT or NCT."
+      }
+    },
+    "notice": "Helper functions that simplify the carbon offsetting (retirement) process. Retiring carbon tokens requires multiple steps and interactions with Toucan Protocol's main contracts: 1. Obtain a Toucan pool token such as BCT or NCT (by performing a token    swap). 2. Redeem the pool token for a TCO2 token. 3. Retire the TCO2 token. These steps are combined in each of the following \"auto offset\" methods implemented in `OffsetHelper` to allow a retirement within one transaction: - `autoOffsetUsingPoolToken()` if the user already owns a Toucan pool   token such as BCT or NCT, - `autoOffsetUsingETH()` if the user would like to perform a retirement   using MATIC, - `autoOffsetUsingToken()` if the user would like to perform a retirement   using an ERC20 token: USDC, WETH or WMATIC. In these methods, \"auto\" refers to the fact that these methods use `autoRedeem()` in order to automatically choose a TCO2 token corresponding to the oldest tokenized carbon project in the specfified token pool. There are no fees incurred by the user when using `autoRedeem()`, i.e., the user receives 1 TCO2 token for each pool token (BCT/NCT) redeemed. There are two `view` helper functions `calculateNeededETHAmount()` and `calculateNeededTokenAmount()` that should be called before using `autoOffsetUsingETH()` and `autoOffsetUsingToken()`, to determine how much  MATIC, respectively how much of the ERC20 token must be sent to the `OffsetHelper` contract in order to retire the specified amount of carbon.",
+    "version": 1
+  }
+}

@@ -199,6 +199,15 @@ class Card extends Component {
 		);
 	}
 
+	getAbout = (about) => {
+		const paragraphs = about.split('\\n');
+		about = [];
+		for(let i = 0; i < paragraphs.length; i++){
+			about[i] = <p key={i} style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{paragraphs[i].replace(/^\s+|\s+$/g, '')}</p>
+		}
+		return about;
+	}
+
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified) => {
 		if (!acceptedTokenInfo) return '';
 		if (!this.props.tokenMap) return '';
@@ -208,6 +217,8 @@ class Card extends Component {
 		const isETH = (item.acceptedTokenString === 'ETH' || item.acceptedTokenString === 'MATIC') ? true : false;
 
 		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
+
+		console.log("about", about, typeof(about));
 
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
@@ -235,7 +246,7 @@ class Card extends Component {
 						</div>
 					</div>
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
-						<p style={{marginTop: "20px"}} className="mr">{about}</p>
+						{this.getAbout(about)}
 						<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
 							{this.getVerifiedLinks(isVerified, title)}
 							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>

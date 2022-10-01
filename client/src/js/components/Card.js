@@ -218,8 +218,6 @@ class Card extends Component {
 
 		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
 
-		console.log("about", about, typeof(about));
-
 		const tokenInfo =
 			<div className="card__body" key={item.acceptedTokenString}>
 				<div style={{display: "flex", flexDirection: "column", borderRight: "double"}}>

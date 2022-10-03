@@ -35,18 +35,28 @@ class Dashboard extends Component {
 
 		this.state = {
 			openTabIndex: 0,
+			openVerifiedIndex: 0,
 			hideLowBalance: false,
 		}
 	}
 	componentDidMount = async () => {
 		try{
 			window.scrollTo(0,0);
+
 			let currentTab = Number(localStorage.getItem('openTabIndex'));
 			if(currentTab){
 				this.setState({
 					openTabIndex: currentTab
 				});
 			}
+
+			let currentVerifiedTab = Number(localStorage.getItem('openVerifiedIndex'));
+			if(currentVerifiedTab){
+				this.setState({
+					openVerifiedIndex: currentVerifiedTab
+				});
+			}
+
 			if(this.props.deployInfo) await this.props.updateDeployInfo('');
 			if(this.props.depositAmount) await this.props.updateDepositAmount('');
 			if(this.props.withdrawAmount) await this.props.updateWithdrawAmount('');
@@ -164,6 +174,7 @@ class Dashboard extends Component {
 		  }, delayInms);
 		});
 	}
+
 	setSelectedToken = async(index) => {
 
 		if(this.props.deployInfo) await this.props.updateDeployInfo('');
@@ -178,6 +189,14 @@ class Dashboard extends Component {
 		});
 		localStorage.setItem('openTabIndex', index);
 	}
+
+	setSelectedVerifiedTab = async(index) => {
+		this.setState({
+			openVerifiedIndex: index,
+		});
+		localStorage.setItem('openVerifiedIndex', index);
+	}
+
 	createOptionButtons = () => {
 		let buttonHolder = [];
 		const buttonStrings = ['Verified Causes', 'Your Causes', 'Contributions'];
@@ -194,6 +213,22 @@ class Dashboard extends Component {
 		return buttonHolder;
 	}
 
+	createVerifiedButtons = () => {
+		if(this.state.openTabIndex !== 0) return;
+		let buttonHolder = [];
+		const buttonStrings = ['Crypto for Charity Pools', 'Other'];
+		const infoStrings = ['Crypto for Charity cause funds', 'miscellaneous funds'];
+		for(let i = 0; i < buttonStrings.length; i++){
+			const name = buttonStrings[i];
+			let isDisabled = false;
+			if(i === this.state.openVerifiedIndex){
+				isDisabled = true;
+			}
+			buttonHolder.push(<div title={infoStrings[i]} key={i}><ButtonSmall text={name} disabled={isDisabled} callback={() => this.setSelectedVerifiedTab(i)}/></div>)
+		}
+		return buttonHolder;
+	}
+
 	getTabTitle = () => {
 		let title;
 		if(this.state.openTabIndex === 0) title = "Verified Pools";
@@ -202,6 +237,18 @@ class Dashboard extends Component {
 		return (
 			<div style={{marginTop: "100px", display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center"}}>
 				<h2 style={{marginTop: "50px"}}> {title}</h2>
+			</div>
+		);
+	}
+
+	getVerifiedTabInfo = () => {
+		if(this.state.openTabIndex !== 0) return;
+		let info;
+		if(this.state.openVerifiedIndex === 0) info = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love. ";
+		else if (this.state.openVerifiedIndex === 1) info = "These pools consist of public goods, charities, and nonprofits that do not fall into the other categories of verified pools.";
+		return (
+			<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
+				<p className="mr">{info}</p>
 			</div>
 		);
 	}
@@ -229,7 +276,7 @@ class Dashboard extends Component {
 	getApplicationLink = () => {
 		if(this.state.openTabIndex === 0){
 			return (
-				<div style={{paddingBottom:"62.5px"}}/>
+				<div style={{paddingBottom:"20px"}}/>
 			);
 		}
 		else if (this.state.openTabIndex === 1){
@@ -248,6 +295,10 @@ class Dashboard extends Component {
 
 	redirectWindowGoogleApplication = () => {
 		window.open("https://docs.google.com/forms/d/e/1FAIpQLSfvejwW-3zNhy4H3hvcIDZ2WGUH422Zj1_yVouRH4tTN8kQFg/viewform?usp=sf_link", "_blank")
+	}
+
+	cardPush = (cardHolder) => {
+
 	}
 	createCardInfo = () => {
 		if(this.props.activeAccount === "Connect" && !web3Modal.cachedProvider){
@@ -284,6 +335,7 @@ class Dashboard extends Component {
 		}
 
 		let cardHolder = [];
+		console.log("poolInfo", poolInfo);
 		for(let i = 0; i < poolInfo.length; i++){
 			const item = poolInfo[i];
 
@@ -304,6 +356,43 @@ class Dashboard extends Component {
 							isVerified={item.isVerified}
 						/>
 					);
+				}
+			}
+			else if(this.state.openTabIndex === 0){
+				const name = item.name;
+				if(this.state.openVerifiedIndex === 0){
+					if(name.endsWith("Cause Fund")){
+						cardHolder.push(
+							<Card
+								key={item.address}
+								title={item.name}
+								idx={i}
+								receiver={item.receiver}
+								address={item.address}
+								acceptedTokenInfo={item.acceptedTokenInfo}
+								about={item.about}
+								picHash={item.picHash}
+								isVerified={item.isVerified}
+							/>
+						);
+					}
+				}
+				else if(this.state.openVerifiedIndex === 1){
+					if(!name.endsWith("Cause Fund")){
+						cardHolder.push(
+							<Card
+								key={item.address}
+								title={item.name}
+								idx={i}
+								receiver={item.receiver}
+								address={item.address}
+								acceptedTokenInfo={item.acceptedTokenInfo}
+								about={item.about}
+								picHash={item.picHash}
+								isVerified={item.isVerified}
+							/>
+						);
+					}
 				}
 			}
 			else{
@@ -332,6 +421,7 @@ class Dashboard extends Component {
 	render() {
 		const cardHolder = this.createCardInfo();
 		const optionButtons = this.createOptionButtons();
+		const verifiedButtons = this.createVerifiedButtons();
 
 		return (
 			<Fragment>
@@ -342,6 +432,10 @@ class Dashboard extends Component {
 								{optionButtons}
 							</div>
 							{this.getTabInfo()}
+							<div style={{display:"flex"}}>
+								{verifiedButtons}
+							</div>
+							{this.getVerifiedTabInfo()}
 						</div>
 					</section>
 					<section className="page-section_no_vert_padding horizontal-padding bw0">

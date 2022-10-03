@@ -27,30 +27,42 @@ contract BurnPit {
         uint256[] amounts
     );
 
+    event NoBal(
+        uint256 tokenBalance,
+        address tokenAddr
+    );
+
+    event Test(
+        address[] _acceptedTokens
+    );
+
     function burnTokens(
         //address _poolToken
-    ) public {
+    ) public payable {
         address offsetHelperAddr = 0x79E63048B355F4FBa192c5b28687B852a5521b31;
         address nctAddr = 0xD838290e877E0188a4A44700463419ED96c16107;
         address[] memory _acceptedTokens = acceptedTokens;
         for(uint8 i = 0; i < _acceptedTokens.length; i++){
             IERC20 token = IERC20(_acceptedTokens[i]);
-            uint256 balance = token.balanceOf(address(this));
-            if(balance > 0){
+            uint256 tokenBalance = token.balanceOf(address(this));
+            if(tokenBalance > 0){
                 address[] memory tco2s;
                 uint256[] memory amounts;
                 token.safeApprove(offsetHelperAddr, 0);
-                token.safeApprove(offsetHelperAddr, balance);
-                (tco2s, amounts) = IOffsetHelper(offsetHelperAddr).autoOffsetUsingToken(_acceptedTokens[i], nctAddr, balance);
+                token.safeApprove(offsetHelperAddr, tokenBalance);
+                (tco2s, amounts) = IOffsetHelper(offsetHelperAddr).autoOffsetUsingToken(_acceptedTokens[i], nctAddr, tokenBalance);
                 emit TokenBurned(_acceptedTokens[i], nctAddr, tco2s, amounts);
+            }else{
+                emit NoBal(tokenBalance, _acceptedTokens[i]);
             }
         }
-        if(address(this).balance > 0){
+        emit Test(_acceptedTokens);
+        /*if(address(this).balance > 0){
             address[] memory tco2s;
             uint256[] memory amounts;
             (tco2s, amounts) = IOffsetHelper(offsetHelperAddr).autoOffsetUsingETH{value: address(this).balance}(nctAddr, address(this).balance);
             emit ETHBurned(nctAddr, tco2s, amounts);
-        }
+        }*/
     }
 
     receive() external payable{}

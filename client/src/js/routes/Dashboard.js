@@ -216,7 +216,7 @@ class Dashboard extends Component {
 	createVerifiedButtons = () => {
 		if(this.state.openTabIndex !== 0) return;
 		let buttonHolder = [];
-		const buttonStrings = ['Crypto for Charity Pools', 'Other'];
+		const buttonStrings = ['Crypto for Charity', 'General'];
 		const infoStrings = ['Crypto for Charity cause funds', 'miscellaneous funds'];
 		for(let i = 0; i < buttonStrings.length; i++){
 			const name = buttonStrings[i];
@@ -244,13 +244,25 @@ class Dashboard extends Component {
 	getVerifiedTabInfo = () => {
 		if(this.state.openTabIndex !== 0) return;
 		let info;
-		if(this.state.openVerifiedIndex === 0) info = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love. ";
-		else if (this.state.openVerifiedIndex === 1) info = "These pools consist of public goods, charities, and nonprofits that do not fall into the other categories of verified pools.";
-		return (
-			<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
-				<p className="mr">{info}</p>
-			</div>
-		);
+		if(this.state.openVerifiedIndex === 0){
+			let info_1 = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love.";
+			let info_2 = "A Crypto for Charity cause fund is a collection of nonprofits with a shared mission or area of focus. Recommending the distribution of your crypto gift’s proceeds to a cause fund is an excellent option for those who want to donate more broadly to a cause."
+			return (
+				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
+					<img style={{width:"100px", paddingBottom:"25px"}} src={require("../../images/c4c.jpg")}/>
+					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info_1}</p>
+					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info_2}</p>
+				</div>
+			);
+		}
+		else if (this.state.openVerifiedIndex === 1){
+			info = "Pools in this group consist of public goods, charities, and nonprofits that do not fall into the other categories of verified pools.";
+			return (
+				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
+					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info}</p>
+				</div>
+			);
+		}
 	}
 
 	getTabInfo = () => {

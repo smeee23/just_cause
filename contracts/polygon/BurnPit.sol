@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 import { IOffsetHelper} from './interfaces/toucan/IOffsetHelper.sol';
 import { IERC20} from './interfaces/other/IERC20.sol';
+import { IWETH} from './interfaces/other/IWETH.sol';
 import { SafeERC20 } from './libraries/SafeERC20.sol';
 
 //import Ownable from '@openzeppelin/contracts/access/Ownable.sol';
@@ -10,9 +11,9 @@ import { SafeERC20 } from './libraries/SafeERC20.sol';
 contract BurnPit {
     using SafeERC20 for IERC20;
 
-    // OffsetHelper addr 0x79E63048B355F4FBa192c5b28687B852a5521b31
+    // OffsetHelper addr 0xFAFcCd01C395e4542BEed819De61f02f5562fAEa
     // USDC + WETH on matic
-    address[] acceptedTokens = [0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174, 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619 ];
+    address[] acceptedTokens = [0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174, 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619, 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270];
 
     event TokenBurned(
         address token,
@@ -38,8 +39,10 @@ contract BurnPit {
 
     function burnTokens(
         //address _poolToken
-    ) public payable {
-        address offsetHelperAddr = 0x79E63048B355F4FBa192c5b28687B852a5521b31;
+    ) public {
+        IWETH weth = IWETH(acceptedTokens[2]);
+        weth.deposit(address(this).balance);
+        address offsetHelperAddr = 0xFAFcCd01C395e4542BEed819De61f02f5562fAEa;
         address nctAddr = 0xD838290e877E0188a4A44700463419ED96c16107;
         address[] memory _acceptedTokens = acceptedTokens;
         for(uint8 i = 0; i < _acceptedTokens.length; i++){

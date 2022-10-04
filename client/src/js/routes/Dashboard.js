@@ -246,7 +246,7 @@ class Dashboard extends Component {
 		let info;
 		if(this.state.openVerifiedIndex === 0){
 			let info_1 = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love.";
-			let info_2 = "A Crypto for Charity cause fund is a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
+			let info_2 = "A Crypto for Charity cause fund supports a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
 			return (
 				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
 					<img style={{width:"300px", paddingBottom:"25px"}} src={require("../../images/c4c.jpg")}/>

@@ -249,7 +249,7 @@ class Dashboard extends Component {
 			let info_2 = "A Crypto for Charity cause fund is a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
 			return (
 				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
-					<img style={{width:"100px", paddingBottom:"25px"}} src={require("../../images/c4c.jpg")}/>
+					<img style={{width:"300px", paddingBottom:"25px"}} src={require("../../images/c4c.jpg")}/>
 					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info_1}</p>
 					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info_2}</p>
 				</div>

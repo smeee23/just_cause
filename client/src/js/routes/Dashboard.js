@@ -373,7 +373,7 @@ class Dashboard extends Component {
 			else if(this.state.openTabIndex === 0){
 				const name = item.name;
 				if(this.state.openVerifiedIndex === 0){
-					if(name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund"){
+					if(name.endsWith("Cause Fund") || name === "Environment Conservation Fund"){
 						cardHolder.push(
 							<Card
 								key={item.address}
@@ -390,7 +390,7 @@ class Dashboard extends Component {
 					}
 				}
 				else if(this.state.openVerifiedIndex === 1){
-					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund"){
+					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund" && name !== "Environment Conservation Fund"){
 						cardHolder.push(
 							<Card
 								key={item.address}

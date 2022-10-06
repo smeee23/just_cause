@@ -353,6 +353,9 @@ class Dashboard extends Component {
 
 			const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
 
+			if(item.name === "Healthcare & Research Fund"){
+				console.log("TEST", poolInfo[i]);
+			}
 			if(this.state.hideLowBalance && this.state.openTabIndex === 2){
 				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){
 					cardHolder.push(

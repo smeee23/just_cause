@@ -199,13 +199,18 @@ class Card extends Component {
 		);
 	}
 
-	getAbout = (about) => {
-		const paragraphs = about.split('\\n');
-		about = [];
-		for(let i = 0; i < paragraphs.length; i++){
-			about[i] = <p key={i} style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{paragraphs[i].replace(/^\s+|\s+$/g, '')}</p>
+	getAbout = (about, address) => {
+		if(about){
+			const paragraphs = about.split('\\n');
+			about = [];
+			for(let i = 0; i < paragraphs.length; i++){
+				about[i] = <p key={i} style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{paragraphs[i].replace(/^\s+|\s+$/g, '')}</p>
+			}
+			return about;
 		}
-		return about;
+		else{
+			console.log("about does not exist", address);
+		}
 	}
 
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified) => {
@@ -244,7 +249,7 @@ class Card extends Component {
 						</div>
 					</div>
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
-						{this.getAbout(about)}
+						{this.getAbout(about, address)}
 						<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
 							{this.getVerifiedLinks(isVerified, title)}
 							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>

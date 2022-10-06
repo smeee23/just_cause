@@ -161,6 +161,9 @@ import { getIpfsData } from "./ipfs";
 				let acceptedTokenStrings = [];
 				let acceptedTokenInfo = [];
 
+				if(name === "Healthcare & Research Fund"){
+					console.log("poolINfo", groupedPoolInfo)
+				}
 				for(let j = 0; j < acceptedTokens.length; j++){
 					const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
 					let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];

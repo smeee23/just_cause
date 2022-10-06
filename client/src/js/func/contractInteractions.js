@@ -7,6 +7,7 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
 import Pool from "../../contracts/IPool.json";
 import { getIpfsData } from "./ipfs";
+import { tempFixForDescriptions } from "./verifiedPoolMap";
 
 	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
 		const web3 = await getWeb3();
@@ -154,7 +155,7 @@ import { getIpfsData } from "./ipfs";
 				const receiver = groupedPoolInfo[1];
 				const isVerified = groupedPoolInfo[2];
 				let aboutHash = groupedPoolInfo[5];
-				const about = await getIpfsData(aboutHash);
+				let about = await getIpfsData(aboutHash);
 				const picHash =  groupedPoolInfo[4];
 				const name = groupedPoolInfo[6];
 
@@ -162,8 +163,15 @@ import { getIpfsData } from "./ipfs";
 				let acceptedTokenInfo = [];
 
 				if(name === "Healthcare & Research Fund"){
-					console.log("poolINfo", groupedPoolInfo)
+					console.log("TESTTTTT", groupedPoolInfo)
+					about = tempFixForDescriptions[0];
 				}
+
+				if(name === "Environment Conservation Fund"){
+					console.log("TEST ENV", groupedPoolInfo)
+					about = tempFixForDescriptions[1];
+				}
+
 				for(let j = 0; j < acceptedTokens.length; j++){
 					const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
 					let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];

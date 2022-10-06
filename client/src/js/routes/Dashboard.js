@@ -353,9 +353,6 @@ class Dashboard extends Component {
 
 			const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
 
-			if(item.name === "Healthcare & Research Fund"){
-				console.log("TEST", poolInfo[i]);
-			}
 			if(this.state.hideLowBalance && this.state.openTabIndex === 2){
 				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){
 					cardHolder.push(
@@ -376,7 +373,7 @@ class Dashboard extends Component {
 			else if(this.state.openTabIndex === 0){
 				const name = item.name;
 				if(this.state.openVerifiedIndex === 0){
-					if(name.endsWith("Cause Fund") || name === "Environment Conservation Fund"){
+					if(name.endsWith("Cause Fund") || name === "Environment Conservation Fund" || name === "Healthcare & Research Fund"){
 						cardHolder.push(
 							<Card
 								key={item.address}

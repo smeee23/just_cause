@@ -484,7 +484,7 @@ class Card extends Component {
 			{ "name": "poolShape5", "color": palette("brand-green")},
 		]
 
-		const isReceiver = this.isReceiver(receiver);
+		const isReceiver = false;//this.isReceiver(receiver);
 
 		const randomPoolIcon = poolIcons[idx % poolIcons.length];
 

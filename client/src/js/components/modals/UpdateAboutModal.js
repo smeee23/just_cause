@@ -37,6 +37,56 @@ class UpdateAboutModal extends Component {
 		}
 	}
 
+  updateMetaUriOnChain = async(poolName, aboutHash, aboutText, picHash, poolAddress) => {
+	let result;
+	let txInfo;
+	try{
+
+		const nftResult = await this.uploadNftMetaData(poolName, aboutText, picHash);
+		const metaUri = 'https://ipfs.io/ipfs/'+nftResult.hash;
+
+		const web3 = await getWeb3();
+		const activeAccount = this.props.activeAccount;
+
+		const gasPrice = (await web3.eth.getGasPrice()).toString();
+
+		const parameter = {
+			from: activeAccount,
+			gas: web3.utils.toHex(1200000),
+			gasPrice: web3.utils.toHex(gasPrice)
+		};
+
+		let JCPoolInstance = new web3.eth.Contract(
+			JCPool.abi,
+			poolAddress,
+		);
+
+		txInfo = {txHash: [], status: '', success: '', type:"SET_ABOUT", poolAddress: poolAddress, poolName: poolName, networkId: this.props.networkId};
+
+		result = await JCPool.methods.setMetaUri(metaUri).send(parameter , (err, transactionHash) => {
+			console.log('Transaction Hash :', transactionHash);
+			if(!err){
+				txInfo.txHash.push(transactionHash);
+				txInfo.status = 'pending';
+				this.props.updatePendingTx(txInfo);
+			}
+			else{
+				txInfo = "";
+			}
+		});
+
+		txInfo.status = 'success';
+	}
+	catch (error) {
+		console.error(error);
+		txInfo = "";
+	}
+
+	if(txInfo){
+		this.displayTxInfo(txInfo);
+	}
+  }
+
   updateAboutOnChain = async(poolName, aboutHash, aboutText, picHash, poolAddress) => {
     let result;
 	let txInfo;
@@ -63,19 +113,11 @@ class UpdateAboutModal extends Component {
 
 		txInfo = {txHash: [], status: '', success: '', type:"SET_ABOUT", poolAddress: poolAddress, poolName: poolName, networkId: this.props.networkId};
 
-		result = await JCPoolInstance.methods.setAbout(aboutHash).send(parameter , (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash);
-			if(!err){
-				txInfo.txHash.push(transactionHash);
-				txInfo.status = 'pending';
-				this.props.updatePendingTx(txInfo);
-			}
-			else{
-				txInfo = "";
-			}
-		});
+		JCPoolInstance.methods.setAbout(aboutHash).send(parameter);
 
-		result = await JCPool.methods.setMetaUri(aboutHash).send(parameter , (err, transactionHash) => {
+		txInfo = {txHash: [], status: '', success: '', type:"SET_ABOUT", poolAddress: poolAddress, poolName: poolName, networkId: this.props.networkId};
+
+		result = await JCPoolInstance.methods.setMetaUri(metaUri).send(parameter , (err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			if(!err){
 				txInfo.txHash.push(transactionHash);
@@ -93,7 +135,6 @@ class UpdateAboutModal extends Component {
 		console.error(error);
 		txInfo = "";
 	}
-
 	if(txInfo){
 		this.displayTxInfo(txInfo);
 	}
@@ -114,6 +155,7 @@ class UpdateAboutModal extends Component {
 	  const aboutHash = uploadResult.hash;
 	  this.props.updateNewAbout(this.props.newAboutInfo);
 	  await this.updateAboutOnChain(poolName, aboutHash, aboutText, picHash, poolAddress);
+	  //await this.updateMetaUriOnChain(poolName, aboutHash, aboutText, picHash, poolAddress)
   }
 
   uploadNftMetaData = async(poolName, aboutText, picHash) => {
@@ -218,11 +260,11 @@ class UpdateAboutModal extends Component {
                 	<h2 style={{fontSize:17}} className="mb0">Current Description:</h2>
                 	{this.getAbout(newAboutInfo.about)}
 					<h2 style={{paddingBottom:"16px", fontSize:17, marginTop:"32px"}} className="mr">Give an update or replace with a new description:</h2>
-					<TextField ref="about" label="Pool Description" placeholder="Describe your cause"/>
+					<TextField ref="about" label="Pool Description" placeholder="give an update"/>
 				</div>
              </ModalBody>
-			 <ModalBodyDeploy>
-                <div style={{marginLeft:"auto", display:"flex", gap:"10px"}} className="modal__body__column__six">
+			 <ModalCtas>
+				 <div style={{marginLeft:"auto", display:"flex", gap:"10px"}}>
 					<Button text={"Update"}
 						disabled={this.checkValues()}
 						callback={() => this.handleClick({poolName: newAboutInfo.poolName, picHash: newAboutInfo.picHash, poolAddress: newAboutInfo.poolAddress, prevAbout: newAboutInfo.about, newAbout: this.refs.about.getValue()})}
@@ -232,7 +274,7 @@ class UpdateAboutModal extends Component {
 						callback={() => this.handleClick({poolName: newAboutInfo.poolName, picHash: newAboutInfo.picHash, poolAddress: newAboutInfo.poolAddress, newAbout: this.refs.about.getValue()})}
 					/>
 				</div>
-			 </ModalBodyDeploy>
+			 </ModalCtas>
 		</Fragment>
 		);
 	}

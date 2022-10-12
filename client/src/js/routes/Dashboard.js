@@ -219,8 +219,8 @@ class Dashboard extends Component {
 	createVerifiedButtons = () => {
 		if(this.state.openTabIndex !== 0) return;
 		let buttonHolder = [];
-		const buttonStrings = ['Crypto for Charity', 'General'];
-		const infoStrings = ['Crypto for Charity cause funds', 'miscellaneous funds'];
+		const buttonStrings = ['General', 'Crypto for Charity'];
+		const infoStrings = ['miscellaneous funds', 'Crypto for Charity cause funds'];
 		for(let i = 0; i < buttonStrings.length; i++){
 			const name = buttonStrings[i];
 			let isDisabled = false;
@@ -247,19 +247,19 @@ class Dashboard extends Component {
 	getVerifiedTabInfo = () => {
 		if(this.state.openTabIndex !== 0) return;
 		let info;
-		if(this.state.openVerifiedIndex === 0){
+		if(this.state.openVerifiedIndex === 1){
 			let info_1 = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love.";
 			let info_2 = "A Crypto for Charity cause fund supports a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
 			return (
 				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
 					<img style={{width:"300px", border: "solid"}} src={require("../../images/c4c.jpg")}/>
-					<p style={{alignItems:"center", marginTop: "25px", justifyContent:"center"}} className="mr">{info_1}</p>
-					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info_2}</p>
+					<p style={{alignItems:"center", marginTop: "25px", justifyContent:"center", marginRight:"0%"}} className="mr">{info_1}</p>
+					<p style={{alignItems:"center", justifyContent:"center", marginRight:"0%"}} className="mr">{info_2}</p>
 				</div>
 			);
 		}
-		else if (this.state.openVerifiedIndex === 1){
-			info = "Pools in this group consist of public goods, charities, and nonprofits that do not fall into the other categories of verified pools.";
+		else if (this.state.openVerifiedIndex === 0){
+			info = "Pools in this group consist of public goods, charities, and nonprofits.";
 			return (
 				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
 					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info}</p>
@@ -276,7 +276,7 @@ class Dashboard extends Component {
 		else if (this.state.openTabIndex === 2) info = "Causes to which you have contributed";
 		return (
 			<div style={{marginTop: "25px", maxWidth: "300px", alignItems:"center", justifyContent:"center"}}>
-				<p className="mr">{info}</p>
+				<p style={{marginRight: "0%"}} className="mr">{info}</p>
 			</div>
 		);
 	}
@@ -375,7 +375,7 @@ class Dashboard extends Component {
 			}
 			else if(this.state.openTabIndex === 0){
 				const name = item.name;
-				if(this.state.openVerifiedIndex === 0){
+				if(this.state.openVerifiedIndex === 1){
 					if(name.endsWith("Cause Fund") || name === "Environment Conservation Fund" || name === "Healthcare & Research Fund"){
 						cardHolder.push(
 							<Card
@@ -392,7 +392,7 @@ class Dashboard extends Component {
 						);
 					}
 				}
-				else if(this.state.openVerifiedIndex === 1){
+				else if(this.state.openVerifiedIndex === 0){
 					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund" && name !== "Environment Conservation Fund"){
 						cardHolder.push(
 							<Card

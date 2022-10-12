@@ -242,7 +242,7 @@ class NewPoolModal extends Component {
           		<h2 className="mb0">Let's Get Started</h2>
        		 </ModalHeader>
 			<ModalBodyDeploy>
-				<div  style={{fontSize:11}}  className="modal__body__column__one">
+				<div  className="modal__body__column__one">
 				<p className="mr">1) Come up with a name for your JustCause Pool. This name will be unique to your Pool. </p>
 				</div>
 
@@ -250,7 +250,7 @@ class NewPoolModal extends Component {
 					<TextField ref="poolName" label="Pool Name" id="poolName" placeholder="Name your pool"/>
 				</div>
 
-				<div style={{fontSize:11}} className="modal__body__column__three">
+				<div className="modal__body__column__three">
 					<p className="mr">2) Enter an address to receive the interest earned by contributions to your cause. It does not have to be an address you own. The field defaults to the current account, but any valid address can be entered. Take care, this address cannot be changed once the pool is created.</p>
 
 				</div>
@@ -259,7 +259,7 @@ class NewPoolModal extends Component {
 					<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
 				</div>
 
-				<div style={{fontSize:11}} className="modal__body__column__five">
+				<div className="modal__body__column__five">
 					<p className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. We want to give you the tools to fund it and share your inspiration with the world.</p>
 				</div>
 

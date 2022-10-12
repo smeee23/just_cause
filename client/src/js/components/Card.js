@@ -19,11 +19,12 @@ import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateShare } from  "../actions/share";
+import { updateNewAbout } from  "../actions/newAbout";
 
 import { getBalance, getContractInfo } from '../func/contractInteractions';
 import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, numberWithCommas, copyToClipboard} from '../func/ancillaryFunctions';
 import { verifiedPoolMap } from '../func/verifiedPoolMap';
-import { Modal, SmallModal } from "../components/Modal";
+import { Modal, SmallModal, LargeModal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
 import WithdrawModal from '../components/modals/WithdrawModal'
 import ClaimModal from '../components/modals/ClaimModal'
@@ -31,7 +32,7 @@ import ApproveModal from '../components/modals/ApproveModal'
 import PendingTxModal from "../components/modals/PendingTxModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import ShareModal from "../components/modals/ShareModal";
-
+import UpdateAboutModal from "./modals/UpdateAboutModal";
 
 class Card extends Component {
 
@@ -66,6 +67,7 @@ class Card extends Component {
 		try{
 			window.scrollTo(0,0);
 			if(this.props.deployInfo) await this.props.updateDeployInfo('');
+			if(this.props.newAbout) await this.props.updateNewAbout('');
 			if(this.props.depositAmount) await this.props.updateDepositAmount('');
 			if(this.props.withdrawAmount) await this.props.updateWithdrawAmount('');
 			if(this.props.approve) await this.props.updateApprove('');
@@ -140,7 +142,7 @@ class Card extends Component {
 	}
 
 	notifyLoad = () => {
-		console.log('image Loaded')
+		//console.log('image Loaded')
 	}
 	getPoolImage = (picHash, header) => {
 		if(!picHash){
@@ -199,12 +201,19 @@ class Card extends Component {
 		);
 	}
 
-	getAbout = (about, address) => {
+	getAbout = (about, address, isReceiver, picHash, title) => {
 		if(about){
+			let aboutString = about;
 			const paragraphs = about.split('\\n');
 			about = [];
 			for(let i = 0; i < paragraphs.length; i++){
 				about[i] = <p key={i} style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{paragraphs[i].replace(/^\s+|\s+$/g, '')}</p>
+			}
+			if(isReceiver){
+				about.push(
+					<div key={about.length} title={"update the description for your cause"} style={{marginBottom: "20px"}}>
+						<ButtonSmall text={"Edit Description"} callback={async() => await this.updateAbout(aboutString, address, picHash, title)}/>
+					</div>)
 			}
 			return about;
 		}
@@ -213,7 +222,7 @@ class Card extends Component {
 		}
 	}
 
-	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified) => {
+	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified, isReceiver) => {
 		if (!acceptedTokenInfo) return '';
 		if (!this.props.tokenMap) return '';
 
@@ -249,7 +258,7 @@ class Card extends Component {
 						</div>
 					</div>
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
-						{this.getAbout(about, address)}
+						{this.getAbout(about, address, isReceiver, picHash, title)}
 						<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
 							{this.getVerifiedLinks(isVerified, title)}
 							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>
@@ -316,6 +325,24 @@ class Card extends Component {
 			</div>
 		return tokenInfo;
 	}
+
+	getUpdateAboutModal = () => {
+		if(this.props.newAbout){
+			let modal = <LargeModal isOpen={true}><UpdateAboutModal newAboutInfo={this.props.newAbout}/></LargeModal>
+			return modal;
+		}
+	}
+	updateAbout = async(aboutString, address, picHash, title) => {
+		await this.props.updateNewAbout('');
+		console.log("update about clicked", this.props.newAbout);
+		try{
+			await this.props.updateNewAbout({about: aboutString, poolAddress: address, picHash: picHash, poolName: title});
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}
+
 	getDepositAmountModal = () => {
 		if(this.props.depositAmount){
 			let modal = <Modal isOpen={true}><DepositModal depositInfo={this.props.depositAmount}/></Modal>
@@ -324,8 +351,8 @@ class Card extends Component {
 	}
 
 	deposit = async(poolAddress, tokenAddress) => {
-		this.props.updateDepositAmount('');
-		console.log('deposit clicked');
+		await this.props.updateDepositAmount('');
+		console.log('deposit clicked', this.props.depositAmount);
 		try{
 			const tokenMap = this.props.tokenMap;
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
@@ -410,6 +437,12 @@ class Card extends Component {
 		}
 	}
 
+	isReceiver = (receiver) => {
+		if(receiver === this.props.activeAccount){
+			return true;
+		}
+		return false;
+	}
 	getShareModal = () => {
 		if(this.props.share){
 			let modal = <SmallModal isOpen={true}><ShareModal info={this.props.share}/></SmallModal>
@@ -451,6 +484,8 @@ class Card extends Component {
 			{ "name": "poolShape5", "color": palette("brand-green")},
 		]
 
+		const isReceiver = this.isReceiver(receiver);
+
 		const randomPoolIcon = poolIcons[idx % poolIcons.length];
 
 		const classnames = classNames({
@@ -460,7 +495,7 @@ class Card extends Component {
 
 		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
-		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title, isVerified);
+		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title, isVerified, isReceiver);
 
 		return (
 			<div className={classnames}>
@@ -488,6 +523,7 @@ class Card extends Component {
 				{this.getClaimModal()}
 				{this.getApproveModal()}
 				{this.getShareModal()}
+				{this.getUpdateAboutModal()}
       		</div>
 		);
 	}
@@ -510,6 +546,7 @@ const mapStateToProps = state => ({
 	approve: state.approve,
 	share: state.share,
 	networkId: state.networkId,
+	newAbout: state.newAbout,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -524,6 +561,7 @@ const mapDispatchToProps = dispatch => ({
 	updateClaim: (txInfo) => dispatch(updateClaim(txInfo)),
 	updateApprove: (txInfo) => dispatch(updateApprove(txInfo)),
 	updateShare: (share) => dispatch(updateShare(share)),
+	updateNewAbout: (about) => dispatch(updateNewAbout(about)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card)

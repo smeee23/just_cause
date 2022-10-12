@@ -25,6 +25,7 @@ import claimReducer from './claim'
 import approveReducer from './approve'
 import shareReducer from './share'
 import connectReducer from './connect'
+import newAboutReducer from './newAbout'
 
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
@@ -51,6 +52,7 @@ const rootReducer = (history) => combineReducers({
 	approve: approveReducer,
 	share: shareReducer,
 	connect: connectReducer,
+	newAbout: newAboutReducer,
 
 	router: connectRouter(history),
 })

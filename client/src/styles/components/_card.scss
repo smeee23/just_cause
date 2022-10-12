@@ -41,7 +41,7 @@ $baseclass: 'card';
     //grid-auto-rows: minmax(100px, auto);
     max-height: 0;
     transition: max-height $duration-short $easing1;
-    overflow: hidden;
+    overflow: scroll;
   }
 
   @keyframes zoominoutsinglefeatured {

@@ -21,6 +21,7 @@ import { updateWithdrawAmount } from  "../actions/withdrawAmount";
 import { updateClaim } from "../actions/claim";
 import { updateApprove } from "../actions/approve";
 import { updateShare } from  "../actions/share";
+import { updateNewAbout } from  "../actions/newAbout";
 
 import LogoCard from "../components/logos/LogoCard";
 import { updatePoolInfo, addDeployedPool } from '../func/contractInteractions';
@@ -58,6 +59,7 @@ class Dashboard extends Component {
 			}
 
 			if(this.props.deployInfo) await this.props.updateDeployInfo('');
+			if(this.props.newAbout) await this.props.updateNewAbout('');
 			if(this.props.depositAmount) await this.props.updateDepositAmount('');
 			if(this.props.withdrawAmount) await this.props.updateWithdrawAmount('');
 			if(this.props.approve) await this.props.updateApprove('');
@@ -178,6 +180,7 @@ class Dashboard extends Component {
 	setSelectedToken = async(index) => {
 
 		if(this.props.deployInfo) await this.props.updateDeployInfo('');
+		if(this.props.newAbout) await this.props.updateNewAbout('');
 		if(this.props.depositAmount) await this.props.updateDepositAmount('');
 		if(this.props.withdrawAmount) await this.props.updateWithdrawAmount('');
 
@@ -200,7 +203,7 @@ class Dashboard extends Component {
 	createOptionButtons = () => {
 		let buttonHolder = [];
 		const buttonStrings = ['Verified Causes', 'Your Causes', 'Contributions'];
-		const infoStrings = ['team verified pools', 'receiving pools', 'your donations'];
+		const infoStrings = ['team verified pools', 'view and update your causes', 'your donations'];
 		for(let i = 0; i < buttonStrings.length; i++){
 			const name = buttonStrings[i];
 			let isDisabled = false;
@@ -249,8 +252,8 @@ class Dashboard extends Component {
 			let info_2 = "A Crypto for Charity cause fund supports a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
 			return (
 				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
-					<img style={{width:"300px", paddingBottom:"25px"}} src={require("../../images/c4c.jpg")}/>
-					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info_1}</p>
+					<img style={{width:"300px", border: "solid"}} src={require("../../images/c4c.jpg")}/>
+					<p style={{alignItems:"center", marginTop: "25px", justifyContent:"center"}} className="mr">{info_1}</p>
 					<p style={{alignItems:"center", justifyContent:"center"}} className="mr">{info_2}</p>
 				</div>
 			);
@@ -483,6 +486,7 @@ const mapStateToProps = state => ({
 	deployTxResult: state.deployTxResult,
 	depositAmount: state.depositAmount,
 	deployInfo: state.deployInfo,
+	newAbout: state.newAbout,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -496,6 +500,7 @@ const mapDispatchToProps = dispatch => ({
 	updateClaim: (txInfo) => dispatch(updateClaim(txInfo)),
 	updateApprove: (txInfo) => dispatch(updateApprove(txInfo)),
 	updateShare: (share) => dispatch(updateShare(share)),
+	updateNewAbout: (about) => dispatch(updateNewAbout(about)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

@@ -32,6 +32,7 @@ $baseclass: 'modal';
     flex-direction: column;
     padding: (4 * $rem-base);
     border-radius: (2 * $rem-base);
+    overflow: scroll;
 
     transition-delay: $duration-shorter;
     transform: translate3d(0,(4 * $rem-base),0);
@@ -57,7 +58,8 @@ $baseclass: 'modal';
     flex-direction: column;
     padding: (4 * $rem-base);
     border-radius: (2 * $rem-base);
-
+    overflow: scroll;
+    
     transition-delay: $duration-shorter;
     transform: translate3d(0,(4 * $rem-base),0);
   }

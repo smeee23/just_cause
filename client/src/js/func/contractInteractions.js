@@ -5,9 +5,11 @@ import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
+import UniswapV2Router02 from "../../contracts/IUniswapV2Router02.json";
 import Pool from "../../contracts/IPool.json";
 import { getIpfsData } from "./ipfs";
 import { tempFixForDescriptions } from "./verifiedPoolMap";
+import { getSushiRouterAddress } from "./tokenMaps"
 
 	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
 		const web3 = await getWeb3();
@@ -126,6 +128,20 @@ import { tempFixForDescriptions } from "./verifiedPoolMap";
 		);
 
 		return await JCPoolInstance.methods.getPoolInfo().call();
+	}
+
+	export const amountSwapOut = async(TokenIn, TokenOut, amount) => {
+		const web3 = await getWeb3();
+
+		const routerAddress = getSushiRouterAddress();
+        let SushiRouterInstance = new web3.eth.Contract(
+			UniswapV2Router02.abi,
+			routerAddress
+		);
+        const path = [TokenIn, TokenOut];
+        const amt = web3.eth.abi.encodeParameter('uint256', amount);
+        var mycall = await SushiRouterInstance.methods.getAmountsOut(amt, path).call({});
+        return(mycall[1]);
 	}
 
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools, knownPoolInfo) => {

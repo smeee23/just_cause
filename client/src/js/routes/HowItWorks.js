@@ -3,11 +3,6 @@ import { Fragment } from "react";
 
 import { connect } from "react-redux";
 
-import Footer from "../components/Footer";
-import Shapes from '../components/Shapes';
-import MaleOne from "../components/icons/MaleOne";
-import FemaleOne from "../components/icons/FemaleOne";
-import FemaleTwo from "../components/icons/FemaleTwo";
 import Arrow from "../components/icons/Arrow";
 import Charity from "../components/icons/Charity";
 import LogoCard from "../components/logos/LogoCard";
@@ -18,12 +13,7 @@ import EthLogo from "../components/cryptoLogos/EthLogo"
 import MaticLogo from "../components/cryptoLogos/MaticLogo"
 import UsdcLogo from "../components/cryptoLogos/UsdcLogo"
 
-import { Button } from '../components/Button';
-
 class Homepage extends Component {
-	constructor(props) {
-		super(props);
-	}
 
 	componentDidMount() {
 		window.scrollTo(0,0);
@@ -115,7 +105,7 @@ class Homepage extends Component {
 						</div>
 					</section>
 					<section style={{alignItems:"center", justifyContent:"center"}}  className="page-section bw0 horizontal-padding">
-						<a href="https://docs.justcause.finance/" target="_blank">LEARN MORE AT OUR DOCS PAGE</a>
+						<a href="https://docs.justcause.finance/" target="_blank" rel="noopener noreferrer">LEARN MORE AT OUR DOCS PAGE</a>
 					</section>
 				</article>
 			</Fragment>

@@ -1,7 +1,6 @@
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import Authereum from "authereum";
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import React, { Component } from "react"
 import { connect } from "react-redux"
@@ -25,7 +24,7 @@ import { updateConnect } from "./actions/connect"
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
-import { getTokenMap, getAaveAddressProvider } from "./func/tokenMaps.js";
+import { getTokenMap, getAaveAddressProvider, deployedNetworks } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
@@ -47,9 +46,6 @@ const providerOptions = {
 		  infuraId: "c6e0956c0fb4432aac74aaa7dfb7687e",
 		}
 	},
-    authereum: {
-        package: Authereum
-    }
 };
 
 export const web3Modal = new Web3Modal({
@@ -61,6 +57,13 @@ export const web3Modal = new Web3Modal({
 
 class App extends Component {
 
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			interval: "",
+		}
+	}
 	componentDidMount = async() => {
 		try {
 
@@ -71,20 +74,19 @@ class App extends Component {
 						const verifiedPoolInfo = localStorage.getItem("verifiedPoolInfo");
 						if(verifiedPoolInfo){
 							await this.props.updateVerifiedPoolInfo(JSON.parse(verifiedPoolInfo));
-							console.log("verifiedPoolInfo from storage", typeof JSON.parse(verifiedPoolInfo));
+							console.log("verifiedPoolInfo from storage", JSON.parse(verifiedPoolInfo));
 						}
 
 						const ownerPoolInfo = localStorage.getItem("ownerPoolInfo");
 						if(ownerPoolInfo){
 							await this.props.updateOwnerPoolInfo(JSON.parse(ownerPoolInfo));
-							console.log("ownerPoolInfo from storage", typeof JSON.parse(ownerPoolInfo));
+							console.log("ownerPoolInfo from storage", JSON.parse(ownerPoolInfo));
 						}
 
 						const userDepositPoolInfo = localStorage.getItem("userDepositPoolInfo");
-						console.log("userDeposit", userDepositPoolInfo)
 						if(userDepositPoolInfo){
 							await this.props.updateUserDepositPoolInfo(JSON.parse(userDepositPoolInfo));
-							console.log("userDepositPoolInfo from storage", typeof JSON.parse(userDepositPoolInfo));
+							console.log("userDepositPoolInfo from storage", JSON.parse(userDepositPoolInfo));
 						}
 
 						const tokenMap = localStorage.getItem("tokenMap");
@@ -92,10 +94,12 @@ class App extends Component {
 							await this.props.updateTokenMap(JSON.parse(tokenMap));
 							console.log("tokenMap from storage", JSON.parse(tokenMap));
 						}
+
 						await this.getAccounts();
 
 						if (this.props.activeAccount){
-							this.setUpConnection();
+							await this.setUpConnection();
+							await this.setPoolStates();
 						}
 					}
 				}
@@ -106,11 +110,6 @@ class App extends Component {
 			if(!this.props.networkId){
 				alert(
 					`Failed to load metamask wallet, no network detected`,
-				);
-			}
-			else if(this.props.networkId !== 80001){
-				alert(
-					`Unsupported network detected (chain id: `+this.props.networkId+'). Please switch to polygon mumbai testnet'
 				);
 			}
 			else{
@@ -125,15 +124,25 @@ class App extends Component {
 	setUpConnection = async() => {
 		this.setActiveAccountState(this.props.activeAccount);
 		this.networkId = await this.web3.eth.net.getId();
-		this.setNetworkId(this.networkId);
 
+		if(!deployedNetworks.includes(this.networkId)){
+			alert(
+				'Unsupported network detected (chain id: '+this.networkId+'). Please switch to Polygon (chain id: 137) or polygon mumbai testnet (chain id: 80001)'
+			);
+		}
+		this.setNetworkId(this.networkId);
+	}
+
+	setPoolStates = async() => {
+		this.poolTrackerAddress = PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address;
 		this.PoolTrackerInstance = new this.web3.eth.Contract(
 			PoolTracker.abi,
-			PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address,
+			this.poolTrackerAddress,
 		);
 
-		this.poolTrackerAddress = PoolTracker.networks[this.networkId].address;
 		this.setPoolTrackAddress(this.poolTrackerAddress);
+
+
 		const tokenMap = getTokenMap(this.networkId);
 		this.setTokenMapState(tokenMap);
 		this.setPoolStateAll(this.props.activeAccount);
@@ -159,6 +168,40 @@ class App extends Component {
 	getAccounts = async() => {
 		const provider = await this.connectToWeb3();
 		this.provider = provider;
+
+		provider.on("accountsChanged", async(accounts) => {
+			console.log("accounts change", accounts, provider);
+			await web3Modal.clearCachedProvider();
+			localStorage.setItem("ownerPoolInfo", "");
+			localStorage.setItem("userDepositPoolInfo", "");
+			window.location.reload(false);
+		  });
+
+		// Subscribe to chainId change
+		provider.on("chainChanged", (chainId) => {
+			console.log(chainId);
+			localStorage.setItem("ownerPoolInfo", "");
+			localStorage.setItem("userDepositPoolInfo", "");
+			localStorage.setItem("verifiedPoolInfo", "");
+			window.location.reload(false);
+		});
+
+		// Subscribe to provider connection
+		provider.on("connect", (info) => {
+			console.log(info);
+			localStorage.setItem("ownerPoolInfo", "");
+			localStorage.setItem("userDepositPoolInfo", "");
+			window.location.reload(false);
+		});
+
+		// Subscribe to provider disconnection
+		provider.on("disconnect", async(error) => {
+			console.log("disconnect", error);
+			await web3Modal.clearCachedProvider();
+			localStorage.setItem("ownerPoolInfo", "");
+			localStorage.setItem("userDepositPoolInfo", "");
+			window.location.reload(false);
+		});
 
 		this.web3 = new Web3(this.provider);
 		const accounts = await this.web3.eth.getAccounts();
@@ -246,6 +289,7 @@ class App extends Component {
 		let ownerPoolInfo;
 		ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools, this.props.verifiedPoolInfo);
 		await this.props.updateUserDepositPoolAddrs(userDepositPools);
+		await this.props.updateOwnerPoolInfo(ownerPoolInfo);
 		localStorage.setItem("ownerPoolInfo", JSON.stringify(ownerPoolInfo));
 
 		let userDepositPoolInfo;

@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
-import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
+import { ModalHeader, ModalCtas } from "../Modal";
 import TextField from '../TextField'
 import { Button, ButtonExtraSmall } from '../Button'
 
@@ -10,9 +10,12 @@ import PoolTracker from "../../../contracts/PoolTracker.json";
 import { updatePendingTx } from "../../actions/pendingTx";
 import { updateTxResult } from  "../../actions/txResult";
 import { updateWithdrawAmount } from  "../../actions/withdrawAmount";
+import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
+import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
+import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
-import {getAmountBase} from '../../func/contractInteractions';
-import {delay, getTokenBaseAmount, displayLogo} from '../../func/ancillaryFunctions';
+import {getDirectFromPoolInfo} from '../../func/contractInteractions';
+import {delay, getTokenBaseAmount, displayLogo, addNewPoolInfo, checkPoolInPoolInfo } from '../../func/ancillaryFunctions';
 
 class WithdrawModal extends Component {
 
@@ -57,7 +60,6 @@ class WithdrawModal extends Component {
 
             const amount = this.props.withdrawAmount.amount;
             this.props.updateWithdrawAmount('');
-            const amountInBase_test = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);
             const amountInBase = getTokenBaseAmount(amount, this.props.tokenMap[tokenString].decimals);
             const gasPrice = (await web3.eth.getGasPrice()).toString();
 
@@ -84,6 +86,23 @@ class WithdrawModal extends Component {
                 }
             });
             txInfo.success = true;
+
+            const newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
+            const newDepositInfo = addNewPoolInfo(this.props.userDepositPoolInfo, newInfo);
+            await this.props.updateUserDepositPoolInfo(newDepositInfo);
+            localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
+
+            if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
+              const newOwnerInfo = addNewPoolInfo(this.props.ownerPoolInfo, newInfo);
+              await this.props.updateOwnerPoolInfo(newOwnerInfo);
+              localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+            }
+
+            if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
+              const newVerifiedInfo = addNewPoolInfo(this.props.verifiedPoolInfo, newInfo);
+              await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
+              localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
+            }
 		}
     catch (error) {
       console.error(error);
@@ -157,12 +176,18 @@ const mapStateToProps = state => ({
     withdrawAmount: state.withdrawAmount,
     activeAccount: state.activeAccount,
     networkId: state.networkId,
+    userDepositPoolInfo: state.userDepositPoolInfo,
+    verifiedPoolInfo: state.verifiedPoolInfo,
+    ownerPoolInfo: state.ownerPoolInfo,
 })
 
 const mapDispatchToProps = dispatch => ({
     updateWithdrawAmount: (amount) => dispatch(updateWithdrawAmount(amount)),
     updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
-	updateTxResult: (res) => dispatch(updateTxResult(res)),
+    updateTxResult: (res) => dispatch(updateTxResult(res)),
+    updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
+    updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
+    updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithdrawModal)

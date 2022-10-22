@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 import Card from '../components/Card';
 import { Modal, LargeModal } from "../components/Modal";
-import { Button, ButtonSmall, ButtonExtraSmall} from '../components/Button';
+import { Button, ButtonSmall } from '../components/Button';
 import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
@@ -24,7 +24,6 @@ import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
 
 import LogoCard from "../components/logos/LogoCard";
-import { updatePoolInfo, addDeployedPool } from '../func/contractInteractions';
 import { getHeaderValuesInUSD } from '../func/ancillaryFunctions';
 
 import web3Modal from "../App";
@@ -79,45 +78,10 @@ class Dashboard extends Component {
 		console.log('component did update');
 	}
 
-	updateVerifiedPoolInfo = async(info) => {
-		await this.props.updateVerifiedPoolInfo(info);
-	}
-
-	updateOwnerPoolInfo = async(info) => {
-		await this.props.updateOwnerPoolInfo(info);
-	}
-
-	updateUserDepositPoolInfo = async(info) => {
-		await this.props.updateUserDepositPoolInfo(info);
-	}
-
 	getTxResultModal = () => {
 		if(this.props.txResult){
-			let modal = <Modal isOpen={true}>
-				<TxResultModal txDetails={this.props.txResult}/>
-				</Modal>;
+			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;
 
-			//const poolLists = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo];
-			if(this.props.txResult.success){
-				let poolLists = updatePoolInfo(this.props.txResult.poolAddress,
-												this.props.activeAccount,
-												this.props.poolTrackerAddress,
-												this.props.tokenMap,
-												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo, this.props.userDepositPoolInfo]);
-
-				if(poolLists[0]){
-					this.updateVerifiedPoolInfo(poolLists[0]);
-					localStorage.setItem("verifiedPoolInfo", JSON.stringify(poolLists[0]));
-				}
-				if(poolLists[1]){
-					this.updateOwnerPoolInfo(poolLists[1]);
-					localStorage.setItem("ownerPoolInfo", JSON.stringify(poolLists[1]));
-				}
-				if(poolLists[2]){
-					this.updateUserDepositPoolInfo(poolLists[2]);
-					localStorage.setItem("userDepositPoolInfo", JSON.stringify(poolLists[2]));
-				}
-			}
 			return modal;
 		}
 	}
@@ -130,23 +94,6 @@ class Dashboard extends Component {
 	getDeployTxModal = () => {
 		if(this.props.deployTxResult){
 			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;
-
-			if(this.props.deployTxResult.status === 'success'){
-				let poolLists = addDeployedPool(this.props.deployTxResult.poolAddress,
-												this.props.activeAccount,
-												this.props.poolTrackerAddress,
-												this.props.tokenMap,
-												[this.props.verifiedPoolInfo,this.props.ownerPoolInfo]);
-				if(poolLists[0]) {
-					this.updateVerifiedPoolInfo(poolLists[0]);
-					localStorage.setItem("verifiedPoolInfo", JSON.stringify(poolLists[0]));
-				}
-				if(poolLists[1]){
-					this.updateOwnerPoolInfo(poolLists[1]);
-					localStorage.setItem("ownerPoolInfo", JSON.stringify(poolLists[1]));
-				}
-			}
-
 			return modal;
 		}
 	}
@@ -252,7 +199,7 @@ class Dashboard extends Component {
 			let info_2 = "A Crypto for Charity cause fund supports a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
 			return (
 				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
-					<img style={{width:"300px", border: "solid"}} src={require("../../images/c4c.jpg")}/>
+					<img style={{width:"300px", border: "solid"}} src={require("../../images/c4c.jpg")} alt={"logo"}/>
 					<p style={{alignItems:"center", marginTop: "25px", justifyContent:"center", marginRight:"0%"}} className="mr">{info_1}</p>
 					<p style={{alignItems:"center", justifyContent:"center", marginRight:"0%"}} className="mr">{info_2}</p>
 				</div>
@@ -324,7 +271,7 @@ class Dashboard extends Component {
 
 					<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
 
-					<a style={{ textDecoration: "none"}} title="New to Polygon? Follow link to learn more" href="https://polygon.technology/" target="_blank">
+					<a style={{ textDecoration: "none"}} title="New to Polygon? Follow link to learn more" href="https://polygon.technology/" target="_blank" rel="noopener noreferrer">
 						<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Connect to Polygon to view causes</h2>
 					</a>
 				</div>
@@ -354,7 +301,7 @@ class Dashboard extends Component {
 		for(let i = 0; i < poolInfo.length; i++){
 			const item = poolInfo[i];
 
-			const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
+			const {userBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
 
 			if(this.state.hideLowBalance && this.state.openTabIndex === 2){
 				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){

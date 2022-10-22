@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, { Component } from "react"
 import classNames from "classnames";
 
 import { connect } from "react-redux";
@@ -21,7 +21,7 @@ import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
 
-import { getBalance, getContractInfo } from '../func/contractInteractions';
+import { getBalance, getContractInfo , getDirectFromPoolInfo} from '../func/contractInteractions';
 import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, numberWithCommas, copyToClipboard} from '../func/ancillaryFunctions';
 import { verifiedPoolMap } from '../func/verifiedPoolMap';
 import { Modal, SmallModal, LargeModal } from "../components/Modal";
@@ -35,6 +35,7 @@ import ShareModal from "../components/modals/ShareModal";
 import UpdateAboutModal from "./modals/UpdateAboutModal";
 
 class Card extends Component {
+	interval = 0;
 
 	constructor(props) {
 		super(props);
@@ -44,6 +45,7 @@ class Card extends Component {
 			selectedTokenIndex: this.highestDeposit(this.props.acceptedTokenInfo),
 			tokenButtons: [],
 			copied: false,
+			directResponse: "",
 		}
 	}
 
@@ -73,6 +75,8 @@ class Card extends Component {
 			if(this.props.approve) await this.props.updateApprove('');
 			if(this.props.share) await this.props.updateShare("");
 			if(this.props.claim)  await this.props.updateClaim('');
+			//this.poolScraper();
+			//this.interval = setInterval(this.poolScraper, 30000);
 		}
 		catch (error) {
 			// Catch any errors for any of the above operations.
@@ -82,24 +86,34 @@ class Card extends Component {
 			console.error(error);
 		}
 	}
+
+	componentWillUnmount() {
+		clearInterval(this.interval);
+	}
+
+	poolScraper = async() => {
+		console.log("print off every 30 sec");
+		if(this.props.address && this.props.activeAccount !== "Connect"){
+			let directResponse = await getDirectFromPoolInfo(this.props.address, this.props.tokenMap, this.props.activeAccount);
+			//console.log("directResponse", directResponse);
+			if(JSON.stringify(this.state.directResponse) !== JSON.stringify(directResponse)){
+				this.setState({ directResponse: directResponse });
+				console.log("HIT A CHANGE", directResponse, this.state.directResponse);
+			}
+		}
+	}
 	displayWithdraw = (item, address, tokenString, title) => {
 	if(item.userBalance > 0){
-		let isDisabled = false;
-		if(this.props.pendingTx) isDisabled = true;
 		return <div title={"withdraw deposit"}><Button logo={displayLogo(tokenString)} text={"Withdraw "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
 		}
 	}
 
 	displayClaim = (item, address, title) => {
 		if(item.unclaimedInterest > 500){
-			let isDisabled = false;
-			if(this.props.pendingTx) isDisabled = true;
 			return <div title={"harvest donations for "+title}><Button logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
 		}
 	}
 	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance, title) => {
-		let isDisabled = false;
-		if(this.props.pendingTx) isDisabled = true;
 		if(isEth){
 			return  <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		}
@@ -202,24 +216,33 @@ class Card extends Component {
 	}
 
 	getAbout = (about, address, isReceiver, picHash, title) => {
-		if(about){
+		if(this.state.directResponse){
+			about = this.state.directResponse;
+			console.log("directResponse", typeof about, typeof this.state.directResponse)
+		}
+		if(!about){
+			console.log("about does not exist", address);
+			about = "(There is a delay loading the description from IPFS. IPFS is a new and evolving technology, it can take time for new pool descriptions to be updated in our system.)"
+		}
 			let aboutString = about;
-			const paragraphs = about.split('\\n');
-			about = [];
-			for(let i = 0; i < paragraphs.length; i++){
-				about[i] = <p key={i} style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{paragraphs[i].replace(/^\s+|\s+$/g, '')}</p>
+			let aboutHolder = [];
+			//let regex = /^Update#[0-9]+$/;
+			if(about.includes("\\n")){
+				const paragraphs = about.split(/\\n/);
+				for(let i = 0; i < paragraphs.length; i++){
+					aboutHolder.push(<p key={i} style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{paragraphs[i].replace(/^\s+|\s+$/g, '')}</p>);
+				}
+			}
+			else{
+				aboutHolder.push(<p key="0" style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{about.replace(/^\s+|\s+$/g, '')}</p>);
 			}
 			if(isReceiver){
-				about.push(
-					<div key={about.length} title={"update the description for your cause"} style={{marginBottom: "20px"}}>
+				aboutHolder.push(
+					<div key={aboutHolder.length} title={"update the description for your cause"} style={{marginBottom: "20px"}}>
 						<ButtonSmall text={"Edit Description"} callback={async() => await this.updateAbout(aboutString, address, picHash, title)}/>
 					</div>)
 			}
-			return about;
-		}
-		else{
-			console.log("about does not exist", address);
-		}
+			return aboutHolder;
 	}
 
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified, isReceiver) => {
@@ -401,7 +424,6 @@ class Card extends Component {
 
 	claim = async(poolAddress, tokenAddress, unclaimedInterest) => {
 		await this.props.updateClaim('');
-		let result;
 		console.log('claim interest clicked', poolAddress);
 		try{
 			const activeAccount = this.props.activeAccount;
@@ -426,7 +448,6 @@ class Card extends Component {
 	approve = async(tokenAddress, tokenString, poolAddress) => {
 		console.log("approve clicked");
 		this.props.updateApprove('');
-		let result;
 		try{
 			const activeAccount = this.props.activeAccount;
 
@@ -461,8 +482,9 @@ class Card extends Component {
 		this.props.updateTxResult('');
 	}
 
-	getPendingTxModal = () => {
+	getPendingTxModal = async() => {
 		if(this.props.pendingTx){
+			await this.poolScraper();
 			let modal = <Modal isOpen={true}><PendingTxModal txDetails={this.props.pendingTx}/></Modal>;
 			return modal;
 		}
@@ -484,7 +506,7 @@ class Card extends Component {
 			{ "name": "poolShape5", "color": palette("brand-green")},
 		]
 
-		const isReceiver = false;//this.isReceiver(receiver);
+		const isReceiver = this.isReceiver(receiver);
 
 		const randomPoolIcon = poolIcons[idx % poolIcons.length];
 

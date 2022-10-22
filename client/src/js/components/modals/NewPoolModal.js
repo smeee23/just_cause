@@ -10,11 +10,12 @@ import PoolTracker from "../../../contracts/PoolTracker.json";
 import { updateDepositAmount } from  "../../actions/depositAmount";
 import {updateDeployInfo} from "../../actions/deployInfo";
 import { updateDeployTxResult } from  "../../actions/deployTxResult";
+import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
 import {upload} from '../../func/ipfs';
 
 import { delay, displayLogo } from '../../func/ancillaryFunctions';
-import {checkInputError} from '../../func/contractInteractions';
+import {checkInputError, addPoolToPoolInfo } from '../../func/contractInteractions';
 
 class NewPoolModal extends Component {
 
@@ -75,6 +76,10 @@ class NewPoolModal extends Component {
 		});
 		txInfo.poolAddress = result.events.AddPool.returnValues.pool;
 		txInfo.status = 'success';
+
+		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, this.props.ownerPoolInfo);
+		await this.props.updateOwnerPoolInfo(newOwnerInfo);
+		localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 	}
 	catch (error) {
 		console.error(error);
@@ -252,7 +257,6 @@ class NewPoolModal extends Component {
 
 				<div className="modal__body__column__three">
 					<p className="mr">2) Enter an address to receive the interest earned by contributions to your cause. It does not have to be an address you own. The field defaults to the current account, but any valid address can be entered. Take care, this address cannot be changed once the pool is created.</p>
-
 				</div>
 
 				<div style={{maxWidth: "330px"}} className="modal__body__column__four">
@@ -260,7 +264,7 @@ class NewPoolModal extends Component {
 				</div>
 
 				<div className="modal__body__column__five">
-					<p className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. We want to give you the tools to fund it and share your inspiration with the world.</p>
+					<p style={{marginTop: "auto"}} className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. We want to give you the tools to fund it and share your inspiration with the world.</p>
 				</div>
 
 				<div className="modal__body__column__six">
@@ -334,12 +338,16 @@ const mapStateToProps = state => ({
  	depositAmount: state.depositAmount,
 	activeAccount: state.activeAccount,
 	networkId: state.networkId,
+	ownerPoolInfo: state.ownerPoolInfo,
 })
 
 const mapDispatchToProps = dispatch => ({
   	updateDepositAmount: (amount) => dispatch(updateDepositAmount(amount)),
 	updateDeployTxResult: (res) => dispatch(updateDeployTxResult(res)),
 	updateDeployInfo: (res) => dispatch(updateDeployInfo(res)),
+	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 })
+
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewPoolModal)

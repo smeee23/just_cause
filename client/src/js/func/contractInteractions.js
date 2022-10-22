@@ -1,5 +1,4 @@
 import getWeb3 from "../../getWeb3NotOnLoad";
-import Web3 from "web3";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import ERC20Instance from "../../contracts/IERC20.json";
@@ -86,19 +85,12 @@ import { getSushiRouterAddress } from "./tokenMaps"
 		return poolLists;
 	}
 
-	export const addUserDepositedPool = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, userDepositPoolInfo) => {
-
-		for(let i = 0; i < userDepositPoolInfo.length; i++){
-			if(userDepositPoolInfo[i].address === poolAddress){
-				return;
-			}
-		}
-
+	export const addPoolToPoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, prevInfo) => {
 		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
 		const userBalancePools = depositBalancePools.balances;
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
-		userDepositPoolInfo.push(poolInfo[0]);
-		return userDepositPoolInfo;
+		prevInfo.push(poolInfo[0]);
+		return prevInfo;
 	}
 
 	export const updatePoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists) => {
@@ -144,6 +136,71 @@ import { getSushiRouterAddress } from "./tokenMaps"
         return(mycall[1]);
 	}
 
+	export const getDirectFromPoolInfo = async(poolAddress, tokenMap, activeAccount, tokenAddress) => {
+		const web3 = await getWeb3();
+		let JCPoolInstance = new web3.eth.Contract(
+			JCPool.abi,
+			poolAddress,
+		);
+
+		const aboutHash = await JCPoolInstance.methods.getAbout().call();
+		const metaHash = await JCPoolInstance.methods.getMetaUri().call();
+		const groupedPoolInfo = await JCPoolInstance.methods.getPoolInfo().call();
+		let about = await getIpfsData(aboutHash);
+		//let metaUri = await getIpfsData(metaHash);
+		if(groupedPoolInfo[6] === "Jiggity's Pool"){
+			console.log("about from contract", groupedPoolInfo[6], about, metaHash);
+		}
+
+		//const acceptedTokens = groupedPoolInfo[0];
+
+		if(groupedPoolInfo[6] === "Healthcare & Research Fund"){
+			about = tempFixForDescriptions[0];
+		}
+
+		const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
+		const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(tokenAddress).call();
+
+		const ercAddr = await JCPoolInstance.methods.getERC721Address().call();
+		//const assets = await JCPoolInstance.getAcceptedTokens().call();
+		const ERCInstance = new web3.eth.Contract(
+			JCDepositorERC721.abi,
+			ercAddr,
+		);
+
+		let tokenIds = await ERCInstance.methods.getUserTokens(activeAccount).call();
+
+		let depositInfo;
+		const totalDeposits = groupedPoolTokenInfo[5];;
+		let userBalance = 0;
+		const unclaimedInterest = groupedPoolTokenInfo[4];
+		const claimedInterest = groupedPoolTokenInfo[3];
+		for(let j = 0; j < tokenIds.length; j++){
+			const tokenId = tokenIds[j].toString();
+			if(tokenId !== "0"){
+				depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
+				if(depositInfo.asset === tokenAddress){
+					userBalance =  depositInfo.balance;
+				}
+				if(groupedPoolInfo[6] === "Gitcoin Grants Matching Pool"){
+					console.log("depostInfo", depositInfo);
+				}
+			}
+		}
+		return { about, totalDeposits, userBalance, unclaimedInterest, claimedInterest, tokenString, poolAddress, tokenAddress };
+	}
+
+	export const getDirectAboutOnly = async(poolAddress) => {
+		const web3 = await getWeb3();
+		let JCPoolInstance = new web3.eth.Contract(
+			JCPool.abi,
+			poolAddress,
+		);
+
+		const aboutHash = await JCPoolInstance.methods.getAbout().call();
+		return await getIpfsData(aboutHash);
+	}
+
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools, knownPoolInfo) => {
 		const web3 = await getWeb3();
 		let knownAddrs = [];
@@ -179,13 +236,7 @@ import { getSushiRouterAddress } from "./tokenMaps"
 				let acceptedTokenInfo = [];
 
 				if(name === "Healthcare & Research Fund"){
-					console.log("TESTTTTT", groupedPoolInfo)
 					about = tempFixForDescriptions[0];
-				}
-
-				if(name === "Environment Conservation Fund"){
-					console.log("TEST ENV", groupedPoolInfo)
-					about = tempFixForDescriptions[1];
 				}
 
 				for(let j = 0; j < acceptedTokens.length; j++){
@@ -325,7 +376,7 @@ import { getSushiRouterAddress } from "./tokenMaps"
 			let tokenIds = await ERCInstance.methods.getUserTokens(activeAccount).call();
 			for(let j = 0; j < tokenIds.length; j++){
 				const tokenId = tokenIds[j].toString();
-				if(tokenId != "0"){
+				if(tokenId !== "0"){
 					const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
 
 					userDepositPools.push(depositList[i]);

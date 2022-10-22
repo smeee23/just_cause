@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
-import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
+import { ModalHeader, ModalCtas } from "../Modal";
 import TextField from '../TextField'
 import { Button } from '../Button'
 import { ButtonExtraSmall } from '../Button'
@@ -13,9 +13,11 @@ import { updatePendingTx } from "../../actions/pendingTx";
 import { updateTxResult } from  "../../actions/txResult";
 import { updateDepositAmount } from  "../../actions/depositAmount";
 import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
+import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
+import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
-import {getAllowance, addUserDepositedPool, getContractInfo} from '../../func/contractInteractions';
-import {delay, getTokenBaseAmount, displayLogo} from '../../func/ancillaryFunctions';
+import { getAllowance, addPoolToPoolInfo, getContractInfo, getDirectFromPoolInfo } from '../../func/contractInteractions';
+import { delay, getTokenBaseAmount, displayLogo, addNewPoolInfo, checkPoolInPoolInfo } from '../../func/ancillaryFunctions';
 
 class DepositModal extends Component {
 
@@ -110,14 +112,31 @@ class DepositModal extends Component {
 				});
 				txInfo.success = true;
 
-				const tempPoolInfo = await addUserDepositedPool(poolAddress,
-													this.props.activeAccount,
-													this.props.poolTrackerAddress,
-													this.props.tokenMap,
-													this.props.userDepositPoolInfo);
+				let newInfo;
+				let newDepositInfo;
+				if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
+					newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
+					newDepositInfo = addNewPoolInfo(this.props.userDepositPoolInfo, newInfo);
+				}
+				else{
+					console.log("POOL NOT FOUND IN DEPOSITS, ADDING POOL");
+					newDepositInfo = await addPoolToPoolInfo(poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, this.props.userDepositPoolInfo);
+				}
+				await this.props.updateUserDepositPoolInfo(newDepositInfo);
+				localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
 
-				if(tempPoolInfo){
-					this.props.updateUserDepositPoolInfo(tempPoolInfo);
+				if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
+					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
+					const newOwnerInfo = addNewPoolInfo(this.props.ownerPoolInfo, newInfo);
+					await this.props.updateOwnerPoolInfo(newOwnerInfo);
+					localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+				}
+
+				if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
+					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
+					const newVerifiedInfo = addNewPoolInfo(this.props.verifiedPoolInfo, newInfo);
+					await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
+					localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 				}
 			}
 			catch (error) {
@@ -206,6 +225,8 @@ const mapStateToProps = state => ({
  	depositAmount: state.depositAmount,
 	activeAccount: state.activeAccount,
 	userDepositPoolInfo: state.userDepositPoolInfo,
+	verifiedPoolInfo: state.verifiedPoolInfo,
+	ownerPoolInfo: state.ownerPoolInfo,
 	networkId: state.networkId,
 })
 
@@ -213,7 +234,10 @@ const mapDispatchToProps = dispatch => ({
     updateDepositAmount: (amount) => dispatch(updateDepositAmount(amount)),
     updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
 	updateTxResult: (res) => dispatch(updateTxResult(res)),
+	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
 	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
+	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DepositModal)

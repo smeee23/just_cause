@@ -274,6 +274,44 @@ export const copyToClipboard = (str) => {
   return Promise.reject('The Clipboard API is not available.');
 }
 
+export const checkPoolInPoolInfo = (poolAddress, poolInfo) => {
+  for(let i = 0; i < poolInfo.length; i++){
+    if(poolInfo[i].address === poolAddress){
+      return true;
+    }
+  }
+  return false;
+}
+
+export const addNewPoolInfo = (prevInfo, newInfo) => {
+
+  Object.keys(prevInfo).forEach( (key, index) => {
+    if(prevInfo[key].address === newInfo.poolAddress){
+      prevInfo[key].about = newInfo.about;
+
+      Object.keys(prevInfo[key].acceptedTokenInfo).forEach( (key_2, index_2) => {
+        if(prevInfo[key].acceptedTokenInfo[key_2].address === newInfo.tokenAddress){
+          prevInfo[key].acceptedTokenInfo[key_2].totalDeposits = newInfo.totalDeposits;
+          prevInfo[key].acceptedTokenInfo[key_2].userBalance = newInfo.userBalance;
+          prevInfo[key].acceptedTokenInfo[key_2].unclaimedInterest = newInfo.unclaimedInterest;
+          prevInfo[key].acceptedTokenInfo[key_2].claimedInterest = newInfo.claimedInterest;
+        }
+      }
+      );
+    }
+  });
+
+  return prevInfo;
+}
+export const addNewPoolInfoAboutOnly = (prevInfo, newInfo) => {
+  Object.keys(prevInfo).forEach( (key, index) => {
+    if(prevInfo[key].address === newInfo.poolAddress){
+      prevInfo[key].about = newInfo.about;
+    }
+  });
+
+  return prevInfo;
+}
 export const displayLogoLg = (acceptedTokenString) => {
   let logo = '';
   if(acceptedTokenString === 'ETH'){

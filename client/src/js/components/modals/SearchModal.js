@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
-import { ModalHeader, ModalBody, ModalCtas } from "../Modal";
+import { ModalHeader, ModalCtas } from "../Modal";
 import TextField from '../TextField'
 import { Button } from '../Button'
 

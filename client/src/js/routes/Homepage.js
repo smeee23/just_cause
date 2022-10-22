@@ -3,11 +3,9 @@ import { Fragment } from "react";
 
 import { connect } from "react-redux";
 
-import Footer from "../components/Footer";
 import Shapes from '../components/Shapes';
 
 import LogoCard from "../components/logos/LogoCard";
-import AGD from "../components/logos/AGD";
 import { Button } from '../components/Button';
 import ShareModal from "../components/modals/ShareModal";
 import {SmallModal } from "../components/Modal";
@@ -45,8 +43,8 @@ class Homepage extends Component {
 										<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
 										<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Future of crowdfunding</h2>
 										<div style={{marginBottom: "5px", marginLeft: "20px", display:"flex", flexDirection: "wrap", alignItems:"left", justifyContent:"left"}}>
-											<a title="source code" href="https://github.com/smeee23/just_cause" target="_blank"><Button isLogo="github"/></a>
-											<a title="Twitter" style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank"><Button isLogo="tweet"/></a>
+											<a title="source code" href="https://github.com/smeee23/just_cause" target="_blank" rel="noopener noreferrer"><Button isLogo="github"/></a>
+											<a title="Twitter" style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank" rel="noopener noreferrer"><Button isLogo="tweet"/></a>
 											{/*<a title="Discord" style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button isLogo="discord"/></a>*/}
 											<div title="share JustCause" style={{marginLeft: "20px"}}>
 												<Button isLogo="share" callback={async() => await this.share()}/>

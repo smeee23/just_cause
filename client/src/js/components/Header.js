@@ -11,7 +11,6 @@ import Takeover from "./Takeover";
 import { updateActiveAccount } from "../actions/activeAccount"
 import { updateConnect } from "../actions/connect"
 import { checkLocationForAppDeploy, displayTVL, getConnection, redirectWindowBlockExplorer } from "../func/ancillaryFunctions"
-import Close from "./logos/Close"
 
 import { web3Modal } from "../App"
 
@@ -59,7 +58,6 @@ class Header extends Component {
   }
 
   connectToWeb3 = async() => {
-		let addresses;
 		let provider;
 		try {
 			// Will open the MetaMask UI
@@ -93,6 +91,8 @@ class Header extends Component {
 	}
   disconnectButtonHit = async() => {
     await web3Modal.clearCachedProvider();
+    localStorage.setItem("ownerPoolInfo", "");
+    localStorage.setItem("userDepositPoolInfo", "");
     window.location.reload(false);
   }
 
@@ -103,10 +103,10 @@ class Header extends Component {
           <NavLink className="theme--white" exact to={"/howitworks"}>
             <TextLink className="theme--white" text="How it works"/>
           </NavLink>
-          <a className="theme--white" href="https://docs.justcause.finance/" target="_blank">
+          <a className="theme--white" href="https://docs.justcause.finance/" target="_blank" rel="noopener noreferrer">
             <TextLink text="Docs"/>
           </a>
-          <a className="theme--white" href="https://github.com/smeee23/just_cause/tree/main/security/audits" target="_blank">
+          <a className="theme--white" href="https://github.com/smeee23/just_cause/tree/main/security/audits" target="_blank" rel="noopener noreferrer">
             <TextLink text="Audits"/>
           </a>
 
@@ -126,7 +126,7 @@ class Header extends Component {
               <TextLink text="Find Pool" navOn={this.state.index === 1 ? "on" : "off"} callback={() => this.resetNavSearch()}/>
             </div>
           </NavLink >
-          <a className="theme--white" title="user documentation" href="https://docs.justcause.finance/" target="_blank">
+          <a className="theme--white" title="user documentation" href="https://docs.justcause.finance/" target="_blank" rel="noopener noreferrer">
             <TextLink text="Docs"/>
           </a>
         </Fragment>

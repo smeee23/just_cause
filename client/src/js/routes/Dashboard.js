@@ -413,7 +413,7 @@ class Dashboard extends Component {
 					}
 				}
 				else if(this.state.openVerifiedIndex === 0){
-					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund" && name !== "Environment Conservation Fund"){
+					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund" && name !== "Environment Conservation Fund" && name !== "Retire Carbon Credits"){
 						cardHolder.push(
 							<Card
 								key={item.address}

@@ -21,8 +21,8 @@ import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
 
-import { getBalance, getContractInfo , getDirectFromPoolInfo} from '../func/contractInteractions';
-import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, numberWithCommas, copyToClipboard} from '../func/ancillaryFunctions';
+import { getBalance, getContractInfo , getDirectFromPoolInfoAllTokens} from '../func/contractInteractions';
+import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, numberWithCommas, copyToClipboard, checkPoolInPoolInfo, addNewPoolInfoAllTokens } from '../func/ancillaryFunctions';
 import { verifiedPoolMap } from '../func/verifiedPoolMap';
 import { Modal, SmallModal, LargeModal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
@@ -42,8 +42,10 @@ class Card extends Component {
 
 		this.state = {
 			open: false,
+			loading: false,
 			selectedTokenIndex: this.highestDeposit(this.props.acceptedTokenInfo),
 			tokenButtons: [],
+			tokenInfo: this.props.acceptedTokenInfo,
 			copied: false,
 			directResponse: "",
 		}
@@ -75,11 +77,10 @@ class Card extends Component {
 			if(this.props.approve) await this.props.updateApprove('');
 			if(this.props.share) await this.props.updateShare("");
 			if(this.props.claim)  await this.props.updateClaim('');
-			//this.poolScraper();
-			//this.interval = setInterval(this.poolScraper, 30000);
+
+			this.setState({ tokenInfo: this.props.acceptedTokenInfo })
 		}
 		catch (error) {
-			// Catch any errors for any of the above operations.
 			alert(
 				error,
 			);
@@ -91,17 +92,6 @@ class Card extends Component {
 		clearInterval(this.interval);
 	}
 
-	poolScraper = async() => {
-		console.log("print off every 30 sec");
-		if(this.props.address && this.props.activeAccount !== "Connect"){
-			let directResponse = await getDirectFromPoolInfo(this.props.address, this.props.tokenMap, this.props.activeAccount);
-			//console.log("directResponse", directResponse);
-			if(JSON.stringify(this.state.directResponse) !== JSON.stringify(directResponse)){
-				this.setState({ directResponse: directResponse });
-				console.log("HIT A CHANGE", directResponse, this.state.directResponse);
-			}
-		}
-	}
 	displayWithdraw = (item, address, tokenString, title) => {
 	if(item.userBalance > 0){
 		return <div title={"withdraw deposit"}><Button logo={displayLogo(tokenString)} text={"Withdraw "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
@@ -150,7 +140,7 @@ class Card extends Component {
 			const tokenName = acceptedTokenInfo[i].acceptedTokenString;
 			let isDisabled = false;
 			if(i === this.state.selectedTokenIndex) isDisabled = true;
-			buttonHolder.push(<ButtonSmall className="card--token__switch" text={tokenName} logo={displayLogo(tokenName)} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
+			buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} disabled={isDisabled} key={i} callback={() => this.setSelectedToken(i)}/>)
 		}
 		return buttonHolder;
 	}
@@ -222,7 +212,7 @@ class Card extends Component {
 		}
 		if(!about){
 			console.log("about does not exist", address);
-			about = "(There is a delay loading the description from IPFS. IPFS is a new and evolving technology, it can take time for new pool descriptions to be updated in our system.)"
+			about = "(There is a delay loading the description from IPFS.)"
 		}
 			let aboutString = about;
 			let aboutHolder = [];
@@ -245,11 +235,20 @@ class Card extends Component {
 			return aboutHolder;
 	}
 
+	resetAnimation = () => {
+		const el = document.getElementById("animated");
+		el.style.animation = "none";
+		let temp = el.offsetHeight;
+		el.style.animation = null;
+	}
+
 	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified, isReceiver) => {
 		if (!acceptedTokenInfo) return '';
 		if (!this.props.tokenMap) return '';
 
-		const item = acceptedTokenInfo[this.state.selectedTokenIndex];
+		//const item = this.props.acceptedTokenInfo[this.state.selectedTokenIndex];
+		const item = this.state.tokenInfo[this.state.selectedTokenIndex];
+
 		const depositAPY = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].depositAPY;
 		const isETH = (item.acceptedTokenString === 'ETH' || item.acceptedTokenString === 'MATIC') ? true : false;
 
@@ -288,12 +287,11 @@ class Card extends Component {
 								<Button isLogo="share" callback={async() => await this.share(address, title )} />
 							</div>
 						</div>
-
 					</div>
 				</div>
 
 				<div style={{display: "grid", width: "330px", flex: "0 0 330"}}>
-					<div className="card__body__column__nine">
+					<div id="animated" className="card__body__column__nine">
 						<div style={{display: "grid", gridTemplateColumns:"108px 1fr"}}>
 							<div style={{gridColumn: 1}}>
 								{displayLogoLg(item.acceptedTokenString)}
@@ -496,6 +494,60 @@ class Card extends Component {
 		}
 	}
 
+	getHeaderValues = () => {
+		return getHeaderValuesInUSD(this.state.tokenInfo, this.props.tokenMap);
+	}
+	refresh = async(poolAddress) =>{
+		this.setState({loading: true});
+
+		let newInfoAllTokens = await getDirectFromPoolInfoAllTokens(this.props.address, this.props.tokenMap, this.props.activeAccount);
+		console.log("update all tokens", newInfoAllTokens);
+
+		if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
+			//const newDepositInfo = addNewPoolInfo(this.props.userDepositPoolInfo, newInfo);
+			const newDepositInfo = addNewPoolInfoAllTokens(this.props.userDepositPoolInfo, newInfoAllTokens);
+			await this.props.updateUserDepositPoolInfo(newDepositInfo);
+			localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
+		}
+
+		if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
+			//const newOwnerInfo = addNewPoolInfo(this.props.ownerPoolInfo, newInfo);
+			const newOwnerInfo = addNewPoolInfoAllTokens(this.props.ownerPoolInfo, newInfoAllTokens);
+			await this.props.updateOwnerPoolInfo(newOwnerInfo);
+			localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+		}
+
+		if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
+			//const newVerifiedInfo = addNewPoolInfo(this.props.verifiedPoolInfo, newInfo);
+			const newVerifiedInfo = addNewPoolInfoAllTokens(this.props.verifiedPoolInfo, newInfoAllTokens);
+			await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
+			localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
+		}
+
+		let tempInfo = this.props.acceptedTokenInfo;
+		for(let i = 0; i < this.props.acceptedTokenInfo.length; i++){
+			const tokenInfo = newInfoAllTokens.newTokenInfo && newInfoAllTokens.newTokenInfo[this.props.acceptedTokenInfo[i].address];
+			tempInfo[i].unclaimedInterest = tokenInfo.unclaimedInterest;
+			tempInfo[i].claimedInterest = tokenInfo.claimedInterest;
+			tempInfo[i].userBalance = tokenInfo.userBalance;
+			tempInfo[i].totalBalance = tokenInfo.totalBalance;
+		}
+
+		this.resetAnimation();
+		this.setState({ tokenInfo: tempInfo, loading: false });
+	}
+
+	getRefreshButton = (poolAddress) => {
+		if(!this.state.open) return;
+		const logo = this.state.loading ? "refresh_pending" : "refresh";
+		return(
+			<div title="refresh pool balances" style={{marginRight:"-16px"}}>
+				<Button isLogo={logo} callback={async() => await this.refresh(poolAddress)} />
+			</div>
+
+		);
+	}
+
 	render() {
 		const { title, about, picHash, idx, address, receiver, acceptedTokenInfo, isVerified} = this.props;
 		const poolIcons = [
@@ -515,7 +567,8 @@ class Card extends Component {
 			"card--open": this.state.open,
 		})
 
-		const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
+		//const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
+		const {userBalance, interestEarned, totalBalance} = this.getHeaderValues();
 		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
 		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title, isVerified, isReceiver);
 
@@ -530,8 +583,8 @@ class Card extends Component {
 					<div className="card__token__buttons" style={{paddingLeft:"10px", display:"flex", flexWrap:"wrap"}}>
 						{tokenButtons}
 					</div>
-
 					<div className="card__header--right">
+									{this.getRefreshButton(address)}
 									<p title="USD value of your deposited tokens (approx.)" className="mb0">{userBalance === "" ? "" : "Balance: " + userBalance}</p>
 									<p title="USD value of all pool tokens (approx.)" className="mb0">{totalBalance === "" ? "" : "Pool: "+ totalBalance}</p>
 									<p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{interestEarned === "" ? "" : "Total Donated: "+ interestEarned}</p>

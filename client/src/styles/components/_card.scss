@@ -152,6 +152,10 @@ $baseclass: 'card';
     transition: transform $easing1 $duration-short;
     cursor: pointer;
   }
+  &__refresh__button {
+    transition: transform $easing1 $duration-short;
+    cursor: pointer;
+  }
   &__body__column {
     margin-right: 4 * $rem-base;
     margin-bottom: 4 * $rem-base;
@@ -194,9 +198,9 @@ $baseclass: 'card';
     cursor: pointer;
   }
 
-  &--token__switch {
+  &--loaded {
     .#{$baseclass}__body__column__nine {
-      transform: scale(1.0);
+      animation: zoominoutsinglefeatured 1s;
     }
   }
   &--open {

@@ -10,14 +10,12 @@ import { IUniswapV2Router02 } from './interfaces/uniswapv2/IUniswapV2Router02.so
 contract BurnPit {
     using SafeERC20 for IERC20;
 
-    // OffsetHelper addr 0x79E63048B355F4FBa192c5b28687B852a5521b31
-    // USDC + WETH on matic
     address[] acceptedTokens = [0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174,
                                 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619,
                                 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270];
 
     address public sushiRouterAddress = 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506;
-    address public nctAddr = 0xD838290e877E0188a4A44700463419ED96c16107;
+    address router;
 
     event TokenBurned(
         uint256 balance,
@@ -32,20 +30,18 @@ contract BurnPit {
         uint256[] amounts
     );
 
-    event NoBal(
-        uint256 tokenBalance,
-        address tokenAddr
-    );
-
-    event Test(
-        address[] _acceptedTokens
-    );
-
+    /**
+     * @notice swaps all eligible tokens for pool token then calls Toucan's OffsetHelper
+     * to buy and retire TCO2s
+     * @param _amountsOut uint256 array representing minimum swap amounts for eligible ERC20s
+     * @param _nctAddr pool token that will be used to retire TCO2s
+     */
     function burnTokens(
-        //address _poolToken
+        uint256[] memory _amountsOut,
+        address _nctAddr
     ) public {
         if(address(this).balance > 0){
-            swap(nctAddr);
+            swap(_nctAddr, _amountsOut[2]);
         }
         address offsetHelperAddr = 0xFAFcCd01C395e4542BEed819De61f02f5562fAEa;
         address[] memory _acceptedTokens = acceptedTokens;
@@ -53,27 +49,30 @@ contract BurnPit {
             IERC20 token = IERC20(_acceptedTokens[i]);
             uint256 tokenBalance = token.balanceOf(address(this));
             if(tokenBalance > 0){
-                swap(_acceptedTokens[i], nctAddr, tokenBalance);
+                swap(_acceptedTokens[i], _nctAddr, tokenBalance, _amountsOut[i]);
             }
         }
 
-        IERC20 nct = IERC20(nctAddr);
+        IERC20 nct = IERC20(_nctAddr);
         uint256 nctBalance = nct.balanceOf(address(this));
         if(nctBalance > 0){
             address[] memory tco2s;
             uint256[] memory amounts;
             nct.safeApprove(offsetHelperAddr, 0);
             nct.safeApprove(offsetHelperAddr, nctBalance);
-            (tco2s, amounts) = IOffsetHelper(offsetHelperAddr).autoOffsetUsingPoolToken(nctAddr, nctBalance);
-            emit TokenBurned(nctBalance, nctAddr, tco2s, amounts);
-        }
-        else{
-            emit NoBal(nctBalance, nctAddr);
+            (tco2s, amounts) = IOffsetHelper(offsetHelperAddr).autoOffsetUsingPoolToken(_nctAddr, nctBalance);
+            emit TokenBurned(nctBalance, _nctAddr, tco2s, amounts);
         }
     }
 
     receive() external payable{}
 
+    /**
+     * @notice generate path for ERC20 swap
+     * @param _fromToken The ERC20 token to deposit and swap
+     * @param _toToken The token to swap for (will be held within contract)
+     * @returns path Address array representing the router path for token swap
+     */
     function generatePath(address _fromToken, address _toToken)
         internal
         view
@@ -93,7 +92,12 @@ contract BurnPit {
         }
     }
 
-    function swap(address _toToken) internal {
+    /**
+     * @notice Swap ETH/MATIC tokens for NCT on SushiSwap
+     * @param _toToken The token to swap for (will be held within contract)
+     * @param _amountOut The amount of _toToken to be swapped
+     */
+    function swap(address _toToken, uint256 _amountOut) internal {
         uint256 balance = address(this).balance;
 
         // instantiate router
@@ -104,29 +108,24 @@ contract BurnPit {
         path[0] = address(routerSushi.WETH());
         path[1] = address(_toToken);
 
-        // estimate amountsOut
-        uint256[] memory expectedAmountsOut = routerSushi.getAmountsOut(
-            balance,
-            path
-        );
-
         // swap
         routerSushi.swapExactETHForTokens{
             value: balance
-        }(0, path, address(this), block.timestamp);
+        }(_amountOut, path, address(this), block.timestamp);
     }
 
     /**
      * @notice Swap eligible ERC20 tokens for NCT on SushiSwap
-     * @dev Needs to be approved on the client side
      * @param _fromToken The ERC20 token to deposit and swap
      * @param _toToken The token to swap for (will be held within contract)
-     * @param _amount The amount of _fromToken to be swapped
+     * @param _amountIn The amount of _fromToken to be swapped
+     * @param _amountOut The amount of _toToken to be swapped
      */
     function swap(
         address _fromToken,
         address _toToken,
-        uint256 _amount
+        uint256 _amountIn,
+        uint256 _amountOut
     ) internal {
         // instantiate router
         IUniswapV2Router02 routerSushi = IUniswapV2Router02(sushiRouterAddress);
@@ -134,19 +133,13 @@ contract BurnPit {
         // generate path
         address[] memory path = generatePath(_fromToken, _toToken);
 
-        // estimate amountsOut
-        uint256[] memory expectedAmountsOut = routerSushi.getAmountsOut(
-            _amount,
-            path
-        );
-
         // approve router
-        IERC20(_fromToken).approve(sushiRouterAddress, expectedAmountsOut[0]);
+        IERC20(_fromToken).approve(sushiRouterAddress, _amountIn);
 
         // swap
         routerSushi.swapExactTokensForTokens(
-            _amount,
-            expectedAmountsOut[0],
+            _amountIn,
+            _amountOut,
             path,
             address(this),
             block.timestamp

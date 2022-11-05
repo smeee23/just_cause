@@ -21,11 +21,12 @@ import { updatePoolTrackerAddress } from "./actions/poolTrackerAddress"
 import { updateAavePoolAddress } from "./actions/aavePoolAddress"
 import { updateNetworkId } from "./actions/networkId"
 import { updateConnect } from "./actions/connect"
+import { updateBurnPitBalances } from "./actions/burnPitBalances";
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
 import { getTokenMap, getAaveAddressProvider, deployedNetworks } from "./func/tokenMaps.js";
-import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress} from './func/contractInteractions.js';
+import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress, getBurnBalances} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
 
@@ -145,6 +146,7 @@ class App extends Component {
 
 		const tokenMap = getTokenMap(this.networkId);
 		this.setTokenMapState(tokenMap);
+		this.setBurnPitBalances(tokenMap);
 		this.setPoolStateAll(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
 		this.setAavePoolAddress(aaveAddressesProvider);
@@ -203,7 +205,19 @@ class App extends Component {
 			window.location.reload(false);
 		});
 
+		/*this.web3.eth.subscribe('newBlockHeaders', async (error, event) => {
+			const blockTxHashes = (await this.web3.eth.getBlock(event.hash)).transactions;
+
+			console.log("blockTxHashes", blockTxHashes);
+			for (const pendingTxHash of pendingTxHashes) {
+			if (blockTxHashes.includes(pendingTxHash)) {
+			console.log(await web3.eth.getTransactionReceipt(pendingTxHash));
+			}
+			}
+		});*/
+
 		this.web3 = new Web3(this.provider);
+
 		const accounts = await this.web3.eth.getAccounts();
 
     	await this.props.updateActiveAccount(accounts[0]);
@@ -222,6 +236,11 @@ class App extends Component {
 
 	setNetworkId = async(networkId) => {
 		await this.props.updateNetworkId(networkId);
+	}
+
+	setBurnPitBalances = async(tokenMap) => {
+		const burnPitBal = await getBurnBalances(tokenMap);
+		await this.props.updateBurnPitBalances(burnPitBal);
 	}
 
 	setPoolTrackAddress = async(poolTrackerAddress) => {
@@ -326,6 +345,7 @@ const mapStateToProps = state => ({
 	networkId: state.networkId,
 	aavePoolAddress: state.aavePoolAddress,
 	connect: state.connect,
+	tokenMap: state.tokenMap,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -342,6 +362,7 @@ const mapDispatchToProps = dispatch => ({
 	updateNetworkId: (int) => dispatch(updateNetworkId(int)),
 	updateAavePoolAddress: (s) => dispatch(updateAavePoolAddress(s)),
 	updateConnect: (bool) => dispatch(updateConnect(bool)),
+	updateBurnPitBalances: (bal) => dispatch(updateBurnPitBalances(bal)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -42,4 +42,8 @@ export const getSushiRouterAddress = () => {
     return "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
 }
 
+export const getBurnPitAddress = () => {
+    return "0xD66650352D23780be345e704d6984434Fc0C28c5";
+}
+
 export const deployedNetworks = [ 80001, 137 ];

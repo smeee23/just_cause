@@ -16,7 +16,9 @@ import CopyCheck from "./logos/CopyCheck";
 import CopyWhite from "./logos/CopyWhite";
 import CopyWhiteCheck from "./logos/CopyWhiteCheck";
 import Close from "./logos/Close";
-import Link from "./logos/Link"
+import Link from "./logos/Link";
+import Refresh from "./logos/Refresh";
+import RefreshPending from "./logos/RefreshPending";
 
 class ButtonExtraSmall extends Component {
 
@@ -181,6 +183,12 @@ class Button extends Component {
           ) : null }
           { isLogo === "link" ? (
               <Link/>
+          ) : null }
+          { isLogo === "refresh" ? (
+              <Refresh/>
+          ) : null }
+          { isLogo === "refresh_pending" ? (
+              <RefreshPending/>
           ) : null }
         </div>
         {this.displayLine(isLogo)}

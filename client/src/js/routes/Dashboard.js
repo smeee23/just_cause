@@ -22,9 +22,11 @@ import { updateClaim } from "../actions/claim";
 import { updateApprove } from "../actions/approve";
 import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
+import { updateBurnPitBalances } from "../actions/burnPitBalances";
 
 import LogoCard from "../components/logos/LogoCard";
-import { getHeaderValuesInUSD } from '../func/ancillaryFunctions';
+import { precise, numberWithCommas, getHeaderValuesInUSD } from '../func/ancillaryFunctions';
+import { burn, getBurnBalances } from '../func/contractInteractions';
 
 import web3Modal from "../App";
 
@@ -37,6 +39,7 @@ class Dashboard extends Component {
 			openTabIndex: 0,
 			openVerifiedIndex: 0,
 			hideLowBalance: false,
+			loadingBurnPitBal: false,
 		}
 	}
 	componentDidMount = async () => {
@@ -166,8 +169,8 @@ class Dashboard extends Component {
 	createVerifiedButtons = () => {
 		if(this.state.openTabIndex !== 0) return;
 		let buttonHolder = [];
-		const buttonStrings = ['General', 'Crypto for Charity'];
-		const infoStrings = ['miscellaneous funds', 'Crypto for Charity cause funds'];
+		const buttonStrings = ['General', 'Retire Carbon Credits', 'Crypto for Charity'];
+		const infoStrings = ['miscellaneous funds', 'retire carbon credits with Toucan protocol', 'Crypto for Charity cause funds'];
 		for(let i = 0; i < buttonStrings.length; i++){
 			const name = buttonStrings[i];
 			let isDisabled = false;
@@ -194,7 +197,7 @@ class Dashboard extends Component {
 	getVerifiedTabInfo = () => {
 		if(this.state.openTabIndex !== 0) return;
 		let info;
-		if(this.state.openVerifiedIndex === 1){
+		if(this.state.openVerifiedIndex === 2){
 			let info_1 = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love.";
 			let info_2 = "A Crypto for Charity cause fund supports a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
 			return (
@@ -204,6 +207,41 @@ class Dashboard extends Component {
 					<p style={{alignItems:"center", justifyContent:"center", marginRight:"0%"}} className="mr">{info_2}</p>
 				</div>
 			);
+		}
+		else if(this.state.openVerifiedIndex === 1){
+			let info_1 = "Greenhouse gases (GHG), like carbon dioxide (CO2), are emitted when fossil-fuels are consumed. We all generate CO2 emissions in the course of our day-to-day lives. Carbon offsetting is the act of reducing carbon dioxide or greenhouse gases in order to compensate for emissions that were produced elsewhere. Companies and individuals are able to offset their carbon emissions by purchasing carbon credits. One carbon offset credit represents one tonne of CO2 equivalent (TCO2e) reduced or averted from the atmosphere.";
+			let info_2 = "The Toucan protocol is smart contract-based infrastructure that enables on chain, liquid carbon markets. Using the Toucan Meta-Registry and Toucan Carbon Bridge carbon credits can be represented as cryptographic tokens and deposited into carbon pools to enable highly liquid markets to scale climate action.";
+			let info_3 = "Donations to the Retire Carbon Credit pool will be sent to our BurnPit smart contract, which purchases and retires carbon credits using Toucan protocol's NCT token. The donated funds stored in the BurnPit can be \"burnt\" by clicking the button below, which swaps all funds for TCO2e's and retires them using Toucan protocol."
+			return(
+				<div style={{marginTop: "25px", maxWidth: "800px", alignItems:"center", justifyContent:"center", display:"flex", flexDirection:"column"}}>
+					<img style={{width:"150px"}} src={require("../../images/toucan.jpg")} alt={"logo"}/>
+
+					<div style={{maxWidth: "800px", alignItems:"center", justifyContent:"center"}}>
+						<p style={{alignItems:"center", marginTop: "25px", justifyContent:"center", marginRight:"0%"}} className="mr">{info_1}</p>
+						<p style={{alignItems:"center", justifyContent:"center", marginRight:"0%"}} className="mr">{info_2}</p>
+						<p style={{alignItems:"center", justifyContent:"center", marginRight:"0%"}} className="mr">{info_3}</p>
+						<div style={{alignItems:"center", justifyContent:"center", textAlign:"left", display:"flex", flexDirection:"wrap"}}>
+							<div style={{display:"flex", flexDirection:"column"}}>
+								<div style={{display:"flex", flexDirection:"wrap", gap:"8px"}}>
+									<h2>BURN PIT BALANCES</h2>
+									{this.getBurnPitRefreshButton()}
+								</div>
+								<div style={{marginTop:"-20px", display:"flex", flexDirection:"wrap"}}>
+									<p>MATIC: {numberWithCommas(precise(this.props.burnPitBalances['ethBalance'], 18))}</p>
+								</div>
+								<p>USDC: {numberWithCommas(precise(this.props.burnPitBalances['usdcBalance'], 6))}</p>
+								<p>WETH: {numberWithCommas(precise(this.props.burnPitBalances['wethBalance'], 18))}</p>
+							</div>
+							<div style={{ paddingLeft:"32px", alignItems:"left", display:"flex", flexDirection:"column"}}>
+								<div style={{paddingTop:"16px"}}>
+									<Button text={"Retire Carbon Credits"} callback={async() => await burn(this.props.tokenMap, this.props.activeAccount)}/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			);
+
 		}
 		else if (this.state.openVerifiedIndex === 0){
 			info = "Pools in this group consist of public goods, charities, and nonprofits.";
@@ -255,13 +293,32 @@ class Dashboard extends Component {
 		}
 	}
 
+	loadingBurnPitChange = () => {
+		this.setState({
+			loading: !this.state.loadingBurnPitBal
+		});
+	}
+	setBurnPitBalances = async(tokenMap) => {
+		this.setState({
+			loading: true
+		});
+		const burnPitBal = await getBurnBalances(tokenMap);
+		await this.props.updateBurnPitBalances(burnPitBal);
+		this.setState({
+			loading: false
+		});
+	}
+	getBurnPitRefreshButton = () => {
+		if(this.state.loading){
+			return(<div title={"refresh pending"}><Button isLogo={"refresh_pending"} isDisabled={true} callback={async() => await this.setBurnPitBalances(this.props.tokenMap)}/></div>);
+		}
+		return(<div title={"refresh BurnPit balances"}><Button isLogo={"refresh"} callback={async() => await this.setBurnPitBalances(this.props.tokenMap)}/></div>);
+	}
+
 	redirectWindowGoogleApplication = () => {
 		window.open("https://docs.google.com/forms/d/e/1FAIpQLSfvejwW-3zNhy4H3hvcIDZ2WGUH422Zj1_yVouRH4tTN8kQFg/viewform?usp=sf_link", "_blank")
 	}
 
-	cardPush = (cardHolder) => {
-
-	}
 	createCardInfo = () => {
 		if(this.props.activeAccount === "Connect" && !web3Modal.cachedProvider){
 			return(
@@ -297,7 +354,6 @@ class Dashboard extends Component {
 		}
 
 		let cardHolder = [];
-		console.log("poolInfo", poolInfo);
 		for(let i = 0; i < poolInfo.length; i++){
 			const item = poolInfo[i];
 
@@ -322,8 +378,25 @@ class Dashboard extends Component {
 			}
 			else if(this.state.openTabIndex === 0){
 				const name = item.name;
-				if(this.state.openVerifiedIndex === 1){
+				if(this.state.openVerifiedIndex === 2){
 					if(name.endsWith("Cause Fund") || name === "Environment Conservation Fund" || name === "Healthcare & Research Fund"){
+						cardHolder.push(
+							<Card
+								key={item.address}
+								title={item.name}
+								idx={i}
+								receiver={item.receiver}
+								address={item.address}
+								acceptedTokenInfo={item.acceptedTokenInfo}
+								about={item.about}
+								picHash={item.picHash}
+								isVerified={item.isVerified}
+							/>
+						);
+					}
+				}
+				if(this.state.openVerifiedIndex === 1){
+					if(name === "Retire Carbon Credits"){
 						cardHolder.push(
 							<Card
 								key={item.address}
@@ -385,6 +458,8 @@ class Dashboard extends Component {
 		const optionButtons = this.createOptionButtons();
 		const verifiedButtons = this.createVerifiedButtons();
 
+		console.log("burnPitBalances", this.props.burnPitBalances);
+
 		return (
 			<Fragment>
 				<article>
@@ -434,6 +509,7 @@ const mapStateToProps = state => ({
 	depositAmount: state.depositAmount,
 	deployInfo: state.deployInfo,
 	newAbout: state.newAbout,
+	burnPitBalances: state.burnPitBalances,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -448,6 +524,7 @@ const mapDispatchToProps = dispatch => ({
 	updateApprove: (txInfo) => dispatch(updateApprove(txInfo)),
 	updateShare: (share) => dispatch(updateShare(share)),
 	updateNewAbout: (about) => dispatch(updateNewAbout(about)),
+	updateBurnPitBalances: (bal) => dispatch(updateBurnPitBalances(bal)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

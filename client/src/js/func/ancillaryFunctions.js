@@ -24,6 +24,8 @@ import DpiLogoLg from "../components/cryptoLogos/DpiLogoLg";
 
 import Logo from "../components/Logo"
 
+import {getPriceFromCoinGecko} from './priceFeeds.js'
+
 export const linkedInShare = (purl, ptitle, poolAddress, psummary) => {
   let url = 'http://www.linkedin.com/shareArticle?mini=true';
   url += '&url=' + encodeURIComponent(purl)+poolAddress;
@@ -303,6 +305,27 @@ export const addNewPoolInfo = (prevInfo, newInfo) => {
 
   return prevInfo;
 }
+
+export const addNewPoolInfoAllTokens = (prevInfo, newInfo) => {
+  Object.keys(prevInfo).forEach( (key, index) => {
+    if(prevInfo[key].address === newInfo.poolAddress){
+      prevInfo[key].about = newInfo.about;
+
+      Object.keys(prevInfo[key].acceptedTokenInfo).forEach( (i) => {
+          const tokenInfo = newInfo.newTokenInfo && newInfo.newTokenInfo[prevInfo[key].acceptedTokenInfo[i].address];
+          console.log("tokenInfo", tokenInfo);
+          prevInfo[key].acceptedTokenInfo[i].totalDeposits = tokenInfo.totalDeposits;
+          prevInfo[key].acceptedTokenInfo[i].userBalance = tokenInfo.userBalance;
+          prevInfo[key].acceptedTokenInfo[i].unclaimedInterest = tokenInfo.unclaimedInterest;
+          prevInfo[key].acceptedTokenInfo[i].claimedInterest = tokenInfo.claimedInterest;
+        }
+      );
+    }
+  });
+  console.log("newInfo_____", prevInfo);
+  return prevInfo;
+}
+
 export const addNewPoolInfoAboutOnly = (prevInfo, newInfo) => {
   Object.keys(prevInfo).forEach( (key, index) => {
     if(prevInfo[key].address === newInfo.poolAddress){

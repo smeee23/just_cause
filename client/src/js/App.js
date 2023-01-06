@@ -25,12 +25,22 @@ import { updateBurnPitBalances } from "./actions/burnPitBalances";
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
+import RetirementCertificate from "../contracts/not_truffle/RetirementCertificates.json";
+import ToucanCarbonOffsets from "../contracts/not_truffle/ToucanCarbonOffsets.json";
 import { getTokenMap, getAaveAddressProvider, deployedNetworks } from "./func/tokenMaps.js";
 import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress, getBurnBalances} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
 
 const providerOptions = {
+	injected: {
+		options: {
+			rpc: {
+			  80001: "https://polygon-mumbai.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
+			  137: "https://polygon-mainnet.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
+			},
+		  }
+	},
     walletconnect: {
         package: WalletConnectProvider,
         options: {
@@ -98,6 +108,19 @@ class App extends Component {
 
 						await this.getAccounts();
 
+						this.RetirementCertificateInstance = new this.web3.eth.Contract(
+							RetirementCertificate.abi,
+							RetirementCertificate.address,
+						);
+
+
+						this.ToucanCarbonOffsetsInstance = new this.web3.eth.Contract(
+							ToucanCarbonOffsets.abi,
+							"0x463de2a5c6E8Bb0c87F4Aa80a02689e6680F72C7",
+						);
+
+						console.log("user events", await this.RetirementCertificateInstance.methods.getUserEvents("0xD66650352D23780be345e704d6984434Fc0C28c5").call());
+						console.log("get attributes", await this.ToucanCarbonOffsetsInstance.methods.getAttributes().call());
 						if (this.props.activeAccount){
 							await this.setUpConnection();
 							await this.setPoolStates();
@@ -145,9 +168,9 @@ class App extends Component {
 
 
 		const tokenMap = getTokenMap(this.networkId);
-		this.setTokenMapState(tokenMap);
-		this.setBurnPitBalances(tokenMap);
-		this.setPoolStateAll(this.props.activeAccount);
+		await this.setTokenMapState(tokenMap);
+		await this.setBurnPitBalances(tokenMap);
+		await this.setPoolStateAll(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
 		this.setAavePoolAddress(aaveAddressesProvider);
 	}

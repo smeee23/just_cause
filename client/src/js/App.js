@@ -281,8 +281,12 @@ class App extends Component {
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
 			const apiKey = tokenMap[key] && tokenMap[key].apiKey;
-			tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
-
+			if(geckoPriceData){
+				tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
+			}
+			else{
+				tokenMap[key]['priceUSD'] = 0;
+			}
 
 			const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
 			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);

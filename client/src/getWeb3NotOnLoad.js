@@ -10,7 +10,14 @@ const getWeb3 = async() => {
 			// You should disable this button while the request is pending!
 
 			provider = await web3Modal.connect();
-      web3 = new Web3(provider);
+			//if(!provider.isMetaMask){
+      			web3 = new Web3(provider);
+			//}
+			/*else{
+				provider = "https://polygon-mainnet.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e";
+				let web3Provider = new Web3.providers.HttpProvider(provider);
+			    web3 = new Web3(web3Provider);
+			}*/
 			//addresses = await provider.request({ method: 'eth_requestAccounts' });
 		}
 		catch (error) {

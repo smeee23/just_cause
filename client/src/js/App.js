@@ -33,14 +33,6 @@ import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
 
 const providerOptions = {
-	injected: {
-		options: {
-			rpc: {
-			  80001: "https://polygon-mumbai.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
-			  137: "https://polygon-mainnet.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
-			},
-		  }
-	},
     walletconnect: {
         package: WalletConnectProvider,
         options: {

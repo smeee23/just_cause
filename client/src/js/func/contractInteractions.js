@@ -1,4 +1,5 @@
 import getWeb3 from "../../getWeb3NotOnLoad";
+import getWeb3Infura from "../../getWeb3InfuraCalls";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
 import BurnPit from "../../contracts/not_truffle/BurnPit.json";
@@ -12,7 +13,7 @@ import { tempFixForDescriptions } from "./verifiedPoolMap";
 import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 
 	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		const PoolAddressesProviderInstance = new web3.eth.Contract(
 			PoolAddressesProvider.abi,
 			poolAddressesProviderAddress,
@@ -23,7 +24,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getLiquidityIndexFromAave = async(tokenAddress, poolAddressesProviderAddress) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		const PoolAddressesProviderInstance = new web3.eth.Contract(
 			PoolAddressesProvider.abi,
 			poolAddressesProviderAddress,
@@ -45,7 +46,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	const getWalletBalance = async(tokenAddress, activeAccount) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 		const balance = await erc20Instance.methods.balanceOf(activeAccount).call();
 		return balance;
@@ -57,7 +58,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 
 	export const getBalance = async(tokenAddress, decimals, tokenString, activeAccount) => {
 		if(tokenString === 'ETH' || tokenString === 'MATIC'){
-			const web3 = await getWeb3()
+			const web3 = await getWeb3Infura()
 			let balance = await web3.eth.getBalance(activeAccount);
 			balance = await web3.utils.fromWei(balance, "ether");
 			return Number.parseFloat(balance).toPrecision(6);
@@ -113,7 +114,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getContractInfo = async(poolAddress) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
@@ -124,7 +125,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getAmountSwapOut = async(path, amount) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 
 		const routerAddress = getSushiRouterAddress();
         let SushiRouterInstance = new web3.eth.Contract(
@@ -219,7 +220,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getDirectFromPoolInfo = async(poolAddress, tokenMap, activeAccount, tokenAddress) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			poolAddress,
@@ -270,7 +271,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getDirectFromPoolInfoAllTokens = async(poolAddress, tokenMap, activeAccount) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			poolAddress,
@@ -328,7 +329,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getDirectAboutOnly = async(poolAddress) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			poolAddress,
@@ -339,7 +340,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools, knownPoolInfo) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		let knownAddrs = [];
 		if(knownPoolInfo){
 			for(const key in knownPoolInfo){
@@ -456,7 +457,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const searchPools = async(poolTrackerAddress, activeAccount, tokenMap, searchAddr) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
@@ -486,7 +487,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getDepositorAddress = async(activeAccount, poolTrackerAddress) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		let userDepositPools = [];
 		let userBalancePools = {};
 
@@ -535,7 +536,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getVerifiedPools = async(networkId) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
 			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,
@@ -546,7 +547,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getUserOwned = async(activeAccount, networkId) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
 			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,
@@ -557,7 +558,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getUserDeposits = async(activeAccount, networkId) => {
-		const web3 = await getWeb3();
+		const web3 = await getWeb3Infura();
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
 			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,

@@ -10,6 +10,7 @@ import PoolTracker from "../../../contracts/PoolTracker.json";
 import ERC20Instance from "../../../contracts/IERC20.json";
 
 import { updatePendingTx } from "../../actions/pendingTx";
+import { updatePendingTxList } from "../../actions/pendingTxList";
 import { updateTxResult } from  "../../actions/txResult";
 import { updateDepositAmount } from  "../../actions/depositAmount";
 import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
@@ -100,11 +101,17 @@ class DepositModal extends Component {
 				const poolName = await getContractInfo(poolAddress);
 				txInfo = {txHash: '', success: '', amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId};
 
-				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, (err, transactionHash) => {
+				result = await PoolTrackerInstance.methods.addDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter, async(err, transactionHash) => {
 					console.log('Transaction Hash :', transactionHash);
 					if(!err){
-						this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId});
+						let info = {txHash: transactionHash, amount: amount, tokenString: tokenString, type:"DEPOSIT", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId, status:"pending"};
+						let pending = [...this.props.pendingTxList];
+						pending.push(info);
+						await this.props.updatePendingTxList(pending);
+						localStorage.setItem("pendingTxList", JSON.stringify(pending));
+						await this.props.updatePendingTx(info);
 						txInfo.txHash = transactionHash;
+
 					}
 					else{
 						txInfo = "";
@@ -116,7 +123,7 @@ class DepositModal extends Component {
 				let newDepositInfo;
 				if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
 					newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
-					newDepositInfo = addNewPoolInfo(this.props.userDepositPoolInfo, newInfo);
+					newDepositInfo = addNewPoolInfo([...this.props.userDepositPoolInfo], newInfo);
 				}
 				else{
 					console.log("POOL NOT FOUND IN DEPOSITS, ADDING POOL");
@@ -127,14 +134,14 @@ class DepositModal extends Component {
 
 				if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
 					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
-					const newOwnerInfo = addNewPoolInfo(this.props.ownerPoolInfo, newInfo);
+					const newOwnerInfo = addNewPoolInfo([...this.props.ownerPoolInfo], newInfo);
 					await this.props.updateOwnerPoolInfo(newOwnerInfo);
 					localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 				}
 
 				if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
 					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
-					const newVerifiedInfo = addNewPoolInfo(this.props.verifiedPoolInfo, newInfo);
+					const newVerifiedInfo = addNewPoolInfo([...this.props.verifiedPoolInfo], newInfo);
 					await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
 					localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 				}
@@ -228,11 +235,13 @@ const mapStateToProps = state => ({
 	verifiedPoolInfo: state.verifiedPoolInfo,
 	ownerPoolInfo: state.ownerPoolInfo,
 	networkId: state.networkId,
+	pendingTxList: state.pendingTxList,
 })
 
 const mapDispatchToProps = dispatch => ({
     updateDepositAmount: (amount) => dispatch(updateDepositAmount(amount)),
     updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
+	updatePendingTxList: (tx) => dispatch(updatePendingTxList(tx)),
 	updateTxResult: (res) => dispatch(updateTxResult(res)),
 	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
 	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),

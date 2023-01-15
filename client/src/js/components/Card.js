@@ -504,22 +504,19 @@ class Card extends Component {
 		console.log("update all tokens", newInfoAllTokens);
 
 		if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
-			//const newDepositInfo = addNewPoolInfo(this.props.userDepositPoolInfo, newInfo);
-			const newDepositInfo = addNewPoolInfoAllTokens(this.props.userDepositPoolInfo, newInfoAllTokens);
+			const newDepositInfo = addNewPoolInfoAllTokens([...this.props.userDepositPoolInfo], newInfoAllTokens);
 			await this.props.updateUserDepositPoolInfo(newDepositInfo);
 			localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
 		}
 
 		if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
-			//const newOwnerInfo = addNewPoolInfo(this.props.ownerPoolInfo, newInfo);
-			const newOwnerInfo = addNewPoolInfoAllTokens(this.props.ownerPoolInfo, newInfoAllTokens);
+			const newOwnerInfo = addNewPoolInfoAllTokens([...this.props.ownerPoolInfo], newInfoAllTokens);
 			await this.props.updateOwnerPoolInfo(newOwnerInfo);
 			localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 		}
 
 		if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
-			//const newVerifiedInfo = addNewPoolInfo(this.props.verifiedPoolInfo, newInfo);
-			const newVerifiedInfo = addNewPoolInfoAllTokens(this.props.verifiedPoolInfo, newInfoAllTokens);
+			const newVerifiedInfo = addNewPoolInfoAllTokens([...this.props.verifiedPoolInfo], newInfoAllTokens);
 			await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
 			localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 		}

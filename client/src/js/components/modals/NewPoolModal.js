@@ -11,6 +11,7 @@ import { updateDepositAmount } from  "../../actions/depositAmount";
 import {updateDeployInfo} from "../../actions/deployInfo";
 import { updateDeployTxResult } from  "../../actions/deployTxResult";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
+import { updatePendingTxList } from "../../actions/pendingTxList";
 
 import {upload} from '../../func/ipfs';
 
@@ -64,11 +65,16 @@ class NewPoolModal extends Component {
 			PoolTracker.abi,
 			this.props.poolTrackerAddress,
 		);
-		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, aboutHash, this.state.fileUploadHash, metaUri, receiver).send(parameter , (err, transactionHash) => {
+		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, aboutHash, this.state.fileUploadHash, metaUri, receiver).send(parameter , async(err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash, tokenAddrs);
 			if(!err){
-				txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver, networkId: this.props.networkId};
-				this.props.updateDeployTxResult(txInfo);
+				txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver, networkId: this.props.networkId, status:"pending"};
+				await this.props.updateDeployTxResult(txInfo);
+				let pending = [...this.props.pendingTxList];
+				if(!pending) pending= [];
+				pending.push(txInfo);
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
 			}
 			else{
 				txInfo = "";
@@ -77,7 +83,7 @@ class NewPoolModal extends Component {
 		txInfo.poolAddress = result.events.AddPool.returnValues.pool;
 		txInfo.status = 'success';
 
-		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, this.props.ownerPoolInfo);
+		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, [...this.props.ownerPoolInfo]);
 		await this.props.updateOwnerPoolInfo(newOwnerInfo);
 		localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 	}
@@ -339,6 +345,7 @@ const mapStateToProps = state => ({
 	activeAccount: state.activeAccount,
 	networkId: state.networkId,
 	ownerPoolInfo: state.ownerPoolInfo,
+	pendingTxList: state.pendingTxList
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -346,6 +353,7 @@ const mapDispatchToProps = dispatch => ({
 	updateDeployTxResult: (res) => dispatch(updateDeployTxResult(res)),
 	updateDeployInfo: (res) => dispatch(updateDeployInfo(res)),
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
+	updatePendingTxList: (tx) => dispatch(updatePendingTxList(tx)),
 })
 
 

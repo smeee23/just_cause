@@ -8,13 +8,14 @@ import getWeb3 from "../../../getWeb3NotOnLoad";
 import PoolTracker from "../../../contracts/PoolTracker.json";
 
 import { updatePendingTx } from "../../actions/pendingTx";
+import { updatePendingTxList } from "../../actions/pendingTxList";
 import { updateTxResult } from  "../../actions/txResult";
 import { updateWithdrawAmount } from  "../../actions/withdrawAmount";
 import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
-import {getDirectFromPoolInfo} from '../../func/contractInteractions';
+import {getDirectFromPoolInfo, getContractInfo} from '../../func/contractInteractions';
 import {delay, getTokenBaseAmount, displayLogo, addNewPoolInfo, checkPoolInPoolInfo } from '../../func/ancillaryFunctions';
 
 class WithdrawModal extends Component {
@@ -73,12 +74,18 @@ class WithdrawModal extends Component {
                 PoolTracker.abi,
                 this.props.poolTrackerAddress,
             );
-
-            txInfo = {txHash: '', success: false, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress, networkId: this.props.networkId};
-            result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter , (err, transactionHash) => {
+            const poolName = await getContractInfo(poolAddress);
+            txInfo = {txHash: '', success: false, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId};
+            result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter , async(err, transactionHash) => {
                 console.log('Transaction Hash :', transactionHash);
                 if(!err){
-                  this.props.updatePendingTx({txHash: transactionHash, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress, networkId: this.props.networkId});
+                  let info = {txHash: transactionHash, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId, status:"pending"};
+						      let pending = [...this.props.pendingTxList];
+                  if(!pending) pending = [];
+                  pending.push(info);
+						      await this.props.updatePendingTxList(pending);
+                  localStorage.setItem("pendingTxList", JSON.stringify(pending));
+                  await this.props.updatePendingTx(info);
                   txInfo.txHash = transactionHash;
                 }
                 else{
@@ -88,18 +95,18 @@ class WithdrawModal extends Component {
             txInfo.success = true;
 
             const newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
-            const newDepositInfo = addNewPoolInfo(this.props.userDepositPoolInfo, newInfo);
+            const newDepositInfo = addNewPoolInfo([...this.props.userDepositPoolInfo], newInfo);
             await this.props.updateUserDepositPoolInfo(newDepositInfo);
             localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
 
             if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
-              const newOwnerInfo = addNewPoolInfo(this.props.ownerPoolInfo, newInfo);
+              const newOwnerInfo = addNewPoolInfo([...this.props.ownerPoolInfo], newInfo);
               await this.props.updateOwnerPoolInfo(newOwnerInfo);
               localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
             }
 
             if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
-              const newVerifiedInfo = addNewPoolInfo(this.props.verifiedPoolInfo, newInfo);
+              const newVerifiedInfo = addNewPoolInfo([...this.props.verifiedPoolInfo], newInfo);
               await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
               localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
             }
@@ -179,11 +186,13 @@ const mapStateToProps = state => ({
     userDepositPoolInfo: state.userDepositPoolInfo,
     verifiedPoolInfo: state.verifiedPoolInfo,
     ownerPoolInfo: state.ownerPoolInfo,
+    pendingTxList: state.pendingTxList,
 })
 
 const mapDispatchToProps = dispatch => ({
     updateWithdrawAmount: (amount) => dispatch(updateWithdrawAmount(amount)),
     updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
+    updatePendingTxList: (tx) => dispatch(updatePendingTxList(tx)),
     updateTxResult: (res) => dispatch(updateTxResult(res)),
     updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
     updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),

@@ -13,6 +13,7 @@ import userDepositPoolAddrsReducer from './userDepositPoolAddrs'
 import userDepositPoolInfoReducer from './userDepositPoolInfo'
 import poolTrackerAddressReducer from './poolTrackerAddress'
 import pendingTxReducer from './pendingTx'
+import pendingTxListReducer from './pendingTxList'
 import txResultReducer from './txResult'
 import deployTxResultReducer from './deployTxResult'
 import deployInfoReducer from './deployInfo'
@@ -41,6 +42,7 @@ const rootReducer = (history) => combineReducers({
 	userDepositPoolInfo: userDepositPoolInfoReducer,
 	poolTrackerAddress: poolTrackerAddressReducer,
 	pendingTx: pendingTxReducer,
+	pendingTxList: pendingTxListReducer,
 	txResult: txResultReducer,
 	deployTxResult: deployTxResultReducer,
 	deployInfo: deployInfoReducer,

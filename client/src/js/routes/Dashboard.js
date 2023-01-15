@@ -10,6 +10,7 @@ import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import NewPoolModal from "../components/modals/NewPoolModal";
+import PendingTxList from "../components/PendingTxList";
 
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
@@ -91,7 +92,7 @@ class Dashboard extends Component {
 	getPendingTxModal = () => {
 		if(this.props.pendingTx){
 			let modal = <Modal isOpen={true}><PendingTxModal txDetails={this.props.pendingTx}/></Modal>;
-			return modal;
+			//return modal;
 		}
 	}
 	getDeployTxModal = () => {
@@ -458,7 +459,7 @@ class Dashboard extends Component {
 		const optionButtons = this.createOptionButtons();
 		const verifiedButtons = this.createVerifiedButtons();
 
-		console.log("burnPitBalances", this.props.burnPitBalances);
+		console.log("pendingTx", this.props.pendingTxList);
 
 		return (
 			<Fragment>
@@ -487,6 +488,7 @@ class Dashboard extends Component {
 
 					</section>
 				</article>
+				<PendingTxList/>
 			</Fragment>
 
 		);
@@ -510,6 +512,7 @@ const mapStateToProps = state => ({
 	deployInfo: state.deployInfo,
 	newAbout: state.newAbout,
 	burnPitBalances: state.burnPitBalances,
+	pendingTxList: state.pendingTxList,
 })
 
 const mapDispatchToProps = dispatch => ({

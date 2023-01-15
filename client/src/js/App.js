@@ -22,15 +22,16 @@ import { updateAavePoolAddress } from "./actions/aavePoolAddress"
 import { updateNetworkId } from "./actions/networkId"
 import { updateConnect } from "./actions/connect"
 import { updateBurnPitBalances } from "./actions/burnPitBalances";
+import { updatePendingTxList } from "./actions/pendingTxList";
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
 import RetirementCertificate from "../contracts/not_truffle/RetirementCertificates.json";
 import ToucanCarbonOffsets from "../contracts/not_truffle/ToucanCarbonOffsets.json";
 import { getTokenMap, getAaveAddressProvider, deployedNetworks } from "./func/tokenMaps.js";
-import {getPoolInfo, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress, getBurnBalances} from './func/contractInteractions.js';
+import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress, getBurnBalances} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
-import {precise, checkLocationForAppDeploy} from './func/ancillaryFunctions';
+import {precise, delay, checkLocationForAppDeploy} from './func/ancillaryFunctions';
 
 const providerOptions = {
     walletconnect: {
@@ -74,24 +75,28 @@ class App extends Component {
 
 				if("inApp" === checkLocationForAppDeploy() || "inSearch" === checkLocationForAppDeploy() ){
 					if(web3Modal.cachedProvider || "inSearch" === checkLocationForAppDeploy() ){
+						const pendingTxList = localStorage.getItem("pendingTxList");
+						if(pendingTxList){
+							const truePending = await checkTransactions(JSON.parse(pendingTxList));
+							this.props.updatePendingTxList(truePending);
+							localStorage.setItem("pendingTxList", JSON.stringify(truePending));
+							console.log("pendingTx from storage", truePending);
+						}
 						const verifiedPoolInfo = localStorage.getItem("verifiedPoolInfo");
 						if(verifiedPoolInfo){
 							await this.props.updateVerifiedPoolInfo(JSON.parse(verifiedPoolInfo));
 							console.log("verifiedPoolInfo from storage", JSON.parse(verifiedPoolInfo));
 						}
-
 						const ownerPoolInfo = localStorage.getItem("ownerPoolInfo");
 						if(ownerPoolInfo){
 							await this.props.updateOwnerPoolInfo(JSON.parse(ownerPoolInfo));
 							console.log("ownerPoolInfo from storage", JSON.parse(ownerPoolInfo));
 						}
-
 						const userDepositPoolInfo = localStorage.getItem("userDepositPoolInfo");
 						if(userDepositPoolInfo){
 							await this.props.updateUserDepositPoolInfo(JSON.parse(userDepositPoolInfo));
 							console.log("userDepositPoolInfo from storage", JSON.parse(userDepositPoolInfo));
 						}
-
 						const tokenMap = localStorage.getItem("tokenMap");
 						if(tokenMap){
 							await this.props.updateTokenMap(JSON.parse(tokenMap));
@@ -117,6 +122,7 @@ class App extends Component {
 							await this.setUpConnection();
 							await this.setPoolStates();
 						}
+						this.subscribeToInfura();
 					}
 				}
 		}
@@ -182,6 +188,110 @@ class App extends Component {
 		return provider;
 	}
 
+	subscribeToInfura = async() => {
+		let poolTrackerInstance = new this.web3.eth.Contract(
+			PoolTracker.abi,
+			this.poolTrackerAddress,
+		);
+
+
+		let options = {
+			filter: {
+				value: [],
+			},
+			fromBlock: 0
+		};
+
+		console.log("events", poolTrackerInstance.events);
+
+		let pending;
+		poolTrackerInstance.events.Claim(options)
+			.on('data', async(event) => {
+				console.log("EVENT data", event)
+				let pending = [...this.props.pendingTxList];
+				pending.forEach((e, i) =>{
+					if(e.txHash === event.transactionHash){
+						e.status = "complete"
+					}
+				});
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+				await delay(3000);
+				pending = (pending).filter(e => !(e.txHash === event.transactionHash));
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+			})
+			.on('changed', changed => console.log("EVENT changed", changed))
+			.on('error', err => console.log("EVENT err", err))
+			.on('connected', str => console.log("EVENT str", str))
+
+		poolTrackerInstance.events.AddPool(options)
+		.on('data', async(event) => {
+			console.log("EVENT data", event)
+			let pending = [...this.props.pendingTxList];
+			pending.forEach((e, i) =>{
+				if(e.txHash === event.transactionHash){
+					e.status = "complete"
+				}
+			});
+			await this.props.updatePendingTxList(pending);
+			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+			await delay(3000);
+			pending = (pending).filter(e => !(e.txHash === event.transactionHash));
+			await this.props.updatePendingTxList(pending);
+			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+		})
+			.on('changed', changed => console.log("EVENT changed", changed))
+			.on('error', err => console.log("EVENT err", err))
+			.on('connected', str => console.log("EVENT str", str))
+
+		poolTrackerInstance.events.AddDeposit(options)
+		.on('data', async(event) => {
+			console.log("EVENT data", event)
+			let pending = [...this.props.pendingTxList];
+			pending.forEach((e, i) =>{
+				if(e.txHash === event.transactionHash){
+					e.status = "complete"
+				}
+			});
+			await this.props.updatePendingTxList(pending);
+			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+			await delay(3000);
+			pending = (pending).filter(e => !(e.txHash === event.transactionHash));
+			await this.props.updatePendingTxList(pending);
+			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+		})
+			.on('changed', changed => console.log("EVENT changed", changed))
+			.on('error', err => console.log("EVENT err", err))
+			.on('connected', str => console.log("EVENT str", str))
+
+		poolTrackerInstance.events.WithdrawDeposit(options)
+		.on('data', async(event) => {
+			console.log("EVENT data", event)
+			let pending = [...this.props.pendingTxList];
+			pending.forEach((e, i) =>{
+				if(e.txHash === event.transactionHash){
+					e.status = "complete"
+				}
+			});
+			await this.props.updatePendingTxList(pending);
+			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+			await delay(3000);
+			pending = (pending).filter(e => !(e.txHash === event.transactionHash));
+			await this.props.updatePendingTxList(pending);
+			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+		})
+			.on('changed', changed => console.log("EVENT changed", changed))
+			.on('error', err => console.log("EVENT err", err))
+			.on('connected', str => console.log("EVENT str", str))
+
+		console.log("pending TX List", this.props.pendingTxList);
+	}
+
 	getAccounts = async() => {
 		const provider = await this.connectToWeb3();
 		this.provider = provider;
@@ -191,6 +301,7 @@ class App extends Component {
 			await web3Modal.clearCachedProvider();
 			localStorage.setItem("ownerPoolInfo", "");
 			localStorage.setItem("userDepositPoolInfo", "");
+			localStorage.setItem("pendingTxList", "");
 			window.location.reload(false);
 		  });
 
@@ -200,6 +311,7 @@ class App extends Component {
 			localStorage.setItem("ownerPoolInfo", "");
 			localStorage.setItem("userDepositPoolInfo", "");
 			localStorage.setItem("verifiedPoolInfo", "");
+			localStorage.setItem("pendingTxList", "");
 			window.location.reload(false);
 		});
 
@@ -208,6 +320,7 @@ class App extends Component {
 			console.log(info);
 			localStorage.setItem("ownerPoolInfo", "");
 			localStorage.setItem("userDepositPoolInfo", "");
+			localStorage.setItem("pendingTxList", "");
 			window.location.reload(false);
 		});
 
@@ -217,6 +330,7 @@ class App extends Component {
 			await web3Modal.clearCachedProvider();
 			localStorage.setItem("ownerPoolInfo", "");
 			localStorage.setItem("userDepositPoolInfo", "");
+			localStorage.setItem("pendingTxList", "");
 			window.location.reload(false);
 		});
 
@@ -365,6 +479,7 @@ const mapStateToProps = state => ({
 	aavePoolAddress: state.aavePoolAddress,
 	connect: state.connect,
 	tokenMap: state.tokenMap,
+	pendingTxList: state.pendingTxList,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -382,6 +497,7 @@ const mapDispatchToProps = dispatch => ({
 	updateAavePoolAddress: (s) => dispatch(updateAavePoolAddress(s)),
 	updateConnect: (bool) => dispatch(updateConnect(bool)),
 	updateBurnPitBalances: (bal) => dispatch(updateBurnPitBalances(bal)),
+	updatePendingTxList: (list) => dispatch(updatePendingTxList(list)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

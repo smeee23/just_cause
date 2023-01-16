@@ -30,7 +30,7 @@ class PendingTx extends Component {
             return <h2 style={{fontSize: 16,  marginBottom: "2px", marginTop: "2px", marginLeft: "4px", marginRight: "4px"}}>Pending Transaction</h2>
         }
         else if(status === 'complete'){
-            return <h2 style={{fontSize: 16,  marginBottom: "2px", marginTop: "2px", marginLeft: "4px", marginRight: "4px", color: "green"}}>Completed Transaction</h2>
+            return <h2 style={{fontSize: 16,  marginBottom: "2px", marginTop: "2px", marginLeft: "4px", marginRight: "4px"}}>Processed Transaction</h2>
         }
     }
     getPendingTx = (txInfo) => {

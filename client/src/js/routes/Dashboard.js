@@ -85,7 +85,6 @@ class Dashboard extends Component {
 	getTxResultModal = () => {
 		if(this.props.txResult){
 			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;
-
 			return modal;
 		}
 	}
@@ -170,8 +169,8 @@ class Dashboard extends Component {
 	createVerifiedButtons = () => {
 		if(this.state.openTabIndex !== 0) return;
 		let buttonHolder = [];
-		const buttonStrings = ['General', 'Retire Carbon Credits', 'Crypto for Charity'];
-		const infoStrings = ['miscellaneous funds', 'retire carbon credits with Toucan protocol', 'Crypto for Charity cause funds'];
+		const buttonStrings = ['General', 'Crypto for Charity'];
+		const infoStrings = ['miscellaneous funds', 'Crypto for Charity cause funds'];
 		for(let i = 0; i < buttonStrings.length; i++){
 			const name = buttonStrings[i];
 			let isDisabled = false;
@@ -198,7 +197,7 @@ class Dashboard extends Component {
 	getVerifiedTabInfo = () => {
 		if(this.state.openTabIndex !== 0) return;
 		let info;
-		if(this.state.openVerifiedIndex === 2){
+		if(this.state.openVerifiedIndex === 1){
 			let info_1 = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love.";
 			let info_2 = "A Crypto for Charity cause fund supports a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
 			return (
@@ -209,7 +208,7 @@ class Dashboard extends Component {
 				</div>
 			);
 		}
-		else if(this.state.openVerifiedIndex === 1){
+		/*else if(this.state.openVerifiedIndex === 1){
 			let info_1 = "Greenhouse gases (GHG), like carbon dioxide (CO2), are emitted when fossil-fuels are consumed. We all generate CO2 emissions in the course of our day-to-day lives. Carbon offsetting is the act of reducing carbon dioxide or greenhouse gases in order to compensate for emissions that were produced elsewhere. Companies and individuals are able to offset their carbon emissions by purchasing carbon credits. One carbon offset credit represents one tonne of CO2 equivalent (TCO2e) reduced or averted from the atmosphere.";
 			let info_2 = "The Toucan protocol is smart contract-based infrastructure that enables on chain, liquid carbon markets. Using the Toucan Meta-Registry and Toucan Carbon Bridge carbon credits can be represented as cryptographic tokens and deposited into carbon pools to enable highly liquid markets to scale climate action.";
 			let info_3 = "Donations to the Retire Carbon Credit pool will be sent to our BurnPit smart contract, which purchases and retires carbon credits using Toucan protocol's NCT token. The donated funds stored in the BurnPit can be \"burnt\" by clicking the button below, which swaps all funds for TCO2e's and retires them using Toucan protocol."
@@ -243,7 +242,7 @@ class Dashboard extends Component {
 				</div>
 			);
 
-		}
+		}*/
 		else if (this.state.openVerifiedIndex === 0){
 			info = "Pools in this group consist of public goods, charities, and nonprofits.";
 			return (
@@ -360,7 +359,7 @@ class Dashboard extends Component {
 
 			const {userBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
 
-			if(this.state.hideLowBalance && this.state.openTabIndex === 2){
+			if(this.state.hideLowBalance && this.state.openTabIndex === 1){
 				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){
 					cardHolder.push(
 						<Card
@@ -379,7 +378,7 @@ class Dashboard extends Component {
 			}
 			else if(this.state.openTabIndex === 0){
 				const name = item.name;
-				if(this.state.openVerifiedIndex === 2){
+				if(this.state.openVerifiedIndex === 1){
 					if(name.endsWith("Cause Fund") || name === "Environment Conservation Fund" || name === "Healthcare & Research Fund"){
 						cardHolder.push(
 							<Card
@@ -396,7 +395,7 @@ class Dashboard extends Component {
 						);
 					}
 				}
-				if(this.state.openVerifiedIndex === 1){
+				/*else if(this.state.openVerifiedIndex === 1){
 					if(name === "Retire Carbon Credits"){
 						cardHolder.push(
 							<Card
@@ -412,7 +411,7 @@ class Dashboard extends Component {
 							/>
 						);
 					}
-				}
+				}*/
 				else if(this.state.openVerifiedIndex === 0){
 					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund" && name !== "Environment Conservation Fund" && name !== "Retire Carbon Credits"){
 						cardHolder.push(

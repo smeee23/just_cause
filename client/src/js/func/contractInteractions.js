@@ -208,9 +208,9 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 		}
 		console.log("AMOUNT SWAP OUT", usdcAmount, usdcBalance);
 		const amountsWithSlippage = [
-										(web3.utils.toBN(usdcAmount).mul(web3.utils.toBN(95)).div(web3.utils.toBN(100))).toString(),
-										(web3.utils.toBN(wethAmount).mul(web3.utils.toBN(95)).div(web3.utils.toBN(100))).toString(),
-										(web3.utils.toBN(wmaticAmount).mul(web3.utils.toBN(95)).div(web3.utils.toBN(100))).toString()
+										(web3.utils.toBN(usdcAmount).mul(web3.utils.toBN(50)).div(web3.utils.toBN(100))).toString(),
+										(web3.utils.toBN(wethAmount).mul(web3.utils.toBN(50)).div(web3.utils.toBN(100))).toString(),
+										(web3.utils.toBN(wmaticAmount).mul(web3.utils.toBN(50)).div(web3.utils.toBN(100))).toString()
 									];
 		const BurnPitInstance = new web3.eth.Contract(
 			BurnPit.abi,

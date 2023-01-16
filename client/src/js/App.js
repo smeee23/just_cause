@@ -31,7 +31,7 @@ import ToucanCarbonOffsets from "../contracts/not_truffle/ToucanCarbonOffsets.js
 import { getTokenMap, getAaveAddressProvider, deployedNetworks } from "./func/tokenMaps.js";
 import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress, getBurnBalances} from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
-import {precise, delay, checkLocationForAppDeploy} from './func/ancillaryFunctions';
+import {precise, delay, checkLocationForAppDeploy, filterOutVerifieds} from './func/ancillaryFunctions';
 
 const providerOptions = {
     walletconnect: {
@@ -70,7 +70,6 @@ class App extends Component {
 	}
 	componentDidMount = async() => {
 		try {
-
 			window.addEventListener('resize', this.props.detectMobile);
 
 				if("inApp" === checkLocationForAppDeploy() || "inSearch" === checkLocationForAppDeploy() ){
@@ -334,17 +333,6 @@ class App extends Component {
 			window.location.reload(false);
 		});
 
-		/*this.web3.eth.subscribe('newBlockHeaders', async (error, event) => {
-			const blockTxHashes = (await this.web3.eth.getBlock(event.hash)).transactions;
-
-			console.log("blockTxHashes", blockTxHashes);
-			for (const pendingTxHash of pendingTxHashes) {
-			if (blockTxHashes.includes(pendingTxHash)) {
-			console.log(await web3.eth.getTransactionReceipt(pendingTxHash));
-			}
-			}
-		});*/
-
 		this.web3 = new Web3(this.provider);
 
 		const accounts = await this.web3.eth.getAccounts();
@@ -427,7 +415,7 @@ class App extends Component {
 	}
 
 	setPoolStateAll = async(activeAccount) => {
-		const verifiedPools = await this.PoolTrackerInstance.methods.getVerifiedPools().call();
+		const verifiedPools = filterOutVerifieds(await this.PoolTrackerInstance.methods.getVerifiedPools().call());
 		const ownerPools = await this.getOwnerAddress(activeAccount);
 		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address);
 		const userDepositPools = depositBalancePools.depositPools;

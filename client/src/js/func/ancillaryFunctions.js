@@ -285,6 +285,9 @@ export const checkPoolInPoolInfo = (poolAddress, poolInfo) => {
   return false;
 }
 
+export const filterOutVerifieds = (poolAddrs) => {
+  return poolAddrs.filter((e) => !["0x4C41B254E7792Af9F03bCf1f72f986fFfE235f00"].includes(e));
+}
 export const addNewPoolInfo = (prevInfo, newInfo) => {
 
   Object.keys(prevInfo).forEach( (key, index) => {

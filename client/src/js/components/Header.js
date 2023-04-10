@@ -155,9 +155,9 @@ class Header extends Component {
 
   getLaunchButton = () => {
     if(web3Modal.cachedProvider)
-      return <ButtonSmall text={"Lauch App"} icon={"poolShape5"} callback={this.connectButtonHit}/>;
+      return <ButtonSmall forceDisplay="true" text={"Lauch App"} icon={"poolShape5"} callback={this.connectButtonHit}/>;
 
-    return <ButtonSmall text={"Lauch App"} icon={"poolShape5"}/>;
+    return <ButtonSmall forceDisplay="true" text={"Lauch App"} icon={"poolShape5"}/>;
   }
 
   getAccountButtons = () => {
@@ -222,8 +222,10 @@ class Header extends Component {
           <h2 title="USD value donated by JustCause (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingLeft: "32px", paddingRight: "0px"}}>{  displayTVL('totalDonated', 'Donated:', this.props.tokenMap, 3) }</h2>
           <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px"}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
           <h2 title="connected" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px", color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
-        <nav className="app-bar__items">
+        <nav className="app-bar__items__left">
           { nav }
+        </nav>
+        <nav className="app-bar__items__right">
         {this.getConnectButton()}
         </nav>
       </header>

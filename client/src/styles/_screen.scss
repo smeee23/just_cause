@@ -20,7 +20,7 @@
 
 @media screen and (max-width: $bp-medium) {
 	h1 {
-		font-size: px-to-rem(72px);
+		font-size: px-to-rem(100px);
 		margin-bottom: 24px;
 		letter-spacing: $letter-spacing-xs;
 	}
@@ -38,7 +38,7 @@
 
 @media screen and (max-width: $bp-small) {
 	h1 {
-		font-size: px-to-rem(56px);
+		font-size: px-to-rem(72px);
 	}
 
 	.horizontal-padding {

@@ -76,7 +76,7 @@ class ButtonSmall extends Component {
     }
   }
 	render() {
-		const { text, icon, tweet, href, callback, disabled, lg, logo, info } = this.props;
+		const { text, icon, tweet, href, callback, disabled, lg, logo, info, forceDisplay } = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -89,13 +89,13 @@ class ButtonSmall extends Component {
       <button title={info} className={classnames} href={href} onClick={callback}>
         <div className="button__items">
           { text ? (
-            <div className="button__itemsm button__text">
+            <div style={{opacity: "1.0"}} className="button__itemsm button__text">
              <div style={{paddingRight: "5px"}}> {logo} </div>
               <p className="mb0">{ text }</p>
             </div>
           ) : null }
           { icon ? (
-            <div className="button__itemsm button__icon">
+            <div style={{opacity: "1"}} className="button__itemsm button__icon">
               <Icon name={icon} size={lg ? 64 : 32}/>
             </div>
           ) : null }

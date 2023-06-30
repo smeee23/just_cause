@@ -144,14 +144,7 @@ class App extends Component {
 
 	setUpConnection = async() => {
 		this.setActiveAccountState(this.props.activeAccount);
-		this.networkId = await this.web3.eth.net.getId();
 
-		if(!deployedNetworks.includes(this.networkId)){
-			alert(
-				'Unsupported network detected (chain id: '+this.networkId+'). Please switch to Polygon (chain id: 137) or polygon mumbai testnet (chain id: 80001)'
-			);
-		}
-		this.setNetworkId(this.networkId);
 	}
 
 	setPoolStates = async() => {
@@ -336,8 +329,17 @@ class App extends Component {
 		this.web3 = new Web3(this.provider);
 
 		const accounts = await this.web3.eth.getAccounts();
-
     	await this.props.updateActiveAccount(accounts[0]);
+
+		this.networkId = await this.web3.eth.net.getId();
+		if(!deployedNetworks.includes(this.networkId)){
+			await window.ethereum.request({
+				method: 'wallet_switchEthereumChain',
+				params: [{ chainId: "0x89" }],
+			});
+			window.location.reload(false);
+		}
+		this.setNetworkId(this.networkId);
 	}
 
 	getAaveData = async() => {

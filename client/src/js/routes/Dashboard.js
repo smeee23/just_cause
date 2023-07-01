@@ -7,6 +7,7 @@ import Card from '../components/Card';
 import { Modal, LargeModal } from "../components/Modal";
 import { Button, ButtonSmall } from '../components/Button';
 import PendingTxModal from "../components/modals/PendingTxModal";
+import AlertModal from "../components/modals/AlertModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import NewPoolModal from "../components/modals/NewPoolModal";
@@ -94,6 +95,14 @@ class Dashboard extends Component {
 			//return modal;
 		}
 	}
+
+	getAlertModal = () => {
+		if(this.props.alert){
+			let modal = <Modal isOpen={true}><AlertModal txDetails={this.props.alert}/></Modal>;
+			return modal;
+		}
+	}
+
 	getDeployTxModal = () => {
 		if(this.props.deployTxResult){
 			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;
@@ -479,6 +488,7 @@ class Dashboard extends Component {
 						{this.getPendingTxModal()}
 						{this.getTxResultModal()}
 						{this.getDeployTxModal()}
+						{this.getAlertModal()}
 						{this.getNewPoolModal()}
 						{this.getApplicationLink()}
 						{cardHolder}
@@ -512,6 +522,7 @@ const mapStateToProps = state => ({
 	newAbout: state.newAbout,
 	burnPitBalances: state.burnPitBalances,
 	pendingTxList: state.pendingTxList,
+	alert: state.alert,
 })
 
 const mapDispatchToProps = dispatch => ({

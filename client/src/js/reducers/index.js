@@ -3,6 +3,7 @@ import { connectRouter } from 'connected-react-router'
 
 import mobileReducer from './mobile'
 import loadingReducer from './loading'
+import alertReducer from './alert'
 import activeAccountReducer from './activeAccount'
 import tokenMapReducer from './tokenMap'
 import verifiedPoolAddrsReducer from './verifiedPoolAddrs'
@@ -32,6 +33,7 @@ import burnPitBalancesReducer from './burnPitBalances'
 const rootReducer = (history) => combineReducers({
 	isMobile: mobileReducer,
 	loading: loadingReducer,
+	alert: alertReducer,
 	activeAccount: activeAccountReducer,
 	tokenMap: tokenMapReducer,
 	verifiedPoolAddrs: verifiedPoolAddrsReducer,

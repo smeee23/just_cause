@@ -473,20 +473,7 @@ class Card extends Component {
 		await this.props.updateShare('');
 		this.props.updateShare({poolAddress: poolAddress, name: name});
 	}
-	displayTxInfo = async(txInfo,) => {
-		this.props.updatePendingTx('');
-		this.props.updateTxResult(txInfo);
-		await delay(5000);
-		this.props.updateTxResult('');
-	}
-
-	getPendingTxModal = async() => {
-		if(this.props.pendingTx){
-			await this.poolScraper();
-			let modal = <Modal isOpen={true}><PendingTxModal txDetails={this.props.pendingTx}/></Modal>;
-			return modal;
-		}
-	}
+	
 	getDeployTxModal = () => {
 		if(this.props.deployTxResult){
 			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;

@@ -10,6 +10,7 @@ import { createHashHistory} from 'history'
 import routes from './routes'
 import { detectMobile } from "./actions/mobile"
 import { updateActiveAccount } from "./actions/activeAccount"
+import { updateAlert } from "./actions/alert"
 import { updateTokenMap } from "./actions/tokenMap"
 import { updateVerifiedPoolAddrs } from "./actions/verifiedPoolAddrs"
 import { updateVerifiedPoolInfo } from "./actions/verifiedPoolInfo"
@@ -333,10 +334,28 @@ class App extends Component {
 
 		this.networkId = await this.web3.eth.net.getId();
 		if(!deployedNetworks.includes(this.networkId)){
-			await window.ethereum.request({
-				method: 'wallet_switchEthereumChain',
-				params: [{ chainId: "0x89" }],
-			});
+			this.props.updateAlert("switch_network");
+			try {
+				await window.ethereum.request({
+					method: 'wallet_switchEthereumChain',
+					params: [{ chainId: "0x89" }],
+				});
+			} catch (err) {
+				// This error code indicates that the chain has not been added to MetaMask
+			  if (err.code === 4902) {
+				await window.ethereum.request({
+				  method: 'wallet_addEthereumChain',
+				  params: [
+					{
+					  chainName: 'Polygon Mainnet',
+					  chainId: "0x89",
+					  nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
+					  rpcUrls: ['https://polygon-rpc.com/']
+					}
+				  ]
+				});
+			  }
+			}
 			window.location.reload(false);
 		}
 		this.setNetworkId(this.networkId);
@@ -475,6 +494,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
 	detectMobile: () => dispatch(detectMobile()),
 	updateActiveAccount: (s) => dispatch(updateActiveAccount(s)),
+	updateAlert: (s) => dispatch(updateAlert(s)),
 	updateTokenMap: (tokenMap) => dispatch(updateTokenMap(tokenMap)),
 	updateVerifiedPoolAddrs: (addrsArray) => dispatch(updateVerifiedPoolAddrs(addrsArray)),
 	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),

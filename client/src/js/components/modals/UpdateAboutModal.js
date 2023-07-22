@@ -180,7 +180,6 @@ class UpdateAboutModal extends Component {
   }
 
   getAbout = (about) => {
-    console.log("size", about.length);
     /*if(about.length > 1000){
         about = about.slice(0, 999)+"...";
     }*/

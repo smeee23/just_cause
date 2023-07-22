@@ -124,14 +124,17 @@ export const encryptString = (inputString, encryptionKey) => {
     encrypted += String.fromCharCode(charCode);
   }
 
-  return encrypted;
+  return Buffer.from(encrypted, 'binary').toString('base64');
 }
 
-export const decryptString = (encryptedString, encryptionKey) => {
+export const decryptString = (encryptedBase64, encryptionKey) => {
+  const encrypted = Buffer.from(encryptedBase64, 'base64').toString('binary');
+
+  console.log("in function", encrypted, encryptedBase64)
   let decrypted = '';
 
-  for (let i = 0; i < encryptedString.length; i++) {
-    const charCode = encryptedString.charCodeAt(i) ^ encryptionKey.charCodeAt(i % encryptionKey.length);
+  for (let i = 0; i < encrypted.length; i++) {
+    const charCode = encrypted.charCodeAt(i) ^ encryptionKey.charCodeAt(i % encryptionKey.length);
     decrypted += String.fromCharCode(charCode);
   }
 

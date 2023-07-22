@@ -3,7 +3,7 @@ import AWS from 'aws-sdk';
 const S3_BUCKET ='justcausepools';
 const REGION ='us-east-1';
 
-const sk = decryptString(process.env.REACT_APP_AWS_S3_SECRET_KEY, process.env.REACT_APP_KEY)+"1D2f1Q7Pu";
+const sk = decryptString(process.env.REACT_APP_AWS_S3_SECRET_KEY, process.env.REACT_APP_KEY);
 
 AWS.config.update({
     accessKeyId: process.env.REACT_APP_AWS_S3_ACCESS_KEY,

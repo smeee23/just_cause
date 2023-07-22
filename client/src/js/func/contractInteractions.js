@@ -1,15 +1,11 @@
 import getWeb3 from "../../getWeb3NotOnLoad";
 import JCPool from "../../contracts/JustCausePool.json";
 import PoolTracker from "../../contracts/PoolTracker.json";
-import BurnPit from "../../contracts/not_truffle/BurnPit.json";
 import ERC20Instance from "../../contracts/IERC20.json";
 import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
-import UniswapV2Router02 from "../../contracts/IUniswapV2Router02.json";
 import Pool from "../../contracts/IPool.json";
-import { getIpfsData } from "./ipfs";
-import { tempFixForDescriptions } from "./verifiedPoolMap";
-import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
+import { getAboutFromS3 } from "./awsS3";
 
 	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
 		const web3 = await getWeb3();
@@ -123,47 +119,6 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 		return await JCPoolInstance.methods.getPoolInfo().call();
 	}
 
-	export const getAmountSwapOut = async(path, amount) => {
-		const web3 = await getWeb3();
-
-		const routerAddress = getSushiRouterAddress();
-        let SushiRouterInstance = new web3.eth.Contract(
-			UniswapV2Router02.abi,
-			routerAddress
-		);
-
-        const amt = web3.eth.abi.encodeParameter('uint256', amount);
-        var mycall = await SushiRouterInstance.methods.getAmountsOut(amt, path).call({});
-        return(mycall);
-	}
-
-	export const getBurnBalances = async(tokenMap) => {
-		if(tokenMap){
-		const web3 = await getWeb3();
-		const acceptedTokens = [
-								tokenMap["USDC"] && tokenMap['USDC'].address,
-								tokenMap["WETH"] && tokenMap['WETH'].address,
-								tokenMap["MATIC"] && tokenMap['MATIC'].address
-							   ];
-
-		const burnPitAddress = getBurnPitAddress();
-
-		const wmaticBalance = await getWalletBalance(acceptedTokens[2], burnPitAddress);
-		console.log("WMATIC BALANCE", wmaticBalance);
-
-		const wethBalance = await getWalletBalance(acceptedTokens[1], burnPitAddress);
-		console.log("WETH BALANCE", wethBalance);
-
-		const usdcBalance = await getWalletBalance(acceptedTokens[0], burnPitAddress);
-		console.log("USDC BALANCE", usdcBalance);
-
-		const ethBalance = await web3.eth.getBalance(burnPitAddress);
-		console.log("MATIC BALANCE", ethBalance);
-
-		return { wmaticBalance, wethBalance, usdcBalance, ethBalance };
-		}
-	}
-
 	export const checkTransactions = async(pendingList) => {
 		const web3 = await getWeb3();
 		let truePendings = [];
@@ -173,62 +128,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 				truePendings.push(x);
 			}
 		});
-		console.log("truePendings", truePendings)
 		return truePendings;
-	}
-
-	export const burn = async(tokenMap, activeAccount) => {
-		const web3 = await getWeb3();
-		const carbonToken = '0xD838290e877E0188a4A44700463419ED96c16107';
-		const acceptedTokens = [
-								tokenMap["USDC"] && tokenMap['USDC'].address,
-								tokenMap["WETH"] && tokenMap['WETH'].address,
-								tokenMap["MATIC"] && tokenMap['MATIC'].address
-							   ];
-
-		const burnPitAddress = getBurnPitAddress();
-		const wmaticBalance = await getWalletBalance(acceptedTokens[2], burnPitAddress);
-		let wmaticAmount = '0';
-		if(wmaticBalance > 0){
-			wmaticAmount = (await getAmountSwapOut([acceptedTokens[2], acceptedTokens[0], carbonToken], wmaticBalance))[2];
-		}
-		console.log("AMOUNT SWAP OUT", wmaticAmount, wmaticBalance);
-
-		const wethBalance = await getWalletBalance(acceptedTokens[1], burnPitAddress);
-		let wethAmount = 0;
-		if(wethBalance > 0){
-			wethAmount = (await getAmountSwapOut([acceptedTokens[1], acceptedTokens[0], carbonToken], wethBalance))[2];
-		}
-		console.log("AMOUNT SWAP OUT", wethAmount, wethBalance);
-
-		const usdcBalance = await getWalletBalance(acceptedTokens[0], burnPitAddress);
-		let usdcAmount = 0;
-		if(usdcBalance > 0){
-			usdcAmount = (await getAmountSwapOut([acceptedTokens[0], carbonToken], usdcBalance))[1];
-		}
-		console.log("AMOUNT SWAP OUT", usdcAmount, usdcBalance);
-		const amountsWithSlippage = [
-										(web3.utils.toBN(usdcAmount).mul(web3.utils.toBN(50)).div(web3.utils.toBN(100))).toString(),
-										(web3.utils.toBN(wethAmount).mul(web3.utils.toBN(50)).div(web3.utils.toBN(100))).toString(),
-										(web3.utils.toBN(wmaticAmount).mul(web3.utils.toBN(50)).div(web3.utils.toBN(100))).toString()
-									];
-		const BurnPitInstance = new web3.eth.Contract(
-			BurnPit.abi,
-			burnPitAddress,
-		);
-
-		const gasPrice = (await web3.eth.getGasPrice()).toString();
-		const parameter = {
-			from: activeAccount,
-			gas: web3.utils.toHex(1500000),
-			gasPrice: web3.utils.toHex(gasPrice)
-		};
-
-		let result = await BurnPitInstance.methods.burnTokens(amountsWithSlippage, carbonToken).send(parameter, (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash, err);
-		});
-
-		console.log("BURN call result", result);
 	}
 
 	export const getDirectFromPoolInfo = async(poolAddress, tokenMap, activeAccount, tokenAddress) => {
@@ -241,17 +141,12 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 		const aboutHash = await JCPoolInstance.methods.getAbout().call();
 		const metaHash = await JCPoolInstance.methods.getMetaUri().call();
 		const groupedPoolInfo = await JCPoolInstance.methods.getPoolInfo().call();
-		let about = await getIpfsData(aboutHash);
-		//let metaUri = await getIpfsData(metaHash);
+		let about = await getAboutFromS3(groupedPoolInfo[6]);
 		if(groupedPoolInfo[6] === "Jiggity's Pool"){
 			console.log("about from contract", groupedPoolInfo);
 		}
 
 		//const acceptedTokens = groupedPoolInfo[0];
-
-		if(groupedPoolInfo[6] === "Healthcare & Research Fund"){
-			about = tempFixForDescriptions[0];
-		}
 
 		const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 		const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(tokenAddress).call();
@@ -283,6 +178,7 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 	}
 
 	export const getDirectFromPoolInfoAllTokens = async(poolAddress, tokenMap, activeAccount) => {
+		console.log("getDirectFromPoolInfoAllTokens");
 		const web3 = await getWeb3();
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
@@ -292,17 +188,12 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 		const aboutHash = await JCPoolInstance.methods.getAbout().call();
 		const metaHash = await JCPoolInstance.methods.getMetaUri().call();
 		const groupedPoolInfo = await JCPoolInstance.methods.getPoolInfo().call();
-		let about = await getIpfsData(aboutHash);
-		//let metaUri = await getIpfsData(metaHash);
+		let about = await getAboutFromS3(groupedPoolInfo[6]);
 		if(groupedPoolInfo[6] === "Jiggity's Pool"){
 			console.log("about from contract", groupedPoolInfo[6], about, metaHash);
 		}
 
 		//const acceptedTokens = groupedPoolInfo[0];
-
-		if(groupedPoolInfo[6] === "Healthcare & Research Fund"){
-			about = tempFixForDescriptions[0];
-		}
 
 		const acceptedTokens = groupedPoolInfo[0];
 		let newTokenInfo = {};
@@ -347,8 +238,8 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 			poolAddress,
 		);
 
-		const aboutHash = await JCPoolInstance.methods.getAbout().call();
-		return await getIpfsData(aboutHash);
+		const name = await JCPoolInstance.methods.getName().call();
+		return await getAboutFromS3(name);
 	}
 
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools, knownPoolInfo) => {
@@ -377,17 +268,12 @@ import { getSushiRouterAddress, getBurnPitAddress } from "./tokenMaps"
 				let acceptedTokens = groupedPoolInfo[0];
 				const receiver = groupedPoolInfo[1];
 				const isVerified = groupedPoolInfo[2];
-				let aboutHash = groupedPoolInfo[5];
-				let about = await getIpfsData(aboutHash);
+				let about = await getAboutFromS3(groupedPoolInfo[6]);
 				const picHash =  groupedPoolInfo[4];
 				const name = groupedPoolInfo[6];
 
 				let acceptedTokenStrings = [];
 				let acceptedTokenInfo = [];
-
-				if(name === "Healthcare & Research Fund"){
-					about = tempFixForDescriptions[0];
-				}
 
 				for(let j = 0; j < acceptedTokens.length; j++){
 					const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);

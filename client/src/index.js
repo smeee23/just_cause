@@ -11,6 +11,8 @@ import rootReducer from './js/reducers'
 
 import * as serviceWorker from './serviceWorker';
 
+require("dotenv").config();
+
 const history = createBrowserHistory()
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose

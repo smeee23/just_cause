@@ -24,11 +24,9 @@ import { updateClaim } from "../actions/claim";
 import { updateApprove } from "../actions/approve";
 import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
-import { updateBurnPitBalances } from "../actions/burnPitBalances";
 
 import LogoCard from "../components/logos/LogoCard";
 import { precise, numberWithCommas, getHeaderValuesInUSD } from '../func/ancillaryFunctions';
-import { burn, getBurnBalances } from '../func/contractInteractions';
 
 import web3Modal from "../App";
 
@@ -41,7 +39,6 @@ class Dashboard extends Component {
 			openTabIndex: 0,
 			openVerifiedIndex: 0,
 			hideLowBalance: false,
-			loadingBurnPitBal: false,
 		}
 	}
 	componentDidMount = async () => {
@@ -77,10 +74,6 @@ class Dashboard extends Component {
 			);
 			console.error(error);
 		}
-	}
-
-	componentDidUpdate = () => {
-		console.log('component did update');
 	}
 
 	getTxResultModal = () => {
@@ -217,41 +210,7 @@ class Dashboard extends Component {
 				</div>
 			);
 		}
-		/*else if(this.state.openVerifiedIndex === 1){
-			let info_1 = "Greenhouse gases (GHG), like carbon dioxide (CO2), are emitted when fossil-fuels are consumed. We all generate CO2 emissions in the course of our day-to-day lives. Carbon offsetting is the act of reducing carbon dioxide or greenhouse gases in order to compensate for emissions that were produced elsewhere. Companies and individuals are able to offset their carbon emissions by purchasing carbon credits. One carbon offset credit represents one tonne of CO2 equivalent (TCO2e) reduced or averted from the atmosphere.";
-			let info_2 = "The Toucan protocol is smart contract-based infrastructure that enables on chain, liquid carbon markets. Using the Toucan Meta-Registry and Toucan Carbon Bridge carbon credits can be represented as cryptographic tokens and deposited into carbon pools to enable highly liquid markets to scale climate action.";
-			let info_3 = "Donations to the Retire Carbon Credit pool will be sent to our BurnPit smart contract, which purchases and retires carbon credits using Toucan protocol's NCT token. The donated funds stored in the BurnPit can be \"burnt\" by clicking the button below, which swaps all funds for TCO2e's and retires them using Toucan protocol."
-			return(
-				<div style={{marginTop: "25px", maxWidth: "800px", alignItems:"center", justifyContent:"center", display:"flex", flexDirection:"column"}}>
-					<img style={{width:"150px"}} src={require("../../images/toucan.jpg")} alt={"logo"}/>
 
-					<div style={{maxWidth: "800px", alignItems:"center", justifyContent:"center"}}>
-						<p style={{alignItems:"center", marginTop: "25px", justifyContent:"center", marginRight:"0%"}} className="mr">{info_1}</p>
-						<p style={{alignItems:"center", justifyContent:"center", marginRight:"0%"}} className="mr">{info_2}</p>
-						<p style={{alignItems:"center", justifyContent:"center", marginRight:"0%"}} className="mr">{info_3}</p>
-						<div style={{alignItems:"center", justifyContent:"center", textAlign:"left", display:"flex", flexDirection:"wrap"}}>
-							<div style={{display:"flex", flexDirection:"column"}}>
-								<div style={{display:"flex", flexDirection:"wrap", gap:"8px"}}>
-									<h2>BURN PIT BALANCES</h2>
-									{this.getBurnPitRefreshButton()}
-								</div>
-								<div style={{marginTop:"-20px", display:"flex", flexDirection:"wrap"}}>
-									<p>MATIC: {numberWithCommas(precise(this.props.burnPitBalances['ethBalance'], 18))}</p>
-								</div>
-								<p>USDC: {numberWithCommas(precise(this.props.burnPitBalances['usdcBalance'], 6))}</p>
-								<p>WETH: {numberWithCommas(precise(this.props.burnPitBalances['wethBalance'], 18))}</p>
-							</div>
-							<div style={{ paddingLeft:"32px", alignItems:"left", display:"flex", flexDirection:"column"}}>
-								<div style={{paddingTop:"16px"}}>
-									<Button text={"Retire Carbon Credits"} callback={async() => await burn(this.props.tokenMap, this.props.activeAccount)}/>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			);
-
-		}*/
 		else if (this.state.openVerifiedIndex === 0){
 			info = "Pools in this group consist of public goods, charities, and nonprofits.";
 			return (
@@ -302,32 +261,6 @@ class Dashboard extends Component {
 		}
 	}
 
-	loadingBurnPitChange = () => {
-		this.setState({
-			loading: !this.state.loadingBurnPitBal
-		});
-	}
-	setBurnPitBalances = async(tokenMap) => {
-		this.setState({
-			loading: true
-		});
-		const burnPitBal = await getBurnBalances(tokenMap);
-		await this.props.updateBurnPitBalances(burnPitBal);
-		this.setState({
-			loading: false
-		});
-	}
-	getBurnPitRefreshButton = () => {
-		if(this.state.loading){
-			return(<div title={"refresh pending"}><Button isLogo={"refresh_pending"} isDisabled={true} callback={async() => await this.setBurnPitBalances(this.props.tokenMap)}/></div>);
-		}
-		return(<div title={"refresh BurnPit balances"}><Button isLogo={"refresh"} callback={async() => await this.setBurnPitBalances(this.props.tokenMap)}/></div>);
-	}
-
-	redirectWindowGoogleApplication = () => {
-		window.open("https://docs.google.com/forms/d/e/1FAIpQLSfvejwW-3zNhy4H3hvcIDZ2WGUH422Zj1_yVouRH4tTN8kQFg/viewform?usp=sf_link", "_blank")
-	}
-
 	createCardInfo = () => {
 		if(this.props.activeAccount === "Connect" && !web3Modal.cachedProvider){
 			return(
@@ -346,20 +279,19 @@ class Dashboard extends Component {
 		}
 		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.openTabIndex];
 
-
 		//if(poolInfo === "No Verified Pools") return
 
 		if(!this.props.tokenMap || !poolInfo){
 			return (<div className="card__loader_wait" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
 					<h2>Loading Pools...</h2>
 				   </div>);
-				}
+		}
 
-		if((this.props.verifiedPoolAddrs.length > 5 && this.state.openTabIndex === 0) ||
-		   (this.props.ownerPoolAddrs.length > 5 && this.state.openTabIndex === 1) ||
-		   (this.props.userDepositPoolAddrs.length > 5 && this.state.openTabIndex === 2)){
-
-			console.log("length hit", this.state.openTabIndex)
+		if(poolInfo.length === 0){
+			return (<div className="card__loader_wait" style={{display:"flex", flexDirection: "column", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
+					<h2>No Pools to Display</h2>
+					<h2>{this.state.openTabIndex === 1 ? "Not Receiving Address for Any JustCause Pools" : this.state.openTabIndex === 2 ? "Not Contributed to Any JustCause Pools" : ""}</h2>
+				   </div>);
 		}
 
 		let cardHolder = [];
@@ -368,7 +300,7 @@ class Dashboard extends Component {
 
 			const {userBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
 
-			if(this.state.hideLowBalance && this.state.openTabIndex === 1){
+			if(this.state.hideLowBalance && this.state.openTabIndex === 2){
 				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){
 					cardHolder.push(
 						<Card
@@ -404,25 +336,8 @@ class Dashboard extends Component {
 						);
 					}
 				}
-				/*else if(this.state.openVerifiedIndex === 1){
-					if(name === "Retire Carbon Credits"){
-						cardHolder.push(
-							<Card
-								key={item.address}
-								title={item.name}
-								idx={i}
-								receiver={item.receiver}
-								address={item.address}
-								acceptedTokenInfo={item.acceptedTokenInfo}
-								about={item.about}
-								picHash={item.picHash}
-								isVerified={item.isVerified}
-							/>
-						);
-					}
-				}*/
 				else if(this.state.openVerifiedIndex === 0){
-					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund" && name !== "Environment Conservation Fund" && name !== "Retire Carbon Credits"){
+					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund" && name !== "Environment Conservation Fund" ){
 						cardHolder.push(
 							<Card
 								key={item.address}
@@ -466,8 +381,6 @@ class Dashboard extends Component {
 		const cardHolder = this.createCardInfo();
 		const optionButtons = this.createOptionButtons();
 		const verifiedButtons = this.createVerifiedButtons();
-
-		console.log("pendingTx", this.props.pendingTxList);
 
 		return (
 			<Fragment>
@@ -520,7 +433,6 @@ const mapStateToProps = state => ({
 	depositAmount: state.depositAmount,
 	deployInfo: state.deployInfo,
 	newAbout: state.newAbout,
-	burnPitBalances: state.burnPitBalances,
 	pendingTxList: state.pendingTxList,
 	alert: state.alert,
 })
@@ -537,7 +449,6 @@ const mapDispatchToProps = dispatch => ({
 	updateApprove: (txInfo) => dispatch(updateApprove(txInfo)),
 	updateShare: (share) => dispatch(updateShare(share)),
 	updateNewAbout: (about) => dispatch(updateNewAbout(about)),
-	updateBurnPitBalances: (bal) => dispatch(updateBurnPitBalances(bal)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

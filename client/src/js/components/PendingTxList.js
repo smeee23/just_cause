@@ -30,7 +30,7 @@ class PendingTxList extends Component {
             status: "complete"
         };
         let txInfo = []
-        console.log("update pending tx", pending)
+
 		if(pending){
 			pending.forEach((e, i) =>{
 				console.log("TX", e, i);
@@ -39,7 +39,6 @@ class PendingTxList extends Component {
                 );
 			})
 		}
-        console.log("TEST", txInfo)
 		return txInfo;
 	}
 	render() {

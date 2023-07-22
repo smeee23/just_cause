@@ -26,6 +26,8 @@ import Logo from "../components/Logo"
 
 import {getPriceFromCoinGecko} from './priceFeeds.js'
 
+const { createHash } = require('crypto');
+
 export const linkedInShare = (purl, ptitle, poolAddress, psummary) => {
   let url = 'http://www.linkedin.com/shareArticle?mini=true';
   url += '&url=' + encodeURIComponent(purl)+poolAddress;
@@ -108,6 +110,32 @@ export const toFixed = (x) => {
 export const precise = (x, decimals) => {
     let number = (Number.parseFloat(x).toPrecision(6) / (10**decimals));
     return toFixed(number);
+}
+
+export const sha256Hash = (string) => {
+  return createHash('sha256').update(string).digest('hex');
+}
+
+export const encryptString = (inputString, encryptionKey) => {
+  let encrypted = '';
+
+  for (let i = 0; i < inputString.length; i++) {
+    const charCode = inputString.charCodeAt(i) ^ encryptionKey.charCodeAt(i % encryptionKey.length);
+    encrypted += String.fromCharCode(charCode);
+  }
+
+  return encrypted;
+}
+
+export const decryptString = (encryptedString, encryptionKey) => {
+  let decrypted = '';
+
+  for (let i = 0; i < encryptedString.length; i++) {
+    const charCode = encryptedString.charCodeAt(i) ^ encryptionKey.charCodeAt(i % encryptionKey.length);
+    decrypted += String.fromCharCode(charCode);
+  }
+
+  return decrypted;
 }
 
 export const rayMul = (a, b) => {

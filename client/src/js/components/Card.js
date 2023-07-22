@@ -48,6 +48,7 @@ class Card extends Component {
 			tokenInfo: this.props.acceptedTokenInfo,
 			copied: false,
 			directResponse: "",
+			picUrl: "",
 		}
 	}
 
@@ -148,15 +149,19 @@ class Card extends Component {
 	notifyLoad = () => {
 		//console.log('image Loaded')
 	}
-	getPoolImage = (picHash, header) => {
-		if(!picHash){
-			//default JustCause image
-			picHash = "bafybeigop55rl4tbkhwt4k4cvd544kz2zfkpdoovrsflqqkal2v4ucixxu"
-		}
-		if(header){
-			return <img alt="" style={{width:'auto', maxWidth:'32px', height:'auto'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
-		}
-		return <img alt="" style={{width:'auto', maxWidth:'300px', height:'auto'}} src={'https://ipfs.io/ipfs/'+picHash} onLoad={this.notifyLoad()}/>
+	getPoolImage = (poolName) => {
+
+		let image;
+
+		const handleImageError = (event) => {
+			// If the image fails to load, set the src to the fallbackSrc
+			event.target.src = "https://justcausepools.s3.amazonaws.com/jc_logo.png";
+		  };
+
+
+		const picUrl = "https://justcausepools.s3.amazonaws.com/"+poolName+"__pic";
+		image = <img alt="" style={{width:'auto', maxWidth:'300px', height:'auto'}} onError={handleImageError} src={picUrl} onLoad={this.notifyLoad()}/>;
+		return image;
 	}
 
 	getIsVerified = (isVerified) => {
@@ -276,7 +281,7 @@ class Card extends Component {
 						</div>
 						</div>
 						<div className="card__body__column__two">
-							{this.getPoolImage(picHash)}
+							{this.getPoolImage(title)}
 						</div>
 					</div>
 					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
@@ -473,7 +478,7 @@ class Card extends Component {
 		await this.props.updateShare('');
 		this.props.updateShare({poolAddress: poolAddress, name: name});
 	}
-	
+
 	getDeployTxModal = () => {
 		if(this.props.deployTxResult){
 			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;

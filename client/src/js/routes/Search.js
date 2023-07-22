@@ -33,10 +33,6 @@ class Search extends Component {
 		window.scrollTo(0,0);
 	}
 
-	componentDidUpdate = () => {
-		console.log('component did update');
-	}
-
 	getTxResultModal = () => {
 		if(this.props.txResult){
 			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;

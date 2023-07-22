@@ -13,9 +13,9 @@ import { updateDeployTxResult } from  "../../actions/deployTxResult";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 import { updatePendingTxList } from "../../actions/pendingTxList";
 
-import {upload} from '../../func/ipfs';
+import { uploadToS3, uploadNftMetaData } from '../../func/awsS3'
 
-import { delay, displayLogo } from '../../func/ancillaryFunctions';
+import { delay, displayLogo, sha256Hash } from '../../func/ancillaryFunctions';
 import {checkInputError, addPoolToPoolInfo } from '../../func/contractInteractions';
 
 class NewPoolModal extends Component {
@@ -37,13 +37,12 @@ class NewPoolModal extends Component {
 		}
 	}
 
-  deployOnChain = async(poolName, receiver, aboutHash, aboutText, acceptedTokens) => {
+  deployOnChain = async(poolName, receiver, aboutText, acceptedTokens) => {
     let result;
 	let txInfo;
 	try{
-
-		const nftResult = await this.uploadNftMetaData(poolName, aboutText, this.state.fileUploadHash);
-		const metaUri = 'https://ipfs.io/ipfs/'+nftResult.hash;
+		const aboutHash = sha256Hash(aboutText);
+		const metaUri = 'https://justcausepools.s3.amazonaws.com/'+poolName+"__meta";
 
 		this.props.updateDeployInfo('');
 		const web3 = await getWeb3();
@@ -65,10 +64,11 @@ class NewPoolModal extends Component {
 			PoolTracker.abi,
 			this.props.poolTrackerAddress,
 		);
+
 		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, aboutHash, this.state.fileUploadHash, metaUri, receiver).send(parameter , async(err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash, tokenAddrs);
 			if(!err){
-				txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver, networkId: this.props.networkId, status:"pending"};
+				txInfo = {txHash: transactionHash, status: 'pending', poolAddress: '...', poolName: poolName, receiver: receiver, networkId: this.props.networkId};
 				await this.props.updateDeployTxResult(txInfo);
 				let pending = [...this.props.pendingTxList];
 				if(!pending) pending= [];
@@ -82,6 +82,9 @@ class NewPoolModal extends Component {
 		});
 		txInfo.poolAddress = result.events.AddPool.returnValues.pool;
 		txInfo.status = 'success';
+
+		await uploadToS3(aboutText, poolName, "__text");
+		await uploadNftMetaData(poolName, aboutText);
 
 		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, [...this.props.ownerPoolInfo]);
 		await this.props.updateOwnerPoolInfo(newOwnerInfo);
@@ -112,53 +115,29 @@ class NewPoolModal extends Component {
 	  for(let i = 0; i < tokens.state.selected.length; i++){
 		tokenInfo[i] = tokenInfo[i].props.children;
 	  }*/
-
-	  const uploadResult = await upload(this.state.about);
-	  const aboutHash = uploadResult.hash;
-	  await this.deployOnChain(this.state.poolName, this.state.receiver, aboutHash, this.state.about, this.state.acceptedTokens);
+	  await this.deployOnChain(this.state.poolName, this.state.receiver, this.state.about, this.state.acceptedTokens);
   }
 
-  uploadPicToIpfs = async() => {
+  uploadPicToS3 = async() => {
 	const reader = new FileReader();
     reader.onloadend = async() => {
         const buf = Buffer(reader.result) // Convert data into buffer
-		const uploadResult = await upload(buf);
+		//const uploadResult = await upload(buf);
+		await uploadToS3(buf, this.state.poolName, "__pic");
+		const picHash = sha256Hash(buf);
 		this.setState({
-			fileUploadHash: uploadResult.hash
+			fileUploadHash: picHash
 		});
     }
     const photo = document.getElementById("photo");
     reader.readAsArrayBuffer(photo.files[0]); // Read Provided File
 
   }
-  uploadNftMetaData = async(poolName, about, fileUploadHash) => {
-    const logoHash = "bafybeigop55rl4tbkhwt4k4cvd544kz2zfkpdoovrsflqqkal2v4ucixxu";
-    const picHash = fileUploadHash ? fileUploadHash : logoHash;
-
-    //let attributes = new Object();
-    //attributes.acceptedTokens = acceptedTokens;
-
-    let uri = {
-        "name": poolName,
-        "description": about,
-        "image": "https://ipfs.io/ipfs/"+picHash,
-    }
-
-    const buf = Buffer.from(JSON.stringify(uri)); // Convert data into buffer
-	const uploadResult = await upload(buf);
-	return uploadResult;
-}
 
   fileUploadButton = () => {
 	document.getElementById('photo').click();
 	document.getElementById('photo').onchange = () =>{
-		this.uploadPicToIpfs();
-	}
-  }
-
-  displayImage = () => {
-	if(this.state.fileUploadHash){
-	   return <img alt="" max-width='100%' height='auto' src={'https://ipfs.io/ipfs/'+this.state.fileUploadHash}/>
+		this.uploadPicToS3();
 	}
   }
 

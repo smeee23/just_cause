@@ -8,17 +8,18 @@ import getWeb3 from "../../../getWeb3NotOnLoad";
 import JCPool from "../../../contracts/JustCausePool.json";
 
 import { updateDepositAmount } from  "../../actions/depositAmount";
-import {updateNewAbout} from "../../actions/newAbout";
+import { updateNewAbout} from "../../actions/newAbout";
 import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
-
-
-import {upload} from '../../func/ipfs';
-
-import { delay, addNewPoolInfoAboutOnly, checkPoolInPoolInfo } from '../../func/ancillaryFunctions';
-import {getDirectAboutOnly } from '../../func/contractInteractions';
 import { updatePendingTx } from "../../actions/pendingTx";
+import { updatePendingTxList } from "../../actions/pendingTxList";
+
+
+import { uploadToS3, uploadNftMetaData } from '../../func/awsS3'
+
+import { delay, addNewPoolInfoAboutOnly, checkPoolInPoolInfo, sha256Hash } from '../../func/ancillaryFunctions';
+import {getDirectAboutOnly } from '../../func/contractInteractions';
 import { updateTxResult } from  "../../actions/txResult";
 
 class UpdateAboutModal extends Component {
@@ -30,19 +31,17 @@ class UpdateAboutModal extends Component {
 			fileUploadHash:"",
 			replace: false,
 			about: "",
-			updateNFT: false,
 			inputError: "",
 			processing: false,
 		}
 	}
 
-  updateMetaUriOnChain = async(poolName, aboutText, picHash, poolAddress) => {
+  updateAboutOnChain = async(poolName, aboutText, poolAddress) => {
 	let result;
 	let txInfo;
 	try{
-
-		const nftResult = await this.uploadNftMetaData(poolName, aboutText, picHash);
-		const metaUri = 'https://ipfs.io/ipfs/'+nftResult.hash;
+		const aboutHash = sha256Hash(aboutText);
+		const metaUri = 'https://justcausepools.s3.amazonaws.com/'+poolName+"__meta";
 
 		const web3 = await getWeb3();
 		const activeAccount = this.props.activeAccount;
@@ -62,12 +61,16 @@ class UpdateAboutModal extends Component {
 
 		txInfo = {txHash: '', status: '', success: '', type:"SET DESCRIPTION", poolAddress: poolAddress, poolName: poolName, networkId: this.props.networkId};
 
-		result = await JCPoolInstance.methods.setMetaUri(metaUri).send(parameter , (err, transactionHash) => {
+		result = await JCPoolInstance.methods.setAbout(aboutHash).send(parameter , async(err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash);
 			if(!err){
+				let info = {txHash: transactionHash, type:"SET DESCRIPTION", poolAddress: poolAddress, poolName: poolName, networkId: this.props.networkId, status:"pending"};
+				let pending = [...this.props.pendingTxList];
+				pending.push(info);
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				await this.props.updatePendingTx(info);
 				txInfo.txHash = transactionHash;
-				txInfo.status = 'pending';
-				this.props.updatePendingTx(txInfo);
 			}
 			else{
 				txInfo = "";
@@ -76,102 +79,8 @@ class UpdateAboutModal extends Component {
 
 		txInfo.status = 'success';
 
-		const newAbout = await getDirectAboutOnly(poolAddress);
-
-		if(newAbout){
-			const newOwnerInfo = addNewPoolInfoAboutOnly([...this.props.ownerPoolInfo], newAbout);
-			await this.props.updateOwnerPoolInfo(newOwnerInfo);
-			localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
-
-			if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
-				const newDepositInfo = addNewPoolInfoAboutOnly([...this.props.userDepositPoolInfo], newAbout);
-				await this.props.updateUserDepositPoolInfo(newDepositInfo);
-				localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
-			}
-
-			if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
-				const newVerifiedInfo = addNewPoolInfoAboutOnly([...this.props.verifiedPoolInfo], newAbout);
-				await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
-				localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
-			}
-		}
-	}
-	catch (error) {
-		console.error(error);
-		txInfo = "";
-	}
-
-	this.props.updatePendingTx('');
-  }
-
-  updateAboutOnChainWithNFT = async(poolName, aboutHash, poolAddress) => {
-	let txInfo;
-	try{
-
-		const web3 = await getWeb3();
-		const activeAccount = this.props.activeAccount;
-
-		const gasPrice = (await web3.eth.getGasPrice()).toString();
-
-		const parameter = {
-			from: activeAccount,
-			gas: web3.utils.toHex(1200000),
-			gasPrice: web3.utils.toHex(gasPrice)
-		};
-
-		let JCPoolInstance = new web3.eth.Contract(
-			JCPool.abi,
-			poolAddress,
-		);
-
-		txInfo = {txHash: [], status: '', success: '', type:"SET DESCRIPTION", poolAddress: poolAddress, poolName: poolName, networkId: this.props.networkId};
-
-		JCPoolInstance.methods.setAbout(aboutHash).send(parameter);
-
-	}
-	catch (error) {
-		console.error(error);
-		txInfo = "";
-	}
-
-  }
-
-  updateAboutOnChain = async(poolName, aboutHash, poolAddress) => {
-	let result;
-	let txInfo;
-	try{
-
-		const web3 = await getWeb3();
-		const activeAccount = this.props.activeAccount;
-
-		const gasPrice = (await web3.eth.getGasPrice()).toString();
-
-		const parameter = {
-			from: activeAccount,
-			gas: web3.utils.toHex(1200000),
-			gasPrice: web3.utils.toHex(gasPrice)
-		};
-
-		let JCPoolInstance = new web3.eth.Contract(
-			JCPool.abi,
-			poolAddress,
-		);
-
-		txInfo = {txHash: '', status: '', success: '', type:"SET DESCRIPTION", poolAddress: poolAddress, poolName: poolName, networkId: this.props.networkId};
-
-		result = await JCPoolInstance.methods.setAbout(aboutHash).send(parameter , (err, transactionHash) => {
-			console.log('Transaction Hash :', transactionHash);
-			if(!err){
-				txInfo.txHash = transactionHash;
-				txInfo.status = 'pending';
-				this.props.updatePendingTx(txInfo);
-			}
-			else{
-				txInfo = "";
-			}
-		});
-
-		txInfo.status = 'success';
+		await uploadToS3(aboutText, poolName, "__text");
+		await uploadNftMetaData(poolName, aboutText);
 
 		const newAbout = await getDirectAboutOnly(poolAddress);
 
@@ -213,30 +122,10 @@ class UpdateAboutModal extends Component {
 	return false;
   }
 
-  setAbout = async(poolName, aboutText, picHash, poolAddress) => {
-	  const uploadResult = await upload(aboutText);
-	  const aboutHash = uploadResult.hash;
+  setAbout = async(poolName, aboutText, poolAddress) => {
 	  this.props.updateNewAbout("");
-	  if(this.state.updateNFT){
-		await this.updateAboutOnChainWithNFT(poolName, aboutHash, poolAddress);
-	  	await this.updateMetaUriOnChain(poolName, aboutText, picHash, poolAddress)
-	  }
-	  else{
-		await this.updateAboutOnChain(poolName, aboutHash, poolAddress);
-	  }
+	  await this.updateAboutOnChain(poolName, aboutText, poolAddress);
   }
-
-  uploadNftMetaData = async(poolName, aboutText, picHash) => {
-    let uri = {
-        "name": poolName,
-        "description": aboutText,
-        "image": "https://ipfs.io/ipfs/"+picHash,
-    }
-
-    const buf = Buffer.from(JSON.stringify(uri)); // Convert data into buffer
-	const uploadResult = await upload(buf);
-	return uploadResult;
-}
 
   handleClick = async(obj) => {
 
@@ -246,32 +135,7 @@ class UpdateAboutModal extends Component {
 	if(!this.state.replace){
 		about = obj.prevAbout + " " + about;
 	}
-	this.setAbout(obj.poolName, about, obj.picHash, obj.poolAddress);
-
-  }
-
-  updateNFT = () => {
-	const updateNFT = !this.state.updateNFT
-	this.setState({
-		updateNFT
-	});
-	console.log(this.state.updateNFT);
-  }
-
-  getUpdateNft = () => {
-	if(this.state.updateNFT){
-		return(
-			<ButtonSmall text={"Update NFT Description"}
-				disabled={this.checkValues()}
-				callback={() => this.updateNFT()}
-				icon={"check"}
-			/>);
-	}
-	return(
-		<ButtonSmall text={"Update NFT Description"}
-			disabled={this.checkValues()}
-			callback={() => this.updateNFT()}
-		/>);
+	this.setAbout(obj.poolName, about, obj.poolAddress);
 
   }
 
@@ -356,12 +220,6 @@ class UpdateAboutModal extends Component {
 						<h2 style={{fontSize:17, marginTop:"16px" }} className="mb0">Optional Selections:</h2>
 						<div style={{marginRight:"auto", marginTop:"16px", display:"flex"}}>
 							<div style={{maxWidth: "400px"}}>
-								<p className="mr">Select this option to update the about section of the NFT your contributors recieve. Only future contributor's NFTs will have the updated description. If this option is selected two transactions are required.</p>
-							</div>
-							{this.getUpdateNft()}
-						</div>
-						<div style={{marginRight:"auto", display:"flex"}}>
-							<div style={{maxWidth: "400px"}}>
 								<p className="mr">Select this option to REPLACE the description section instead of adding an update. This will erase the original description.</p>
 							</div>
 							{this.getReplace()}
@@ -387,12 +245,14 @@ const mapStateToProps = state => ({
 	userDepositPoolInfo: state.userDepositPoolInfo,
 	verifiedPoolInfo: state.verifiedPoolInfo,
 	ownerPoolInfo: state.ownerPoolInfo,
+	pendingTxList: state.pendingTxList,
 })
 
 const mapDispatchToProps = dispatch => ({
   	updateDepositAmount: (amount) => dispatch(updateDepositAmount(amount)),
 	updateNewAbout: (about) => dispatch(updateNewAbout(about)),
 	updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
+	updatePendingTxList: (tx) => dispatch(updatePendingTxList(tx)),
 	updateTxResult: (res) => dispatch(updateTxResult(res)),
 	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
 	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),

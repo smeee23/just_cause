@@ -33,7 +33,6 @@ class Header extends Component {
     let i;
     if("inApp" === checkLocationForAppDeploy()){
       const loc = window.location.href;
-      console.log("loc", loc, loc.includes("dashboard"));
       if(loc.includes("search") && index === 1){
         console.log("search", loc);
         i = 1;

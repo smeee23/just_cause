@@ -1,6 +1,10 @@
 @media screen and (max-width: $bp-xxlarge) {
 	h1 {
-		font-size: px-to-rem($rem-base * 14);
+		font-size: px-to-rem($rem-base * 13);
+	}
+
+	h6 {
+		font-size: px-to-rem(48px);
 	}
 
 	@include grid-at-bp(xxlarge);
@@ -9,6 +13,10 @@
 @media screen and (max-width: $bp-large) {
 	h1 {
 		font-size: px-to-rem($rem-base * 13);
+	}
+
+	h6 {
+		font-size: px-to-rem(48px);
 	}
 
 	.horizontal-padding {
@@ -20,11 +28,14 @@
 
 @media screen and (max-width: $bp-medium) {
 	h1 {
-		font-size: px-to-rem(100px);
+		font-size: px-to-rem(48px);
 		margin-bottom: 24px;
 		letter-spacing: $letter-spacing-xs;
 	}
 
+	h6 {
+		font-size: px-to-rem(36px);
+	}
 	.page-section {
 		@include verticalPadding(($rem-base * 8));
 	}
@@ -38,9 +49,12 @@
 
 @media screen and (max-width: $bp-small) {
 	h1 {
-		font-size: px-to-rem(72px);
+		font-size: px-to-rem(36px);
 	}
 
+	h6 {
+		font-size: px-to-rem(24px);
+	}
 	.horizontal-padding {
 		@include horizontalPadding(($rem-base * 3));
 	}
@@ -48,6 +62,9 @@
 
 @media screen and (max-width: $bp-xsmall) {
 	h1 {
-		font-size: px-to-rem(48px);
+		font-size: px-to-rem(24px);
+	}
+	h6 {
+		font-size: px-to-rem(24px);
 	}
 }

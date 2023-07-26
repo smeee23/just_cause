@@ -1361,7 +1361,6 @@ h1 span, h2 span, h3 span, h4 span, p span, blockquote span {
 
 @media screen and (max-width: 800px) {
   h1 {
-    font-size: 9rem;
     margin-bottom: 24px;
     letter-spacing: -0.15rem;
   }

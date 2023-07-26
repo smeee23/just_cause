@@ -55,7 +55,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-	font-size: px-to-rem($rem-base * 15);
+	font-size: px-to-rem(36px);
 	line-height: 1;
 	margin-bottom: 48px;
 	letter-spacing: $letter-spacing-xxs;
@@ -91,9 +91,16 @@ h5 {
 	font-family: $font-body;
 }
 
+h6 {
+	font-size: px-to-rem(24px);
+	line-height: 1;
+	margin-bottom: 36px;
+	letter-spacing: $letter-spacing-xxs;
+	text-transform: uppercase;
+}
+
 p {
 	line-height: $goldenRatio;
 	margin-bottom: 24px;
 	letter-spacing: $letter-spacing-lg;
 }
-

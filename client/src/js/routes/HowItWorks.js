@@ -23,38 +23,28 @@ class Homepage extends Component {
 		const graphic =
 				<div style={{marginTop:"10px", paddingtop:"100px", display: "flex", alignItems:"center", justifyContent:"center"}}>
 					<div style={{gridColumn: "2", gridRow: "1", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
-						<h2 style={{fontSize:60, marginTop: "30px"}}>Lossless Donations</h2>
-					<div style={{flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(7, auto)", gap: "5px", gridTemplateRows: "repeat(2, auto)", alignItems:"center", justifyContent:"center"}}>
 
-					<div style={{gridColumn: "3", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center", paddingRight:"20px"}}>
-						<LogoCard/>
-						<h2 style={{marginTop: "5px"}} className="mb0">JustCause</h2>
-					</div>
-					<div style={{gridColumn: "4", gridRow: "2"}}>
-						<Arrow/>
-						<div>
-							<EthLogo/>
-							<UsdcLogo/>
-							<MaticLogo/>
+					<div style={{flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(7, auto)", gridTemplateRows: "repeat(2, auto)", alignItems:"center", justifyContent:"center"}}>
+
+						<div style={{gridColumn: "3", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center", paddingRight:"20px"}}>
+							<LogoCard/>
+							<h2 style={{marginTop: "5px"}} className="mb0">JustCause</h2>
+						</div>
+						<div style={{gridColumn: "4", gridRow: "2", alignItems:"center", justifyContent:"center"}}>
+							<div style={{marginLeft: "12px"}}>
+								<Arrow/>
+							</div>
+							<div>
+								<EthLogo/>
+								<UsdcLogo/>
+								<MaticLogo/>
+							</div>
+						</div>
+						<div style={{gridColumn: "5", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center", paddingRight:"20px"}}>
+							<AaveLogo/>
+							<h2 style={{marginTop: "5px"}} className="mb0">AAVE</h2>
 						</div>
 					</div>
-					<div style={{gridColumn: "5", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center", paddingRight:"20px"}}>
-						<AaveLogo/>
-						<h2 style={{marginTop: "5px"}} className="mb0">AAVE</h2>
-					</div>
-					<div style={{gridColumn: "6", gridRow: "2", display: "flex", flexDirection: "column"}}>
-						<Arrow/>
-						<div>
-							<EthLogo/>
-							<UsdcLogo/>
-							<MaticLogo/>
-						</div>
-					</div>
-					<div style={{gridColumn: "7", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
-						<Charity/>
-						<h2 style={{marginTop: "5px"}} className="mb0">Your Cause</h2>
-					</div>
-				</div>
 					</div>
 				</div>
 		return graphic;
@@ -65,14 +55,12 @@ class Homepage extends Component {
 			<Fragment>
 
 				<article>
-					<div style={{marginTop: "120px", marginLeft: "100px"}}>
-						<AGD/>
-					</div>
-					<div style={{marginBottom:"10px",  alignItems:"center", justifyContent:"center"}}>
-						{this.getSlide()}
-					</div>
 					<section className="page-section horizontal-padding">
-						<h2 style={{margin:'auto', fontSize:50, paddingBottom: "50px"}}>different approach to fundraising</h2>
+						<h1 style={{marginTop: "30px"}}>Lossless Donations</h1>
+						<div style={{marginBottom:"36px",  alignItems:"center", justifyContent:"center"}}>
+							{this.getSlide()}
+						</div>
+						<h6>different approach to fundraising</h6>
 						<div style={{margin:'auto'}} className="grid">
 							<div className="grid__item--col-6 grid__item--col-12-medium">
 								<p className="mr">JustCause allows you to leverage the power of decentralized finance (Defi) to fund causes that are important to you. We use an innovative funding mechanism to allow users to contribute to public goods, charitable organizations, DAOs, local/global/personal injustice, and much more! Create and fund pools with your friends and JustCause smart contracts donate funds while preserving your initial deposit.</p>
@@ -83,7 +71,7 @@ class Homepage extends Component {
 						</div>
 					</section>
 					<section className="page-section horizontal-padding">
-						<h2 style={{margin:'auto', fontSize:50, paddingBottom: "50px"}}>How We Do It</h2>
+						<h6 style={{margin:'auto', paddingBottom: "50px"}}>How We Do It</h6>
 						<div style={{margin:'auto'}} className="grid">
 							<div className="grid__item--col-6 grid__item--col-12-medium">
 								<p className="mr">JustCause Pools generate interest through an integration with the Aave lending protocol. Aave can be thought of as an automated system of liquidity pools. Users deposit tokens they want to lend out, which are amassed into a large lending pool. Borrowers may then draw from these pools by taking out collateralized loans. In exchange for providing liquidity to the market lenders earn a passive rate of interest on their deposits.</p>
@@ -94,7 +82,7 @@ class Homepage extends Component {
 						</div>
 					</section>
 					<section className="page-section horizontal-padding">
-						<h2 style={{margin:'auto', fontSize:50,  paddingBottom: "50px"}}>Why We Do It</h2>
+						<h6 style={{margin:'auto', paddingBottom: "50px"}}>Why We Do It</h6>
 						<div style={{margin:'auto'}} className="grid">
 							<div className="grid__item--col-6 grid__item--col-12-medium">
 								<p className="mr">JustCause is an open source, permissionless and non-custodial protocol. This means that anyone has the freedom to create or contribute to pools with a user interface or interact directly with the smart contracts on the network. This freedom lies at the heart of the difference between permissioned (closed) and permissionless (open) systems.</p>
@@ -103,9 +91,6 @@ class Homepage extends Component {
 								<p className="mr">Our mission is to give users the freedom to create and fund any cause they deem worthy. Crowdfunding mechanisms based on traditional financial payment networks are inherently permissioned and custodial. This leaves the funds and users of these systems vulnerable to financial censorship. We want to solve this problem.</p>
 							</div>
 						</div>
-					</section>
-					<section style={{alignItems:"center", justifyContent:"center"}}  className="page-section bw0 horizontal-padding">
-						<a href="https://docs.justcause.finance/" target="_blank" rel="noopener noreferrer">LEARN MORE AT OUR DOCS PAGE</a>
 					</section>
 				</article>
 			</Fragment>

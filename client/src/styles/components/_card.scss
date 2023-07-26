@@ -211,10 +211,6 @@ $baseclass: 'card';
       transform: rotate(-45deg);
     }
 
-    .#{$baseclass}__body__column__one {
-      //animation: zoominoutsinglefeatured 1s;
-    }
-
     .#{$baseclass}__body__column__nine {
       animation: zoominoutsinglefeatured 1s;
     }

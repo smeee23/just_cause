@@ -136,6 +136,7 @@ class Header extends Component {
   getHomeLink = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
+        <div style={{width: "100%"}}>
         <div className="app-bar__logo">
           <NavLink exact to={"/"} className="app-bar__left tdn theme--white">
             <Logo/>
@@ -145,11 +146,12 @@ class Header extends Component {
             {this.getConnectButton()}
           </div>
         </div>
+        </div>
       );
     }
     else{
       return (
-        <div className="app-bar__left tdn theme--white" style={{width: "390px"}}>
+        <div className="app-bar__left tdn theme--white" style={{width: "100%"}}>
           <div className="app-bar__logo">
             <div style={{display: "flex"}}>
               <Logo/>

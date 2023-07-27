@@ -288,8 +288,7 @@ class Dashboard extends Component {
 		}
 
 		if(poolInfo.length === 0){
-			return (<div className="card__loader_wait" style={{display:"flex", flexDirection: "column", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
-					<h2>No Pools to Display</h2>
+			return (<div className="card__loader_wait page-section--center" style={{paddingTop: "48px"}}>
 					<h2>{this.state.openTabIndex === 1 ? "Not Receiving Address for Any JustCause Pools" : this.state.openTabIndex === 2 ? "Not Contributed to Any JustCause Pools" : ""}</h2>
 				   </div>);
 		}

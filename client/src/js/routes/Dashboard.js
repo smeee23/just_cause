@@ -162,9 +162,9 @@ class Dashboard extends Component {
 			if(i === this.state.openTabIndex){
 				isDisabled = true;
 			}
-			buttonHolder.push(<div title={infoStrings[i]} key={i}><Button text={name} disabled={isDisabled} callback={() => this.setSelectedToken(i)}/></div>)
+			buttonHolder.push(<div title={infoStrings[i]} key={i}><ButtonSmall text={name} disabled={isDisabled} callback={() => this.setSelectedToken(i)}/></div>)
 		}
-		buttonHolder.push(<div style={{marginLeft: "30px"}} key={4} title="create your own cause"><Button text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/></div>);
+		buttonHolder.push(<div style={{marginLeft: "30px"}} key={4} title="create your own cause"><ButtonSmall text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/></div>);
 		return buttonHolder;
 	}
 
@@ -387,7 +387,7 @@ class Dashboard extends Component {
 				<article>
 					<section  className="page-section page-section--center horizontal-padding bw0" style={{paddingBottom:"0px"}}>
 						<div style={{display:"flex", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
-							<div style={{display:"flex"}}>
+							<div style={{display:"flex", marginTop: "36px"}}>
 								{optionButtons}
 							</div>
 							{this.getTabInfo()}

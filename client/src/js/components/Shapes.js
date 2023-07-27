@@ -60,7 +60,7 @@ class Shapes extends Component {
         engine.world.gravity.scale = 0.000005;
         engine.world.gravity.y = 0;
 
-        this.attractor = Matter.Bodies.circle(this.docWidth / 2, this.viewportHeight / 1.8, this.viewportHeight * 0.75, {
+        this.attractor = Matter.Bodies.circle(this.docWidth / 4, this.viewportHeight / 1.8, this.viewportHeight * 0.05, {
             isStatic: true,
             render: { fillStyle: 'transparent', strokeStyle: '#FFFFFF55', lineWidth: 0 },
             chamfer: { radius: this.viewportHeight * 0.33 },

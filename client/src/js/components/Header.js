@@ -149,17 +149,21 @@ class Header extends Component {
     }
     else{
       return (
-        <div className="app-bar__left tdn theme--white">
-          <Logo/>
+        <div className="app-bar__left tdn theme--white" style={{width: "390px"}}>
           <div className="app-bar__logo">
-            <h2 className="mb0">JustCause</h2>
+            <div style={{display: "flex"}}>
+              <Logo/>
+              <h2 className="mb0">JustCause</h2>
+            </div>
             <div className="app-bar__tvl">
               <h2 title="USD value donated by JustCause (approx.)" className="mb0" style={{fontSize:11}}>{  displayTVL('totalDonated', 'Donated:', this.props.tokenMap, 3) }</h2>
               <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px"}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
             </div>
-            <h2 title="connected" className="mb0" style={{fontSize:11, color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
-            <div className="app-bar__connect">
-              {this.getConnectButton()}
+            <div className="app-bar__connect" >
+              <h2 title="connected" className="mb0" style={{fontSize:11, color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
+              <div >
+                {this.getConnectButton()}
+              </div>
             </div>
           </div>
         </div>
@@ -235,7 +239,12 @@ class Header extends Component {
           { nav }
         </nav>
         <nav className="app-bar__items__right">
-        {this.getConnectButton()}
+        <div style={{display: "flex", gap: "3px"}} >
+              <h2 title="connected" className="mb0" style={{fontSize:11, color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
+              <div >
+                {this.getConnectButton()}
+              </div>
+            </div>
         </nav>
       </header>
 		);

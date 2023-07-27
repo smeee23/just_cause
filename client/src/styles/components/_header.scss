@@ -44,6 +44,7 @@ $baseclass: 'app-bar';
   .#{$baseclass}__tvl {
     flex: 1;
     display: flex;
+    margin-bottom: 3px;
   }
 
   .#{$baseclass}__logo {
@@ -52,10 +53,12 @@ $baseclass: 'app-bar';
     flex-direction: column;
     gap: 3px;
   }
+  .#{$baseclass}__connect {
+    display: flex;
+    gap: 3px;
+  }
 
   .#{$baseclass}__items__right {
-    //flex: 1;
-    //display: flex;
     justify-content: flex-end;
     align-items: center;
 
@@ -99,6 +102,13 @@ $baseclass: 'app-bar';
       display: none;
     }
     height: 170px;
+
+    .#{$baseclass}__logo {
+        text-align: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
   }
 
   @media screen and (min-width: $bp-small) {

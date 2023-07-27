@@ -129,7 +129,7 @@ export const encryptString = (inputString, encryptionKey) => {
 
 export const decryptString = (encryptedBase64, encryptionKey) => {
   const encrypted = Buffer.from(encryptedBase64, 'base64').toString('binary');
-  
+
   let decrypted = '';
 
   for (let i = 0; i < encrypted.length; i++) {
@@ -218,8 +218,8 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
 export const getConnection = (tokenMap, networkId) => {
   if(tokenMap){
     let netName;
-    if(networkId === 80001) netName = 'Mumbai Testnet';
-    else if (networkId === 137) netName = 'Polygon';
+    if(networkId === 80001) return 'Mumbai Testnet';
+    else if (networkId === 137) return <MaticLogo/>;
 
     return netName;
   }

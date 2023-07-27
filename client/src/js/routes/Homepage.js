@@ -34,15 +34,15 @@ class Homepage extends Component {
 
 
 					<section className="page-section page-section--center horizontal-padding">
-						<div style={{width:500, height:window.innerHeight/1.2, /*background: "#3FA7D6", border:"20px", borderRadius:"50%",*/ display:"flex", gap:"2", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
+						<div style={{width:500, textAlign: "left", height:window.innerHeight/1.2, /*background: "#3FA7D6", border:"20px", borderRadius:"50%",*/ display:"flex", gap:"2", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
 
-								<div style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center"}}>
+								<div style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", gap: "8px"}}>
 									<LogoCard/>
 									<div style={{display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
 
-										<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
-										<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Future of crowdfunding</h2>
-										<div style={{marginBottom: "5px", marginLeft: "20px", display:"flex", flexDirection: "wrap", alignItems:"left", justifyContent:"left"}}>
+										<h1 style={{marginBottom: "5px", marginLeft: "0px"}} >JustCause</h1>
+										<h2 style={{marginBottom: "5px", fontSize:17, marginRight: "auto"}} >defi crowdfunding</h2>
+										<div style={{marginBottom: "5px", display:"flex", flexDirection: "wrap", alignItems:"left", justifyContent:"left"}}>
 											<a title="source code" href="https://github.com/smeee23/just_cause" target="_blank" rel="noopener noreferrer"><Button isLogo="github"/></a>
 											<a title="Twitter" style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank" rel="noopener noreferrer"><Button isLogo="tweet"/></a>
 											{/*<a title="Discord" style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button isLogo="discord"/></a>*/}

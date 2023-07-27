@@ -26,11 +26,11 @@ class Homepage extends Component {
 
 					<div style={{flexWrap: "wrap", display: "grid", gridTemplateColumns: "repeat(7, auto)", gridTemplateRows: "repeat(2, auto)", alignItems:"center", justifyContent:"center"}}>
 
-						<div style={{gridColumn: "3", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center", paddingRight:"20px"}}>
+						<div style={{gridColumn: "3", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center", paddingRight:"3px"}}>
 							<LogoCard/>
 							<h2 style={{marginTop: "5px"}} className="mb0">JustCause</h2>
 						</div>
-						<div style={{gridColumn: "4", gridRow: "2", alignItems:"center", justifyContent:"center"}}>
+						<div style={{gridColumn: "4", gridRow: "2", alignItems:"center", justifyContent:"center", marginLeft:"-9px"}}>
 							<div style={{marginLeft: "12px"}}>
 								<Arrow/>
 							</div>
@@ -40,7 +40,7 @@ class Homepage extends Component {
 								<MaticLogo/>
 							</div>
 						</div>
-						<div style={{gridColumn: "5", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center", paddingRight:"20px"}}>
+						<div style={{gridColumn: "5", gridRow: "2", display: "flex", flexDirection: "column", alignItems:"center", justifyContent:"center", marginLeft:"-15px"}}>
 							<AaveLogo/>
 							<h2 style={{marginTop: "5px"}} className="mb0">AAVE</h2>
 						</div>

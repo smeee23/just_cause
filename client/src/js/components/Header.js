@@ -136,17 +136,32 @@ class Header extends Component {
   getHomeLink = () => {
     if("outsideApp" === checkLocationForAppDeploy()){
       return (
-        <NavLink exact to={"/"} className="app-bar__left tdn theme--white">
-          <Logo/>
-            <h2 className="mb0">JustCause</h2>
-        </NavLink>
+        <div className="app-bar__logo">
+          <NavLink exact to={"/"} className="app-bar__left tdn theme--white">
+            <Logo/>
+              <h2 className="mb0">JustCause</h2>
+          </NavLink>
+          <div className="app-bar__connect">
+            {this.getConnectButton()}
+          </div>
+        </div>
       );
     }
     else{
       return (
         <div className="app-bar__left tdn theme--white">
           <Logo/>
-          <h2 className="mb0">JustCause</h2>
+          <div className="app-bar__logo">
+            <h2 className="mb0">JustCause</h2>
+            <div className="app-bar__tvl">
+              <h2 title="USD value donated by JustCause (approx.)" className="mb0" style={{fontSize:11}}>{  displayTVL('totalDonated', 'Donated:', this.props.tokenMap, 3) }</h2>
+              <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px"}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
+            </div>
+            <h2 title="connected" className="mb0" style={{fontSize:11, color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
+            <div className="app-bar__connect">
+              {this.getConnectButton()}
+            </div>
+          </div>
         </div>
       );
     }
@@ -173,9 +188,9 @@ class Header extends Component {
           <div title={"view address on block explorer"} >
             <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/>
           </div>
-            <div title={"disconnect wallet"} style={{marginTop: "-5px"}}>
-              <Button isLogo="close" callback={this.disconnectButtonHit}/>
-            </div>
+          <div title={"disconnect wallet"} style={{marginTop: "-5px"}}>
+            <Button isLogo="close" callback={this.disconnectButtonHit}/>
+          </div>
         </div>
       );
     }
@@ -214,13 +229,8 @@ class Header extends Component {
 
 		return (
       <header className="app-bar horizontal-padding theme--white">
-        <Takeover>
-          { nav }
-        </Takeover>
+        <Takeover/>
         {this.getHomeLink()}
-          <h2 title="USD value donated by JustCause (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingLeft: "32px", paddingRight: "0px"}}>{  displayTVL('totalDonated', 'Donated:', this.props.tokenMap, 3) }</h2>
-          <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px"}}>{  displayTVL('tvl', 'Deposited:', this.props.tokenMap, 3) }</h2>
-          <h2 title="connected" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px", color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
         <nav className="app-bar__items__left">
           { nav }
         </nav>

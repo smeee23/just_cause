@@ -55,6 +55,10 @@
 	h6 {
 		font-size: px-to-rem(24px);
 	}
+
+	p {
+		font-size: px-to-rem(10px);
+	}
 	.horizontal-padding {
 		@include horizontalPadding(($rem-base * 3));
 	}

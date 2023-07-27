@@ -16,6 +16,7 @@ $baseclass: 'takeover';
     width: 32px;
     height: 24px;
     margin-right: (2 * $rem-base);
+    margin-bottom: 20px;
     cursor: pointer;
 
     &__line {
@@ -35,7 +36,7 @@ $baseclass: 'takeover';
     top: 0;
     height: 100vh;
     padding-top: (12 * $rem-base);
-    background: $brand-black;
+    background: $brand-blue;
     box-shadow: 4px 0 (4 * $rem-base) rgba($brand-black, 0.4);
     transition: transform $easing2 $duration-medium;
     transform: translate3d(-100%,0,0);

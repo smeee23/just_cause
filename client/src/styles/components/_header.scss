@@ -12,17 +12,16 @@ $baseclass: 'app-bar';
 
   background: linear-gradient(180deg, $brand-white 75%, transparent);
 
-  h2, h3, h4, h5, h6 {
-    height: 2.25 * $rem-base;
-  }
+
 
   .logo {
-    margin-right: 1 * $rem-base;
+    margin-right: 0.1 * $rem-base;
+    margin-top: -3px;
   }
 
   &__left {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .#{$baseclass}__items__left {
@@ -40,6 +39,18 @@ $baseclass: 'app-bar';
         margin-left: 0;
       }
     }
+  }
+
+  .#{$baseclass}__tvl {
+    flex: 1;
+    display: flex;
+  }
+
+  .#{$baseclass}__logo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
   }
 
   .#{$baseclass}__items__right {
@@ -79,6 +90,19 @@ $baseclass: 'app-bar';
 
   @media screen and (max-width: $bp-medium) {
     .#{$baseclass}__items__left > a {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: $bp-small) {
+    .#{$baseclass}__items__right {
+      display: none;
+    }
+    height: 170px;
+  }
+
+  @media screen and (min-width: $bp-small) {
+    .#{$baseclass}__connect {
       display: none;
     }
   }

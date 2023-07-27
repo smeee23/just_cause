@@ -144,6 +144,12 @@ $baseclass: 'button';
       transition: none;
     }
   }
+  @media screen and (max-width: $bp-medium) {
+    .#{$baseclass}__itemsm {
+      padding: ($rem-base * 0.5) ($rem-base * 0.75);
+      margin-left: auto;
+    }
+  }
 }
 
 .#{$white-theme-baseclass} {

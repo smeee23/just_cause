@@ -65,8 +65,6 @@ class Takeover extends Component {
       "takeover--open": this.state.open,
     })
 
-    console.log("Takeover", this.props);
-
 		return (
       <div className={classnames}>
         <nav className='takeover__panel horizontal-padding'>

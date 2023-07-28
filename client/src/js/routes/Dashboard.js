@@ -282,8 +282,16 @@ class Dashboard extends Component {
 		//if(poolInfo === "No Verified Pools") return
 
 		if(!this.props.tokenMap || !poolInfo){
-			return (<div className="card__loader_wait" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
-					<h2>Loading Pools...</h2>
+			return (<div style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
+						<div className="card__loading">
+							<h2 className="card__letter" style={{ animationDelay: '0.1s' }}>L</h2>
+							<h2 className="card__letter" style={{ animationDelay: '0.2s' }}>O</h2>
+							<h2 className="card__letter" style={{ animationDelay: '0.3s' }}>A</h2>
+							<h2 className="card__letter" style={{ animationDelay: '0.4s' }}>D</h2>
+							<h2 className="card__letter" style={{ animationDelay: '0.5s' }}>I</h2>
+							<h2 className="card__letter" style={{ animationDelay: '0.6s' }}>N</h2>
+							<h2 className="card__letter" style={{ animationDelay: '0.7s' }}>G</h2>
+						</div>
 				   </div>);
 		}
 

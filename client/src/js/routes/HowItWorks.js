@@ -56,7 +56,7 @@ class Homepage extends Component {
 
 				<article>
 					<section className="page-section horizontal-padding">
-						<h1 style={{marginTop: "30px"}}>Lossless Donations</h1>
+						<h1 style={{paddingTop: "45px"}}>Lossless Donations</h1>
 						<div style={{marginBottom:"36px",  alignItems:"center", justifyContent:"center"}}>
 							{this.getSlide()}
 						</div>

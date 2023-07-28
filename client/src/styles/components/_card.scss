@@ -66,14 +66,37 @@ $baseclass: 'card';
     to { transform: translateX(0); opacity: 1; }
   }
 
-  &__cardholder_slide {
-    animation: 0.5s ease-out 0s 1 wait, 0.21s ease-out 0.5s 1 slideInFromLeft;
-    margin-left: auto;
-    margin-right: auto;
+  @keyframes wave {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-7px);
+    }
   }
 
-  &__loading_wait {
-    animation: 2s ease-out 0s 1 wait;
+  @keyframes appear {
+    to {
+      visibility: visible;
+    }
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-top: "100px";
+    visibility: hidden;
+    animation: appear 0s forwards 1.5s;
+  }
+
+  &__letter {
+    animation: wave 1s ease-in-out infinite 1.5s;
+  }
+
+  &__cardholder_slide {
+    animation: 0.5s ease-out 0s 1 wait, 0.21s ease-out 0.5s 1 slideInFromLeft;
     margin-left: auto;
     margin-right: auto;
   }

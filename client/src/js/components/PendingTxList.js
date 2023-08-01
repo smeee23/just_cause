@@ -45,7 +45,7 @@ class PendingTxList extends Component {
     const { isMobile } = this.props;
     const pending = this.props.pendingTxList;
 		return (
-        <div style={{position: "fixed", top: "120px", color:"black", marginLeft: "0px", display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left", gap: "5px"}}>
+        <div style={{position: "fixed", top: "160px", color:"black", marginLeft: "0px", display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left", gap: "5px"}}>
             {this.getPendingTxs(pending)}
         </div>
 		);

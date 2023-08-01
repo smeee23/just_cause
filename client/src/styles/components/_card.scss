@@ -179,6 +179,7 @@ $baseclass: 'card';
     max-height: 250px;
     overflow: scroll;
     padding-bottom: 0.25 * $rem-base;
+    margin-bottom: 1 * $rem-base;
   }
 
   &__body__column {

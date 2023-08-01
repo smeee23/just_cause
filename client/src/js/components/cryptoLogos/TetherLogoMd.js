@@ -1,10 +1,10 @@
 
 import React, {Component} from "react"
 
-class TetherLogoLg extends Component {
+class TetherLogoMd extends Component {
 	render() {
 		return (
-            <svg width="100px" height="100px" viewBox="0 0 22 22">
+            <svg width="66px" height="66px" viewBox="0 0 22 22">
                 <g id="icons/cypto/tether" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                     <g id="tether-logo" transform="translate(0.000000, 2.000000)">
                         <path d="M4.02147059,0.0938235294 L0.0168235294,8.50558824 C-0.0144555839,8.56980815 -0.000293918628,8.64691055 0.0517647059,8.69582353 L10.8673529,19.0597647 C10.9311856,19.1209803 11.0319321,19.1209803 11.0957647,19.0597647 L21.9113529,8.69647059 C21.9634116,8.64755761 21.9775732,8.57045521 21.9462941,8.50623529 L17.9416471,0.0944705882 C17.9152529,0.0367730892 17.8575655,-1.25939755e-05 17.7941176,-1.25939755e-05 L4.17029412,-1.25939755e-05 C4.10652954,-0.000793298373 4.04824885,0.0359488741 4.02147059,0.0938235294 L4.02147059,0.0938235294 Z" id="Path" fill="#50AF95"></path>
@@ -15,4 +15,4 @@ class TetherLogoLg extends Component {
         );
     }
 }
-export default TetherLogoLg
+export default TetherLogoMd

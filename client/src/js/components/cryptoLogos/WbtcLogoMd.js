@@ -1,10 +1,10 @@
 
 import React, {Component} from "react"
 
-class WbtcLogoLg extends Component {
+class WbtcLogoMd extends Component {
 	render() {
 		return (
-			<svg width="100px" height="100px" viewBox="0 0 22 22">
+			<svg width="66px" height="66px" viewBox="0 0 22 22">
 				<g id="icons/cypto/wbtc" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
 					<g id="wbtc-logo" fillRule="nonzero">
 							<path d="M17.818,4.586 L17.218,5.186 C20.1855333,8.43120891 20.1855333,13.4047911 17.218,16.65 L17.818,17.25 C21.1195654,13.6688375 21.1195654,8.15316246 17.818,4.572 L17.818,4.586 Z" id="Shape" fill="#5A5564"></path>
@@ -20,4 +20,4 @@ class WbtcLogoLg extends Component {
 	}
 }
 
-export default WbtcLogoLg
+export default WbtcLogoMd

@@ -1,3 +1,15 @@
+@media screen and (min-width: $bp-xxlarge) {
+	h1 {
+		font-size: px-to-rem($rem-base * 13);
+	}
+
+	h6 {
+		font-size: px-to-rem(48px);
+	}
+
+	@include grid-at-bp(xxlarge);
+}
+
 @media screen and (max-width: $bp-xxlarge) {
 	h1 {
 		font-size: px-to-rem($rem-base * 13);
@@ -58,9 +70,10 @@
 
 	p {
 		font-size: px-to-rem(10px);
+		margin-bottom: 8px;
 	}
 	.horizontal-padding {
-		@include horizontalPadding(($rem-base * 3));
+		@include horizontalPadding(($rem-base * 1.25));
 	}
 }
 

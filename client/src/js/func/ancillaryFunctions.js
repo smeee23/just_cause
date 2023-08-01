@@ -22,6 +22,17 @@ import WEthLogoLg from "../components/cryptoLogos/WEthLogoLg";
 import LinkLogoLg from "../components/cryptoLogos/LinkLogoLg";
 import DpiLogoLg from "../components/cryptoLogos/DpiLogoLg";
 
+import DaiLogoMd from "../components/cryptoLogos/DaiLogoMd";
+import WbtcLogoMd from "../components/cryptoLogos/WbtcLogoMd";
+import UsdcLogoMd from "../components/cryptoLogos/UsdcLogoMd";
+import TetherLogoMd from "../components/cryptoLogos/TetherLogoMd";
+import EthLogoMd from "../components/cryptoLogos/EthLogoMd";
+import AaveLogoMd from "../components/cryptoLogos/AaveLogoMd";
+import MaticLogoMd from "../components/cryptoLogos/MaticLogoMd";
+import WEthLogoMd from "../components/cryptoLogos/WEthLogoMd";
+import LinkLogoMd from "../components/cryptoLogos/LinkLogoMd";
+import DpiLogoMd from "../components/cryptoLogos/DpiLogoMd";
+
 import Logo from "../components/Logo"
 
 import {getPriceFromCoinGecko} from './priceFeeds.js'
@@ -170,6 +181,13 @@ export const delay = (delayInms) => {
 
 export const numberWithCommas = (x) => {
   return x.toString()
+}
+
+export const digitsWithMaxTenLength = (x) => {
+  let str = x.toString().substring(0, 10);
+  if(str === "0.00000000") return "<0.00000001"
+
+  return str
 }
 
 export const formatDollars = (x) => {
@@ -400,6 +418,41 @@ export const displayLogoLg = (acceptedTokenString) => {
   else if(acceptedTokenString === 'LINK'){
     logo = <LinkLogoLg/>;
   }
+
+  return logo;
+}
+  export const displayLogoMd = (acceptedTokenString) => {
+    let logo = '';
+    if(acceptedTokenString === 'ETH'){
+      logo = <EthLogoMd/>;
+    }
+    else if (acceptedTokenString === 'USDT'){
+      logo = <TetherLogoMd/>;
+    }
+    else if (acceptedTokenString === 'USDC'){
+      logo = <UsdcLogoMd/>;
+    }
+    else if (acceptedTokenString === 'WBTC'){
+      logo = <WbtcLogoMd/>;
+    }
+    else if (acceptedTokenString === 'DAI'){
+      logo = <DaiLogoMd/>;
+    }
+    else if (acceptedTokenString === 'AAVE'){
+      logo = <AaveLogoMd/>;
+    }
+    else if(acceptedTokenString === 'WETH'){
+      logo = <WEthLogoMd/>;
+    }
+    else if(acceptedTokenString === 'MATIC'){
+      logo = <MaticLogoMd/>;
+    }
+    else if(acceptedTokenString === 'DPI'){
+      logo = <DpiLogoMd/>;
+    }
+    else if(acceptedTokenString === 'LINK'){
+      logo = <LinkLogoMd/>;
+    }
 
   return logo;
 }

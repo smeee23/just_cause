@@ -8,8 +8,6 @@ $baseclass: 'card';
   &__header, &__bar, &__body {
     border-radius: 8px;
     max-width: 1000px;
-    //justify-content: center;
-    //align-items: center;
     margin-left: auto;
     margin-right: auto;
   }
@@ -26,7 +24,7 @@ $baseclass: 'card';
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: (10 * $rem-base);
+    min-height: (8 * $rem-base);
   }
 
   &__body {
@@ -36,12 +34,22 @@ $baseclass: 'card';
     border-radius: 0;
     display: flex;
     flex-direction: wrap;
-    //display: grid;
-    //grid-template-columns: repeat(5, 1fr);
-    //grid-auto-rows: minmax(100px, auto);
     max-height: 0;
     transition: max-height $duration-short $easing1;
     overflow: scroll;
+  }
+
+  &__body__left {
+    display: flex;
+    flex-direction: column;
+    border-right: solid 3px;
+  }
+
+  &__header--left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
   }
 
   @keyframes zoominoutsinglefeatured {
@@ -49,7 +57,7 @@ $baseclass: 'card';
           transform: scale(1,1);
       }
       50% {
-          transform: scale(1.05,1.05);
+          transform: scale(1.03,1.03);
       }
       100% {
           transform: scale(1,1);
@@ -100,6 +108,10 @@ $baseclass: 'card';
     margin-left: auto;
     margin-right: auto;
   }
+  &__body__token-logo {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+  }
 
   &__body__column__one {
     grid-column: 1 ;
@@ -109,6 +121,7 @@ $baseclass: 'card';
     //text-align: center;
     width: "auto";
   }
+
   &__body__column__two {
     grid-column: 2/4 ;
     grid-row: 1;
@@ -117,45 +130,15 @@ $baseclass: 'card';
     padding-right: 8px;
     padding-left: 8px;
   }
-  /*&__body__column__three {
-    grid-column: 4/6;
-    grid-row: 2/3;
-    margin-left: 32px;
-  }
-  &__body__column__four {
-    grid-column: 3;
-    grid-row: 4;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-  /*&__body__column__five {
-    grid-column: 5;
-    grid-row: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }*/
-  &__body__column__six {
-    grid-column: 4/6;
-    grid-row: 3/5;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-end;
-    margin-bottom: 2 * $rem-base;
-    margin-left: 32px;
-  }
-  /*&__body__column__seven {
-    grid-column: 4;
-    grid-row: 2 / 4;
 
-  }*/
   &__body__column__eight {
     grid-column: 1/4;
     grid-row: 2/5;
-    //border-right: 2px solid white;
     margin-bottom: 2 * $rem-base;
+    margin-top: 2 * $rem-base;
+    padding-right: 8px;
   }
+
   &__body__column__nine {
     grid-column: 4/6;
     grid-row: 1/3;
@@ -168,9 +151,9 @@ $baseclass: 'card';
   }
 
   &__token__buttons {
-    padding-left: 10px;
     display: flex;
     flex-wrap: wrap;
+    margin-top: 1 * $rem-base;
 
     transition: transform $easing1 $duration-short;
     cursor: pointer;
@@ -179,6 +162,25 @@ $baseclass: 'card';
     transition: transform $easing1 $duration-short;
     cursor: pointer;
   }
+
+
+  &__dep-buttons-col {
+    margin-right: auto;
+    width: 150px;
+  }
+
+  &__dep-buttons-flex {
+    display: none;
+  }
+  &__about-box {
+    padding: (1 * $rem-base) (1 * $rem-base);
+    border: solid 3px;
+    border-radius: 8px;
+    max-height: 250px;
+    overflow: scroll;
+    padding-bottom: 0.25 * $rem-base;
+  }
+
   &__body__column {
     margin-right: 4 * $rem-base;
     margin-bottom: 4 * $rem-base;
@@ -194,6 +196,16 @@ $baseclass: 'card';
     > * {
       &:not(:last-child) {
         margin-bottom: 2 * $rem-base;
+      }
+    }
+  }
+
+  &__header__balances {
+    display: flex;
+    flex: 1;
+    > * {
+      &:not(:first-child) {
+        margin-left: px-to-rem($rem-base * 3);
       }
     }
   }
@@ -216,6 +228,26 @@ $baseclass: 'card';
     border-top-right-radius: 0;
   }
 
+  &__pool-pic {
+    height: auto;
+    width: auto;
+    max-width: 300px;
+  }
+  &__balance-grid--inner {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+  }
+
+  &__balance-grid--outer {
+    display: flex;
+  }
+
+  &__balance-box {
+    display: grid;
+    width: 250px;
+    flex: 0 0 250;
+  }
+
   &__open-button {
     transition: transform $easing1 $duration-short;
     cursor: pointer;
@@ -234,15 +266,11 @@ $baseclass: 'card';
       transform: rotate(-45deg);
     }
 
-    .#{$baseclass}__body__column__nine {
-      animation: zoominoutsinglefeatured 1s;
-    }
-
     .#{$baseclass}__body__column__eight {
       transform: scale(1.0);
     }
 
-    .#{$baseclass}__body__column__six {
+    .#{$baseclass}__balance-grid--outer {
       animation: zoominoutsinglefeatured 1s;
     }
 
@@ -253,12 +281,70 @@ $baseclass: 'card';
     .#{$baseclass}__token__buttons {
       transform: scale(1.0);
     }
-
   }
 
   @media screen and (max-width: $bp-medium) {
+
+    .#{$baseclass}__body {
+      flex-direction:column;
+    }
+
+    .#{$baseclass}__body__left {
+      border-right: none;
+    }
+
+    .#{$baseclass}__body__column__nine {
+      margin-left: 0px;
+      margin-bottom: 0px;
+      padding-top: 1 * $rem-base;
+    }
+
+    .#{$baseclass}__body__token-logo {
+      grid-template-columns: 70px 1fr;
+    }
+
+    .#{$baseclass}__dep-buttons-col {
+      display: none;
+    }
+
+    .#{$baseclass}__dep-buttons-flex {
+      display: flex;
+      flex-direction: column-reverse;
+      margin-left: auto;
+      width: 112px;
+    }
+  }
+
+  @media screen and (max-width: $bp-small) {
+
     .#{$baseclass}__header {
-      padding: (3 * $rem-base);
+      padding: (1 * $rem-base);
+    }
+
+    .#{$baseclass}__body {
+      padding: (1 * $rem-base);
+    }
+
+    .#{$baseclass}__pool-pic {
+      max-width: 125px;
+    }
+
+    .#{$baseclass}__balance-grid--inner {
+      grid-template-columns: 56px 1fr;
+    }
+
+    .#{$baseclass}__balance-box {
+      width: 150px;
+      flex: 0 0 150;
+    }
+
+    .#{$baseclass}__body__column__two {
+      padding-right: 3px;
+      padding-left: 3px;
+    }
+
+    .#{$baseclass}__body__column__eight {
+      margin-bottom: 0px;
     }
   }
 }

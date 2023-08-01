@@ -1,10 +1,10 @@
 import React, {Component} from "react"
 
-class DaiLogoLg extends Component {
+class DaiLogoMd extends Component {
 
 	render() {
 		return (
-            <svg width="100px" height="100px" viewBox="0 0 22 22">
+            <svg width="66px" height="66px" viewBox="0 0 22 22">
                 <g id="icons/cypto/dai" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                     <g id="dai-logo" fillRule="nonzero">
                         <path d="M11,0 C17.0756908,0 22,4.92529925 22,11 C22,17.0756908 17.0756908,22 11,22 C4.92529925,22 0,17.0751958 0,11 C0,4.92529925 4.92529925,0 11,0 Z" id="Path" fill="#F5AC37"></path>
@@ -16,4 +16,4 @@ class DaiLogoLg extends Component {
 	}
 }
 
-export default DaiLogoLg
+export default DaiLogoMd

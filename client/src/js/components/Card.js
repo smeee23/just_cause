@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { Component, Fragment } from "react"
 import classNames from "classnames";
 
 import { connect } from "react-redux";
@@ -22,7 +22,7 @@ import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
 
 import { getBalance, getContractInfo , getDirectFromPoolInfoAllTokens} from '../func/contractInteractions';
-import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, numberWithCommas, copyToClipboard, checkPoolInPoolInfo, addNewPoolInfoAllTokens } from '../func/ancillaryFunctions';
+import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoMd, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, digitsWithMaxTenLength, copyToClipboard, checkPoolInPoolInfo, addNewPoolInfoAllTokens } from '../func/ancillaryFunctions';
 import { verifiedPoolMap } from '../func/verifiedPoolMap';
 import { Modal, SmallModal, LargeModal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
@@ -94,23 +94,29 @@ class Card extends Component {
 	}
 
 	displayWithdraw = (item, address, tokenString, title) => {
-	if(item.userBalance > 0){
-		return <div title={"withdraw deposit"}><Button logo={displayLogo(tokenString)} text={"Withdraw "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
+		if(item.userBalance > 0){
+			if(this.props.isMobile) return <div title={"withdraw deposit"}><ButtonSmall logo={displayLogo(tokenString)} text={"Withdraw "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
+
+			return <div title={"withdraw deposit"}><Button logo={displayLogo(tokenString)} text={"Withdraw "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
 		}
 	}
 
 	displayClaim = (item, address, title) => {
 		if(item.unclaimedInterest > 500){
+			if(this.props.isMobile) return <div title={"harvest donations for "+title}><ButtonSmall logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
 			return <div title={"harvest donations for "+title}><Button logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
 		}
 	}
 	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance, title) => {
 		if(isEth){
+			if(this.props.isMobile) return  <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 			return  <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		}
 		if(Number(allowance) === 0){
+			if(this.props.isMobile) return <div title={"required before deposit"}><ButtonSmall logo={displayLogo(tokenString)} text={"Approve "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 			return <div title={"required before deposit"}><Button logo={displayLogo(tokenString)} text={"Approve "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 		}
+		if(this.props.isMobile) return <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		return <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 	}
 	toggleCardOpen = () => {
@@ -123,7 +129,7 @@ class Card extends Component {
 		this.setState({
 			selectedTokenIndex: index,
 		});
-
+		this.resetAnimation();
 	}
 
 	copyToClipboard = (receiver) => {
@@ -160,16 +166,16 @@ class Card extends Component {
 
 
 		const picUrl = "https://justcausepools.s3.amazonaws.com/"+poolName+"__pic";
-		image = <img alt="" style={{width:'auto', maxWidth:'300px', height:'auto'}} onError={handleImageError} src={picUrl} onLoad={this.notifyLoad()}/>;
+		image = <img alt="" className="card__pool-pic" onError={handleImageError} src={picUrl} onLoad={this.notifyLoad()}/>;
 		return image;
 	}
 
 	getIsVerified = (isVerified) => {
 		if(isVerified){
-			return <h3 style={{fontSize: 13, color: "green"}}>(Verified Pool)</h3>
+			return <h3 className="mb0" style={{fontSize: 13, color: "green"}}>(Verified Pool)</h3>
 		}
 		else{
-			return <h3 style={{fontSize: 13}}>(User Pool)</h3>
+			return <h3 className="mb0" style={{fontSize: 13}}>(User Pool)</h3>
 		}
 	}
 
@@ -196,7 +202,6 @@ class Card extends Component {
 				);
 			}
 		}
-
 	}
 
 	getCopyButton = (receiver) => {
@@ -210,34 +215,44 @@ class Card extends Component {
 		);
 	}
 
-	getAbout = (about, address, isReceiver, picHash, title) => {
+	getAbout = (isReceiver) => {
+
+		const title = this.props.title;
+		const about = this.props.about;
+		const picHash = this.props.picHash;
+		const address = this.props.address;
+
 		if(this.state.directResponse){
 			about = this.state.directResponse;
 			console.log("directResponse", typeof about, typeof this.state.directResponse)
 		}
 		if(!about){
 			console.log("about does not exist", address);
-			about = "(There is a delay loading the description from IPFS.)"
+			about = "(There is a delay loading the description)"
 		}
 			let aboutString = about;
+
+			console.log("ABOUT", about.length);
 			let aboutHolder = [];
-			//let regex = /^Update#[0-9]+$/;
+			let editButton = ""
 			if(about.includes("\\n")){
 				const paragraphs = about.split(/\\n/);
 				for(let i = 0; i < paragraphs.length; i++){
-					aboutHolder.push(<p key={i} style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{paragraphs[i].replace(/^\s+|\s+$/g, '')}</p>);
+					const mt = i === 0 ? "0px" : "20px";
+					aboutHolder.push(<p key={i} style={{marginTop: mt, whiteSpace: "pre-wrap"}} className="mb0">{paragraphs[i].replace(/^\s+|\s+$/g, '')}</p>);
 				}
 			}
 			else{
-				aboutHolder.push(<p key="0" style={{marginTop: "20px", whiteSpace: "pre-wrap"}} className="mr">{about.replace(/^\s+|\s+$/g, '')}</p>);
+				aboutHolder.push(<p key="0" style={{whiteSpace: "pre-wrap"}} className="mb0">{about.replace(/^\s+|\s+$/g, '')}</p>);
 			}
 			if(isReceiver){
-				aboutHolder.push(
+				editButton = (
 					<div key={aboutHolder.length} title={"update the description for your cause"} style={{marginBottom: "20px"}}>
 						<ButtonSmall text={"Edit Description"} callback={async() => await this.updateAbout(aboutString, address, picHash, title)}/>
-					</div>)
+					</div>
+				);
 			}
-			return aboutHolder;
+			return {aboutHolder, editButton};
 	}
 
 	resetAnimation = () => {
@@ -247,12 +262,63 @@ class Card extends Component {
 		el.style.animation = null;
 	}
 
-	createTokenInfo = (address, receiver, acceptedTokenInfo, about, picHash, title, isVerified, isReceiver) => {
-		if (!acceptedTokenInfo) return '';
+	createPoolInfo = (isReceiver) => {
+		if (!this.props.acceptedTokenInfo) return '';
 		if (!this.props.tokenMap) return '';
 
-		//const item = this.props.acceptedTokenInfo[this.state.selectedTokenIndex];
+		const address = this.props.address;
+		const title = this.props.title;
+		const receiver = this.props.receiver;
+		const about = this.props.about;
+		const picHash = this.props.picHash;
+		const isVerified = this.props.isVerified;
+
+		const {aboutHolder, editButton} = this.getAbout(isReceiver)
+
+		const tokenInfo =
+			<div className="card__body__left">
+				<div style={{display: "flex", flexDirection: "wrap"}}>
+					<div className="card__body__column__one">
+					<div >
+						<div title="view on block explorer">
+							<div style={{display: "flex", flexDirection: "wrap", gap: "3px"}}>
+								<ButtonSmall text={"Receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address', this.props.networkId)}/>
+								{this.getCopyButton(receiver)}
+							</div>
+							<ButtonSmall text={"Pool "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address', this.props.networkId)}/>
+						</div>
+					</div>
+					</div>
+					<div className="card__body__column__two">
+						{this.getPoolImage(title)}
+					</div>
+				</div>
+				<div className="card__body__column__eight">
+					<div className="card__about-box">
+						{aboutHolder}
+					</div>
+					{editButton}
+					{!this.props.isMobile ?
+						<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
+							{this.getVerifiedLinks(isVerified, title)}
+							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>
+								<Button isLogo="share" callback={async() => await this.share(address, title )} />
+							</div>
+						</div> : ""
+					}
+				</div>
+			</div>
+		return tokenInfo;
+	}
+
+	createTokenInfo = () => {
+		if (!this.props.acceptedTokenInfo) return '';
+		if (!this.props.tokenMap) return '';
+
+		const address = this.props.address;
+		const title = this.props.title;
 		const item = this.state.tokenInfo[this.state.selectedTokenIndex];
+		const isVerified = this.props.isVerified;
 
 		const depositAPY = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].depositAPY;
 		const isETH = (item.acceptedTokenString === 'ETH' || item.acceptedTokenString === 'MATIC') ? true : false;
@@ -260,95 +326,73 @@ class Card extends Component {
 		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
 
 		const tokenInfo =
-			<div className="card__body" key={item.acceptedTokenString}>
-				<div style={{display: "flex", flexDirection: "column", borderRight: "double"}}>
-					<div style={{display: "flex", flexDirection: "wrap"}}>
-						<div className="card__body__column__one">
-						<div >
-							<div style={{display: "flex", flexDirection: "column", gap: "1px", marginLeft: "8px"}}>
-								<h4 className="mb0">
-									{title}
-								</h4>
-								{this.getIsVerified(isVerified)}
-							</div>
-							<div title="view on block explorer" style={{marginLeft: "8px"}}>
-								<div style={{display: "flex", flexDirection: "wrap", gap: "3px"}}>
-									<Button text={"Receiver "+receiver.slice(0, 6) + "..."+receiver.slice(-4)} callback={() => redirectWindowBlockExplorer(receiver, 'address', this.props.networkId)}/>
-									{this.getCopyButton(receiver)}
-								</div>
-								<Button text={"Pool "+address.slice(0, 6) + "..."+address.slice(-4)} callback={() => redirectWindowBlockExplorer(address, 'address', this.props.networkId)}/>
-							</div>
-						</div>
-						</div>
-						<div className="card__body__column__two">
-							{this.getPoolImage(title)}
-						</div>
-					</div>
-					<div /*style={{fontSize:17}}*/ className="card__body__column__eight">
-						{this.getAbout(about, address, isReceiver, picHash, title)}
-						<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
-							{this.getVerifiedLinks(isVerified, title)}
-							<div title={"share "+ title} style={{bottom: "0px", color: "red"}}>
-								<Button isLogo="share" callback={async() => await this.share(address, title )} />
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div style={{display: "grid", width: "330px", flex: "0 0 330"}}>
-					<div id="animated" className="card__body__column__nine">
-						<div style={{display: "grid", gridTemplateColumns:"108px 1fr"}}>
+			<div id="animated" className="card__balance-grid--outer">
+				<div className="card__balance-box">
+					<div className="card__body__column__nine">
+						<div className="card__body__token-logo">
 							<div style={{gridColumn: 1}}>
-								{displayLogoLg(item.acceptedTokenString)}
+								{this.props.isMobile ? displayLogoMd(item.acceptedTokenString) : displayLogoLg(item.acceptedTokenString)}
 							</div>
 							<div style={{gridColumn: 2, marginRight: "auto", marginTop: "auto"}}>
 								<h5 className="mb0">  {item.acceptedTokenString} </h5>
 								{this.getAPY(depositAPY)}
 							</div>
 						</div>
-
-						<div title="user balance" style={{display: "grid", gridTemplateColumns:"70px 1fr", paddingTop: "20px"}}>
+						<div title="user balance" className="card__balance-grid--inner" >
 							<div style={{gridColumn: 1}}>
 								<p>{"Balance"}</p>
 							</div>
 							<div style={{gridColumn: 2, width: "250px"}}>
-								<p >{numberWithCommas(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+								<p >{digitsWithMaxTenLength(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
 							</div>
 						</div>
-						<div title="pool balance" style={{display: "grid", gridTemplateColumns:"70px 1fr"}}>
+						<div title="pool balance" className="card__balance-grid--inner">
 							<div style={{gridColumn: 1}}>
 								<p>{"Pool"}</p>
 							</div>
 							<div style={{gridColumn: 2, width: "250px"}}>
-								<p>{numberWithCommas(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
+								<p>{digitsWithMaxTenLength(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
 							</div>
 						</div>
-						<div title={"unharvested "+item.acceptedTokenString+" for "+title} style={{display: "grid", gridTemplateColumns:"70px 1fr"}}>
+						<div title={"unharvested "+item.acceptedTokenString+" for "+title} className="card__balance-grid--inner">
 							<div style={{gridColumn: 1}}>
 								<p>{"Earned"}</p>
 							</div>
 							<div style={{gridColumn: 2, width: "250"}}>
-							<p>{numberWithCommas(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
+							<p>{digitsWithMaxTenLength(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
 							</div>
 						</div>
-						<div title={item.acceptedTokenString+" harvested and sent to "+title} style={{display: "grid", gridTemplateColumns:"70px 1fr"}}>
+						<div title={item.acceptedTokenString+" harvested and sent to "+title} className="card__balance-grid--inner">
 							<div style={{gridColumn: 1}}>
 								<p>{"Donated"}</p>
 							</div>
 							<div style={{gridColumn: 2, width: "250px"}}>
-								<p>{numberWithCommas(precise(item.claimedInterest, item.decimals))+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
+								<p>{digitsWithMaxTenLength(precise(item.claimedInterest, item.decimals))+"  (" +getFormatUSD(precise(item.claimedInterest, item.decimals), priceUSD)+")" }</p>
 							</div>
 						</div>
-
-						<div style={{marginRight: "auto"}}>
+						<div className="card__dep-buttons-col">
 							{this.displayClaim(item, address, title)}
 							{this.displayWithdraw(item, address, item.acceptedTokenString, title)}
 							{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance, title)}
 						</div>
+						{this.props.isMobile ?
+							<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
+								{this.getVerifiedLinks(isVerified, title)}
+								<div title={"share "+ title}>
+									<Button isLogo="share" callback={async() => await this.share(address, title )} />
+								</div>
+							</div> : ""
+						}
 					</div>
 				</div>
+				<div className="card__dep-buttons-flex">
+					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance, title)}
+					{this.displayWithdraw(item, address, item.acceptedTokenString, title)}
+					{this.displayClaim(item, address, title)}
+				</div>
+		</div>
 
-			</div>
+		//if(this.props.isMobile) return;
 		return tokenInfo;
 	}
 
@@ -536,7 +580,53 @@ class Card extends Component {
 
 		);
 	}
+	getBalances = (userBalance, interestEarned, totalBalance) => {
+		return(
+			<Fragment>
+				<p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{interestEarned === "" ? "" : "Donated "+ interestEarned}</p>
+				<p title="USD value of your deposited tokens (approx.)" className="mb0">{userBalance === "" ? "" : "Balance " + userBalance}</p>
+				<p title="USD value of all pool tokens (approx.)" className="mb0">{totalBalance === "" ? "" : "Pool "+ totalBalance}</p>
+			</Fragment>
+		);
+	}
+	getCardLeft = (randomPoolIcon, userBalance, interestEarned, totalBalance) => {
+		const cardBalances = <div className="card__header__balances">
+								{this.getBalances(userBalance, interestEarned, totalBalance)}
+							 </div>;
+		/*if(this.state.open){
+			return (
+				<div style={{display: "flex"}}>
+					<div className="card__header--left">
+						{cardBalances}
+						<div className="card__token__buttons">
+							{this.createTokenButtons(this.props.acceptedTokenInfo)}
+						</div>
+					</div>
+				</div>
+			);
+		}*/
 
+		return (
+			<div style={{display: "flex", flexDirection: "column"}}>
+			<div style={{display: "flex"}}>
+				<Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>
+				<div className="card__header--left">
+					<div style={{display: "flex", flexDirection: "wrap", gap: "3px"}}>
+						<h4 className="mb0">{this.props.title}</h4>
+						{this.state.open ? this.getIsVerified(this.props.isVerified) : ""}
+					</div>
+					{cardBalances}
+				</div>
+					</div>
+					{this.state.open ?
+						<div className="card__token__buttons">
+							{this.createTokenButtons(this.props.acceptedTokenInfo)}
+						</div> : ""
+					}
+			</div>
+		);
+
+	}
 	render() {
 		const { title, about, picHash, idx, address, receiver, acceptedTokenInfo, isVerified} = this.props;
 		const poolIcons = [
@@ -558,29 +648,22 @@ class Card extends Component {
 
 		//const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const {userBalance, interestEarned, totalBalance} = this.getHeaderValues();
-		const tokenButtons = this.createTokenButtons(acceptedTokenInfo);
-		const tokenInfo = this.createTokenInfo(address, receiver, acceptedTokenInfo, about, picHash, title, isVerified, isReceiver);
 
 		return (
 			<div className={classnames}>
 				<div className="card__header">
-				{this.state.open ? "" : <Icon name={randomPoolIcon.name} size={32} color={randomPoolIcon.color} strokeWidth={3}/>}
-					<h4 className="mb0">
-						{this.state.open ? "" : title}
-					</h4>
 
-					<div className="card__token__buttons" style={{paddingLeft:"10px", display:"flex", flexWrap:"wrap"}}>
-						{tokenButtons}
-					</div>
+					{this.getCardLeft(randomPoolIcon, userBalance, interestEarned, totalBalance)}
+
 					<div className="card__header--right">
-									{this.getRefreshButton(address)}
-									<p title="USD value of your deposited tokens (approx.)" className="mb0">{userBalance === "" ? "" : "Balance: " + userBalance}</p>
-									<p title="USD value of all pool tokens (approx.)" className="mb0">{totalBalance === "" ? "" : "Pool: "+ totalBalance}</p>
-									<p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{interestEarned === "" ? "" : "Total Donated: "+ interestEarned}</p>
-									<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
+						{this.getRefreshButton(address)}
+						<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 					</div>
 				</div>
-				{tokenInfo}
+				<div className="card__body">
+					{this.createPoolInfo(isReceiver)}
+					{this.createTokenInfo()}
+				</div>
 				<div className="card__bar"/>
 				{this.getDepositAmountModal()}
 				{this.getWithdrawAmountModal()}
@@ -611,6 +694,7 @@ const mapStateToProps = state => ({
 	share: state.share,
 	networkId: state.networkId,
 	newAbout: state.newAbout,
+	isMobile: state.isMobile,
 })
 
 const mapDispatchToProps = dispatch => ({

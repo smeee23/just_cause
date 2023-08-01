@@ -1,12 +1,11 @@
 
-
 import React, {Component} from "react"
 
-class UsdcLogoLg extends Component {
+class UsdcLogoMd extends Component {
 
 	render() {
 		return (
-      <svg width="100px" height="100px" viewBox="0 0 22 22">
+      <svg width="66px" height="66px" viewBox="0 0 22 22">
           <title>icons/cypto/usdc</title>
           <g id="icons/cypto/usdc" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
               <g id="usdc-logo" fillRule="nonzero">
@@ -19,4 +18,4 @@ class UsdcLogoLg extends Component {
     );
   }
 }
-export default UsdcLogoLg
+export default UsdcLogoMd

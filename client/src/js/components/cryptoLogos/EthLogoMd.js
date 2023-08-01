@@ -1,9 +1,9 @@
 import React, {Component} from "react"
 
-class EthLogoLg extends Component {
+class EthLogoMd extends Component {
 	render() {
 		return (
-            <svg width="100px" height="100px" viewBox="0 0 22 22">
+            <svg width="66px" height="66px" viewBox="0 0 22 22">
                 <g id="icons/crypto/eth" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                     <g id="eth-logo" transform="translate(4.000000, 0.000000)" fillRule="nonzero">
                         <polygon id="Path" fill="#343434" points="6.74648741 0 6.59902039 0.500906085 6.59902039 15.0347538 6.74648741 15.1818767 13.4928028 11.1940723"></polygon>
@@ -19,4 +19,4 @@ class EthLogoLg extends Component {
     }
 }
 
-export default EthLogoLg
+export default EthLogoMd

@@ -1,10 +1,10 @@
 import React, {Component} from "react"
 
-class AaveLogoLg extends Component {
+class AaveLogoMd extends Component {
 
 	render() {
 		return (
-            <svg width="100px" height="100px" viewBox="0 0 22 22">
+            <svg width="66px" height="66px" viewBox="0 0 22 22">
                 <defs>
                     <linearGradient x1="87.2792784%" y1="18.632268%" x2="12.8792784%" y2="81.232268%" id="linearGradient-1">
                         <stop stopColor="#B6509E" offset="0%"></stop>
@@ -22,4 +22,4 @@ class AaveLogoLg extends Component {
 	}
 }
 
-export default AaveLogoLg
+export default AaveLogoMd

@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
-import { ModalHeader, ModalBodyDeploy, ModalCtas } from "../Modal";
+import { ModalHeader, ModalBodyDeploy, ModalCtasDeploy } from "../Modal";
 import TextField from '../TextField'
 import { Button, ButtonSmall } from '../Button'
 
@@ -27,7 +27,7 @@ class NewPoolModal extends Component {
 			isValidInput: 'valid',
 			fileUploadHash:"",
       		amount: 0,
-			acceptedTokens: ["MATIC"],
+			acceptedTokens: ["WETH"],
 			step: 0,
 			poolName: "",
 			receiver: "",
@@ -178,7 +178,7 @@ class NewPoolModal extends Component {
 	let buttonHolder = [];
 	for(let i = 0; i < tokenStrings.length; i++){
 		const tokenName = tokenStrings[i];
-		if(!["AAVE", "DPI"].includes(tokenName) )
+		if(!["AAVE", "DPI", "LINK", "MATIC"].includes(tokenName) )
 			if(!this.state.acceptedTokens.includes(tokenName)){
 				buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} icon={"plus"} key={i} callback={() => this.addToken(tokenName)}/>);
 			}
@@ -186,7 +186,7 @@ class NewPoolModal extends Component {
 				buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} icon={"check"} key={i} callback={() => this.removeToken(tokenName)}/>);
 			}
 	}
-	return buttonHolder;
+	return buttonHolder
   }
 
   getButton = () => {
@@ -229,7 +229,7 @@ class NewPoolModal extends Component {
 
 		display = <Fragment>
 			<ModalHeader>
-          		<h2 className="mb0">Let's Get Started</h2>
+					<h2 className="mb0">Let's Get Started</h2>
        		 </ModalHeader>
 			<ModalBodyDeploy>
 				<div  className="modal__body__column__one">
@@ -239,30 +239,28 @@ class NewPoolModal extends Component {
 				<div style={{maxWidth: "330px"}} className="modal__body__column__two">
 					<TextField ref="poolName" label="Pool Name" id="poolName" placeholder="Name your pool"/>
 				</div>
-
 				<div className="modal__body__column__three">
-					<p className="mr">2) Enter an address to receive the interest earned by contributions to your cause. It does not have to be an address you own. The field defaults to the current account, but any valid address can be entered. Take care, this address cannot be changed once the pool is created.</p>
-				</div>
+					<p>2) Enter an address to receive the interest earned by contributions to your cause. The field defaults to the current account, but any valid address can be entered. Take care, this address cannot be changed once the pool is created.</p>
 
-				<div style={{maxWidth: "330px"}} className="modal__body__column__four">
-					<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
+					<div style={{maxWidth: "330px"}}>
+						<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
+					</div>
 				</div>
-
 				<div className="modal__body__column__five">
-					<p style={{marginTop: "auto"}} className="mr">3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. We want to give you the tools to fund it and share your inspiration with the world.</p>
+					<p style={{marginTop: "auto"}}>3) Tell us about your Cause! Whether your Cause is a public good, charity, DAO, etc. We want to give you the tools to fund it and share your inspiration with the world.</p>
 				</div>
 
 				<div className="modal__body__column__six">
 					<TextField ref="about" label="Pool Description" placeholder="Describe your cause"/>
 				</div>
 			</ModalBodyDeploy>
-			<ModalCtas>
+			<ModalCtasDeploy>
 			<p style={{color: "#DC143C", fontSize:16}} className="mr">{this.state.inputError}</p>
 			<Button text={this.getButton()}
 				disabled={this.checkValues()}
 				callback={() => this.handleClick({poolName: this.refs.poolName.getValue(), receiver: this.refs.receiver.getValue(), about: this.refs.about.getValue()})}
 			/>
-			</ModalCtas>
+			</ModalCtasDeploy>
 			</Fragment>
 
 	}
@@ -270,31 +268,26 @@ class NewPoolModal extends Component {
 
 		display = <Fragment>
 			<ModalHeader>
-          		<h2 className="mb0">Just a Couple more things...</h2>
+					<h2 className="mb0">Couple more things...</h2>
        		 </ModalHeader>
 			<ModalBodyDeploy>
-			<div /*style={{fontSize:17}}*/ className="modal__body__column__one">
-				<p className="mr">4) This is an optional step. This image will be on the NFT that you and your contributors receive. It will also be displayed on the JustCause site. If left blank image will default to the JustCause Logo </p>
+			<div className="modal__body__column__one--wide">
+				<p>4) This is an optional step. This image will be on the NFT that you and your contributors receive. It will also be displayed on the JustCause site. If left blank image will default to the JustCause Logo </p>
+				<div style={{display: "flex", justifyContent: "flex-end"}}>
+					<input id="photo" type="file" hidden/>
+					<Button disabled={this.isPhotoUploaded()} text={this.getUploadButtonText()} callback={() => this.fileUploadButton()} />
+				</div>
 			</div>
 
-			<div className="modal__body__column__two">
-				<input id="photo" type="file" hidden/>
-				<Button disabled={this.isPhotoUploaded()} text={this.getUploadButtonText()} callback={() => this.fileUploadButton()} />
-			</div>
-
-			<div /*style={{fontSize:17}}*/ className="modal__body__column__three">
-				<p className="mr">5) Select the tokens your contributors will be able to deposit. You will receive these tokens in the receiver address when you or someone else calls the claim function.</p>
-			</div>
-
-			<div /*style={{fontSize:17}}*/ className="modal__body__column__seven">
-				{this.displayTokenSelection()}
-			</div>
-
-			<div /*style={{fontSize:17}}*/  className="modal__body__column__five">
-				<p className="mr">{"Accepted Tokens: " + this.state.acceptedTokens}</p>
+			<div className="modal__body__column__three" style={{gap: "8"}}>
+				<p>5) Select the tokens your contributors will be able to deposit. You will receive these tokens in the receiver address when you or someone else calls the claim function.</p>
+				<div className="card__token__buttons">
+					{this.displayTokenSelection()}
+				</div>
+				<p>{"Accepted Tokens: " + this.state.acceptedTokens}</p>
 			</div>
 		</ModalBodyDeploy>
-        <ModalCtas>
+        <ModalCtasDeploy>
 		<Button text="<= Back"
 			callback={() => this.handleClickBack({tokens: this.refs.tokens})}
 		 />
@@ -302,7 +295,7 @@ class NewPoolModal extends Component {
 		  	disabled={this.checkValues()}
 			callback={() => this.handleClick({tokens: this.refs.tokens})}
 		 />
-        </ModalCtas>
+        </ModalCtasDeploy>
 		</Fragment>
 	}
 	return display;

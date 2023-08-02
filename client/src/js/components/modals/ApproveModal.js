@@ -7,6 +7,7 @@ import getWeb3 from "../../../getWeb3NotOnLoad";
 import ERC20Instance from "../../../contracts/IERC20.json";
 
 import { updatePendingTx } from "../../actions/pendingTx";
+import { updatePendingTxList } from "../../actions/pendingTxList";
 import { updateTxResult } from  "../../actions/txResult";
 import { updateApprove } from "../../actions/approve";
 import { updateTokenMap } from "../../actions/tokenMap"
@@ -38,10 +39,15 @@ class ApproveModal extends Component {
 
                 const amount = '10000000000000000000000000000000';
                 txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress, networkId: this.props.networkId};
-                result = await erc20Instance.methods.approve(this.props.poolTrackerAddress, amount).send(parameter, (err, transactionHash) => {
+                result = await erc20Instance.methods.approve(this.props.poolTrackerAddress, amount).send(parameter, async(err, transactionHash) => {
                     console.log('Transaction Hash :', transactionHash, err);
 					if(!err){
-						this.props.updatePendingTx({txHash: transactionHash, amount: '', tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress, networkId: this.props.networkId});
+						let info = {txHash: transactionHash, amount: amount, tokenString: tokenString, type:"APPROVE", poolAddress: poolAddress, poolName: tokenString, networkId: this.props.networkId, status:"pending"};
+						let pending = [...this.props.pendingTxList];
+						pending.push(info);
+						await this.props.updatePendingTxList(pending);
+						localStorage.setItem("pendingTxList", JSON.stringify(pending));
+						this.props.updatePendingTx(info);
 						txInfo.txHash = transactionHash;
 					}
 					else{
@@ -49,6 +55,20 @@ class ApproveModal extends Component {
 					}
                 });
                 txInfo.success = true;
+
+
+				let pending = [...this.props.pendingTxList];
+				pending.forEach((e, i) =>{
+					if(e.txHash === txInfo.transactionHash){
+						e.status = "complete"
+					}
+				});
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+				pending = (pending).filter(e => !(e.txInfo === txInfo.transactionHash));
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
 
                 let tempTokenMap = this.props.tokenMap;
                 tempTokenMap[tokenString]['allowance'] = true;
@@ -62,14 +82,14 @@ class ApproveModal extends Component {
 			if(txInfo){
 				this.displayTxInfo(txInfo);
 			}
+			this.props.updateApprove('');
 	}
 
   displayDepositNotice = (txInfo) => {
 
 	return(
 		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Approval allows your wallet to interact with the JustCause smart contracts.</p>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">It will need to be called only once per token.</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Approval allows your tokens to interact with the JustCause smart contracts.</p>
 		</div>
 	)
 
@@ -106,6 +126,7 @@ const mapStateToProps = state => ({
  	approve: state.approve,
 	activeAccount: state.activeAccount,
 	networkId: state.networkId,
+	pendingTxList: state.pendingTxList,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -113,6 +134,7 @@ const mapDispatchToProps = dispatch => ({
     updatePendingTx: (tx) => dispatch(updatePendingTx(tx)),
 	updateTxResult: (res) => dispatch(updateTxResult(res)),
     updateTokenMap: (res) => dispatch(updateTokenMap(res)),
+	updatePendingTxList: (tx) => dispatch(updatePendingTxList(tx)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApproveModal)

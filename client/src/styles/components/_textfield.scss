@@ -62,3 +62,13 @@ $baseclass: 'textfield';
     background: $brand-black;
   }
 }
+
+@media screen and (max-width: $bp-small) {
+  .#{$baseclass} {
+    font-size: 1.25rem;
+  }
+
+  .#{$baseclass}__input {
+    font-size: 1.25rem;
+  }
+}

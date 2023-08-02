@@ -63,6 +63,16 @@ class ModalBodyDeploy extends Component {
 class ModalCtas extends Component {
   render() {
 		return (
+      <div className="modal__ctas--no-body">
+        { this.props.children }
+      </div>
+		);
+	}
+}
+
+class ModalCtasDeploy extends Component {
+  render() {
+		return (
       <div className="modal__ctas">
         { this.props.children }
       </div>
@@ -226,4 +236,4 @@ class LargeModal extends Component {
 	}
 }
 
-export { Modal, LargeModal, SmallModal, ModalHeader, ModalHeaderNoClose, ModalBody, ModalBodyTx, ModalBodyDeploy, ModalCtas }
+export { Modal, LargeModal, SmallModal, ModalHeader, ModalHeaderNoClose, ModalBody, ModalBodyTx, ModalBodyDeploy, ModalCtas, ModalCtasDeploy }

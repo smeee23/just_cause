@@ -172,7 +172,7 @@ class Card extends Component {
 
 	getIsVerified = (isVerified) => {
 		if(isVerified){
-			return <h3 className="mb0" style={{fontSize: 13, color: "green"}}>(Verified Pool)</h3>
+			return <h3 className="mb0" style={{fontSize: 13, color: "green", display: "flex", flexWrap: "nowrap", whiteSpace: "nowrap"}}>(Verified Pool)</h3>
 		}
 		else{
 			return <h3 className="mb0" style={{fontSize: 13}}>(User Pool)</h3>
@@ -492,7 +492,7 @@ class Card extends Component {
 
 	approve = async(tokenAddress, tokenString, poolAddress) => {
 		console.log("approve clicked");
-		this.props.updateApprove('');
+		await this.props.updateApprove('');
 		try{
 			const activeAccount = this.props.activeAccount;
 
@@ -591,18 +591,6 @@ class Card extends Component {
 		const cardBalances = <div className="card__header__balances">
 								{this.getBalances(userBalance, interestEarned, totalBalance)}
 							 </div>;
-		/*if(this.state.open){
-			return (
-				<div style={{display: "flex"}}>
-					<div className="card__header--left">
-						{cardBalances}
-						<div className="card__token__buttons">
-							{this.createTokenButtons(this.props.acceptedTokenInfo)}
-						</div>
-					</div>
-				</div>
-			);
-		}*/
 
 		return (
 			<div style={{display: "flex", flexDirection: "column"}}>
@@ -611,7 +599,9 @@ class Card extends Component {
 				<div className="card__header--left">
 					<div style={{display: "flex", flexDirection: "wrap", gap: "3px"}}>
 						<h4 className="mb0">{this.props.title}</h4>
-						{this.state.open ? this.getIsVerified(this.props.isVerified) : ""}
+						<div style={{display: "flex", flexWrap: "nowrap"}}>
+							{this.state.open ? this.getIsVerified(this.props.isVerified) : ""}
+						</div>
 					</div>
 					{cardBalances}
 				</div>

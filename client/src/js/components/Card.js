@@ -231,8 +231,6 @@ class Card extends Component {
 			about = "(There is a delay loading the description)"
 		}
 			let aboutString = about;
-
-			console.log("ABOUT", about.length);
 			let aboutHolder = [];
 			let editButton = ""
 			if(about.includes("\\n")){

@@ -154,7 +154,7 @@ class Dashboard extends Component {
 
 	createOptionButtons = () => {
 		let buttonHolder = [];
-		const buttonStrings = ['Verified Causes', 'Your Causes', 'Contributions'];
+		const buttonStrings = ['Verified Causes', 'Your Causes', 'Your Donations'];
 		const infoStrings = ['team verified pools', 'view and update your causes', 'your donations'];
 		for(let i = 0; i < buttonStrings.length; i++){
 			const name = buttonStrings[i];
@@ -188,7 +188,7 @@ class Dashboard extends Component {
 		let title;
 		if(this.state.openTabIndex === 0) title = "Verified Pools";
 		else if (this.state.openTabIndex === 1) title = "Your Causes";
-		else if (this.state.openTabIndex === 2) title = "Contributions";
+		else if (this.state.openTabIndex === 2) title = "Your Donations";
 		return (
 			<div style={{marginTop: "100px", display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center"}}>
 				<h2 style={{marginTop: "50px"}}> {title}</h2>
@@ -282,7 +282,7 @@ class Dashboard extends Component {
 		//if(poolInfo === "No Verified Pools") return
 
 		if(!this.props.tokenMap || !poolInfo){
-			return (<div style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
+			return (<div className="page-section--center" style={{paddingTop: "48px", width: "100%"}}>
 						<div className="card__loading">
 							<h2 className="card__letter" style={{ animationDelay: '0.1s' }}>L</h2>
 							<h2 className="card__letter" style={{ animationDelay: '0.2s' }}>O</h2>
@@ -296,7 +296,7 @@ class Dashboard extends Component {
 		}
 
 		if(poolInfo.length === 0){
-			return (<div className="card__loader_wait page-section--center" style={{paddingTop: "48px"}}>
+			return (<div className="page-section--center" style={{paddingTop: "48px", width: "100%"}}>
 					<h2>{this.state.openTabIndex === 1 ? "Not Receiving Address for Any JustCause Pools" : this.state.openTabIndex === 2 ? "Not Contributed to Any JustCause Pools" : ""}</h2>
 				   </div>);
 		}

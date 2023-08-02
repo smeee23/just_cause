@@ -175,7 +175,7 @@ $baseclass: 'card';
   &__about-box {
     padding: (1 * $rem-base) (1 * $rem-base);
     border: solid 3px;
-    border-radius: 8px;
+    //border-radius: 8px;
     max-height: 250px;
     overflow: scroll;
     padding-bottom: 0.25 * $rem-base;

@@ -22,10 +22,11 @@ class Shapes extends Component {
         });
 
         const palette = {
-            pink: '#d63fb8',
-            cyan: '#3fd6b8',
+            brandRed: '#CE3232',
+            brandYellow: '#E0C723',
+            brandGreen: '#009f38',
             brandPink: '#D991BA',
-            purple: '#743fd6'
+            brandBlue: '#3FA7D6'
         }
 
         const shapes = {
@@ -67,7 +68,7 @@ class Shapes extends Component {
               attractors: [
                 (bodyA, bodyB) => {
                   return {
-                    x: (bodyA.position.x - bodyB.position.x) * 0.000005,
+                    x: (bodyA.position.x - bodyB.position.x) * -0.000005,
                     y: (bodyA.position.y - bodyB.position.y) * 0.000005,
                   };
                 }

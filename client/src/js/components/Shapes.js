@@ -23,20 +23,20 @@ class Shapes extends Component {
 
         const palette = {
             brandRed: '#CE3232',
-            brandYellow: '#E0C723',
+            //brandYellow: '#E0C723',
             brandGreen: '#009f38',
             brandPink: '#D991BA',
             brandBlue: '#3FA7D6'
         }
 
         const shapes = {
-            polygon1: { sides: 0, size: 200 },
+            //polygon1: { sides: 0, size: 200 },
             rectangle1: { width: 400, height: 200 },
             polygon2: { sides: 5, size: 300 },
             polygon3: { sides: 6, size: 240 },
             polygon4: { sides: 8, size: 200 },
             rectangle2: { width: 200, height: 100 },
-            polygon5: { sides: 0, size: 120 },
+            //polygon5: { sides: 0, size: 120 },
         }
 
         const paletteKeys = Object.keys(palette);
@@ -60,16 +60,16 @@ class Shapes extends Component {
         engine.world.gravity.scale = 0.000005;
         engine.world.gravity.y = 0;
 
-        this.attractor = Matter.Bodies.circle(this.docWidth / 4, this.viewportHeight / 1.8, this.viewportHeight * 0.05, {
+        this.attractor = Matter.Bodies.circle(this.docWidth / 4, this.viewportHeight / -1.8, this.viewportHeight * 0.05, {
             isStatic: true,
             render: { fillStyle: 'transparent', strokeStyle: '#FFFFFF55', lineWidth: 0 },
-            chamfer: { radius: this.viewportHeight * 0.33 },
+            chamfer: { radius: this.viewportHeight * 0.003 },
             plugin: {
               attractors: [
                 (bodyA, bodyB) => {
                   return {
-                    x: (bodyA.position.x - bodyB.position.x) * -0.000005,
-                    y: (bodyA.position.y - bodyB.position.y) * 0.000005,
+                    x: (bodyA.position.x - bodyB.position.x) * 0.0000015,
+                    y: (bodyA.position.y - bodyB.position.y) * 0.0000015,
                   };
                 }
               ]

@@ -303,7 +303,7 @@ export const displayLogo = (acceptedTokenString) => {
 }
 
 export const checkLocationForAppDeploy = () => {
-  const urls = ["https://www.justcause.finance/#/", "https://www.justcause.finance/#/just_cause/howitworks", "https://www.justcause.finance/#/just_cause/",
+  const urls = ["https://www.justcause.finance/#/", "https://justcause.finance/#/", "https://justcause.finance", "https://www.justcause.finance/#/just_cause/howitworks", "https://www.justcause.finance/#/just_cause/",
               "https://www.justcause.finance/#/just_cause"];
 
   const pathnames = ["/howitworks", "/just_cause", "/"]

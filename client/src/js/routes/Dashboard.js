@@ -200,11 +200,13 @@ class Dashboard extends Component {
 		if(this.state.openTabIndex !== 0) return;
 		let info;
 		if(this.state.openVerifiedIndex === 1){
-			let info_1 = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love.";
-			let info_2 = "A Crypto for Charity cause fund supports a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
+			const info_1 = "The Crypto for Charity team is part of FreeWill, a technology company on a mission to empower both donors and nonprofits to do the most good for the people and causes they love.";
+			const info_2 = "A Crypto for Charity cause fund supports a collection of nonprofits with a shared mission or area of focus. The distribution of your donation to a cause fund is an excellent option for those who want to donate more broadly to a cause."
+			const width = this.props.isMobile ? "200px" : "300px"
+
 			return (
 				<div style={{marginTop: "25px", maxWidth: "600px", alignItems:"center", justifyContent:"center"}}>
-					<img style={{width:"300px", border: "solid"}} src={require("../../images/c4c.jpg")} alt={"logo"}/>
+					<img style={{width: width, border: "solid"}} src={require("../../images/c4c.jpg")} alt={"logo"}/>
 					<p style={{alignItems:"center", marginTop: "25px", justifyContent:"center", marginRight:"0%"}} className="mr">{info_1}</p>
 					<p style={{alignItems:"center", justifyContent:"center", marginRight:"0%"}} className="mr">{info_2}</p>
 				</div>
@@ -442,6 +444,7 @@ const mapStateToProps = state => ({
 	newAbout: state.newAbout,
 	pendingTxList: state.pendingTxList,
 	alert: state.alert,
+	isMobile: state.isMobile,
 })
 
 const mapDispatchToProps = dispatch => ({

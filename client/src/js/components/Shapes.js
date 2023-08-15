@@ -22,11 +22,10 @@ class Shapes extends Component {
         });
 
         const palette = {
-            brandRed: '#CE3232',
-            brandYellow: '#E0C723',
-            brandGreen: '#80CE32',
+            pink: '#d63fb8',
+            cyan: '#3fd6b8',
             brandPink: '#D991BA',
-            brandBlue: '#3FA7D6'
+            purple: '#743fd6'
         }
 
         const shapes = {

@@ -28,7 +28,7 @@ $baseclass: 'card';
   }
 
   &__body {
-    padding-top: 100;
+    padding-top: 0;
     padding-bottom: 0;
     border-top: 0;
     border-radius: 0;
@@ -262,7 +262,6 @@ $baseclass: 'card';
   &--open {
     .#{$baseclass}__body {
       max-height: 1500px;
-      padding-top: 0;
     }
     .#{$baseclass}__open-button {
       transform: rotate(-45deg);
@@ -325,6 +324,7 @@ $baseclass: 'card';
 
     .#{$baseclass}__body {
       padding: (1 * $rem-base);
+      padding-top: 0;
     }
 
     .#{$baseclass}__pool-pic {

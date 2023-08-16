@@ -37,7 +37,6 @@ $baseclass: 'card';
     max-height: 0;
     transition: max-height $duration-short $easing1;
     overflow: scroll;
-    margin-top: 100px;
   }
 
   &__body__left {
@@ -263,7 +262,6 @@ $baseclass: 'card';
   &--open {
     .#{$baseclass}__body {
       max-height: 1500px;
-      margin-top: 0;
     }
     .#{$baseclass}__open-button {
       transform: rotate(-45deg);
@@ -325,8 +323,8 @@ $baseclass: 'card';
     }
 
     .#{$baseclass}__body {
-      padding: (1 * $rem-base);
-      padding-top: 0;
+      padding-right: (1 * $rem-base);
+      padding-left: (1 * $rem-base);
     }
 
     .#{$baseclass}__pool-pic {

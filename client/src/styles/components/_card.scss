@@ -37,6 +37,7 @@ $baseclass: 'card';
     max-height: 0;
     transition: max-height $duration-short $easing1;
     overflow: scroll;
+    margin-top: 100px;
   }
 
   &__body__left {
@@ -262,6 +263,7 @@ $baseclass: 'card';
   &--open {
     .#{$baseclass}__body {
       max-height: 1500px;
+      margin-top: 0;
     }
     .#{$baseclass}__open-button {
       transform: rotate(-45deg);

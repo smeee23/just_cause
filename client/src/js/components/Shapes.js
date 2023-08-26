@@ -22,10 +22,10 @@ class Shapes extends Component {
         });
 
         const palette = {
-            brandRed: '#CE3232',
+            offBrandRed: '#B60000',
             brandGreen: '#009f38',
             brandPink: '#D991BA',
-            brandBlue: '#3FA7D6'
+            offBrandBlue: '#3C99C3'
         }
 
         const shapes = {

@@ -183,7 +183,7 @@ class Header extends Component {
   getAccountButtons = () => {
     if(this.props.activeAccount === "Connect"){
       return(
-        <div title={"connect wallet"}>
+        <div title={"connect to web3"}>
           <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"people"} callback={this.connectButtonHit}/>
         </div>
       );
@@ -194,7 +194,7 @@ class Header extends Component {
           <div title={"view address on block explorer"} >
             <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/>
           </div>
-          <div title={"disconnect wallet"} style={{marginTop: "-5px"}}>
+          <div title={"disconnect"} style={{marginTop: "-5px"}}>
             <Button isLogo="close" callback={this.disconnectButtonHit}/>
           </div>
         </div>
@@ -223,9 +223,9 @@ class Header extends Component {
 
   displayInfo= (address) => {
     if(address === 'Connect')
-      return "connect wallet";
+      return "connect web3";
 
-    return "disconnect wallet";
+    return "disconnect";
   }
 
 	render() {

@@ -107,7 +107,10 @@ class NewPoolModal extends Component {
 		this.props.updateDeployTxResult('');
 	}
   checkValues = () => {
-	return false;
+	if(this.props.activeAccount === "Connect"){
+		return true
+	}
+	return false
   }
 
   setValues = async() => {
@@ -225,11 +228,12 @@ class NewPoolModal extends Component {
 
   handleInputSwitch = (poolInfo) => {
 	let display;
+	console.log("TEST", this.props.activeAccount === "Connect")
 	if(this.state.step === 0){
 
 		display = <Fragment>
 			<ModalHeader>
-					<h2 className="mb0">Let's Get Started</h2>
+					<h2 className="mb0">{ this.props.activeAccount === "Connect" ? "Please Connect to Network" : "Let's Get Started"}</h2>
        		 </ModalHeader>
 			<ModalBodyDeploy>
 				<div  className="modal__body__column__one">
@@ -243,7 +247,7 @@ class NewPoolModal extends Component {
 					<p>2) Enter an address to receive the interest earned by contributions to your cause. The field defaults to the current account, but any valid address can be entered. Take care, this address cannot be changed once the pool is created.</p>
 
 					<div style={{maxWidth: "330px"}}>
-						<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount}/>
+						<TextField ref="receiver" label="Receiving Address" value={poolInfo.activeAccount === "Connect" ? "no network connection": poolInfo.activeAccount}/>
 					</div>
 				</div>
 				<div className="modal__body__column__five">

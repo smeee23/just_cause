@@ -181,4 +181,8 @@ $baseclass: 'modal';
   .#{$baseclass}__boxdeploy {
     padding: (2 * $rem-base);
   }
+
+  .#{$baseclass}__body__column__five {
+    margin-top: -24px;
+  }
 }

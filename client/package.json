@@ -3,15 +3,21 @@
   "homepage": "./",
   "version": "0.1.0",
   "private": true,
-
   "dependencies": {
     "@walletconnect/web3-provider": "^1.7.8",
+    "aws-sdk": "^2.989.0",
+    "axios": "^0.21.4",
+    "bignumber.js": "^9.0.2",
     "classnames": "^2.2.5",
     "connected-react-router": "^6.9.1",
+    "dotenv": "^10.0.0",
+    "ethers": "^5.4.6",
     "gh-pages": "^3.2.3",
     "history": "^4.7.2",
     "matter-attractors": "^0.1.6",
     "matter-js": "^0.12.0",
+    "node": "^16.11.1",
+    "nodejs": "^0.0.0",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-redux": "^6.0.0",
@@ -22,14 +28,7 @@
     "s": "^1.0.0",
     "sass": "^1.43.2",
     "web3": "1.2.2",
-    "axios": "^0.21.4",
-    "bignumber.js": "^9.0.2",
-    "dotenv": "^10.0.0",
-    "ethers": "^5.4.6",
-    "node": "^16.11.1",
-    "nodejs": "^0.0.0",
-    "web3modal": "^1.9.8",
-    "aws-sdk": "^2.989.0"
+    "web3modal": "^1.9.8"
   },
   "scripts": {
     "start": "react-scripts start",

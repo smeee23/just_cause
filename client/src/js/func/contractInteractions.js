@@ -336,8 +336,11 @@ import { getAboutFromS3 } from "./awsS3";
 			const receiver = input.receiver;
 			const about = input.about;
 
+			const regex = /^[a-zA-Z0-9 ]*$/;
+
 			if(!poolName) return "Pool Name cannot be blank"
 			if(poolName.length > 30) return "Pool Name cannot exceed 30 characters"
+			if(!regex.test(poolName)) return "Pool Name can only contain letters and numbers"
 			if(!about) return "Describe section cannot be blank"
 			if(!receiver) return "Receiver section cannot be blank"
 			let error = await nameExists(poolName, poolTrackerAddress);
@@ -361,9 +364,11 @@ import { getAboutFromS3 } from "./awsS3";
 			PoolTracker.abi,
 			poolTrackerAddress,
 		);
+		console.log("searchAddr", searchAddr);
 
 		if(!web3.utils.isAddress(searchAddr)){
 			searchAddr = await PoolTrackerInstance.methods.getAddressFromName(searchAddr).call();
+			console.log("not address", searchAddr);
 		}
 
 		if(searchAddr !== '0x0000000000000000000000000000000000000000'){

@@ -237,7 +237,7 @@ class NewPoolModal extends Component {
        		 </ModalHeader>
 			<ModalBodyDeploy>
 				<div  className="modal__body__column__one">
-				<p className="mr">1) Come up with a name for your JustCause Pool. This name will be unique to your Pool. </p>
+				<p className="mr">1) Come up with a name for your JustCause Pool. This name will be unique to your Pool. No special characters.</p>
 				</div>
 
 				<div style={{maxWidth: "330px"}} className="modal__body__column__two">

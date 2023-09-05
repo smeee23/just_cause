@@ -111,6 +111,8 @@ PoolTracker, JustCausePool, and JCDepositorERC721 are the three contracts in the
 
 PoolTracker coordinates all major functionality of the protocol. It is the only address with permission to execute the pool creation, deposit, withdraw, and claim processes in JustCause.
 
+PoolTracker OP Mainnet Address: [0x9ff20439a4F5e315A48E5714d0f989f18DE77684](https://optimistic.etherscan.io/address/0x9ff20439a4f5e315a48e5714d0f989f18de77684)
+
 ### Pool Creation
 
 To create a new pool the `createJCPoolClone` method of PoolTracker is called. This method generates proxy contracts for both JustCausePool and JCDepositorERC721. In the JustCause protocol each pool/cause has its own JustCausePool smart contract clone and ERC721 token.
@@ -226,29 +228,29 @@ Your funds are allocated in a smart contract. The code of the smart contract is 
 
 ### How do I interact with the JustCause protocol?
 
-[JustCause dApp](https://www.justcause.finance/#/) is currently deployed on the Polygon PoS (proof of stake) network.
+[JustCause dApp](https://www.justcause.finance/#/) is currently deployed on the Optimism (OP) network.
 
 Users have the option to run the dApp locally by following the setup guide in our [readme file](https://github.com/smeee23/just_cause/blob/main/README.md).
 
 ---
 
-### What is Polygon PoS?
+### What is Optimism network?
 
-Polygon is a decentralised Ethereum scaling platform that enables developers to build scalable user-friendly dApps with low transaction fees.
+Optimism Mainnet is a low-cost and lightning-fast Ethereum L2 blockchain powered by Optimism.
 
-See: [Getting started on the Polygon PoS chain](https://wallet.polygon.technology/)
+See: [Getting started on the OP Mainnet chain](https://www.optimism.io/)
 
 ---
 
 ### What is the cost of donating with JustCause protocol?
 
-Contributors receive their full deposit back upon withdrawal, minus network transaction fees. Interacting with the protocol requires transactions and thus transaction fees on the Polygon PoS blockchain.
+Contributors receive their full deposit back upon withdrawal, minus network transaction fees. Interacting with the protocol requires transactions and thus transaction fees onchain.
 
 ---
 
 ### What fee does JustCause charge?
 
-No fee is charged by JustCause. However, a fee mechanism is built into the contracts. This rate can be raised to as high as 0.4% or lowered to 0 by the team to find an equilibrium that supports the causes as well as JustCause in the long run. This can only be done by the team multisig address. There are no plans to turn on the fee mechanism. 
+No fee is charged by JustCause. However, a fee mechanism is built into the contracts. This rate can be raised to as high as 0.4% or lowered to 0 by the team to find an equilibrium that supports the causes as well as JustCause in the long run. This can only be done by the team multisig address. There are no plans to turn on the fee mechanism.
 
 
 ---
@@ -296,7 +298,7 @@ Users are able to deposit any amount they want, there is no minimum or maximum l
 
 ### What tokens are allowed to be deposited?
 
-JustCause Pool creators choose what tokens to accept at pool creation. They can choose from Polygon network MATIC, USDC, USDT, DAI, WBTC, WETH, AAVE, DPI, and LINK with more to be added.
+JustCause Pool creators choose what tokens to accept at pool creation. They can choose from Optimism Mainnet USDC, DAI, WBTC, and ETH.
 
 ---
 
@@ -329,7 +331,7 @@ If one of the stablecoins deposited in a JustCause pool goes significantly down 
 # JustCausePool
  ---
 
-This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/just_cause/blob/main/contracts/polygon/JustCausePool.sol) in our github repository.
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/justcause_contracts/blob/main/contracts/deploy/JustCausePool.sol) in our github repository.
 
 The protocol uses Aave to generate interest for crowdfunding. JustCausePool is a point of contact with the Aave Pool contract, and where the protocol stores the deposited [aTokens](https://docs.aave.com/developers/tokens/atoken).
 
@@ -840,7 +842,7 @@ Function rReturns asset specific pool information.
 # JCDepositorERC721
 ---
 
-This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/just_cause/blob/main/contracts/polygon/JCDepositorERC721.sol) in our github repository.
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/justcause_contracts/blob/main/contracts/deploy/JCDepositorERC721.sol) in our github repository.
 
 JCDepositorERC721 creates an ERC721 (NFT) for each Contributor, which acts as a digital receipt storing information about their donations. It is for this reason that the NFTs cannot be sold/transferred from the original Contributor's wallet. The only way to get a JustCausePool NFT is to **donate!**
 
@@ -1041,7 +1043,7 @@ Function returns the Pool associated with this NFT contract.
 
 # PoolTracker
 
-This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/just_cause/blob/main/contracts/polygon/PoolTracker.sol) in our github repository.
+This contract is part of the JustCause Protocol for lossless donations using Aave v3. Full code can be found [here](https://github.com/smeee23/justcause_contracts/blob/main/contracts/deploy/PoolTracker.sol) in our github repository.
 
 PoolTracker coordinates all major functionality of the protocol.
 

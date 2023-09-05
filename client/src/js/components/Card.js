@@ -22,7 +22,7 @@ import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
 
 import { getBalance, getContractInfo , getDirectFromPoolInfoAllTokens} from '../func/contractInteractions';
-import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoMd, displayLogoLg, redirectWindowBlockExplorer, redirectWindowUrl, digitsWithMaxTenLength, copyToClipboard, checkPoolInPoolInfo, addNewPoolInfoAllTokens } from '../func/ancillaryFunctions';
+import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoMd, displayLogoLg, redirectWindowBlockExplorer, isNativeToken, redirectWindowUrl, digitsWithMaxTenLength, copyToClipboard, checkPoolInPoolInfo, addNewPoolInfoAllTokens } from '../func/ancillaryFunctions';
 import { verifiedPoolMap } from '../func/verifiedPoolMap';
 import { Modal, SmallModal, LargeModal } from "../components/Modal";
 import DepositModal from '../components/modals/DepositModal'
@@ -190,7 +190,7 @@ class Card extends Component {
 
 	getVerifiedLinks = (isVerified, poolName) => {
 		if(!poolName) return;
-		if(isVerified && this.props.networkId === 137){
+		if(isVerified && this.props.networkId === 10){
 			const name = poolName.replace(/\s+/g, '');
 			const keys = Object.keys(verifiedPoolMap)
 			if(keys.includes(name)){
@@ -319,7 +319,7 @@ class Card extends Component {
 		const isVerified = this.props.isVerified;
 
 		const depositAPY = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].depositAPY;
-		const isETH = (item.acceptedTokenString === 'ETH' || item.acceptedTokenString === 'MATIC') ? true : false;
+		const isETH = isNativeToken(this.props.networkId, item.acceptedTokenString);
 
 		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
 
@@ -425,7 +425,7 @@ class Card extends Component {
 			const tokenMap = this.props.tokenMap;
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 			const activeAccount = this.props.activeAccount;
-			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount);
+			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount, this.props.networkId);
 			const contractInfo = await getContractInfo(poolAddress);
 			await this.props.updateDepositAmount({tokenString: tokenString, tokenAddress: tokenAddress, userBalance: userBalance, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount, amount: ''});
 			//this.updatePoolInfo(this.props.depositAmount.poolAddress, this.props.depositAmount.activeAccount);

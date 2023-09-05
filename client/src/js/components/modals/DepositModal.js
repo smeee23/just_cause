@@ -18,7 +18,7 @@ import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
 import { getAllowance, addPoolToPoolInfo, getContractInfo, getDirectFromPoolInfo } from '../../func/contractInteractions';
-import { delay, getTokenBaseAmount, displayLogo, addNewPoolInfo, checkPoolInPoolInfo } from '../../func/ancillaryFunctions';
+import { delay, getTokenBaseAmount, displayLogo, addNewPoolInfo, checkPoolInPoolInfo, isNativeToken } from '../../func/ancillaryFunctions';
 
 class DepositModal extends Component {
 
@@ -59,7 +59,7 @@ class DepositModal extends Component {
 				const poolAddress = this.props.depositAmount.poolAddress;
 				const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 				const tokenString = this.props.depositAmount.tokenString;
-				const isETH = (tokenString === 'ETH' || tokenString === 'MATIC');
+				const isETH = isNativeToken(this.props.networkId, tokenString);
 				const activeAccount = this.props.activeAccount;
 
 				const amount = this.props.depositAmount.amount;

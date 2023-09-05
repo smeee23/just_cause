@@ -16,7 +16,7 @@ import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
 import {getDirectFromPoolInfo, getContractInfo} from '../../func/contractInteractions';
-import {delay, getTokenBaseAmount, displayLogo, addNewPoolInfo, checkPoolInPoolInfo } from '../../func/ancillaryFunctions';
+import {delay, getTokenBaseAmount, displayLogo, addNewPoolInfo, checkPoolInPoolInfo, isNativeToken } from '../../func/ancillaryFunctions';
 
 class WithdrawModal extends Component {
 
@@ -56,7 +56,7 @@ class WithdrawModal extends Component {
             const tokenAddress = this.props.withdrawAmount.tokenAddress;
             const poolAddress = this.props.withdrawAmount.poolAddress;
             const tokenString = this.props.withdrawAmount.tokenString;
-            const isETH = (tokenString === 'ETH' || tokenString === 'MATIC');
+            const isETH = isNativeToken(this.props.networkId, tokenString);
             const activeAccount = this.props.activeAccount;
 
             const amount = this.props.withdrawAmount.amount;

@@ -181,7 +181,7 @@ class NewPoolModal extends Component {
 	let buttonHolder = [];
 	for(let i = 0; i < tokenStrings.length; i++){
 		const tokenName = tokenStrings[i];
-		if(!["AAVE", "DPI", "LINK", "MATIC"].includes(tokenName) )
+		if(!["AAVE", "DPI", "LINK", "MATIC", "USDT"].includes(tokenName) )
 			if(!this.state.acceptedTokens.includes(tokenName)){
 				buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} icon={"plus"} key={i} callback={() => this.addToken(tokenName)}/>);
 			}

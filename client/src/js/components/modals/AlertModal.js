@@ -95,7 +95,7 @@ class AlertModal extends Component {
 		return (
       <Fragment>
         <ModalBodyTx>
-            <h2>UNSUPPORTED NETWORK IDENTIFIED SWITCH TO POLYGON MAINNET</h2>
+            <h2>UNSUPPORTED NETWORK IDENTIFIED SWITCH TO OPTIMISM MAINNET</h2>
         </ModalBodyTx>
       </Fragment>
 		);

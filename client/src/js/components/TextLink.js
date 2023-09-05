@@ -6,12 +6,16 @@ class TextLink extends Component {
     if(navOn === "on"){
       return(
         <div className="button__bar--outer">
-          <div className="button__bar--inner-nav"/>
+          <div className="button__bar--inner"/>
         </div>
       );
     }
     else if(navOn === "off"){
-      return;
+      return(
+        <div className="button__bar--outer">
+          <div className="button__bar--inner"/>
+        </div>
+      );
     }
     else {
       return(

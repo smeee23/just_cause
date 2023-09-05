@@ -14,7 +14,7 @@ import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
-import {delay, displayLogo, getFormatUSD, numberWithCommas, precise, checkPoolInPoolInfo, addNewPoolInfo} from '../../func/ancillaryFunctions';
+import {delay, displayLogo, getFormatUSD, numberWithCommas, precise, checkPoolInPoolInfo, addNewPoolInfo, isNativeToken} from '../../func/ancillaryFunctions';
 import { getContractInfo, getDirectFromPoolInfo,  } from '../../func/contractInteractions';
 class ClaimModal extends Component {
 
@@ -26,7 +26,7 @@ class ClaimModal extends Component {
 				const tokenAddress = this.props.claim.tokenAddress;
 				const poolAddress = this.props.claim.poolAddress;
 				const tokenString = this.props.claim.tokenString;
-				const isETH = (tokenString === 'ETH' || tokenString === 'MATIC');
+				const isETH = isNativeToken(this.props.networkId, tokenString);
 				const activeAccount = this.props.activeAccount;
 				const gasPrice = (await web3.eth.getGasPrice()).toString();
                 this.props.updateClaim('');

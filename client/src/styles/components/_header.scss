@@ -75,19 +75,19 @@ $baseclass: 'app-bar';
 
   a {
     &:nth-child(1).active .button__bar--inner {
-      background: $brand-red;
+      background: $brand-grey-dark;
     }
 
     &:nth-child(2).active .button__bar--inner {
-      background: $brand-yellow;
+      background: $brand-grey-dark;
     }
 
     &:nth-child(3).active .button__bar--inner {
-      background: $brand-green;
+      background: $brand-grey-dark;
     }
 
     &:nth-child(4).active .button__bar--inner {
-      background: $brand-pink;
+      background: $brand-grey-dark;
     }
   }
 

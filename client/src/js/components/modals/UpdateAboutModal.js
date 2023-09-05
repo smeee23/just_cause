@@ -207,7 +207,7 @@ class UpdateAboutModal extends Component {
 				</ModalHeader>
 				<ModalBody>
 					<div style={{marginTop:"-16px", display: "flex", flexDirection: "column", width:"100%"}}>
-						<p style={{marginBottom:"32px"}} className="mr">Updating or replacing your description requires a transaction on Polygon and an update to your Pool's smart contract.</p>
+						<p style={{marginBottom:"32px"}} className="mr">Updating or replacing your description requires a transaction onchain and an update to your Pool's smart contract.</p>
 						<h2 style={{fontSize:17}} className="mb0">Current Description:</h2>
 						{this.getAbout(newAboutInfo.about)}
 						<h2 style={{marginBottom: "8px", fontSize:17, marginTop:"32px"}} className="mr">Give an update or replace with a new description:</h2>

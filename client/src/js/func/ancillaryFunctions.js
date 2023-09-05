@@ -10,6 +10,7 @@ import MaticLogo from "../components/cryptoLogos/MaticLogo";
 import WEthLogo from "../components/cryptoLogos/WEthLogo";
 import LinkLogo from "../components/cryptoLogos/LinkLogo";
 import DpiLogo from "../components/cryptoLogos/DpiLogo";
+import OptimismLogo from "../components/cryptoLogos/OptimismLogo";
 
 import DaiLogoLg from "../components/cryptoLogos/DaiLogoLg";
 import WbtcLogoLg from "../components/cryptoLogos/WbtcLogoLg";
@@ -69,6 +70,7 @@ export const getBlockExplorerUrl = (label, networkId) => {
   let urlBase;
   if(networkId === 80001) urlBase = 'https://mumbai.polygonscan.com';
   else if (networkId === 137) urlBase = 'https://polygonscan.com';
+  else if (networkId === 10) urlBase = 'https://optimistic.etherscan.io';
   return urlBase + label;
 }
 export const redirectWindowBlockExplorer = (hash, label, networkId) => {
@@ -235,12 +237,15 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
 
 export const getConnection = (tokenMap, networkId) => {
   if(tokenMap){
-    let netName;
     if(networkId === 80001) return 'Mumbai Testnet';
     else if (networkId === 137) return <MaticLogo/>;
-
-    return netName;
+    else if (networkId === 10) return <OptimismLogo/>;
   }
+}
+
+export const isNativeToken = (networkId, tokenString) => {
+  const isETH = (tokenString === 'ETH' && networkId === 10) || (tokenString === 'MATIC' && [10, 80001].includes(networkId)) ? true : false;
+  return isETH;
 }
 
 export const displayTVL = (id, label, tokenMap, cutOff) => {

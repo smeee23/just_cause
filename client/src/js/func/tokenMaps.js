@@ -22,28 +22,47 @@ const polygonMainetTokenMap = {
     LINK: {address:'0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39', decimals: 18, apiKey: "chainlink"},
 }
 
+const optimismMainetTokenMap = {
+    AAVE: {address: '0x76FB31fb4af56892A25e32cFC43De717950c9278', decimals: 18, apiKey: "aave"},
+    DAI: {address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', decimals: 18, apiKey: "dai"},
+    USDC: {address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',decimals: 6, apiKey: "usd-coin"},
+    USDT: {address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',decimals: 6, apiKey: "tether"},
+    WBTC: {address: '0x68f180fcCe6836688e9084f035309E29Bf0A2095',decimals: 8, apiKey: "bitcoin"},
+    ETH: {address: '0x4200000000000000000000000000000000000006', decimals: 18, apiKey: "ethereum"},
+    LINK: {address: '0x350a791Bfc2C21F9Ed5d10980Dad2e2638ffa7f6', decimals: 18, apiKey: "chainlink"},
+}
+
 const aavePoolAddressesProviderPolygonMumbaiV3Address = '0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6';
 const aavePoolAddressesProviderPolygonMainnetAddress = '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb';
+const aavePoolAddressesProviderOptimismMainnetAddress = '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb';
+
+const poolTrackerOptimismAddress = "0x9ff20439a4F5e315A48E5714d0f989f18DE77684";
+const poolTrackerPolygonAddress = "0x6C819199Be8Ed043BfbBBDeD5CB39a66413fbFd1";
+const poolTrackerPolygonMumbaiAddress = "0x0d18DA5180eB259660bd1693927Fc582308c6900";
 
 export const getTokenMap = (networkId) =>{
 
     if(networkId === 80001) return polygonMumbaiV3TokenMap;
 
     if(networkId === 137) return polygonMainetTokenMap;
+
+    if(networkId === 10) return optimismMainetTokenMap;
 }
 
 export const getAaveAddressProvider = (networkId) => {
     if(networkId === 80001) return aavePoolAddressesProviderPolygonMumbaiV3Address;
 
     if(networkId === 137) return aavePoolAddressesProviderPolygonMainnetAddress;
+
+    if(networkId === 10) return aavePoolAddressesProviderOptimismMainnetAddress
 }
 
-export const getSushiRouterAddress = () => {
-    return "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
+export const getPoolTrackerAddress = (networkId) => {
+    if(networkId === 80001) return poolTrackerPolygonMumbaiAddress;
+
+    if(networkId === 137) return poolTrackerPolygonAddress;
+
+    if(networkId === 10) return poolTrackerOptimismAddress;
 }
 
-export const getBurnPitAddress = () => {
-    return "0xD66650352D23780be345e704d6984434Fc0C28c5";
-}
-
-export const deployedNetworks = [ 80001, 137 ];
+export const deployedNetworks = [ 80001, 137, 10 ]; //mumbai, polygon, optimism

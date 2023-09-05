@@ -6,6 +6,7 @@ import JCDepositorERC721 from "../../contracts/JCDepositorERC721.json";
 import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
 import Pool from "../../contracts/IPool.json";
 import { getAboutFromS3 } from "./awsS3";
+import { isNativeToken } from "./ancillaryFunctions";
 
 	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
 		const web3 = await getWeb3();
@@ -51,8 +52,8 @@ import { getAboutFromS3 } from "./awsS3";
 		return (amount*10**decimals).toString();
 	}
 
-	export const getBalance = async(tokenAddress, decimals, tokenString, activeAccount) => {
-		if(tokenString === 'ETH' || tokenString === 'MATIC'){
+	export const getBalance = async(tokenAddress, decimals, tokenString, activeAccount, networkId) => {
+		if(isNativeToken(networkId, tokenString)){
 			const web3 = await getWeb3()
 			let balance = await web3.eth.getBalance(activeAccount);
 			balance = await web3.utils.fromWei(balance, "ether");

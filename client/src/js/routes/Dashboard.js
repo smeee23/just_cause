@@ -169,6 +169,7 @@ class Dashboard extends Component {
 	}
 
 	createVerifiedButtons = () => {
+		if(this.props.networkId !== 137) return;
 		if(this.state.openTabIndex !== 0) return;
 		let buttonHolder = [];
 		const buttonStrings = ['General', 'Crypto for Charity'];
@@ -197,6 +198,7 @@ class Dashboard extends Component {
 	}
 
 	getVerifiedTabInfo = () => {
+		if(this.props.networkId !== 137) return;
 		if(this.state.openTabIndex !== 0) return;
 		let info;
 		if(this.state.openVerifiedIndex === 1){
@@ -272,8 +274,8 @@ class Dashboard extends Component {
 
 					<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
 
-					<a style={{ textDecoration: "none"}} title="New to Polygon? Follow link to learn more" href="https://polygon.technology/" target="_blank" rel="noopener noreferrer">
-						<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Connect to Polygon to view causes</h2>
+					<a style={{ textDecoration: "none"}} title="New to Web3? Follow link to learn more" href="https://metamask.io/" target="_blank" rel="noopener noreferrer">
+						<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Connect with MetaMask to view causes</h2>
 					</a>
 				</div>
 			</div>
@@ -445,6 +447,7 @@ const mapStateToProps = state => ({
 	pendingTxList: state.pendingTxList,
 	alert: state.alert,
 	isMobile: state.isMobile,
+	networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({

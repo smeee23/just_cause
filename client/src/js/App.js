@@ -25,7 +25,7 @@ import { updatePendingTxList } from "./actions/pendingTxList";
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
-import { getTokenMap, getAaveAddressProvider, deployedNetworks } from "./func/tokenMaps.js";
+import { getTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
 import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress } from './func/contractInteractions.js';
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, delay, checkLocationForAppDeploy, filterOutVerifieds, encryptString, decryptString} from './func/ancillaryFunctions';
@@ -33,12 +33,6 @@ import {precise, delay, checkLocationForAppDeploy, filterOutVerifieds, encryptSt
 const providerOptions = {
     walletconnect: {
         package: WalletConnectProvider,
-        options: {
-          rpc: {
-            80001: "https://polygon-mumbai.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
-			137: "https://polygon-mainnet.infura.io/v3/c6e0956c0fb4432aac74aaa7dfb7687e",
-          },
-        }
     },
 };
 
@@ -125,7 +119,7 @@ class App extends Component {
 	}
 
 	setPoolStates = async() => {
-		this.poolTrackerAddress = PoolTracker.networks[this.networkId] && PoolTracker.networks[this.networkId].address;
+		this.poolTrackerAddress = getPoolTrackerAddress(this.networkId);
 		this.PoolTrackerInstance = new this.web3.eth.Contract(
 			PoolTracker.abi,
 			this.poolTrackerAddress,
@@ -274,10 +268,7 @@ class App extends Component {
 		// Subscribe to chainId change
 		provider.on("chainChanged", (chainId) => {
 			console.log(chainId);
-			localStorage.setItem("ownerPoolInfo", "");
-			localStorage.setItem("userDepositPoolInfo", "");
-			localStorage.setItem("verifiedPoolInfo", "");
-			localStorage.setItem("pendingTxList", "");
+			localStorage.clear();
 			window.location.reload(false);
 		});
 
@@ -311,23 +302,12 @@ class App extends Component {
 			try {
 				await window.ethereum.request({
 					method: 'wallet_switchEthereumChain',
-					params: [{ chainId: "0x89" }],
+					params: [{ chainId: "0xA" }],
 				});
 			} catch (err) {
 				// This error code indicates that the chain has not been added to MetaMask
-			  if (err.code === 4902) {
-				await window.ethereum.request({
-				  method: 'wallet_addEthereumChain',
-				  params: [
-					{
-					  chainName: 'Polygon Mainnet',
-					  chainId: "0x89",
-					  nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
-					  rpcUrls: ['https://polygon-rpc.com/']
-					}
-				  ]
-				});
-			  }
+				//this.props.updateAlert("switch_network");
+				alert("Optimism Network not found");
 			}
 			window.location.reload(false);
 		}
@@ -388,6 +368,7 @@ class App extends Component {
 		}
 		await this.props.updateTokenMap(tokenMap);
 		localStorage.setItem("tokenMap", JSON.stringify(tokenMap));
+		console.log("tokenMap", tokenMap);
 	}
 
 	calculateAPY = (liquidityRate) => {

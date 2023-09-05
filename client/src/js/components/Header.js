@@ -117,7 +117,7 @@ class Header extends Component {
         <Fragment>
           <NavLink className="theme--white" exact to={"/dashboard"}>
             <div title="create and fund causes">
-            <TextLink text="Dashboard" navOn={this.state.index === 0 ? "on" : "off"} callback={() => this.resetNavDash()}/>
+              <TextLink text="Dashboard" navOn={this.state.index === 0 ? "on" : "off"} callback={() => this.resetNavDash()}/>
             </div>
           </NavLink>
           <NavLink className="theme--white" exact to={"/search"}>

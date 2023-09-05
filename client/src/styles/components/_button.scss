@@ -105,6 +105,10 @@ $baseclass: 'button';
       transform: scale3d(0,1,1);
 			transform-origin: right;
     }
+    .#{$baseclass}__bar--inner-nav {
+      transform: scale3d(0,1,1);
+			transform-origin: right;
+    }
   }
 
   &--disabled {

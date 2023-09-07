@@ -80,11 +80,6 @@ class App extends Component {
 							await this.props.updateUserDepositPoolInfo(JSON.parse(userDepositPoolInfo));
 							console.log("userDepositPoolInfo from storage", JSON.parse(userDepositPoolInfo));
 						}
-						const tokenMap = localStorage.getItem("tokenMap");
-						if(tokenMap){
-							await this.props.updateTokenMap(JSON.parse(tokenMap));
-							console.log("tokenMap from storage", JSON.parse(tokenMap));
-						}
 
 						await this.getAccounts();
 
@@ -129,6 +124,19 @@ class App extends Component {
 
 
 		const tokenMap = getTokenMap(this.networkId);
+		let tokenMapCache = localStorage.getItem("tokenMap");
+		if(tokenMapCache){
+			tokenMapCache =JSON.parse(tokenMapCache);
+			if(JSON.stringify(Object.keys(tokenMap)) === JSON.stringify(Object.keys(tokenMapCache))){
+				await this.props.updateTokenMap(tokenMapCache);
+				console.log("tokenMap from storage", tokenMapCache);
+			}
+			else{
+				console.log("tokenMap mismatch")
+				localStorage.clear();
+				window.location.reload(false);
+			}
+		}
 		await this.setTokenMapState(tokenMap);
 		await this.setPoolStateAll(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);

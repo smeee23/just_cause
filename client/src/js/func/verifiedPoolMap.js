@@ -1,4 +1,5 @@
 export const verifiedPoolMap = {
+    TheProtocolGuild:{siteUrl : "https://protocol-guild.readthedocs.io/en/latest/index.html"},
     GitcoinGrantsMatchingPool: {siteUrl: 'https://gitcoin.co/about'},
     UnchainFund: {siteUrl:'https://unchain.fund/'},
     CoinCenter: {siteUrl: 'https://www.coincenter.org/'},

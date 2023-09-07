@@ -15,19 +15,19 @@ import { updatePendingTxList } from "../../actions/pendingTxList";
 
 import { uploadToS3, uploadNftMetaData } from '../../func/awsS3'
 
-import { delay, displayLogo, sha256Hash } from '../../func/ancillaryFunctions';
+import { delay, displayLogo, sha256Hash, isNativeToken } from '../../func/ancillaryFunctions';
 import {checkInputError, addPoolToPoolInfo } from '../../func/contractInteractions';
 
 class NewPoolModal extends Component {
 
   constructor(props) {
 		super(props);
-
+		const nativeToken = isNativeToken(this.props.networkId, "ETH") ? "ETH" : "MATIC";
 		this.state = {
 			isValidInput: 'valid',
 			fileUploadHash:"",
       		amount: 0,
-			acceptedTokens: ["WETH"],
+			acceptedTokens: [nativeToken],
 			step: 0,
 			poolName: "",
 			receiver: "",
@@ -64,6 +64,8 @@ class NewPoolModal extends Component {
 			PoolTracker.abi,
 			this.props.poolTrackerAddress,
 		);
+
+		console.log(poolName, "aboutHash", aboutHash, "picHash", this.state.fileUploadHash, "metaUri", metaUri);
 
 		result = await PoolTrackerInstance.methods.createJCPoolClone(tokenAddrs, poolName, aboutHash, this.state.fileUploadHash, metaUri, receiver).send(parameter , async(err, transactionHash) => {
 			console.log('Transaction Hash :', transactionHash, tokenAddrs);
@@ -181,7 +183,11 @@ class NewPoolModal extends Component {
 	let buttonHolder = [];
 	for(let i = 0; i < tokenStrings.length; i++){
 		const tokenName = tokenStrings[i];
-		if(!["AAVE", "DPI", "LINK", "MATIC", "USDT"].includes(tokenName) )
+		const notAcceptedTokens = ["AAVE", "DPI", "LINK", "USDT"]
+		if(isNativeToken(this.props.netowkrId, "ETH")){
+			notAcceptedTokens.push("MATIC");
+		}
+		if(!notAcceptedTokens.includes(tokenName) )
 			if(!this.state.acceptedTokens.includes(tokenName)){
 				buttonHolder.push(<ButtonSmall text={tokenName} logo={displayLogo(tokenName)} icon={"plus"} key={i} callback={() => this.addToken(tokenName)}/>);
 			}
@@ -276,7 +282,7 @@ class NewPoolModal extends Component {
        		 </ModalHeader>
 			<ModalBodyDeploy>
 			<div className="modal__body__column__one--wide">
-				<p>4) This is an optional step. This image will be on the NFT that you and your contributors receive. It will also be displayed on the JustCause site. If left blank image will default to the JustCause Logo </p>
+				<p>4) This is an optional step. This image will be on the NFT that your contributors receive. It will also be displayed on the JustCause site. If left blank image will default to the JustCause Logo </p>
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
 					<input id="photo" type="file" hidden/>
 					<Button disabled={this.isPhotoUploaded()} text={this.getUploadButtonText()} callback={() => this.fileUploadButton()} />

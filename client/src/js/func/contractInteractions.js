@@ -340,7 +340,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 			const regex = /^[a-zA-Z0-9 ]*$/;
 
 			if(!poolName) return "Pool Name cannot be blank"
-			if(poolName.length > 30) return "Pool Name cannot exceed 30 characters"
+			if(poolName.length > 60) return "Pool Name cannot exceed 60 characters"
 			if(!regex.test(poolName)) return "Pool Name can only contain letters and numbers"
 			if(!about) return "Describe section cannot be blank"
 			if(!receiver) return "Receiver section cannot be blank"

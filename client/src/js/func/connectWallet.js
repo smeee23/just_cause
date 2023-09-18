@@ -106,7 +106,8 @@ const connectWallet = async(connectionType) => {
 
     // Subscribe to provider disconnection
     const disconnectSub = provider.on("disconnect", async(error) => {
-      disconnect(error)
+      coinbaseWallet.disconnect();
+      disconnect(error);
     });
     unsubscribers.push(disconnectSub.unsubscribe);
 

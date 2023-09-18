@@ -1,0 +1,85 @@
+import React, { useEffect, useState } from 'react';
+import { useAccount, useConnect} from 'wagmi'
+import { ButtonSmall } from '../components/Button';
+import { connect } from "react-redux"
+import { updateActiveAccount } from "../actions/activeAccount"
+import { updateConnect } from "../actions/connect"
+
+function Profile({ updateActiveAccount, updateConnect }) {
+    const { address, connector, isConnected } = useAccount()
+    const { connect, connectors, error, isLoading, pendingConnector } = useConnect()
+    const [isMounted, setIsMounted] = useState(true);
+
+    useEffect(() => {
+      let isMounted = true;
+      if (!address || !connector) {
+        return; // Exit early if address or connector is not available yet
+      }
+
+      if(isMounted){
+        updateActiveAccount(address);
+        updateConnect(connector.name);
+
+        sessionStorage.setItem('activeAccount', JSON.stringify(address));
+        sessionStorage.setItem('connectionType', JSON.stringify(connector.name));
+
+        console.log("Effect is running!", address, connector);
+      }
+      return () => {
+        isMounted = false;
+      }
+    }, [address, connector, updateActiveAccount, updateConnect]);
+
+    if (isConnected && connector) {
+      console.log("connected", connector.name, address)
+      return (
+        <div>
+          <div>{ address }</div>
+          <div>Connected to {connector.name}</div>
+        </div>
+      )
+    }
+
+    return (
+      <div style={{
+          display: 'flex',           // Turn on flexbox
+          justifyContent: 'center',  // Center horizontally
+          alignItems: 'center',      // Center vertically
+          gap: '8px',                // Space between items
+          flexDirection: 'column'       // Horizontal layout. This is default and can be omitted.
+      }}>
+          {connectors.map((connector) => (
+              <ButtonSmall
+                  disabled={!connector.ready}
+                  key={connector.id}
+                  callback={() => connect({ connector })}
+                  text={
+                    connector.name +
+                    (!connector.ready ? ' (unsupported)' : '') +
+                    (isLoading && connector.id === pendingConnector?.id ? ' (connecting)' : '')
+                  }
+                  icon={connector.name}
+              />
+          ))}
+          {error && <div>{error.message}</div>}
+        </div>
+    )
+}
+
+const mapStateToProps = state => ({
+	activeAccount: state.activeAccount,
+  connect: state.connect,
+})
+
+const mapDispatchToProps = dispatch => ({
+  updateActiveAccount: (s) => {
+    console.log('Dispatching updateActiveAccount with:', s);
+    dispatch(updateActiveAccount(s));
+  },
+  updateConnect: (s) => {
+      console.log('Dispatching updateConnect with:', s);
+      dispatch(updateConnect(s));
+  },
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)

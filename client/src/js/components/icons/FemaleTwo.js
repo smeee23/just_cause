@@ -6,7 +6,7 @@ class FemaleTwo extends Component {
 		return (
             <svg width="100px" height="100px" viewBox="0 0 512 512"><defs><clipPath id="clip-Chr_8">
 
-			<rect height="512" width="512"/></clipPath></defs><g clip-path="url(#clip-Chr_8)" data-name="Chr 8" id="Chr_8">
+			<rect height="512" width="512"/></clipPath></defs><g clipPath="url(#clip-Chr_8)" data-name="Chr 8" id="Chr_8">
 
 			<g data-name="Character 8" id="Character_8">
 

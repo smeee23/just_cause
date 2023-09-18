@@ -107,17 +107,13 @@ class Card extends Component {
 			return <div title={"harvest donations for "+title}><Button logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
 		}
 	}
-	displayDepositOrApprove = (poolAddress, tokenAddress, isEth, tokenString, allowance, title) => {
+	displayDeposit = (poolAddress, tokenAddress, isEth, tokenString, title) => {
 		if(isEth){
-			if(this.props.isMobile) return  <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+			if(this.props.isMobile) return  <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 			return  <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		}
-		if(Number(allowance) === 0){
-			if(this.props.isMobile) return <div title={"required before deposit"}><ButtonSmall logo={displayLogo(tokenString)} text={"Approve "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
-			return <div title={"required before deposit"}><Button logo={displayLogo(tokenString)} text={"Approve "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
-		}
-		if(this.props.isMobile) return <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
-		return <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+		if(this.props.isMobile) return <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+		return <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 	}
 	toggleCardOpen = () => {
 		this.setState({
@@ -371,7 +367,7 @@ class Card extends Component {
 						<div className="card__dep-buttons-col">
 							{this.displayClaim(item, address, title)}
 							{this.displayWithdraw(item, address, item.acceptedTokenString, title)}
-							{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance, title)}
+							{this.displayDeposit(address, item.address, isETH, item.acceptedTokenString, title)}
 						</div>
 						{this.props.isMobile ?
 							<div style={{display: "flex", flexDirection: "wrap", gap: "16px"}}>
@@ -384,7 +380,7 @@ class Card extends Component {
 					</div>
 				</div>
 				<div className="card__dep-buttons-flex">
-					{this.displayDepositOrApprove(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance, title)}
+					{this.displayDeposit(address, item.address, isETH, item.acceptedTokenString, this.props.tokenMap[item.acceptedTokenString].allowance, title)}
 					{this.displayWithdraw(item, address, item.acceptedTokenString, title)}
 					{this.displayClaim(item, address, title)}
 				</div>
@@ -425,10 +421,9 @@ class Card extends Component {
 			const tokenMap = this.props.tokenMap;
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 			const activeAccount = this.props.activeAccount;
-			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount, this.props.networkId);
-			const contractInfo = await getContractInfo(poolAddress);
+			const userBalance = await getBalance(tokenAddress, tokenMap[tokenString].decimals, tokenString, activeAccount, this.props.networkId, this.props.connect);
+			const contractInfo = await getContractInfo(poolAddress, this.props.connect);
 			await this.props.updateDepositAmount({tokenString: tokenString, tokenAddress: tokenAddress, userBalance: userBalance, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount, amount: ''});
-			//this.updatePoolInfo(this.props.depositAmount.poolAddress, this.props.depositAmount.activeAccount);
 		}
 		catch (error) {
 			console.error(error);
@@ -448,7 +443,7 @@ class Card extends Component {
 			const tokenMap = this.props.tokenMap;
 			const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === tokenAddress);
 			const activeAccount = this.props.activeAccount;
-			const contractInfo = await getContractInfo(poolAddress);
+			const contractInfo = await getContractInfo(poolAddress, this.props.connect);
 			let formatBalance = precise(rawBalance, tokenMap[tokenString].decimals);
 			if(rawBalance /10**tokenMap[tokenString].decimals < formatBalance){
 				alert('withdraw amount issue');
@@ -473,7 +468,7 @@ class Card extends Component {
 		try{
 			const activeAccount = this.props.activeAccount;
 			const tokenString = Object.keys(this.props.tokenMap).find(key => this.props.tokenMap[key].address === tokenAddress);
-			const contractInfo = await getContractInfo(poolAddress);
+			const contractInfo = await getContractInfo(poolAddress, this.props.connect);
 
 			await this.props.updateClaim({tokenString: tokenString, tokenAddress: tokenAddress, poolAddress: poolAddress, contractInfo: contractInfo, activeAccount: activeAccount, unclaimedInterest: unclaimedInterest});
 
@@ -487,19 +482,6 @@ class Card extends Component {
 		if(this.props.approve){
 			let modal = <SmallModal isOpen={true}><ApproveModal approveInfo={this.props.approve}/></SmallModal>
 			return modal;
-		}
-	}
-
-	approve = async(tokenAddress, tokenString, poolAddress) => {
-		console.log("approve clicked");
-		await this.props.updateApprove('');
-		try{
-			const activeAccount = this.props.activeAccount;
-
-			await this.props.updateApprove({tokenString: tokenString, tokenAddress: tokenAddress, poolAddress: poolAddress, activeAccount: activeAccount});
-		}
-		catch (error) {
-			console.error(error);
 		}
 	}
 
@@ -534,7 +516,7 @@ class Card extends Component {
 	refresh = async(poolAddress) =>{
 		this.setState({loading: true});
 
-		let newInfoAllTokens = await getDirectFromPoolInfoAllTokens(this.props.address, this.props.tokenMap, this.props.activeAccount);
+		let newInfoAllTokens = await getDirectFromPoolInfoAllTokens(this.props.address, this.props.tokenMap, this.props.activeAccount, this.props.connect);
 		console.log("update all tokens", newInfoAllTokens);
 
 		if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
@@ -682,6 +664,7 @@ const mapStateToProps = state => ({
 	share: state.share,
 	networkId: state.networkId,
 	newAbout: state.newAbout,
+	connect: state.connect,
 	isMobile: state.isMobile,
 })
 

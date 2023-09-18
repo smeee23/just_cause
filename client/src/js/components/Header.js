@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from "react";
 import { connect } from "react-redux"
 import Web3 from "web3";
+import { withRouter } from 'react-router-dom';
 
 import Logo from "./Logo";
 import { Button, ButtonSmall } from "./Button";
@@ -10,9 +11,9 @@ import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
 import { updateConnect } from "../actions/connect"
-import { checkLocationForAppDeploy, displayTVL, getConnection, redirectWindowBlockExplorer } from "../func/ancillaryFunctions"
-
-import { web3Modal } from "../App"
+import { displayTVL, getConnection, redirectWindowBlockExplorer } from "../func/ancillaryFunctions"
+import Profile from "../func/wagmiDisplay"
+import Disconnect from "../func/wagmiDisconnect"
 
 class Header extends Component {
 
@@ -31,7 +32,7 @@ class Header extends Component {
 
   getNavIndex = (index) => {
     let i;
-    if("inApp" === checkLocationForAppDeploy()){
+    if(!["/howitworks", "/"].includes(this.props.location.pathname)){
       const loc = window.location.href;
       if(loc.includes("search") && index === 1){
         console.log("search", loc);
@@ -62,7 +63,7 @@ class Header extends Component {
 			// Will open the MetaMask UI
 			// You should disable this button while the request is pending!
 
-			provider = await web3Modal.connect();
+			//provider =
 			//addresses = await provider.request({ method: 'eth_requestAccounts' });
 		}
 		catch (error) {
@@ -74,29 +75,15 @@ class Header extends Component {
 
 	connectButtonHit = async() => {
     if(this.props.activeAccount === "Connect"){
-      const provider = await this.connectToWeb3();
-      const web3 = new Web3(provider);
-		  const addresses = await web3.eth.getAccounts();
-      if(addresses){
-        this.props.updateActiveAccount(addresses[0]);
-        this.props.updateConnect(true);
-      }
-
-      window.location.reload(false);
+      this.props.updateActiveAccount("Pending")
     }
     else{
         redirectWindowBlockExplorer(this.props.activeAccount, 'address', this.props.networkId);
     }
 	}
-  disconnectButtonHit = async() => {
-    await web3Modal.clearCachedProvider();
-    localStorage.setItem("ownerPoolInfo", "");
-    localStorage.setItem("userDepositPoolInfo", "");
-    window.location.reload(false);
-  }
 
   generateNav = () => {
-    if("outsideApp" === checkLocationForAppDeploy()){
+    if(["/howitworks", "/"].includes(this.props.location.pathname)){
       return (
         <Fragment>
           <NavLink className="theme--white" exact to={"/howitworks"}>
@@ -134,7 +121,7 @@ class Header extends Component {
   }
 
   getHomeLink = () => {
-    if("outsideApp" === checkLocationForAppDeploy()){
+    if(["/howitworks", "/"].includes(this.props.location.pathname)){
       return (
         <div style={{width: "100%"}}>
         <div className="app-bar__logo">
@@ -162,7 +149,7 @@ class Header extends Component {
               <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px"}}>{  displayTVL('tvl', 'Deposited', this.props.tokenMap, 3) }</h2>
             </div>
             <div className="app-bar__connect" >
-              <h2 title="connected" className="mb0" style={{fontSize:11, color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
+              <h2 title="connected" className="mb0" style={{fontSize:11, color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId, this.props.activeAccount)} </h2>
               <div >
                 {this.getConnectButton()}
               </div>
@@ -174,17 +161,17 @@ class Header extends Component {
   }
 
   getLaunchButton = () => {
-    if(web3Modal.cachedProvider)
+    if(this.props.connect)
       return <ButtonSmall forceDisplay="true" text={"Lauch App"} icon={"poolShape5"} callback={this.connectButtonHit}/>;
 
     return <ButtonSmall forceDisplay="true" text={"Lauch App"} icon={"poolShape5"}/>;
   }
 
   getAccountButtons = () => {
-    if(this.props.activeAccount === "Connect"){
+    if(["Connect", "Pending"].includes(this.props.activeAccount)){
       return(
         <div title={"connect to web3"}>
-          <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"people"} callback={this.connectButtonHit}/>
+          <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/>
         </div>
       );
     }
@@ -192,10 +179,10 @@ class Header extends Component {
       return(
         <div style={{display: "flex", flexDirection: "wrap", gap: "2px"}}>
           <div title={"view address on block explorer"} >
-            <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/>
+            <ButtonSmall text={this.displayAddress(this.props.activeAccount)} logo={getConnection(this.props.networkId, this.props.activeAccount)} icon={this.props.connect} callback={this.connectButtonHit}/>
           </div>
           <div title={"disconnect"} style={{marginTop: "-5px"}}>
-            <Button isLogo="close" callback={this.disconnectButtonHit}/>
+            <Disconnect/>
           </div>
         </div>
       );
@@ -203,19 +190,19 @@ class Header extends Component {
   }
 
   getConnectButton = () => {
-    if("outsideApp" === checkLocationForAppDeploy()){
+    if(["/howitworks", "/"].includes(this.props.location.pathname)){
       return (
         <NavLink className="theme--white" exact to={"/dashboard"}>
           {this.getLaunchButton()}
         </NavLink>
-        )
+      )
     }
     else{
       return this.getAccountButtons();
     }
   }
   displayAddress = (address) => {
-    if(address === 'Connect')
+    if(['Connect', 'Pending'].includes(address))
       return address;
 
     return address.slice(0, 6) + "..."+address.slice(-4);
@@ -232,6 +219,7 @@ class Header extends Component {
     const { isMobile } = this.props;
 
     const nav = this.generateNav();
+    const profile = <Profile/>;
 
 		return (
       <header className="app-bar horizontal-padding theme--white">
@@ -242,10 +230,7 @@ class Header extends Component {
         </nav>
         <nav className="app-bar__items__right">
         <div style={{display: "flex", gap: "3px"}} >
-              <h2 title="connected" className="mb0" style={{fontSize:11, color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId)} </h2>
-              <div >
                 {this.getConnectButton()}
-              </div>
             </div>
         </nav>
       </header>
@@ -257,12 +242,16 @@ const mapStateToProps = state => ({
 	isMobile: state.isMobile,
   activeAccount: state.activeAccount,
   tokenMap: state.tokenMap,
+  connect: state.connect,
   networkId: state.networkId,
 })
 
 const mapDispatchToProps = dispatch => ({
-	updateActiveAccount: (s) => dispatch(updateActiveAccount(s)),
+	updateActiveAccount: (s) => {
+    console.log('Dispatching updateActiveAccount with:', s);
+    dispatch(updateActiveAccount(s));
+  },
   updateConnect: (bool) => dispatch(updateConnect(bool)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header)
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header))

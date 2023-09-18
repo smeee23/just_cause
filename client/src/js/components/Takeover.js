@@ -5,7 +5,7 @@ import { Button, ButtonSmall } from "./Button";
 import TextLink from "./TextLink";
 import { NavLink } from 'react-router-dom'
 
-import { checkLocationForAppDeploy } from "../func/ancillaryFunctions"
+import { withRouter } from 'react-router-dom';
 
 class Takeover extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class Takeover extends Component {
   }
 
   generateNav = () => {
-    if("outsideApp" === checkLocationForAppDeploy()){
+    if(["/howitworks", "/"].includes(this.props.location.pathname)){
       return (
         <Fragment>
           <NavLink className="theme--white" exact to={"/howitworks"}>
@@ -80,4 +80,4 @@ class Takeover extends Component {
 	}
 }
 
-export default Takeover
+export default withRouter(Takeover)

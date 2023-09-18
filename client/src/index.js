@@ -11,7 +11,7 @@ import rootReducer from './js/reducers'
 
 import * as serviceWorker from './serviceWorker';
 
-require("dotenv").config();
+global.Buffer = global.Buffer || require('buffer').Buffer;
 
 const history = createBrowserHistory()
 

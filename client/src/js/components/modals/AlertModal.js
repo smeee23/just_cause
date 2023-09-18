@@ -62,7 +62,7 @@ class AlertModal extends Component {
   }
 
   getContractInfo = async(address) => {
-    return await getContractInfo(address);
+    return await getContractInfo(address, this.props.connect);
   };
 
   share = async(poolAddress, name, txDetails) => {
@@ -104,6 +104,7 @@ class AlertModal extends Component {
 
 const mapStateToProps = state => ({
   tokenMap: state.tokenMap,
+  connect: state.connect,
 })
 
 const mapDispatchToProps = dispatch => ({

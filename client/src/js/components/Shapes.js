@@ -3,9 +3,6 @@ import Matter from "matter-js";
 import MatterAttractors from "matter-attractors";
 
 class Shapes extends Component {
-    componentWillUnmount() {
-        // Todo remove event listeners
-    }
 
     componentDidMount() {
         const Engine = Matter.Engine,
@@ -104,29 +101,39 @@ class Shapes extends Component {
 
         Render.run(render);
 
-        document.addEventListener('mousedown', (e) => {
-            this.startX = e.clientX;
-            this.startY = e.clientY;
-            this.dragBody = Matter.Query.point(this.stack.bodies, { x: this.startX, y: this.startY }).shift();
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (this.dragBody) {
-                Matter.Body.setPosition(this.dragBody, { x: e.clientX, y: e.clientY });
-            }
-        });
-
-        document.addEventListener('mouseup', (e) => {
-            if (this.dragBody) {
-                const maxVelo = 10;
-                const xVelo = Math.min(Math.max(e.clientX - this.startX, maxVelo), -1 * maxVelo);
-                const yVelo = Math.min(Math.max(e.clientY - this.startY, maxVelo), -1 * maxVelo);
-                Matter.Body.setVelocity(this.dragBody, { x: xVelo, y: yVelo });
-                this.dragBody = null;
-            }
-        });
+        document.addEventListener('mousedown', this.handleMouseDown);
+        document.addEventListener('mousemove', this.handleMouseMove);
+        document.addEventListener('mouseup', this.handleMouseUp);
     }
 
+    handleMouseDown = (e) => {
+        this.startX = e.clientX;
+        this.startY = e.clientY;
+        this.dragBody = Matter.Query.point(this.stack.bodies, { x: this.startX, y: this.startY }).shift();
+    };
+
+    handleMouseMove = (e) => {
+        if (this.dragBody) {
+            Matter.Body.setPosition(this.dragBody, { x: e.clientX, y: e.clientY });
+        }
+    };
+
+    handleMouseUp = (e) => {
+        if (this.dragBody) {
+            const maxVelo = 10;
+            const xVelo = Math.min(Math.max(e.clientX - this.startX, maxVelo), -1 * maxVelo);
+            const yVelo = Math.min(Math.max(e.clientY - this.startY, maxVelo), -1 * maxVelo);
+            Matter.Body.setVelocity(this.dragBody, { x: xVelo, y: yVelo });
+            this.dragBody = null;
+        }
+    };
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleMouseDown);
+        document.removeEventListener('mousemove', this.handleMouseMove);
+        document.removeEventListener('mouseup', this.handleMouseUp);
+    }
+    
     createWalls = (World, Bodies, engine) => {
         const wallThickness = 50;
 

@@ -41,11 +41,11 @@ class NewPoolModal extends Component {
     let result;
 	let txInfo;
 	try{
-		const aboutHash = sha256Hash(aboutText);
+		const aboutHash = await sha256Hash(aboutText);
 		const metaUri = 'https://justcausepools.s3.amazonaws.com/'+poolName+"__meta";
 
 		this.props.updateDeployInfo('');
-		const web3 = await getWeb3();
+		const web3 = await getWeb3(this.props.connect);
 		const activeAccount = this.props.activeAccount;
 		let tokenAddrs = [];
 		for(let i = 0; i < acceptedTokens.length; i++){
@@ -88,7 +88,7 @@ class NewPoolModal extends Component {
 		await uploadToS3(aboutText, poolName, "__text");
 		await uploadNftMetaData(poolName, aboutText);
 
-		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, [...this.props.ownerPoolInfo]);
+		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, [...this.props.ownerPoolInfo], this.props.connect);
 		await this.props.updateOwnerPoolInfo(newOwnerInfo);
 		localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 	}
@@ -126,17 +126,15 @@ class NewPoolModal extends Component {
   uploadPicToS3 = async() => {
 	const reader = new FileReader();
     reader.onloadend = async() => {
-        const buf = Buffer(reader.result) // Convert data into buffer
-		//const uploadResult = await upload(buf);
+        const buf = reader.result;
 		await uploadToS3(buf, this.state.poolName, "__pic");
-		const picHash = sha256Hash(buf);
+		const picHash = await sha256Hash(buf);
 		this.setState({
 			fileUploadHash: picHash
 		});
     }
     const photo = document.getElementById("photo");
     reader.readAsArrayBuffer(photo.files[0]); // Read Provided File
-
   }
 
   fileUploadButton = () => {
@@ -211,7 +209,7 @@ class NewPoolModal extends Component {
 	}
 	else if(this.state.step === 0){
 		const poolTracker = this.props.poolTrackerAddress;
-		const inputError = await checkInputError(obj, poolTracker);
+		const inputError = await checkInputError(obj, poolTracker, this.props.connect);
 		this.setState({inputError});
 		if(!this.state.inputError){
 			this.setState({
@@ -327,7 +325,8 @@ const mapStateToProps = state => ({
 	activeAccount: state.activeAccount,
 	networkId: state.networkId,
 	ownerPoolInfo: state.ownerPoolInfo,
-	pendingTxList: state.pendingTxList
+	connect: state.connect,
+	pendingTxList: state.pendingTxList,
 })
 
 const mapDispatchToProps = dispatch => ({

@@ -43,7 +43,7 @@ class UpdateAboutModal extends Component {
 		const aboutHash = sha256Hash(aboutText);
 		const metaUri = 'https://justcausepools.s3.amazonaws.com/'+poolName+"__meta";
 
-		const web3 = await getWeb3();
+		const web3 = await getWeb3(this.props.connect);
 		const activeAccount = this.props.activeAccount;
 
 		const gasPrice = (await web3.eth.getGasPrice()).toString();
@@ -82,7 +82,7 @@ class UpdateAboutModal extends Component {
 		await uploadToS3(aboutText, poolName, "__text");
 		await uploadNftMetaData(poolName, aboutText);
 
-		const newAbout = await getDirectAboutOnly(poolAddress);
+		const newAbout = await getDirectAboutOnly(poolAddress, this.props.connect);
 
 		if(newAbout){
 			const newOwnerInfo = addNewPoolInfoAboutOnly([...this.props.ownerPoolInfo], newAbout);
@@ -244,6 +244,7 @@ const mapStateToProps = state => ({
 	userDepositPoolInfo: state.userDepositPoolInfo,
 	verifiedPoolInfo: state.verifiedPoolInfo,
 	ownerPoolInfo: state.ownerPoolInfo,
+	connect: state.connect,
 	pendingTxList: state.pendingTxList,
 })
 

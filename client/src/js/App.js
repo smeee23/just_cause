@@ -1,6 +1,5 @@
 import Web3 from "web3";
 import Web3Modal from "web3modal";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { ConnectedRouter } from 'connected-react-router'
@@ -26,22 +25,56 @@ import { updatePendingTxList } from "./actions/pendingTxList";
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
 import { getTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
+
 import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress } from './func/contractInteractions.js';
+
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
 import {precise, delay, checkLocationForAppDeploy, filterOutVerifieds, encryptString, decryptString} from './func/ancillaryFunctions';
+import connectWallet from "./func/connectWallet";
+import { configureChains, createConfig, WagmiConfig } from 'wagmi'
+import { optimism } from 'wagmi/chains'
 
-const providerOptions = {
-    walletconnect: {
-        package: WalletConnectProvider,
-    },
-};
+import { EthereumProvider } from '@walletconnect/ethereum-provider'
 
-export const web3Modal = new Web3Modal({
-	cacheProvider: true, // optional
-    disableInjectedProvider: false,
-	providerOptions, // required
-	theme: "dark",
-});
+import { infuraProvider } from 'wagmi/providers/infura'
+import { publicProvider } from 'wagmi/providers/public'
+
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+
+const chainName = [optimism]
+const projectId = '121c52ec6852ab6b453b3fbf45945d49'
+
+// Configure chains & providers with the Alchemy provider.
+  // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
+  const { chains, publicClient, webSocketPublicClient } = configureChains(
+	[optimism],
+	[infuraProvider({ apiKey: 'c6e0956c0fb4432aac74aaa7dfb7687e' }), publicProvider()],
+  )
+
+  // Set up wagmi config
+  const wagmiConfig = createConfig({
+	autoConnect: true,
+	connectors: [
+	  new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
+	  new CoinbaseWalletConnector({
+		chains,
+		options: {
+		  appName: 'JustCause',
+		},
+	  }),
+	  new WalletConnectConnector({
+		chains,
+		options: {
+		  projectId: projectId,
+		},
+	  }),
+	],
+	publicClient,
+	webSocketPublicClient,
+  })
 
 class App extends Component {
 
@@ -56,16 +89,9 @@ class App extends Component {
 		try {
 			console.log("isMobile", this.props.isMobile)
 			window.addEventListener('resize', this.props.detectMobile);
-
-				if("inApp" === checkLocationForAppDeploy() || "inSearch" === checkLocationForAppDeploy() ){
-					if(web3Modal.cachedProvider || "inSearch" === checkLocationForAppDeploy() ){
-						const pendingTxList = localStorage.getItem("pendingTxList");
-						if(pendingTxList){
-							const truePending = await checkTransactions(JSON.parse(pendingTxList));
-							this.props.updatePendingTxList(truePending);
-							localStorage.setItem("pendingTxList", JSON.stringify(truePending));
-						}
-						const verifiedPoolInfo = localStorage.getItem("verifiedPoolInfo");
+				//if("inApp" === checkLocationForAppDeploy() || "inSearch" === checkLocationForAppDeploy() ){
+					//if(web3Modal.cachedProvider || "inSearch" === checkLocationForAppDeploy() ){
+						/*const verifiedPoolInfo = localStorage.getItem("verifiedPoolInfo");
 						if(verifiedPoolInfo){
 							await this.props.updateVerifiedPoolInfo(JSON.parse(verifiedPoolInfo));
 							console.log("verifiedPoolInfo from storage", JSON.parse(verifiedPoolInfo));
@@ -79,16 +105,22 @@ class App extends Component {
 						if(userDepositPoolInfo){
 							await this.props.updateUserDepositPoolInfo(JSON.parse(userDepositPoolInfo));
 							console.log("userDepositPoolInfo from storage", JSON.parse(userDepositPoolInfo));
-						}
+						}*/
 
-						await this.getAccounts();
 
-						if (this.props.activeAccount){
-							await this.setUpConnection();
-							await this.setPoolStates();
-						}
-						this.subscribeToInfura();
-					}
+						//if (this.props.activeAccount){
+
+						//}
+					//}
+				//}
+
+				const activeAccount = sessionStorage.getItem('activeAccount');
+				if(activeAccount){
+					this.props.updateActiveAccount(JSON.parse(activeAccount));
+				}
+				const connector = sessionStorage.getItem('connectionType');
+				if(connector){
+					this.props.updateConnect(JSON.parse(connector));
 				}
 		}
 
@@ -105,6 +137,38 @@ class App extends Component {
 			);
 			}
 			console.error(error);
+		}
+	}
+
+	componentDidUpdate = async(prevProps) => {
+        if (this.props.connect !== prevProps.connect) {
+            // account prop has changed, perform your logic
+			const pendingTxList = localStorage.getItem("pendingTxList");
+			if(pendingTxList){
+				const truePending = await checkTransactions(JSON.parse(pendingTxList), this.props.connect);
+				this.props.updatePendingTxList(truePending);
+				localStorage.setItem("pendingTxList", JSON.stringify(truePending));
+			}
+			if(this.props.activeAccount){
+				await this.getAccounts();
+				await this.setUpConnection();
+				await this.setPoolStates();
+				this.subscribeToInfura();
+			}
+        }
+    }
+
+	componentWillUnmount() {
+		console.log("unmounting")
+		window.removeEventListener('resize', this.props.detectMobile);
+
+		this.claimSubscription && this.claimSubscription.unsubscribe();
+		this.addPoolSubscription && this.addPoolSubscription.unsubscribe();
+		this.addDepositSubscription && this.addDepositSubscription.unsubscribe();
+		this.withdrawDepositSubscription && this.withdrawDepositSubscription.unsubscribe();
+
+		if (this.walletConnection && this.walletConnection.unsubscribeAll) {
+			this.walletConnection.unsubscribeAll();
 		}
 	}
 
@@ -148,14 +212,15 @@ class App extends Component {
 	}
 
 	connectToWeb3 = async() => {
-		let provider;
+		let web3;
 		try {
-			provider = await web3Modal.connect();
+			this.walletConnection = await connectWallet(this.props.connect);
+			web3 = this.walletConnection.web3;
 		}
 		catch (error) {
 			console.error(error);
 		}
-		return provider;
+		return web3;
 	}
 
 	subscribeToInfura = async() => {
@@ -163,7 +228,6 @@ class App extends Component {
 			PoolTracker.abi,
 			this.poolTrackerAddress,
 		);
-
 
 		let options = {
 			filter: {
@@ -175,9 +239,9 @@ class App extends Component {
 		console.log("events", poolTrackerInstance.events);
 
 		let pending;
-		poolTrackerInstance.events.Claim(options)
+		this.claimSubscription = poolTrackerInstance.events.Claim(options)
 			.on('data', async(event) => {
-				console.log("EVENT data", event)
+				//console.log("EVENT data", event)
 				let pending = [...this.props.pendingTxList];
 				pending.forEach((e, i) =>{
 					if(e.txHash === event.transactionHash){
@@ -196,115 +260,74 @@ class App extends Component {
 			.on('error', err => console.log("EVENT err", err))
 			.on('connected', str => console.log("EVENT str", str))
 
-		poolTrackerInstance.events.AddPool(options)
-		.on('data', async(event) => {
-			console.log("EVENT data", event)
-			let pending = [...this.props.pendingTxList];
-			pending.forEach((e, i) =>{
-				if(e.txHash === event.transactionHash){
-					e.status = "complete"
-				}
-			});
-			await this.props.updatePendingTxList(pending);
-			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+		this.addPoolSubscription = poolTrackerInstance.events.AddPool(options)
+			.on('data', async(event) => {
+				//console.log("EVENT data", event)
+				let pending = [...this.props.pendingTxList];
+				pending.forEach((e, i) =>{
+					if(e.txHash === event.transactionHash){
+						e.status = "complete"
+					}
+				});
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
 
-			await delay(3000);
-			pending = (pending).filter(e => !(e.txHash === event.transactionHash));
-			await this.props.updatePendingTxList(pending);
-			localStorage.setItem("pendingTxList", JSON.stringify(pending));
-		})
+				await delay(3000);
+				pending = (pending).filter(e => !(e.txHash === event.transactionHash));
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+			})
 			.on('changed', changed => console.log("EVENT changed", changed))
 			.on('error', err => console.log("EVENT err", err))
 			.on('connected', str => console.log("EVENT str", str))
 
-		poolTrackerInstance.events.AddDeposit(options)
-		.on('data', async(event) => {
-			console.log("EVENT data", event)
-			let pending = [...this.props.pendingTxList];
-			pending.forEach((e, i) =>{
-				if(e.txHash === event.transactionHash){
-					e.status = "complete"
-				}
-			});
-			await this.props.updatePendingTxList(pending);
-			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+		this.addDepositSubscription = poolTrackerInstance.events.AddDeposit(options)
+			.on('data', async(event) => {
+				//console.log("EVENT data", event)
+				let pending = [...this.props.pendingTxList];
+				pending.forEach((e, i) =>{
+					if(e.txHash === event.transactionHash){
+						e.status = "complete"
+					}
+				});
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
 
-			await delay(3000);
-			pending = (pending).filter(e => !(e.txHash === event.transactionHash));
-			await this.props.updatePendingTxList(pending);
-			localStorage.setItem("pendingTxList", JSON.stringify(pending));
-		})
+				await delay(3000);
+				pending = (pending).filter(e => !(e.txHash === event.transactionHash));
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+			})
 			.on('changed', changed => console.log("EVENT changed", changed))
 			.on('error', err => console.log("EVENT err", err))
 			.on('connected', str => console.log("EVENT str", str))
 
-		poolTrackerInstance.events.WithdrawDeposit(options)
-		.on('data', async(event) => {
-			console.log("EVENT data", event)
-			let pending = [...this.props.pendingTxList];
-			pending.forEach((e, i) =>{
-				if(e.txHash === event.transactionHash){
-					e.status = "complete"
-				}
-			});
-			await this.props.updatePendingTxList(pending);
-			localStorage.setItem("pendingTxList", JSON.stringify(pending));
+		this.withdrawDepositSubscription = poolTrackerInstance.events.WithdrawDeposit(options)
+			.on('data', async(event) => {
+				//console.log("EVENT data", event)
+				let pending = [...this.props.pendingTxList];
+				pending.forEach((e, i) =>{
+					if(e.txHash === event.transactionHash){
+						e.status = "complete"
+					}
+				});
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
 
-			await delay(3000);
-			pending = (pending).filter(e => !(e.txHash === event.transactionHash));
-			await this.props.updatePendingTxList(pending);
-			localStorage.setItem("pendingTxList", JSON.stringify(pending));
-		})
+				await delay(3000);
+				pending = (pending).filter(e => !(e.txHash === event.transactionHash));
+				await this.props.updatePendingTxList(pending);
+				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+			})
 			.on('changed', changed => console.log("EVENT changed", changed))
 			.on('error', err => console.log("EVENT err", err))
 			.on('connected', str => console.log("EVENT str", str))
 	}
 
 	getAccounts = async() => {
-		const provider = await this.connectToWeb3();
-		this.provider = provider;
-
-		provider.on("accountsChanged", async(accounts) => {
-			console.log("accounts change", accounts, provider);
-			await web3Modal.clearCachedProvider();
-			localStorage.setItem("ownerPoolInfo", "");
-			localStorage.setItem("userDepositPoolInfo", "");
-			localStorage.setItem("pendingTxList", "");
-			window.location.reload(false);
-		  });
-
-		// Subscribe to chainId change
-		provider.on("chainChanged", (chainId) => {
-			console.log(chainId);
-			localStorage.clear();
-			window.location.reload(false);
-		});
-
-		// Subscribe to provider connection
-		provider.on("connect", (info) => {
-			console.log(info);
-			localStorage.setItem("ownerPoolInfo", "");
-			localStorage.setItem("userDepositPoolInfo", "");
-			localStorage.setItem("pendingTxList", "");
-			window.location.reload(false);
-		});
-
-		// Subscribe to provider disconnection
-		provider.on("disconnect", async(error) => {
-			console.log("disconnect", error);
-			await web3Modal.clearCachedProvider();
-			localStorage.setItem("ownerPoolInfo", "");
-			localStorage.setItem("userDepositPoolInfo", "");
-			localStorage.setItem("pendingTxList", "");
-			window.location.reload(false);
-		});
-
-		this.web3 = new Web3(this.provider);
-
-		const accounts = await this.web3.eth.getAccounts();
-    	await this.props.updateActiveAccount(accounts[0]);
-
+		this.web3 = await this.connectToWeb3();
 		this.networkId = await this.web3.eth.net.getId();
+		console.log("networkId", this.networkId);
 		if(!deployedNetworks.includes(this.networkId)){
 			this.props.updateAlert("switch_network");
 			try {
@@ -328,7 +351,7 @@ class App extends Component {
 	}
 
 	setAavePoolAddress = async(aavePoolAddressesProviderAddress) => {
-		const aavePoolAddress = await getAavePoolAddress(aavePoolAddressesProviderAddress);
+		const aavePoolAddress = await getAavePoolAddress(aavePoolAddressesProviderAddress, this.props.connect);
 		await this.props.updateAavePoolAddress(aavePoolAddress);
 
 	}
@@ -352,10 +375,9 @@ class App extends Component {
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
 
-			const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId));
+			const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId), this.props.connect);
 			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
 			const allowance = await getAllowance(erc20Instance, this.poolTrackerAddress, this.props.activeAccount);
-			tokenMap[key]['allowance'] = allowance > 0 ? true : false;
 
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
@@ -395,17 +417,17 @@ class App extends Component {
 	setPoolStateAll = async(activeAccount) => {
 		const verifiedPools = filterOutVerifieds(await this.PoolTrackerInstance.methods.getVerifiedPools().call());
 		const ownerPools = await this.getOwnerAddress(activeAccount);
-		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address);
+		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address, this.props.connect);
 		const userDepositPools = depositBalancePools.depositPools;
 		const userBalancePools = depositBalancePools.balances;
 
 		let verifiedPoolInfo;
-		verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools);
+		verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools, {}, this.props.connect);
 		await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
 		localStorage.setItem("verifiedPoolInfo", JSON.stringify(verifiedPoolInfo));
 
 		let ownerPoolInfo;
-		ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools, this.props.verifiedPoolInfo);
+		ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools, this.props.verifiedPoolInfo, this.props.connect);
 		await this.props.updateUserDepositPoolAddrs(userDepositPools);
 		await this.props.updateOwnerPoolInfo(ownerPoolInfo);
 		localStorage.setItem("ownerPoolInfo", JSON.stringify(ownerPoolInfo));
@@ -416,7 +438,7 @@ class App extends Component {
 			knownPools[("v_"+key)] = this.props.verifiedPoolInfo[key];
 		}
 
-		userDepositPoolInfo = await getPoolInfo(userDepositPools, getTokenMap(this.networkId),  userBalancePools, knownPools);
+		userDepositPoolInfo = await getPoolInfo(userDepositPools, getTokenMap(this.networkId),  userBalancePools, knownPools, this.props.connect);
 		await this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
 		localStorage.setItem("userDepositPoolInfo", JSON.stringify(userDepositPoolInfo));
 	}
@@ -431,9 +453,11 @@ class App extends Component {
 		}
 
 		return (
-    	<ConnectedRouter history={history}>
-        	{ routes }
-		</ConnectedRouter>
+		<WagmiConfig config={wagmiConfig}>
+			<ConnectedRouter history={history}>
+				{ routes }
+			</ConnectedRouter>
+		</WagmiConfig>
 		)
 	}
 }

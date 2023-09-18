@@ -19,6 +19,9 @@ import Close from "./logos/Close";
 import Link from "./logos/Link";
 import Refresh from "./logos/Refresh";
 import RefreshPending from "./logos/RefreshPending";
+import CoinbaseWalletLogo from "./cryptoLogos/CoinbaseWalletLogo";
+import MetaMaskLogo from "./cryptoLogos/MetaMaskLogo";
+import WalletConnectLogo from "./cryptoLogos/WalletConnectLogo";
 
 class ButtonExtraSmall extends Component {
 
@@ -68,6 +71,13 @@ class ButtonExtraSmall extends Component {
 
 class ButtonSmall extends Component {
 
+  getButtonIcon = () => {
+    if(this.props.icon === "Coinbase Wallet") return <CoinbaseWalletLogo/>
+    if(this.props.icon === "MetaMask") return <MetaMaskLogo/>
+    if(this.props.icon === "WalletConnect") return <WalletConnectLogo/>
+    return <Icon name={this.props.icon} size={this.props.lg ? 64 : 32}/>
+  }
+
   displayLine = (tweet) => {
     if(!tweet){
       return  <div className="button__bar--outer">
@@ -89,14 +99,14 @@ class ButtonSmall extends Component {
       <button title={info} className={classnames} href={href} onClick={callback}>
         <div className="button__items">
           { text ? (
-            <div style={{opacity: "1.0"}} className="button__itemsm button__text">
+            <div style={{opacity: "1.0", gap: "2px"}} className="button__itemsm button__text">
              <div> {logo} </div>
               <p className="mb0">{ text }</p>
             </div>
           ) : null }
           { icon ? (
             <div style={{opacity: "1"}} className="button__itemsm button__icon">
-              <Icon name={icon} size={lg ? 64 : 32}/>
+              {this.getButtonIcon(icon)}
             </div>
           ) : null }
           { tweet ? (

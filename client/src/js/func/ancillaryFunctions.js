@@ -38,7 +38,7 @@ import Logo from "../components/Logo"
 
 import {getPriceFromCoinGecko} from './priceFeeds.js'
 
-const { createHash } = require('crypto');
+//const { createHash } = require('crypto');
 
 export const linkedInShare = (purl, ptitle, poolAddress, psummary) => {
   let url = 'http://www.linkedin.com/shareArticle?mini=true';
@@ -125,8 +125,14 @@ export const precise = (x, decimals) => {
     return toFixed(number);
 }
 
-export const sha256Hash = (string) => {
-  return createHash('sha256').update(string).digest('hex');
+export const sha256Hash = async(str) => {
+  const encoder = new TextEncoder(); // this will encode string into UTF-8 by default
+  const arrayBuffer = encoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+  console.log("hashHex", typeof(hashHex))
+  return hashHex;
 }
 
 export const encryptString = (inputString, encryptionKey) => {
@@ -137,11 +143,11 @@ export const encryptString = (inputString, encryptionKey) => {
     encrypted += String.fromCharCode(charCode);
   }
 
-  return Buffer.from(encrypted, 'binary').toString('base64');
+  return btoa(encrypted);
 }
 
 export const decryptString = (encryptedBase64, encryptionKey) => {
-  const encrypted = Buffer.from(encryptedBase64, 'base64').toString('binary');
+  const encrypted = atob(encryptedBase64)
 
   let decrypted = '';
 
@@ -235,11 +241,11 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
   return {userBalance, interestEarned, totalBalance}
 }
 
-export const getConnection = (tokenMap, networkId) => {
-  if(tokenMap){
-    if(networkId === 80001) return 'Mumbai Testnet';
+export const getConnection = (networkId, activeAccount) => {
+  if(activeAccount){
+    if(networkId === 80001) return 'TEST';
     else if (networkId === 137) return <MaticLogo/>;
-    else if (networkId === 10) return <OptimismLogo/>;
+    else if (networkId === 10) return <OptimismLogo size="20"/>;
   }
 }
 
@@ -371,7 +377,6 @@ export const addNewPoolInfoAllTokens = (prevInfo, newInfo) => {
 
       Object.keys(prevInfo[key].acceptedTokenInfo).forEach( (i) => {
           const tokenInfo = newInfo.newTokenInfo && newInfo.newTokenInfo[prevInfo[key].acceptedTokenInfo[i].address];
-          console.log("tokenInfo", tokenInfo);
           prevInfo[key].acceptedTokenInfo[i].totalDeposits = tokenInfo.totalDeposits;
           prevInfo[key].acceptedTokenInfo[i].userBalance = tokenInfo.userBalance;
           prevInfo[key].acceptedTokenInfo[i].unclaimedInterest = tokenInfo.unclaimedInterest;
@@ -380,7 +385,6 @@ export const addNewPoolInfoAllTokens = (prevInfo, newInfo) => {
       );
     }
   });
-  console.log("newInfo_____", prevInfo);
   return prevInfo;
 }
 

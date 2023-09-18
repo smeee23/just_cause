@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 
 import Card from '../components/Card';
 import { Modal, LargeModal } from "../components/Modal";
+import ConnectModal from "../components/Modal"
 import { Button, ButtonSmall } from '../components/Button';
 import PendingTxModal from "../components/modals/PendingTxModal";
 import AlertModal from "../components/modals/AlertModal";
@@ -12,7 +13,7 @@ import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import NewPoolModal from "../components/modals/NewPoolModal";
 import PendingTxList from "../components/PendingTxList";
-
+import ConnectPendingModal from "../components/modals/ConnectPendingModal";
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
@@ -103,6 +104,13 @@ class Dashboard extends Component {
 		}
 	}
 
+	getConnectModal = () => {
+		if(this.props.activeAccount === "Pending"){
+			let modal = <ConnectModal isOpen={true}><ConnectPendingModal/></ConnectModal>;
+			return modal;
+		}
+	}
+
 	getNewPoolModal = () => {
 		if(this.props.deployInfo){
 			let modal = <LargeModal isOpen={true}><NewPoolModal poolInfo={this.props.deployInfo}/></LargeModal>;
@@ -156,6 +164,10 @@ class Dashboard extends Component {
 		let buttonHolder = [];
 		const buttonStrings = ['Verified Causes', 'Your Causes', 'Your Donations'];
 		const infoStrings = ['team verified pools', 'view and update your causes', 'your donations'];
+		let createDisabled;
+		if(["Connect", "Pending"].includes(this.props.activeAccount)){
+			createDisabled = true;
+		}
 		for(let i = 0; i < buttonStrings.length; i++){
 			const name = buttonStrings[i];
 			let isDisabled = false;
@@ -164,7 +176,7 @@ class Dashboard extends Component {
 			}
 			buttonHolder.push(<div title={infoStrings[i]} key={i}><ButtonSmall text={name} disabled={isDisabled} callback={() => this.setSelectedToken(i)}/></div>)
 		}
-		buttonHolder.push(<div style={{marginLeft: "30px"}} key={4} title="create your own cause"><ButtonSmall text="Create Pool" callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/></div>);
+		buttonHolder.push(<div style={{marginLeft: "30px"}} key={4} title={createDisabled ? "connect wallet to create cause" : "create your own cause"} ><ButtonSmall text="Create Pool" disabled={createDisabled} callback={async() => await this.deploy(this.props.tokenMap, this.props.poolTrackerAddress)}/></div>);
 		return buttonHolder;
 	}
 
@@ -266,24 +278,19 @@ class Dashboard extends Component {
 	}
 
 	createCardInfo = () => {
-		if(this.props.activeAccount === "Connect" && !web3Modal.cachedProvider){
+		if(["Connect", "Connecting"].includes(this.props.activeAccount) && !web3Modal.cachedProvider){
 			return(
 			<div className="card__cardholder_slide" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
 				<LogoCard/>
 				<div style={{display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
 
 					<h1 style={{marginBottom: "5px", marginLeft: "20px"}} >JustCause</h1>
-
-					<a style={{ textDecoration: "none"}} title="New to Web3? Follow link to learn more" href="https://metamask.io/" target="_blank" rel="noopener noreferrer">
-						<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Connect with MetaMask to view causes</h2>
-					</a>
+					<h2 style={{marginBottom: "5px", fontSize:17, marginLeft: "20px", marginRight: "auto"}} >Connect Wallet to view causes</h2>
 				</div>
 			</div>
 			);
 		}
 		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.openTabIndex];
-
-		//if(poolInfo === "No Verified Pools") return
 
 		if(!this.props.tokenMap || !poolInfo){
 			return (<div className="page-section--center" style={{paddingTop: "48px", width: "100%"}}>
@@ -409,6 +416,7 @@ class Dashboard extends Component {
 						</div>
 					</section>
 					<section className="page-section_no_vert_padding horizontal-padding bw0">
+						{this.getConnectModal()}
 						{this.getPendingTxModal()}
 						{this.getTxResultModal()}
 						{this.getDeployTxModal()}

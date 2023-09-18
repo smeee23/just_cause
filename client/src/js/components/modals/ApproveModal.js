@@ -2,7 +2,7 @@ import React, {Component, Fragment} from "react"
 import { connect } from "react-redux";
 import { ModalHeader, ModalCtas } from "../Modal";
 import { Button } from '../Button'
-
+import TextLink from "../TextLink";
 import getWeb3 from "../../../getWeb3NotOnLoad";
 import ERC20Instance from "../../../contracts/IERC20.json";
 
@@ -21,7 +21,7 @@ class ApproveModal extends Component {
 			let result;
 			try{
 
-				const web3 = await getWeb3();
+				const web3 = await getWeb3(this.props.connect);
 				const tokenAddress = this.props.approve.tokenAddress;
 				const poolAddress = this.props.approve.poolAddress;
 				const tokenString = this.props.approve.tokenString;
@@ -90,6 +90,14 @@ class ApproveModal extends Component {
 	return(
 		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
 			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Approval allows your tokens to interact with the JustCause smart contracts.</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">To eliminate the need to frequently approve token transactions we set a high approval amount. This can be adjusted lower in your wallet.</p>
+			<a
+				title="learn more about approvals"
+				href="https://support.metamask.io/hc/en-us/articles/6055177143579-How-to-customize-token-approvals-with-a-spending-cap"
+				target="_blank" rel="noopener noreferrer"
+			>
+				<p style={{marginLeft:"2%", marginRight:"0%", color: "black", textDecoration: "underline"}} className="mr">Questions? Learn more</p>
+			</a>
 		</div>
 	)
 
@@ -126,6 +134,7 @@ const mapStateToProps = state => ({
  	approve: state.approve,
 	activeAccount: state.activeAccount,
 	networkId: state.networkId,
+	connect: state.connect,
 	pendingTxList: state.pendingTxList,
 })
 

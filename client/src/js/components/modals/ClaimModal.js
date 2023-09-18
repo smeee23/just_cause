@@ -22,7 +22,7 @@ class ClaimModal extends Component {
 			let txInfo;
 			let result;
 			try{
-				const web3 = await getWeb3();
+				const web3 = await getWeb3(this.props.connect);
 				const tokenAddress = this.props.claim.tokenAddress;
 				const poolAddress = this.props.claim.poolAddress;
 				const tokenString = this.props.claim.tokenString;
@@ -42,7 +42,7 @@ class ClaimModal extends Component {
                     this.props.poolTrackerAddress,
                 );
 
-				const poolName = await getContractInfo(poolAddress);
+				const poolName = await getContractInfo(poolAddress, this.props.connect);
                 txInfo = {txHash: '', success: '', amount: '', tokenString: tokenString, type:"CLAIM", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId};
                 result = await PoolTrackerInstance.methods.claimInterest(tokenAddress, poolAddress, isETH).send(parameter , async(err, transactionHash) => {
                     console.log('Transaction Hash :', transactionHash);
@@ -74,7 +74,7 @@ class ClaimModal extends Component {
 
 				let newInfo;
 				if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
-					newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
+					newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
 					console.log("Gitcoin", newInfo);
 					const newDepositInfo = addNewPoolInfo([...this.props.userDepositPoolInfo], newInfo);
 					await this.props.updateUserDepositPoolInfo(newDepositInfo);
@@ -82,14 +82,14 @@ class ClaimModal extends Component {
 				}
 
 				if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
-					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
+					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
 					const newOwnerInfo = addNewPoolInfo([...this.props.ownerPoolInfo], newInfo);
 					await this.props.updateOwnerPoolInfo(newOwnerInfo);
 					localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 				}
 
 				if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
-					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
+					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
 					const newVerifiedInfo = addNewPoolInfo([...this.props.verifiedPoolInfo], newInfo);
 					await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
 					localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
@@ -157,6 +157,7 @@ const mapStateToProps = state => ({
 	userDepositPoolInfo: state.userDepositPoolInfo,
     verifiedPoolInfo: state.verifiedPoolInfo,
     ownerPoolInfo: state.ownerPoolInfo,
+	connect: state.connect,
 	pendingTxList: state.pendingTxList,
 })
 

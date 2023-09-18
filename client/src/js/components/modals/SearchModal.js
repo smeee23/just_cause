@@ -29,7 +29,7 @@ class SearchModal extends Component {
     this.setState({
       pending: true
     });
-    let results = await searchPools(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap, searchTerm);
+    let results = await searchPools(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap, searchTerm, this.props.connect);
     this.props.updateSearchInfo(results);
   }
 
@@ -71,6 +71,7 @@ const mapStateToProps = state => ({
   tokenMap: state.tokenMap,
 	poolTrackerAddress: state.poolTrackerAddress,
  	depositAmount: state.depositAmount,
+  connect: state.connect,
 	activeAccount: state.activeAccount,
 })
 

@@ -67,7 +67,7 @@ class TxResultModal extends Component {
   }
 
   getContractInfo = async(address) => {
-    return await getContractInfo(address);
+    return await getContractInfo(address, this.props.connect);
   };
 
   share = async(poolAddress, name, txDetails) => {
@@ -113,6 +113,7 @@ class TxResultModal extends Component {
 
 const mapStateToProps = state => ({
   tokenMap: state.tokenMap,
+  connect: state.connect,
 })
 
 const mapDispatchToProps = dispatch => ({

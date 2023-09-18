@@ -10,13 +10,16 @@ import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import SearchModal from "../components/modals/SearchModal";
+import ConnectModal from "../components/Modal"
+import ConnectPendingModal from "../components/modals/ConnectPendingModal";
 
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import {updateSearchInfo } from "../actions/searchInfo";
 
-import { updatePoolInfo, getExternalPoolInfo } from '../func/contractInteractions';
+import { getExternalPoolInfo } from '../func/contractInteractions';
+import PendingTxList from "../components/PendingTxList";
 
 class Search extends Component {
 
@@ -36,21 +39,13 @@ class Search extends Component {
 	getTxResultModal = () => {
 		if(this.props.txResult){
 			let modal = <Modal isOpen={true}><TxResultModal txDetails={this.props.txResult}/></Modal>;
-
-			if(this.props.txResult.success){
-				let poolLists = updatePoolInfo(this.props.txResult.poolAddress);
-				if(poolLists[0]) this.props.updateVerifiedPoolInfo(poolLists[0]);
-				if(poolLists[1]) this.props.updateOwnerPoolInfo(poolLists[1]);
-				if(poolLists[2]) this.props.updateUserDepositPoolInfo(poolLists[2]);
-			}
-
 			return modal;
 		}
 	}
 	getPendingTxModal = () => {
 		if(this.props.pendingTx){
 			let modal = <Modal isOpen={true}><PendingTxModal txDetails={this.props.pendingTx}/></Modal>;
-			return modal;
+			//return modal;
 		}
 	}
 	getDeployTxModal = () => {
@@ -60,24 +55,31 @@ class Search extends Component {
 		}
 	}
 
+	getConnectModal = () => {
+		if(this.props.activeAccount === "Pending"){
+			let modal = <ConnectModal isOpen={true}><ConnectPendingModal/></ConnectModal>;
+			return modal;
+		}
+	}
+
 	getExternalLink = async() => {
-		//if(this.props.poolTrackerAddress && this.props.activeAccount && this.props.tokenMap && this.state.linkAddress){
-		const info = await getExternalPoolInfo(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap, this.state.linkAddress);
+		const info = await getExternalPoolInfo(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap, this.state.linkAddress, this.props.connect);
 		const results = this.createCardInfo(info);
 		return results;
-		//}
 	}
 	getSearchResults = () => {
-			if(this.props.searchInfo && this.props.activeAccount !== "Connect"){
+		if(!["Connect", "Pending"].includes(this.props.activeAccount)){
+			if(this.props.searchInfo){
 				//if(this.state.openModel === true) this.closeModal();
 				const searchResults = this.createCardInfo(this.props.searchInfo)
 				//this.props.updateSearchInfo('');
 				return searchResults;
 			}
-			else if(this.props.activeAccount !== "Connect"){
+			else{
 				let modal = <Modal isOpen={true}><SearchModal linkAddress={this.state.linkAddress}/></Modal>;
 				return modal;
 			}
+		}
 	}
 
 	openModal = () => {
@@ -91,10 +93,15 @@ class Search extends Component {
 	}
 
 	getSearchModal = () => {
-		if((!this.props.searchInfo || this.state.openModal) && this.props.activeAccount !== "Connect"){
+		if((!this.props.searchInfo || this.state.openModal) && !["Connect", "Pending"].includes(this.props.activeAccount)){
 			let modal = <Modal isOpen={true}><SearchModal linkAddress={this.state.linkAddress}/></Modal>;
 			return modal;
 		}
+	}
+
+	isConnected = () => {
+		console.log("isConnected", !["Connect", "Pending"].includes(this.props.activeAccount));
+		return false;
 	}
 	createCardInfo = (poolInfo) => {
 		if(poolInfo === "") return
@@ -134,7 +141,7 @@ class Search extends Component {
 		return (
 			<Fragment>
 				<article>
-				<section className="page-section page-section--center horizontal-padding bw0">
+				<section className="page-section page-section--center horizontal-padding bw0" style={{marginTop: "135px"}}>
 					<Button text="Find Pool" icon="search" callback={() => this.openModal()}/>
 				</section>
 					<section className="page-section horizontal-padding bw0">
@@ -143,8 +150,10 @@ class Search extends Component {
 						{this.getDeployTxModal()}
 						{this.getSearchModal()}
 						{this.getSearchResults()}
+						{this.getConnectModal()}
 					</section>
 				</article>
+				<PendingTxList/>
 			</Fragment>
 		);
 	}
@@ -159,11 +168,12 @@ const mapStateToProps = state => ({
 	pendingTx: state.pendingTx,
 	txResult: state.txResult,
 	deployTxResult: state.deployTxResult,
+	connect: state.connect,
 	searchInfo: state.searchInfo,
 })
 
 const mapDispatchToProps = dispatch => ({
-	pdateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
+	updateVerifiedPoolInfo: (infoArray) => dispatch(updateVerifiedPoolInfo(infoArray)),
 	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 	updateSearchInfo: (info) => dispatch(updateSearchInfo(info)),

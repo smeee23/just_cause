@@ -15,7 +15,7 @@ import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
-import {getDirectFromPoolInfo, getContractInfo} from '../../func/contractInteractions';
+import {getDirectFromPoolInfo, getContractInfo, checkValueInputError} from '../../func/contractInteractions';
 import {delay, getTokenBaseAmount, displayLogo, addNewPoolInfo, checkPoolInPoolInfo, isNativeToken } from '../../func/ancillaryFunctions';
 
 class WithdrawModal extends Component {
@@ -25,34 +25,27 @@ class WithdrawModal extends Component {
 
 		this.state = {
 			isValidInput: 'valid',
-            amount: 0,
-            val: '0.0',
+      inputError: '',
+      amount: 0,
+      val: '0.0',
 		}
 	}
 
   setAmount = async(amount, withdrawInfo) => {
-    /*if(!isNaN(amount)){
-      if(Math.sign(amount) === 1){
-        if(amount > withdrawInfo.balance){
-          if(amount === 0){*/
-            withdrawInfo.amount = amount;
-            this.props.updateWithdrawAmount(withdrawInfo);
-            await this.withdrawToChain();
-          /*}
-          else this.setState({isValidInput: 'zero', amount});
-        }
-        else this.setState({isValidInput: 'bal', amount});
-      }
-      else this.setState({isValidInput: 'neg', amount});
+    withdrawInfo.amount = amount;
+    const inputError = await checkValueInputError(amount, withdrawInfo.formatBalance, "withdraw");
+    this.setState({inputError});
+    if(!this.state.inputError){
+      this.props.updateWithdrawAmount(withdrawInfo);
+      await this.withdrawToChain();
     }
-    else this.setState({isValidInput: 'nan', amount});*/
   }
 
   withdrawToChain = async() => {
         let txInfo;
         let result;
         try{
-            const web3 = await getWeb3();
+            const web3 = await getWeb3(this.props.connect);
             const tokenAddress = this.props.withdrawAmount.tokenAddress;
             const poolAddress = this.props.withdrawAmount.poolAddress;
             const tokenString = this.props.withdrawAmount.tokenString;
@@ -74,7 +67,7 @@ class WithdrawModal extends Component {
                 PoolTracker.abi,
                 this.props.poolTrackerAddress,
             );
-            const poolName = await getContractInfo(poolAddress);
+            const poolName = await getContractInfo(poolAddress, this.props.connect);
             txInfo = {txHash: '', success: false, amount: amount, tokenString: tokenString, type:"WITHDRAW", poolAddress: poolAddress, poolName: poolName[6], networkId: this.props.networkId};
             result = await PoolTrackerInstance.methods.withdrawDeposit(amountInBase, tokenAddress, poolAddress, isETH).send(parameter , async(err, transactionHash) => {
                 console.log('Transaction Hash :', transactionHash);
@@ -94,7 +87,7 @@ class WithdrawModal extends Component {
             });
             txInfo.success = true;
 
-            const newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress);
+            const newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
             const newDepositInfo = addNewPoolInfo([...this.props.userDepositPoolInfo], newInfo);
             await this.props.updateUserDepositPoolInfo(newDepositInfo);
             localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
@@ -165,7 +158,8 @@ class WithdrawModal extends Component {
               <TextField ref="myField" label="amount to withdraw:" value={this.state.val} />
             </div>
           </div>
-          <div style={{marginLeft: "auto", marginTop:"auto", paddingBottom:"31px"}}>
+          <div style={{display: "flex", marginLeft: "auto", marginTop:"auto", paddingBottom:"31px"}}>
+            <p style={{color: "#DC143C", fontSize:16}} className="mr">{this.state.inputError}</p>
             <Button style={{marginLeft: "auto", marginTop:"auto"}} text="Withdraw" callback={() => this.setAmount(this.refs.myField.getValue(), withdrawInfo)}/>
           </div>
 
@@ -186,6 +180,7 @@ const mapStateToProps = state => ({
     userDepositPoolInfo: state.userDepositPoolInfo,
     verifiedPoolInfo: state.verifiedPoolInfo,
     ownerPoolInfo: state.ownerPoolInfo,
+    connect: state.connect,
     pendingTxList: state.pendingTxList,
 })
 

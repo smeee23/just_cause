@@ -8,8 +8,8 @@ import Pool from "../../contracts/IPool.json";
 import { getAboutFromS3 } from "./awsS3";
 import { isNativeToken } from "./ancillaryFunctions";
 
-	export const getAavePoolAddress = async(poolAddressesProviderAddress) => {
-		const web3 = await getWeb3();
+	export const getAavePoolAddress = async(poolAddressesProviderAddress, web3Type) => {
+		const web3 = await getWeb3(web3Type)
 		const PoolAddressesProviderInstance = new web3.eth.Contract(
 			PoolAddressesProvider.abi,
 			poolAddressesProviderAddress,
@@ -19,8 +19,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return poolAddr;
 	}
 
-	export const getLiquidityIndexFromAave = async(tokenAddress, poolAddressesProviderAddress) => {
-		const web3 = await getWeb3();
+	export const getLiquidityIndexFromAave = async(tokenAddress, poolAddressesProviderAddress, web3Type) => {
+		const web3 = await getWeb3(web3Type)
 		const PoolAddressesProviderInstance = new web3.eth.Contract(
 			PoolAddressesProvider.abi,
 			poolAddressesProviderAddress,
@@ -41,8 +41,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return allowance;
 	}
 
-	const getWalletBalance = async(tokenAddress, activeAccount) => {
-		const web3 = await getWeb3();
+	const getWalletBalance = async(tokenAddress, activeAccount, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 		const balance = await erc20Instance.methods.balanceOf(activeAccount).call();
 		return balance;
@@ -52,51 +52,34 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return (amount*10**decimals).toString();
 	}
 
-	export const getBalance = async(tokenAddress, decimals, tokenString, activeAccount, networkId) => {
+	export const getBalance = async(tokenAddress, decimals, tokenString, activeAccount, networkId, web3Type) => {
 		if(isNativeToken(networkId, tokenString)){
-			const web3 = await getWeb3()
+			const web3 = await getWeb3(web3Type)
 			let balance = await web3.eth.getBalance(activeAccount);
 			balance = await web3.utils.fromWei(balance, "ether");
 			return Number.parseFloat(balance).toPrecision(6);
 		}
 		else{
-			let balance = await getWalletBalance(tokenAddress, activeAccount);
+			let balance = await getWalletBalance(tokenAddress, activeAccount, web3Type);
 			balance = balance / 10**decimals;
 			return Number.parseFloat(balance).toPrecision(6);
 		}
 	}
 
-	export const addDeployedPool = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists) => {
-
-		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
+	export const addPoolToPoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, prevInfo, web3Type) => {
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress, web3Type);
 		const userBalancePools = depositBalancePools.balances;
-
-		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
-
-
-		for(let i = 0; i < poolLists.length; i++){
-			if(i !== 0 || poolInfo[0].isVerified){
-				poolLists[i].push(poolInfo[0]);
-			}
-		}
-
-		return poolLists;
-	}
-
-	export const addPoolToPoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, prevInfo) => {
-		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
-		const userBalancePools = depositBalancePools.balances;
-		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
+		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools, {},  web3Type);
 		prevInfo.push(poolInfo[0]);
 		return prevInfo;
 	}
 
-	export const updatePoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists) => {
+	export const updatePoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists, web3Type) => {
 
-		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress, web3Type);
 		const userBalancePools = depositBalancePools.balances;
 
-		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools);
+		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools, {}, web3Type);
 		for(let i=0; i < poolLists.length; i++){
 			if(poolLists[i]){
 				for(let j=0; j < poolLists[i].length; j++){
@@ -109,8 +92,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return poolLists;
 	}
 
-	export const getContractInfo = async(poolAddress) => {
-		const web3 = await getWeb3();
+	export const getContractInfo = async(poolAddress, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
@@ -120,8 +103,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return await JCPoolInstance.methods.getPoolInfo().call();
 	}
 
-	export const checkTransactions = async(pendingList) => {
-		const web3 = await getWeb3();
+	export const checkTransactions = async(pendingList, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		let truePendings = [];
 		pendingList.forEach(async(x) => {
 			const receipt = await web3.eth.getTransactionReceipt(x.txHash);
@@ -132,8 +115,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return truePendings;
 	}
 
-	export const getDirectFromPoolInfo = async(poolAddress, tokenMap, activeAccount, tokenAddress) => {
-		const web3 = await getWeb3();
+	export const getDirectFromPoolInfo = async(poolAddress, tokenMap, activeAccount, tokenAddress, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			poolAddress,
@@ -178,9 +161,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return { about, totalDeposits, userBalance, unclaimedInterest, claimedInterest, tokenString, poolAddress, tokenAddress };
 	}
 
-	export const getDirectFromPoolInfoAllTokens = async(poolAddress, tokenMap, activeAccount) => {
-		console.log("getDirectFromPoolInfoAllTokens");
-		const web3 = await getWeb3();
+	export const getDirectFromPoolInfoAllTokens = async(poolAddress, tokenMap, activeAccount, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			poolAddress,
@@ -232,8 +214,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return { about, poolAddress, newTokenInfo };
 	}
 
-	export const getDirectAboutOnly = async(poolAddress) => {
-		const web3 = await getWeb3();
+	export const getDirectAboutOnly = async(poolAddress, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		let JCPoolInstance = new web3.eth.Contract(
 			JCPool.abi,
 			poolAddress,
@@ -243,8 +225,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return await getAboutFromS3(name);
 	}
 
-	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools, knownPoolInfo) => {
-		const web3 = await getWeb3();
+	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools, knownPoolInfo, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		let knownAddrs = [];
 		if(knownPoolInfo){
 			for(const key in knownPoolInfo){
@@ -315,8 +297,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return poolInfo;
 	}
 
-	export const nameExists = async(poolName, poolTrackerAddress) => {
-		const web3 = await getWeb3();
+	export const nameExists = async(poolName, poolTrackerAddress, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
 			poolTrackerAddress,
@@ -326,13 +308,13 @@ import { isNativeToken } from "./ancillaryFunctions";
 			return "Pool Name already exists, please choose another";
 		}
 	}
-	export const checkValidAddress = async(address) => {
-		const web3 = await getWeb3();
+	export const checkValidAddress = async(address, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		const result = web3.utils.isAddress(address);
 		if(!result) return "The receiver address is not a valid address, please recheck"
 
 	}
-	export const checkInputError = async(input, poolTrackerAddress) => {
+	export const checkInputError = async(input, poolTrackerAddress, web3Type) => {
 			const poolName = input.poolName;
 			const receiver = input.receiver;
 			const about = input.about;
@@ -344,22 +326,31 @@ import { isNativeToken } from "./ancillaryFunctions";
 			if(!regex.test(poolName)) return "Pool Name can only contain letters and numbers"
 			if(!about) return "Describe section cannot be blank"
 			if(!receiver) return "Receiver section cannot be blank"
-			let error = await nameExists(poolName, poolTrackerAddress);
+			let error = await nameExists(poolName, poolTrackerAddress, web3Type);
 			if(error) return error;
-			error = await checkValidAddress(receiver);
+			error = await checkValidAddress(receiver, web3Type);
 			if(error) return error;
 
 			return "";
 	}
-	export const getExternalPoolInfo = async(poolTrackerAddress, activeAccount, tokenMap, address) => {
-		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
+
+	export const checkValueInputError = async(amount, balance, type) => {
+		if(isNaN(amount)) return "not a number"
+		else if(Number(amount) === 0) return "cannot be zero"
+		else if(Math.sign(amount) !== 1) return "cannot be negative"
+		else if(type === "deposit" && parseFloat(amount) > parseFloat(balance)) return "exceeds balance"
+		else if (type === "withdraw" && parseFloat(amount) > parseFloat(balance)) return "exceeds deposited amount"
+		return "";
+	}
+	export const getExternalPoolInfo = async(poolTrackerAddress, activeAccount, tokenMap, address, web3Type) => {
+		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress, web3Type);
 		const userBalancePools = depositBalancePools.balances;
-		const resultPool = await getPoolInfo([address], tokenMap, userBalancePools);
+		const resultPool = await getPoolInfo([address], tokenMap, userBalancePools, {}, web3Type);
 		return resultPool;
 	}
 
-	export const searchPools = async(poolTrackerAddress, activeAccount, tokenMap, searchAddr) => {
-		const web3 = await getWeb3();
+	export const searchPools = async(poolTrackerAddress, activeAccount, tokenMap, searchAddr, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
@@ -375,9 +366,9 @@ import { isNativeToken } from "./ancillaryFunctions";
 		if(searchAddr !== '0x0000000000000000000000000000000000000000'){
 			const found = await PoolTrackerInstance.methods.checkPool(searchAddr).call();
 			if(found){
-				const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress);
+				const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress, web3Type);
 				const userBalancePools = depositBalancePools.balances;
-				const resultPool = await getPoolInfo([searchAddr], tokenMap, userBalancePools);
+				const resultPool = await getPoolInfo([searchAddr], tokenMap, userBalancePools, {}, web3Type);
 				return resultPool
 			}
 			else{
@@ -390,8 +381,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return []
 	}
 
-	export const getDepositorAddress = async(activeAccount, poolTrackerAddress) => {
-		const web3 = await getWeb3();
+	export const getDepositorAddress = async(activeAccount, poolTrackerAddress, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		let userDepositPools = [];
 		let userBalancePools = {};
 
@@ -427,20 +418,11 @@ import { isNativeToken } from "./ancillaryFunctions";
 			}
 		}
 
-		/*let balance = await ERCInstance.methods.balanceOf(activeAccount).call();
-
-		for(let i = 0; i < balance; i++){
-			const tokenId = await ERCInstance.methods.tokenOfOwnerByIndex(activeAccount, i).call();
-			const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
-				userDepositPools.push(depositInfo.pool);
-				userBalancePools[depositInfo.pool+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled, depositInfo.timeStamp, depositInfo.pool, depositInfo.asset];
-		}*/
-
 		return {'depositPools':[...new Set(userDepositPools)], 'balances':userBalancePools};
 	}
 
-	export const getVerifiedPools = async(networkId) => {
-		const web3 = await getWeb3();
+	export const getVerifiedPools = async(networkId, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
 			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,
@@ -450,8 +432,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return verifiedPools;
 	}
 
-	export const getUserOwned = async(activeAccount, networkId) => {
-		const web3 = await getWeb3();
+	export const getUserOwned = async(activeAccount, networkId, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
 			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,
@@ -461,8 +443,8 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return ownerPools;
 	}
 
-	export const getUserDeposits = async(activeAccount, networkId) => {
-		const web3 = await getWeb3();
+	export const getUserDeposits = async(activeAccount, networkId, web3Type) => {
+		const web3 = await getWeb3(web3Type);
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
 			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,

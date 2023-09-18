@@ -71,7 +71,7 @@ class Homepage extends Component {
 						</div>
 					</section>
 					<section className="page-section horizontal-padding">
-						<h6 style={{margin:'auto', paddingBottom: "50px"}}>How We Do It</h6>
+						<h6>How We Do It</h6>
 						<div style={{margin:'auto'}} className="grid">
 							<div className="grid__item--col-6 grid__item--col-12-medium">
 								<p className="mr">JustCause Pools generate interest through an integration with the Aave lending protocol. Aave can be thought of as an automated system of liquidity pools. Users deposit tokens they want to lend out, which are amassed into a large lending pool. Borrowers may then draw from these pools by taking out collateralized loans. In exchange for providing liquidity to the market lenders earn a passive rate of interest on their deposits.</p>
@@ -82,7 +82,7 @@ class Homepage extends Component {
 						</div>
 					</section>
 					<section className="page-section horizontal-padding">
-						<h6 style={{margin:'auto', paddingBottom: "50px"}}>Why We Do It</h6>
+						<h6>Why We Do It</h6>
 						<div style={{margin:'auto'}} className="grid">
 							<div className="grid__item--col-6 grid__item--col-12-medium">
 								<p className="mr">JustCause is an open source, permissionless and non-custodial protocol. This means that anyone has the freedom to create or contribute to pools with a user interface or interact directly with the smart contracts on the network. This freedom lies at the heart of the difference between permissioned (closed) and permissionless (open) systems.</p>

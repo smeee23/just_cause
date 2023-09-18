@@ -81,8 +81,10 @@ export const uploadNftMetaData = async(poolName, about) => {
         "image": "https://justcausepools.s3.amazonaws.com/"+poolName+"__pic",
     }
 
-    const buf = Buffer.from(JSON.stringify(uri)); // Convert data into buffer
-	await uploadToS3(buf, poolName, "__meta");
-	const metaHash = sha256Hash(buf);
-	return metaHash;
+    const uriString = JSON.stringify(uri);
+    const uint8Array = new TextEncoder().encode(uriString); // Convert string to Uint8Array
+
+    await uploadToS3(uint8Array.buffer, poolName, "__meta");
+    const metaHash = sha256Hash(uint8Array.buffer);
+    return metaHash;
 }

@@ -72,14 +72,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  updateActiveAccount: (s) => {
-    console.log('Dispatching updateActiveAccount with:', s);
-    dispatch(updateActiveAccount(s));
-  },
-  updateConnect: (s) => {
-      console.log('Dispatching updateConnect with:', s);
-      dispatch(updateConnect(s));
-  },
+  updateActiveAccount: (s) => dispatch(updateActiveAccount(s)),
+  updateConnect: (s) => dispatch(updateConnect(s)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)

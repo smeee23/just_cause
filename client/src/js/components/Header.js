@@ -247,10 +247,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-	updateActiveAccount: (s) => {
-    console.log('Dispatching updateActiveAccount with:', s);
-    dispatch(updateActiveAccount(s));
-  },
+	updateActiveAccount: (s) => dispatch(updateActiveAccount(s)),
   updateConnect: (bool) => dispatch(updateConnect(bool)),
 })
 

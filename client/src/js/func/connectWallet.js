@@ -114,7 +114,7 @@ const connectWallet = async(connectionType) => {
   }
   else if(connectionType == "WalletConnect"){
     const provider = await EthereumProvider.init({
-      projectId: '121c52ec6852ab6b453b3fbf45945d49', // required
+      projectId: projectId, // required
       chains: [10], // required
       rpcMap: {
         10: infuraRpc,

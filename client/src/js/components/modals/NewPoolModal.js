@@ -76,7 +76,7 @@ class NewPoolModal extends Component {
 				if(!pending) pending= [];
 				pending.push(txInfo);
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 			}
 			else{
 				txInfo = "";
@@ -88,9 +88,9 @@ class NewPoolModal extends Component {
 		await uploadToS3(aboutText, poolName, "__text");
 		await uploadNftMetaData(poolName, aboutText);
 
-		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, [...this.props.ownerPoolInfo], this.props.connect);
+		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, {...this.props.ownerPoolInfo}, this.props.connect);
 		await this.props.updateOwnerPoolInfo(newOwnerInfo);
-		localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+		sessionStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 	}
 	catch (error) {
 		console.error(error);

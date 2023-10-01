@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import Card from '../components/Card'
 import { Button } from '../components/Button'
 import { Modal } from "../components/Modal";
+import AlertModal from "../components/modals/AlertModal";
 import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
@@ -16,8 +17,8 @@ import ConnectPendingModal from "../components/modals/ConnectPendingModal";
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
-import {updateSearchInfo } from "../actions/searchInfo";
-
+import { updateSearchInfo } from "../actions/searchInfo";
+import { updateAlert } from "../actions/alert";
 import { getExternalPoolInfo } from '../func/contractInteractions';
 import PendingTxList from "../components/PendingTxList";
 
@@ -55,6 +56,14 @@ class Search extends Component {
 		}
 	}
 
+	getAlertModal = () => {
+		if(this.props.alert){
+			console.log("TESTING", this.props.alert)
+			//let modal = <Modal isOpen={true}><AlertModal info={this.props.alert}/></Modal>;
+			//return modal;
+		}
+	}
+
 	getConnectModal = () => {
 		if(this.props.activeAccount === "Pending"){
 			let modal = <ConnectModal isOpen={true}><ConnectPendingModal/></ConnectModal>;
@@ -70,9 +79,7 @@ class Search extends Component {
 	getSearchResults = () => {
 		if(!["Connect", "Pending"].includes(this.props.activeAccount)){
 			if(this.props.searchInfo){
-				//if(this.state.openModel === true) this.closeModal();
 				const searchResults = this.createCardInfo(this.props.searchInfo)
-				//this.props.updateSearchInfo('');
 				return searchResults;
 			}
 			else{
@@ -103,16 +110,19 @@ class Search extends Component {
 		console.log("isConnected", !["Connect", "Pending"].includes(this.props.activeAccount));
 		return false;
 	}
+
 	createCardInfo = (poolInfo) => {
-		if(poolInfo === "") return
-		let cardHolder = [];
-		for(let i = 0; i < poolInfo.length; i++){
-			const item = poolInfo[i];
+		if(poolInfo.length === 0){
+			return
+		}
+		else{
+			let cardHolder = [];
+			const item = poolInfo;
 			cardHolder.push(
 				<Card
 					key={item.address}
 					title={item.name}
-					idx={i}
+					idx={0}
 					receiver={item.receiver}
 					address={item.address}
 					acceptedTokenInfo={item.acceptedTokenInfo}
@@ -121,8 +131,8 @@ class Search extends Component {
 					isVerified={item.isVerified}
 				/>
 			);
+			return cardHolder;
 		}
-		return cardHolder;
 	}
 
 	render() {
@@ -142,13 +152,18 @@ class Search extends Component {
 			<Fragment>
 				<article>
 				<section className="page-section page-section--center horizontal-padding bw0" style={{marginTop: "135px"}}>
-					<Button text="Find Pool" icon="search" callback={() => this.openModal()}/>
+					<Button
+						text="Find Pool"
+						icon="search"
+						disabled={["Connect", "Pending"].includes(this.props.activeAccount)}
+						callback={() => this.openModal()}/>
 				</section>
 					<section className="page-section horizontal-padding bw0">
 						{this.getPendingTxModal()}
 						{this.getTxResultModal()}
 						{this.getDeployTxModal()}
 						{this.getSearchModal()}
+						{this.getAlertModal()}
 						{this.getSearchResults()}
 						{this.getConnectModal()}
 					</section>
@@ -170,6 +185,7 @@ const mapStateToProps = state => ({
 	deployTxResult: state.deployTxResult,
 	connect: state.connect,
 	searchInfo: state.searchInfo,
+	alert: state.alert,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -177,6 +193,7 @@ const mapDispatchToProps = dispatch => ({
 	updateUserDepositPoolInfo: (infoArray) => dispatch(updateUserDepositPoolInfo(infoArray)),
 	updateOwnerPoolInfo: (infoArray) => dispatch(updateOwnerPoolInfo(infoArray)),
 	updateSearchInfo: (info) => dispatch(updateSearchInfo(info)),
+	updateAlert: (info) => dispatch(updateAlert(info)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search)

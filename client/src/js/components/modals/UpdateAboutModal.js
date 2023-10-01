@@ -68,7 +68,7 @@ class UpdateAboutModal extends Component {
 				let pending = [...this.props.pendingTxList];
 				pending.push(info);
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 				await this.props.updatePendingTx(info);
 				txInfo.txHash = transactionHash;
 			}
@@ -85,20 +85,20 @@ class UpdateAboutModal extends Component {
 		const newAbout = await getDirectAboutOnly(poolAddress, this.props.connect);
 
 		if(newAbout){
-			const newOwnerInfo = addNewPoolInfoAboutOnly([...this.props.ownerPoolInfo], newAbout);
+			const newOwnerInfo = addNewPoolInfoAboutOnly({...this.props.ownerPoolInfo}, newAbout);
 			await this.props.updateOwnerPoolInfo(newOwnerInfo);
-			localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+			sessionStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 
 			if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
-				const newDepositInfo = addNewPoolInfoAboutOnly([...this.props.userDepositPoolInfo], newAbout);
+				const newDepositInfo = addNewPoolInfoAboutOnly({...this.props.userDepositPoolInfo}, newAbout);
 				await this.props.updateUserDepositPoolInfo(newDepositInfo);
-				localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
+				sessionStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
 			}
 
 			if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
-				const newVerifiedInfo = addNewPoolInfoAboutOnly([...this.props.verifiedPoolInfo], newAbout);
+				const newVerifiedInfo = addNewPoolInfoAboutOnly({...this.props.verifiedPoolInfo}, newAbout);
 				await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
-				localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
+				sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 			}
 		}
 

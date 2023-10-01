@@ -61,7 +61,7 @@ class ClaimModal extends Component {
 						pending.push(info);
 						console.log("pending_2", pending, this.props.pendingTxList);
 						await this.props.updatePendingTxList(pending);
-						localStorage.setItem("pendingTxList", JSON.stringify(pending));
+						sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
 						await this.props.updatePendingTx(info);
 						txInfo.txHash = transactionHash;
@@ -75,24 +75,23 @@ class ClaimModal extends Component {
 				let newInfo;
 				if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
 					newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
-					console.log("Gitcoin", newInfo);
-					const newDepositInfo = addNewPoolInfo([...this.props.userDepositPoolInfo], newInfo);
+					const newDepositInfo = addNewPoolInfo({...this.props.userDepositPoolInfo}, newInfo);
 					await this.props.updateUserDepositPoolInfo(newDepositInfo);
-					localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
+					sessionStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
 				}
 
 				if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
 					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
-					const newOwnerInfo = addNewPoolInfo([...this.props.ownerPoolInfo], newInfo);
+					const newOwnerInfo = addNewPoolInfo({...this.props.ownerPoolInfo}, newInfo);
 					await this.props.updateOwnerPoolInfo(newOwnerInfo);
-					localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+					sessionStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 				}
 
 				if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
 					newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
-					const newVerifiedInfo = addNewPoolInfo([...this.props.verifiedPoolInfo], newInfo);
+					const newVerifiedInfo = addNewPoolInfo({...this.props.verifiedPoolInfo}, newInfo);
 					await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
-					localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
+					sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 				}
 
 			}

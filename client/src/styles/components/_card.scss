@@ -99,6 +99,11 @@ $baseclass: 'card';
     animation: appear 0s forwards 1.5s;
   }
 
+  &__delay {
+    visibility: hidden; /* initial state */
+    animation: appear 0s forwards 1.5s;
+  }
+
   &__letter {
     animation: wave 1s ease-in-out infinite 1.5s;
   }
@@ -110,7 +115,7 @@ $baseclass: 'card';
   }
   &__body__token-logo {
     display: grid;
-    grid-template-columns: 108px 1fr;
+    grid-template-columns: 70px 1fr;
   }
 
   &__body__column__one {
@@ -298,10 +303,6 @@ $baseclass: 'card';
       margin-left: 0px;
       margin-bottom: 0px;
       padding-top: 1 * $rem-base;
-    }
-
-    .#{$baseclass}__body__token-logo {
-      grid-template-columns: 70px 1fr;
     }
 
     .#{$baseclass}__dep-buttons-col {

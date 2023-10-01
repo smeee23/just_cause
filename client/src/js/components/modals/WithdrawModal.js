@@ -77,7 +77,7 @@ class WithdrawModal extends Component {
                   if(!pending) pending = [];
                   pending.push(info);
 						      await this.props.updatePendingTxList(pending);
-                  localStorage.setItem("pendingTxList", JSON.stringify(pending));
+                  sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
                   await this.props.updatePendingTx(info);
                   txInfo.txHash = transactionHash;
                 }
@@ -88,20 +88,20 @@ class WithdrawModal extends Component {
             txInfo.success = true;
 
             const newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
-            const newDepositInfo = addNewPoolInfo([...this.props.userDepositPoolInfo], newInfo);
+            const newDepositInfo = addNewPoolInfo({...this.props.userDepositPoolInfo}, newInfo);
             await this.props.updateUserDepositPoolInfo(newDepositInfo);
-            localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
+            sessionStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
 
             if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
-              const newOwnerInfo = addNewPoolInfo([...this.props.ownerPoolInfo], newInfo);
+              const newOwnerInfo = addNewPoolInfo({...this.props.ownerPoolInfo}, newInfo);
               await this.props.updateOwnerPoolInfo(newOwnerInfo);
-              localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+              sessionStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
             }
 
             if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
-              const newVerifiedInfo = addNewPoolInfo([...this.props.verifiedPoolInfo], newInfo);
+              const newVerifiedInfo = addNewPoolInfo({...this.props.verifiedPoolInfo}, newInfo);
               await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
-              localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
+              sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
             }
 		}
     catch (error) {

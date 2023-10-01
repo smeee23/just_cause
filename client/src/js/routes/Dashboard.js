@@ -14,6 +14,7 @@ import DeployTxModal from "../components/modals/DeployTxModal";
 import NewPoolModal from "../components/modals/NewPoolModal";
 import PendingTxList from "../components/PendingTxList";
 import ConnectPendingModal from "../components/modals/ConnectPendingModal";
+
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
 import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
@@ -25,11 +26,11 @@ import { updateClaim } from "../actions/claim";
 import { updateApprove } from "../actions/approve";
 import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
+import { updateAlert } from "../actions/alert";
 
 import LogoCard from "../components/logos/LogoCard";
 import { precise, numberWithCommas, getHeaderValuesInUSD } from '../func/ancillaryFunctions';
-
-import web3Modal from "../App";
+import { getUserOwned, getUserDeposits } from "../func/contractInteractions";
 
 class Dashboard extends Component {
 
@@ -46,14 +47,14 @@ class Dashboard extends Component {
 		try{
 			window.scrollTo(0,0);
 
-			let currentTab = Number(localStorage.getItem('openTabIndex'));
+			let currentTab = Number(sessionStorage.getItem('openTabIndex'));
 			if(currentTab){
 				this.setState({
 					openTabIndex: currentTab
 				});
 			}
 
-			let currentVerifiedTab = Number(localStorage.getItem('openVerifiedIndex'));
+			let currentVerifiedTab = Number(sessionStorage.getItem('openVerifiedIndex'));
 			if(currentVerifiedTab){
 				this.setState({
 					openVerifiedIndex: currentVerifiedTab
@@ -92,7 +93,7 @@ class Dashboard extends Component {
 
 	getAlertModal = () => {
 		if(this.props.alert){
-			let modal = <Modal isOpen={true}><AlertModal txDetails={this.props.alert}/></Modal>;
+			let modal = <Modal isOpen={true}><AlertModal info={this.props.alert}/></Modal>;
 			return modal;
 		}
 	}
@@ -150,14 +151,14 @@ class Dashboard extends Component {
 		this.setState({
 			openTabIndex: index,
 		});
-		localStorage.setItem('openTabIndex', index);
+		sessionStorage.setItem('openTabIndex', index);
 	}
 
 	setSelectedVerifiedTab = async(index) => {
 		this.setState({
 			openVerifiedIndex: index,
 		});
-		localStorage.setItem('openVerifiedIndex', index);
+		sessionStorage.setItem('openVerifiedIndex', index);
 	}
 
 	createOptionButtons = () => {
@@ -242,7 +243,7 @@ class Dashboard extends Component {
 		let info;
 		if(this.state.openTabIndex === 0) info = "The recipients of verified pools are known and established entities";
 		else if (this.state.openTabIndex === 1) info = "Causes for which you are the receiving address";
-		else if (this.state.openTabIndex === 2) info = "Causes to which you have contributed";
+		else if (this.state.openTabIndex === 2) info = "Causes to which you have contributed donations";
 		return (
 			<div style={{marginTop: "25px", maxWidth: "300px", alignItems:"center", justifyContent:"center"}}>
 				<p style={{marginRight: "0%"}} className="mr">{info}</p>
@@ -257,30 +258,30 @@ class Dashboard extends Component {
 			hideLowBalance: (!orig)
 		});
 	}
-	getApplicationLink = () => {
-		if(this.state.openTabIndex === 0){
-			return (
-				<div style={{paddingBottom:"20px"}}/>
-			);
+
+	getHideLowTitle = () => {
+		if(["Connect", "Pending"].includes(this.props.activeAccount)){
+			return "Connect wallet"
 		}
-		else if (this.state.openTabIndex === 1){
+		return this.state.hideLowBalance ? "show all pools contributed to" : "hide inactive pools"
+	}
+	getHideLowButton = () => {
+		if (this.state.openTabIndex === 2){
 			return (
-				<div style={{paddingBottom:"62.5px"}}/>
-			);
-		}
-		else if (this.state.openTabIndex === 2){
-			return (
-				<div title={this.state.hideLowBalance ? "show all pools contributed to" : "hide inactive pools"} style={{paddingBottom:"20px", maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
-					<ButtonSmall text={this.state.hideLowBalance ? "Show All" : "Hide Zero/Low Balances"} callback={() => this.setHideLowBalances()}/>
+				<div title={this.getHideLowTitle()} style={{height: '50px', maxWidth: "1000px", borderRadius: "8px", marginLeft: "auto", marginRight: "auto"}}>
+					<ButtonSmall text={this.state.hideLowBalance ? "Show All" : "Hide Zero/Low Balances"} disabled={["Connect", "Pending"].includes(this.props.activeAccount)} callback={() => this.setHideLowBalances()}/>
 				</div>
 			);
 		}
+		return (<div style={{ height: '50px' }} />);
 	}
 
 	createCardInfo = () => {
-		if(["Connect", "Connecting"].includes(this.props.activeAccount) && !web3Modal.cachedProvider){
+		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.openTabIndex];
+		if(["Connect", "Connecting"].includes(this.props.activeAccount) &&
+		   ((!this.props.ownerPoolInfo && this.state.openTabIndex === 1) || (!this.props.userDepositPoolInfo && this.state.openTabIndex === 2))){
 			return(
-			<div className="card__cardholder_slide" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto", paddingTop: "100px"}}>
+			<div className="card__cardholder_slide" style={{display:"flex", flexDirection: "wrap", alignItems:"center", justifyContent:"center", marginLeft:"auto", marginRight:"auto"}}>
 				<LogoCard/>
 				<div style={{display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
 
@@ -290,9 +291,22 @@ class Dashboard extends Component {
 			</div>
 			);
 		}
-		const poolInfo = [this.props.verifiedPoolInfo, this.props.ownerPoolInfo, this.props.userDepositPoolInfo][this.state.openTabIndex];
 
-		if(!this.props.tokenMap || !poolInfo){
+		if(!["Connect", "Connecting"].includes(this.props.activeAccount)){
+			if(this.state.openTabIndex === 1 && this.props.ownerPoolAddrs.length === 0){
+				return (<div className="page-section--center card__delay" style={{ width: "100%"}}>
+					<h2>{"Not Receiving Address for Any JustCause Pools"}</h2>
+				   </div>);
+			}
+			else if(this.state.openTabIndex === 2 && this.props.userDepositPoolAddrs.length === 0){
+				return (<div className="page-section--center card__delay" style={{ width: "100%"}}>
+					<h2>{"Not Contributed to Any JustCause Pools"}</h2>
+				   </div>);
+			}
+		}
+
+
+		if(!this.props.tokenMap || Object.keys(poolInfo).length === 0){
 			return (<div className="page-section--center" style={{paddingTop: "48px", width: "100%"}}>
 						<div className="card__loading">
 							<h2 className="card__letter" style={{ animationDelay: '0.1s' }}>L</h2>
@@ -303,53 +317,44 @@ class Dashboard extends Component {
 							<h2 className="card__letter" style={{ animationDelay: '0.6s' }}>N</h2>
 							<h2 className="card__letter" style={{ animationDelay: '0.7s' }}>G</h2>
 						</div>
-				   </div>);
-		}
-
-		if(poolInfo.length === 0){
-			return (<div className="page-section--center" style={{paddingTop: "48px", width: "100%"}}>
-					<h2>{this.state.openTabIndex === 1 ? "Not Receiving Address for Any JustCause Pools" : this.state.openTabIndex === 2 ? "Not Contributed to Any JustCause Pools" : ""}</h2>
-				   </div>);
+				    </div>);
 		}
 
 		let cardHolder = [];
-		for(let i = 0; i < poolInfo.length; i++){
-			const item = poolInfo[i];
-
-			const {userBalance} = getHeaderValuesInUSD(item.acceptedTokenInfo, this.props.tokenMap);
-
+		Object.entries(poolInfo).forEach(([key, value]) => {
+			const {userBalance} = getHeaderValuesInUSD(value.acceptedTokenInfo, this.props.tokenMap);
 			if(this.state.hideLowBalance && this.state.openTabIndex === 2){
 				if(userBalance !== "<$0.01" && userBalance !== "$0.00"){
 					cardHolder.push(
 						<Card
-							key={item.address}
-							title={item.name}
-							idx={i}
-							receiver={item.receiver}
-							address={item.address}
-							acceptedTokenInfo={item.acceptedTokenInfo}
-							about={item.about}
-							picHash={item.picHash}
-							isVerified={item.isVerified}
+							key={value.address}
+							title={value.name}
+							idx={cardHolder.length}
+							receiver={value.receiver}
+							address={value.address}
+							acceptedTokenInfo={value.acceptedTokenInfo}
+							about={value.about}
+							picHash={value.picHash}
+							isVerified={value.isVerified}
 						/>
 					);
 				}
 			}
 			else if(this.state.openTabIndex === 0){
-				const name = item.name;
+				const name = value.name;
 				if(this.state.openVerifiedIndex === 1){
 					if(name.endsWith("Cause Fund") || name === "Environment Conservation Fund" || name === "Healthcare & Research Fund"){
 						cardHolder.push(
 							<Card
-								key={item.address}
-								title={item.name}
-								idx={i}
-								receiver={item.receiver}
-								address={item.address}
-								acceptedTokenInfo={item.acceptedTokenInfo}
-								about={item.about}
-								picHash={item.picHash}
-								isVerified={item.isVerified}
+								key={value.address}
+								title={value.name}
+								idx={cardHolder.length}
+								receiver={value.receiver}
+								address={value.address}
+								acceptedTokenInfo={value.acceptedTokenInfo}
+								about={value.about}
+								picHash={value.picHash}
+								isVerified={value.isVerified}
 							/>
 						);
 					}
@@ -358,15 +363,15 @@ class Dashboard extends Component {
 					if(!name.endsWith("Cause Fund") && name !== "Healthcare & Research Fund" && name !== "Environment Conservation Fund" ){
 						cardHolder.push(
 							<Card
-								key={item.address}
-								title={item.name}
-								idx={i}
-								receiver={item.receiver}
-								address={item.address}
-								acceptedTokenInfo={item.acceptedTokenInfo}
-								about={item.about}
-								picHash={item.picHash}
-								isVerified={item.isVerified}
+								key={value.address}
+								title={value.name}
+								idx={cardHolder.length}
+								receiver={value.receiver}
+								address={value.address}
+								acceptedTokenInfo={value.acceptedTokenInfo}
+								about={value.about}
+								picHash={value.picHash}
+								isVerified={value.isVerified}
 							/>
 						);
 					}
@@ -375,19 +380,19 @@ class Dashboard extends Component {
 			else{
 				cardHolder.push(
 					<Card
-						key={item.address}
-						title={item.name}
-						idx={i}
-						receiver={item.receiver}
-						address={item.address}
-						acceptedTokenInfo={item.acceptedTokenInfo}
-						about={item.about}
-						picHash={item.picHash}
-						isVerified={item.isVerified}
+						key={value.address}
+						title={value.name}
+						idx={cardHolder.length}
+						receiver={value.receiver}
+						address={value.address}
+						acceptedTokenInfo={value.acceptedTokenInfo}
+						about={value.about}
+						picHash={value.picHash}
+						isVerified={value.isVerified}
 					/>
 				);
 			}
-		}
+		});
 		return (
 			<div className="card__cardholder_slide">
 				{cardHolder}
@@ -396,16 +401,15 @@ class Dashboard extends Component {
 	}
 
 	render() {
-		const cardHolder = this.createCardInfo();
 		const optionButtons = this.createOptionButtons();
 		const verifiedButtons = this.createVerifiedButtons();
 
 		return (
 			<Fragment>
 				<article>
-					<section  className="page-section page-section--center horizontal-padding bw0" style={{paddingBottom:"0px"}}>
+					<section  className="page-section page-section--center horizontal-padding bw0" style={{paddingBottom:"0px", minHeight: "400px"}}>
 						<div style={{display:"flex", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
-							<div style={{display:"flex", marginTop: "36px"}}>
+							<div style={{height: '50px', display:"flex", marginTop: "40px"}}>
 								{optionButtons}
 							</div>
 							{this.getTabInfo()}
@@ -413,6 +417,7 @@ class Dashboard extends Component {
 								{verifiedButtons}
 							</div>
 							{this.getVerifiedTabInfo()}
+							{this.getHideLowButton()}
 						</div>
 					</section>
 					<section className="page-section_no_vert_padding horizontal-padding bw0">
@@ -422,11 +427,7 @@ class Dashboard extends Component {
 						{this.getDeployTxModal()}
 						{this.getAlertModal()}
 						{this.getNewPoolModal()}
-						{this.getApplicationLink()}
-						{cardHolder}
-					</section>
-					<section className="page-section page-section--center horizontal-padding bw0" style={{paddingTop:"0px"}} >
-
+						{this.createCardInfo()}
 					</section>
 				</article>
 				<PendingTxList/>
@@ -456,6 +457,7 @@ const mapStateToProps = state => ({
 	alert: state.alert,
 	isMobile: state.isMobile,
 	networkId: state.networkId,
+	alert: state.alert,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -470,6 +472,7 @@ const mapDispatchToProps = dispatch => ({
 	updateApprove: (txInfo) => dispatch(updateApprove(txInfo)),
 	updateShare: (share) => dispatch(updateShare(share)),
 	updateNewAbout: (about) => dispatch(updateNewAbout(about)),
+	updateAlert: (info) => dispatch(updateAlert(info)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

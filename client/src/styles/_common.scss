@@ -9,12 +9,18 @@ html, body, input, textarea {
 	color: $brand-white;
 }
 
-::selection { background: $brand-yellow; }
+::selection { background: $brand-blue; }
 
 body {
 	-webkit-overflow-scrolling: touch;
-
 	-webkit-touch-callout: none;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	-o-user-select: text;
+	user-select: text;
+
+	caret-color: transparent;
 }
 
 ul {

@@ -22,7 +22,7 @@ const polygonMainetTokenMap = {
     LINK: {address:'0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39', decimals: 18, apiKey: "chainlink"},
 }
 
-const optimismMainetTokenMap = {
+export const optimismMainetTokenMap = {
     AAVE: {address: '0x76FB31fb4af56892A25e32cFC43De717950c9278', decimals: 18, apiKey: "aave"},
     DAI: {address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', decimals: 18, apiKey: "dai"},
     USDC: {address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',decimals: 6, apiKey: "usd-coin"},
@@ -54,7 +54,7 @@ export const getAaveAddressProvider = (networkId) => {
 
     if(networkId === 137) return aavePoolAddressesProviderPolygonMainnetAddress;
 
-    if(networkId === 10) return aavePoolAddressesProviderOptimismMainnetAddress
+    if(networkId === 10) return aavePoolAddressesProviderOptimismMainnetAddress;
 }
 
 export const getPoolTrackerAddress = (networkId) => {

@@ -38,6 +38,8 @@ import Logo from "../components/Logo"
 
 import {getPriceFromCoinGecko} from './priceFeeds.js'
 
+import { getDataFromS3, getAboutFromS3 } from "./awsS3";
+
 //const { createHash } = require('crypto');
 
 export const linkedInShare = (purl, ptitle, poolAddress, psummary) => {
@@ -144,19 +146,6 @@ export const encryptString = (inputString, encryptionKey) => {
   }
 
   return btoa(encrypted);
-}
-
-export const decryptString = (encryptedBase64, encryptionKey) => {
-  const encrypted = atob(encryptedBase64)
-
-  let decrypted = '';
-
-  for (let i = 0; i < encrypted.length; i++) {
-    const charCode = encrypted.charCodeAt(i) ^ encryptionKey.charCodeAt(i % encryptionKey.length);
-    decrypted += String.fromCharCode(charCode);
-  }
-
-  return decrypted;
 }
 
 export const rayMul = (a, b) => {
@@ -338,12 +327,7 @@ export const copyToClipboard = (str) => {
 }
 
 export const checkPoolInPoolInfo = (poolAddress, poolInfo) => {
-  for(let i = 0; i < poolInfo.length; i++){
-    if(poolInfo[i].address === poolAddress){
-      return true;
-    }
-  }
-  return false;
+  return Object.keys(poolInfo).includes(poolAddress)
 }
 
 export const filterOutVerifieds = (poolAddrs) => {
@@ -397,6 +381,7 @@ export const addNewPoolInfoAboutOnly = (prevInfo, newInfo) => {
 
   return prevInfo;
 }
+
 export const displayLogoLg = (acceptedTokenString) => {
   let logo = '';
   if(acceptedTokenString === 'ETH'){
@@ -466,4 +451,112 @@ export const displayLogoLg = (acceptedTokenString) => {
     }
 
   return logo;
+}
+
+export const buildAwsPools = async(tokenMap, poolList) => {
+  try{
+    const poolPromises = poolList.map(async e => {
+      const poolData = JSON.parse(await getDataFromS3(e+"_pool_OP"));
+      if (poolData.hasOwnProperty("pool")) {
+        poolData["address"] = poolData["pool"];
+        delete poolData["pool"];
+      }
+      poolData["about"] = await getAboutFromS3(poolData["name"])
+      let acceptedTokenStrings = [];
+      poolData["acceptedTokenInfo"].forEach(async(e) => {
+        const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === e["address"]);
+        e["decimals"] = tokenMap[tokenString].decimals;
+        e["acceptedTokenString"] = tokenString;
+        acceptedTokenStrings.push(tokenString);
+      })
+      return poolData;
+    });
+
+    // await for all promises to complete
+    return await Promise.all(poolPromises);
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
+export const getLastWrite = async() => {
+  const last_write = await getDataFromS3("last_write_OP");
+  const curr_time = Math.floor(Date.now() / 1000);
+  console.log("last_write", last_write, curr_time, (curr_time - last_write));
+  return curr_time - last_write;
+}
+
+export const getVerifiedPoolInfoAws = async(tokenMap, activeAccount) => {
+  let verifiedPoolInfo = {};
+  let contributorPoolInfo = {};
+  let receiverPoolInfo = {};
+  try{
+    const secFromWrite = await getLastWrite();
+    if(secFromWrite < 1800){
+      const data = await getDataFromS3("verified_OP");
+      const verifiedPools = data.length > 0 ? JSON.parse(data) : [];
+      if(verifiedPools.length > 0){
+        const allVerifiedPoolData = await buildAwsPools(tokenMap, verifiedPools);
+        allVerifiedPoolData.forEach(data => {
+          verifiedPoolInfo[data.address] = data;
+        });
+      }
+
+      let contributorData;
+      if(activeAccount && !["Connect", "Pending"].includes(activeAccount)){
+        let data = await getDataFromS3(activeAccount+"__con_OP");
+        contributorData = JSON.parse(data);
+        const contributorPools = data.length > 0 ? Object.keys(contributorData) : [];
+        data = await getDataFromS3(activeAccount+"__rec_OP");
+        const receiverPools = data.length > 0 ? JSON.parse(data) : [];
+
+        if(contributorPools.length > 0){
+          const allContributorPoolData = await buildAwsPools(tokenMap, contributorPools);
+          allContributorPoolData.forEach(data => {
+            contributorPoolInfo[data.address] = data;
+          });
+        }
+
+        if(receiverPools.length > 0){
+          const allReceiverPoolData = await buildAwsPools(tokenMap, receiverPools);
+          allReceiverPoolData.forEach(data => {
+            receiverPoolInfo[data.address] = data;
+          });
+        }
+
+        if(contributorData){
+          verifiedPoolInfo = mergePoolAndDeposits(verifiedPoolInfo, contributorData);
+          contributorPoolInfo = mergePoolAndDeposits(contributorPoolInfo, contributorData);
+          receiverPoolInfo = mergePoolAndDeposits(receiverPoolInfo, contributorData);
+        }
+      }
+    }
+  }
+  catch (error){
+    console.error(error);
+  }
+  return { verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo }
+}
+
+const mergePoolAndDeposits = (poolObj, depositObj) => {
+  // deep copy of the poolObj to avoid mutating the original object
+  const mergedPool = JSON.parse(JSON.stringify(poolObj));
+
+  for (let poolAddress in mergedPool) {
+    // Loop through acceptedTokenInfo of the current pool
+    mergedPool[poolAddress].acceptedTokenInfo.forEach(tokenInfo => {
+      const tokenAddress = tokenInfo.address;
+
+      // Set default values
+      tokenInfo.userBalance = '0';
+
+      // If there is a deposit for the current token, update userBalance
+      if (depositObj[poolAddress] && depositObj[poolAddress][tokenAddress] !== undefined) {
+        tokenInfo.userBalance = depositObj[poolAddress][tokenAddress].toString();
+      }
+    });
+  }
+
+  return mergedPool;
 }

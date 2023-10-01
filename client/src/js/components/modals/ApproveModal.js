@@ -46,7 +46,7 @@ class ApproveModal extends Component {
 						let pending = [...this.props.pendingTxList];
 						pending.push(info);
 						await this.props.updatePendingTxList(pending);
-						localStorage.setItem("pendingTxList", JSON.stringify(pending));
+						sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 						this.props.updatePendingTx(info);
 						txInfo.txHash = transactionHash;
 					}
@@ -64,11 +64,11 @@ class ApproveModal extends Component {
 					}
 				});
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
 				pending = (pending).filter(e => !(e.txInfo === txInfo.transactionHash));
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
                 let tempTokenMap = this.props.tokenMap;
                 tempTokenMap[tokenString]['allowance'] = true;

@@ -21,7 +21,7 @@ import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateShare } from  "../actions/share";
 import { updateNewAbout } from  "../actions/newAbout";
 
-import { getBalance, getContractInfo , getDirectFromPoolInfoAllTokens} from '../func/contractInteractions';
+import { getBalance, getContractInfo , getDirectFromPoolInfoAllTokens, getAllowance} from '../func/contractInteractions';
 import { precise, delay, getHeaderValuesInUSD, getFormatUSD, displayLogo, displayLogoMd, displayLogoLg, redirectWindowBlockExplorer, isNativeToken, redirectWindowUrl, digitsWithMaxTenLength, copyToClipboard, checkPoolInPoolInfo, addNewPoolInfoAllTokens } from '../func/ancillaryFunctions';
 import { verifiedPoolMap } from '../func/verifiedPoolMap';
 import { Modal, SmallModal, LargeModal } from "../components/Modal";
@@ -93,6 +93,22 @@ class Card extends Component {
 		clearInterval(this.interval);
 	}
 
+	componentDidUpdate = async(prevProps) => {
+		if (prevProps.verifiedPoolInfo !== this.props.verifiedPoolInfo && !["Connect", "Pending"].includes(this.props.activeAccount)) {
+			await this.refreshDisplay(this.props.address)
+		}
+		if (prevProps.pendingTxList !== this.props.pendingTxList) {
+			if(prevProps.pendingTxList.length > this.props.pendingTxList.length){
+				for(let i = 0; i < prevProps.pendingTxList.length; i++){
+					if(prevProps.pendingTxList[i].poolAddress === this.props.address){
+						console.log('pending tx proccessed', prevProps.pendingTxList, this.props.pendingTxList);
+						//await this.refresh(this.props.address)
+					}
+				}
+			}
+		}
+	}
+
 	displayWithdraw = (item, address, tokenString, title) => {
 		if(item.userBalance > 0){
 			if(this.props.isMobile) return <div title={"withdraw deposit"}><ButtonSmall logo={displayLogo(tokenString)} text={"Withdraw "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.withdrawDeposit(address, item.address, item.userBalance)}/></div>
@@ -110,10 +126,19 @@ class Card extends Component {
 	displayDeposit = (poolAddress, tokenAddress, isEth, tokenString, title) => {
 		if(isEth){
 			if(this.props.isMobile) return  <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
-			return  <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} /*disabled={isDisabled}*/ callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+			return  <div title={this.getDepositDesc(title)}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+		}
+		if(this.props.tokenMap[tokenString]['allowance'] === "0"){
+			if(this.props.isMobile) return <div title={"required before deposit"}><ButtonSmall logo={displayLogo(tokenString)} text={"Approve "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
+			return <div title={"required before deposit"}><Button logo={displayLogo(tokenString)} text={"Approve "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 		}
 		if(this.props.isMobile) return <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
-		return <div title={"earn donations for "+title}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+		return <div title={this.getDepositDesc(title)}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+	}
+
+	getDepositDesc = (title) => {
+		if(this.props.activeAccount === "Connect") return "Connect wallet to deposit"
+		return "earn donations for "+title;
 	}
 	toggleCardOpen = () => {
 		this.setState({
@@ -180,7 +205,7 @@ class Card extends Component {
 			if(depositAPY.includes("e-")){
 				depositAPY = "0.000"
 			}
-			return (<p>{" "+ depositAPY+'% APY'}</p>);
+			return (<p className="mb0">{" "+ depositAPY+'% APY'}</p>);
 		}
 	}
 
@@ -214,7 +239,7 @@ class Card extends Component {
 	getAbout = (isReceiver) => {
 
 		const title = this.props.title;
-		const about = this.props.about;
+		let about = this.props.about;
 		const picHash = this.props.picHash;
 		const address = this.props.address;
 
@@ -250,7 +275,7 @@ class Card extends Component {
 	}
 
 	resetAnimation = () => {
-		const el = document.getElementById("animated");
+		const el = document.getElementById("animated"+this.props.idx);
 		el.style.animation = "none";
 		let temp = el.offsetHeight;
 		el.style.animation = null;
@@ -320,26 +345,28 @@ class Card extends Component {
 		const priceUSD = this.props.tokenMap[item.acceptedTokenString] && this.props.tokenMap[item.acceptedTokenString].priceUSD;
 
 		const tokenInfo =
-			<div id="animated" className="card__balance-grid--outer">
+			<div id={"animated"+this.props.idx} className="card__balance-grid--outer">
 				<div className="card__balance-box">
 					<div className="card__body__column__nine">
 						<div className="card__body__token-logo">
 							<div style={{gridColumn: 1}}>
-								{this.props.isMobile ? displayLogoMd(item.acceptedTokenString) : displayLogoLg(item.acceptedTokenString)}
+								{displayLogoMd(item.acceptedTokenString)}
 							</div>
-							<div style={{gridColumn: 2, marginRight: "auto", marginTop: "auto"}}>
+							<div style={{gridColumn: 2, marginRight: "auto", marginTop:"auto", marginBottom: "24px"}}>
 								<h5 className="mb0">  {item.acceptedTokenString} </h5>
 								{this.getAPY(depositAPY)}
 							</div>
 						</div>
-						<div title="user balance" className="card__balance-grid--inner" >
-							<div style={{gridColumn: 1}}>
-								<p>{"Balance"}</p>
-							</div>
-							<div style={{gridColumn: 2, width: "250px"}}>
-								<p >{digitsWithMaxTenLength(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
-							</div>
-						</div>
+						{item.userBalance?.toString() ?
+							<div title="user balance" className="card__balance-grid--inner" >
+								<div style={{gridColumn: 1}}>
+									<p>{"Balance"}</p>
+								</div>
+								<div style={{gridColumn: 2, width: "250px"}}>
+									<p >{digitsWithMaxTenLength(precise(item.userBalance, item.decimals))+"  (" +getFormatUSD(precise(item.userBalance, item.decimals), priceUSD)+")"}</p>
+								</div>
+							</div> : ""
+						}
 						<div title="pool balance" className="card__balance-grid--inner">
 							<div style={{gridColumn: 1}}>
 								<p>{"Pool"}</p>
@@ -348,14 +375,16 @@ class Card extends Component {
 								<p>{digitsWithMaxTenLength(precise(item.totalDeposits, item.decimals))+"  (" +getFormatUSD(precise(item.totalDeposits, item.decimals),priceUSD)+")"}</p>
 							</div>
 						</div>
-						<div title={"unharvested "+item.acceptedTokenString+" for "+title} className="card__balance-grid--inner">
-							<div style={{gridColumn: 1}}>
-								<p>{"Earned"}</p>
-							</div>
-							<div style={{gridColumn: 2, width: "250"}}>
-							<p>{digitsWithMaxTenLength(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
-							</div>
-						</div>
+						{ item.unclaimedInterest?.toString() ?
+							<div title={"unharvested "+item.acceptedTokenString+" for "+title} className="card__balance-grid--inner">
+								<div style={{gridColumn: 1}}>
+									<p>{"Earned"}</p>
+								</div>
+								<div style={{gridColumn: 2, width: "250"}}>
+								<p>{digitsWithMaxTenLength(precise(item.unclaimedInterest, item.decimals)) +"  (" +getFormatUSD(precise(item.unclaimedInterest, item.decimals), priceUSD)+")"}</p>
+								</div>
+							</div> : ""
+						}
 						<div title={item.acceptedTokenString+" harvested and sent to "+title} className="card__balance-grid--inner">
 							<div style={{gridColumn: 1}}>
 								<p>{"Donated"}</p>
@@ -485,6 +514,19 @@ class Card extends Component {
 		}
 	}
 
+	approve = async(tokenAddress, tokenString, poolAddress) => {
+		console.log("approve clicked");
+		await this.props.updateApprove('');
+		try{
+			const activeAccount = this.props.activeAccount;
+
+			await this.props.updateApprove({tokenString: tokenString, tokenAddress: tokenAddress, poolAddress: poolAddress, activeAccount: activeAccount});
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}
+
 	isReceiver = (receiver) => {
 		if(receiver === this.props.activeAccount){
 			return true;
@@ -520,21 +562,21 @@ class Card extends Component {
 		console.log("update all tokens", newInfoAllTokens);
 
 		if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
-			const newDepositInfo = addNewPoolInfoAllTokens([...this.props.userDepositPoolInfo], newInfoAllTokens);
+			const newDepositInfo = addNewPoolInfoAllTokens({...this.props.userDepositPoolInfo}, newInfoAllTokens);
 			await this.props.updateUserDepositPoolInfo(newDepositInfo);
-			localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
+			sessionStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
 		}
 
 		if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
-			const newOwnerInfo = addNewPoolInfoAllTokens([...this.props.ownerPoolInfo], newInfoAllTokens);
+			const newOwnerInfo = addNewPoolInfoAllTokens({...this.props.ownerPoolInfo}, newInfoAllTokens);
 			await this.props.updateOwnerPoolInfo(newOwnerInfo);
-			localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+			sessionStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 		}
 
 		if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
-			const newVerifiedInfo = addNewPoolInfoAllTokens([...this.props.verifiedPoolInfo], newInfoAllTokens);
+			const newVerifiedInfo = addNewPoolInfoAllTokens({...this.props.verifiedPoolInfo}, newInfoAllTokens);
 			await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
-			localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
+			sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 		}
 
 		let tempInfo = this.props.acceptedTokenInfo;
@@ -550,12 +592,30 @@ class Card extends Component {
 		this.setState({ tokenInfo: tempInfo, loading: false });
 	}
 
-	getRefreshButton = (poolAddress) => {
+	refreshDisplay = async(poolAddress) =>{
+		this.setState({loading: true});
+
+		let newInfoAllTokens = await getDirectFromPoolInfoAllTokens(this.props.address, this.props.tokenMap, this.props.activeAccount, this.props.connect);
+
+		let tempInfo = this.props.acceptedTokenInfo;
+		for(let i = 0; i < this.props.acceptedTokenInfo.length; i++){
+			const tokenInfo = newInfoAllTokens.newTokenInfo && newInfoAllTokens.newTokenInfo[this.props.acceptedTokenInfo[i].address];
+			tempInfo[i].unclaimedInterest = tokenInfo.unclaimedInterest;
+			tempInfo[i].claimedInterest = tokenInfo.claimedInterest;
+			tempInfo[i].userBalance = tokenInfo.userBalance;
+			tempInfo[i].totalBalance = tokenInfo.totalBalance;
+		}
+
+		this.resetAnimation();
+		this.setState({ tokenInfo: tempInfo, loading: false });
+	}
+
+	getRefreshButton = () => {
 		if(!this.state.open) return;
 		const logo = this.state.loading ? "refresh_pending" : "refresh";
 		return(
 			<div title="refresh pool balances" style={{marginRight:"-16px"}}>
-				<Button isLogo={logo} callback={async() => await this.refresh(poolAddress)} />
+				<Button isLogo={logo} callback={async() => await this.refresh(this.props.address)} />
 			</div>
 
 		);
@@ -563,9 +623,9 @@ class Card extends Component {
 	getBalances = (userBalance, interestEarned, totalBalance) => {
 		return(
 			<Fragment>
-				<p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{interestEarned === "" ? "" : "Donated "+ interestEarned}</p>
-				<p title="USD value of your deposited tokens (approx.)" className="mb0">{userBalance === "" ? "" : "Balance " + userBalance}</p>
-				<p title="USD value of all pool tokens (approx.)" className="mb0">{totalBalance === "" ? "" : "Pool "+ totalBalance}</p>
+				{interestEarned === "" ? "" : <p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{"Donated "+ interestEarned}</p>}
+				{userBalance === "" ? "" : <p title="USD value of your deposited tokens (approx.)" className="mb0">{"Balance " + userBalance}</p>}
+				{totalBalance === "" ? "" : <p title="USD value of all pool tokens (approx.)" className="mb0">{"Pool "+ totalBalance}</p>}
 			</Fragment>
 		);
 	}
@@ -619,6 +679,7 @@ class Card extends Component {
 		//const {userBalance, interestEarned, totalBalance} = getHeaderValuesInUSD(acceptedTokenInfo, this.props.tokenMap);
 		const {userBalance, interestEarned, totalBalance} = this.getHeaderValues();
 
+
 		return (
 			<div className={classnames}>
 				<div className="card__header">
@@ -626,7 +687,7 @@ class Card extends Component {
 					{this.getCardLeft(randomPoolIcon, userBalance, interestEarned, totalBalance)}
 
 					<div className="card__header--right">
-						{this.getRefreshButton(address)}
+						{this.getRefreshButton()}
 						<div className="card__open-button" onClick={this.toggleCardOpen}><Icon name={"plus"} size={32}/></div>
 					</div>
 				</div>
@@ -666,6 +727,7 @@ const mapStateToProps = state => ({
 	newAbout: state.newAbout,
 	connect: state.connect,
 	isMobile: state.isMobile,
+	pendingTxList: state.pendingTxList,
 })
 
 const mapDispatchToProps = dispatch => ({

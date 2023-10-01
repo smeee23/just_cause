@@ -4,9 +4,9 @@ import Web3 from "web3";
 
 const accountsChanged = (accounts) => {
   console.log("accounts changed", accounts);
-  localStorage.setItem("ownerPoolInfo", "");
-  localStorage.setItem("userDepositPoolInfo", "");
-  localStorage.setItem("pendingTxList", "");
+  sessionStorage.setItem("ownerPoolInfo", "");
+  sessionStorage.setItem("userDepositPoolInfo", "");
+  sessionStorage.setItem("pendingTxList", "");
   sessionStorage.setItem("connectionType", "");
   sessionStorage.setItem("activeAccount", "");
   window.location.reload(false);
@@ -14,10 +14,10 @@ const accountsChanged = (accounts) => {
 
 const chainChanged = (chainId) => {
   console.log("chainid changed", chainId);
-  localStorage.setItem("ownerPoolInfo", "");
-  localStorage.setItem("userDepositPoolInfo", "");
-  localStorage.setItem("verifiedPoolInfo", "");
-  localStorage.setItem("pendingTxList", "");
+  sessionStorage.setItem("ownerPoolInfo", "");
+  sessionStorage.setItem("userDepositPoolInfo", "");
+  sessionStorage.setItem("verifiedPoolInfo", "");
+  sessionStorage.setItem("pendingTxList", "");
   sessionStorage.setItem("connectionType", "");
   sessionStorage.setItem("activeAccount", "");
   window.location.reload(false);
@@ -25,17 +25,17 @@ const chainChanged = (chainId) => {
 
 const connectEvent = (info) => {
   console.log("connect", info);
-  localStorage.setItem("ownerPoolInfo", "");
-  localStorage.setItem("userDepositPoolInfo", "");
-  localStorage.setItem("pendingTxList", "");
+  sessionStorage.setItem("ownerPoolInfo", "");
+  sessionStorage.setItem("userDepositPoolInfo", "");
+  sessionStorage.setItem("pendingTxList", "");
   window.location.reload(false);
 }
 
 const disconnect = (error) => {
   console.log("disconnect", error);
-  localStorage.setItem("ownerPoolInfo", "");
-  localStorage.setItem("userDepositPoolInfo", "");
-  localStorage.setItem("pendingTxList", "");
+  sessionStorage.setItem("ownerPoolInfo", "");
+  sessionStorage.setItem("userDepositPoolInfo", "");
+  sessionStorage.setItem("pendingTxList", "");
   sessionStorage.setItem("connectionType", "");
   sessionStorage.setItem("activeAccount", "");
   window.location.reload(false);

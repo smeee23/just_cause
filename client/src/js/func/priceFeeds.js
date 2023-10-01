@@ -18,12 +18,12 @@ export const getPriceFromMessari = async(apiKey) => {
 export const getPriceFromCoinGecko = async(networkId) => {
     let data;
     try{
-        if(deployedNetworks.includes(networkId) ){
-            const url = "https://api.coingecko.com/api/v3/simple/price?ids=aave,dai,tether,usd-coin,ethereum,bitcoin,chainlink,matic-network,defipulse-index&vs_currencies=usd";
-            const response = await axios.get(url);
-            console.log('coingecko prices:', response.data);
-            data = response.data;
-        }
+        //if(deployedNetworks.includes(networkId) ){
+        const url = "https://api.coingecko.com/api/v3/simple/price?ids=aave,dai,tether,usd-coin,ethereum,bitcoin,chainlink,matic-network,defipulse-index&vs_currencies=usd";
+        const response = await axios.get(url);
+        console.log('coingecko prices:', response.data);
+        data = response.data;
+        //}
     }
     catch (error) {
         console.error(error);

@@ -13,102 +13,42 @@ import WEthLogo from "../cryptoLogos/WEthLogo";
 import LinkLogo from "../cryptoLogos/LinkLogo";
 import DpiLogo from "../cryptoLogos/DpiLogo";
 import Logo from "../Logo"
-import { Button } from '../Button';
 
-import { updateShare } from  "../../actions/share";
-
-import { redirectWindowBlockExplorer } from '../../func/ancillaryFunctions';
-import { getContractInfo } from '../../func/contractInteractions';
+import { updateAlert } from "../../actions/alert";
 
 class AlertModal extends Component {
 
-  displayLogo = (acceptedTokenString) => {
-    let logo = '';
-    if(acceptedTokenString === 'ETH'){
-      logo = <EthLogo/>;
+  getText = () => {
+    if(this.props.info.msg === "pool_not_found"){
+      return "POOL NOT FOUND";
     }
-    else if (acceptedTokenString === 'USDT'){
-      logo = <TetherLogo/>;
-    }
-    else if (acceptedTokenString === 'USDC'){
-      logo = <UsdcLogo/>;
-    }
-    else if (acceptedTokenString === 'WBTC'){
-      logo = <WbtcLogo/>;
-    }
-    else if (acceptedTokenString === 'DAI'){
-      logo = <DaiLogo/>;
-    }
-    else if (acceptedTokenString === 'AAVE'){
-      logo = <AaveLogo/>;
-    }
-    else if(acceptedTokenString === 'WETH'){
-      logo = <WEthLogo/>;
-    }
-    else if(acceptedTokenString === 'MATIC'){
-      logo = <MaticLogo/>;
-    }
-    else if(acceptedTokenString === 'LINK'){
-      logo = <LinkLogo/>;
-    }
-    else if(acceptedTokenString === 'DPI'){
-      logo = <DpiLogo/>;
-    }
-    else{
-      logo = <Logo/>
-    }
-
-    return logo;
-  }
-
-  getContractInfo = async(address) => {
-    return await getContractInfo(address, this.props.connect);
-  };
-
-  share = async(poolAddress, name, txDetails) => {
-		await this.props.updateShare("");
-		await this.props.updateShare({poolAddress: poolAddress, name: name, txDetails: txDetails});
-	}
-
-  getShareButton = (txDetails) => {
-    if(txDetails.type === "DEPOSIT"){
-      return(
-        <div title={"share your donation"} style={{display:"flex", flex:"flex-wrap", gap:"16px", paddingBottom:"32px"}}>
-          <h4 style={{fontSize: 15, marginBottom: "auto", marginTop: "auto"}}>Proud of your donation? Why not share it?</h4>
-          <Button isLogo="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails )} />
-        </div>
-      );
-    }
-    if(txDetails.type === "CLAIM"){
-      return(
-        <div title={"share"} style={{display:"flex", flex:"flex-wrap", gap:"16px", paddingBottom:"32px"}}>
-          <h4 style={{fontSize: 15, marginBottom: "auto", marginTop: "auto"}}>Thank you for harvesting donations for {txDetails.poolName}!</h4>
-          <Button isLogo="share_d" callback={async() => await this.share(txDetails.poolAddress, txDetails.poolName, txDetails)}/>
-        </div>
-      );
+    if(this.props.info.msg === "switch_network"){
+      return "UNSUPPORTED NETWORK IDENTIFIED SWITCH TO OPTIMISM MAINNET"
     }
   }
 
   render() {
-      const { txDetails } = this.props;
-
-		return (
-      <Fragment>
-        <ModalBodyTx>
-            <h2>UNSUPPORTED NETWORK IDENTIFIED SWITCH TO OPTIMISM MAINNET</h2>
-        </ModalBodyTx>
-      </Fragment>
-		);
+      const { info } =  this.props
+      console.log("info", info)
+      const text = this.getText()
+      return (
+        <Fragment>
+          <ModalBodyTx>
+              <h2>{text}</h2>
+          </ModalBodyTx>
+        </Fragment>
+      );
 	}
 }
 
 const mapStateToProps = state => ({
   tokenMap: state.tokenMap,
   connect: state.connect,
+  alert: state.alert,
 })
 
 const mapDispatchToProps = dispatch => ({
-  updateShare: (share) => dispatch(updateShare(share)),
+  updateAlert: (msg) => dispatch(updateAlert(msg)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlertModal)

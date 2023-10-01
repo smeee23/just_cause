@@ -36,7 +36,9 @@ import { isNativeToken } from "./ancillaryFunctions";
 		return aaveTokenInfo;
 	}
 
-	export const getAllowance = async(erc20Instance, address, activeAccount) => {
+	export const getAllowance = async(tokenAddress, address, activeAccount, web3Type) => {
+		const web3 = await getWeb3(web3Type);
+		const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 		const allowance = await erc20Instance.methods.allowance(activeAccount, address).call();
 		return allowance;
 	}
@@ -70,11 +72,11 @@ import { isNativeToken } from "./ancillaryFunctions";
 		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress, web3Type);
 		const userBalancePools = depositBalancePools.balances;
 		const poolInfo = await getPoolInfo([poolAddress], tokenMap,  userBalancePools, {},  web3Type);
-		prevInfo.push(poolInfo[0]);
+		prevInfo[poolAddress] = poolInfo[poolAddress];
 		return prevInfo;
 	}
 
-	export const updatePoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists, web3Type) => {
+	/*export const updatePoolInfo = async(poolAddress, activeAccount, poolTrackerAddress, tokenMap, poolLists, web3Type) => {
 
 		const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress, web3Type);
 		const userBalancePools = depositBalancePools.balances;
@@ -90,7 +92,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 			}
 		}
 		return poolLists;
-	}
+	}*/
 
 	export const getContractInfo = async(poolAddress, web3Type) => {
 		const web3 = await getWeb3(web3Type);
@@ -234,11 +236,11 @@ import { isNativeToken } from "./ancillaryFunctions";
 			}
 		}
 
-		let poolInfo = [];
+		let poolInfo = {};
 		for(let i=0; i < poolTracker.length; i++){
 			if(knownPoolInfo && knownAddrs.includes(poolTracker[i])){
 				const key = Object.keys(knownPoolInfo).find(key => knownPoolInfo[key].address === poolTracker[i]);
-				poolInfo.push(knownPoolInfo[key]);
+				poolInfo[key] = knownPoolInfo[key];
 			}
 			else{
 				let JCPoolInstance = new web3.eth.Contract(
@@ -261,28 +263,22 @@ import { isNativeToken } from "./ancillaryFunctions";
 				for(let j = 0; j < acceptedTokens.length; j++){
 					const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
 					let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];
-					const balance = (balances) ? balances[0] : 0;
-					const amountScaled = (balances) ? balances[1] : 0;
+					const balance = (balances) ? balances[0] : '0';
 					const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(acceptedTokens[j]).call();
 					acceptedTokenInfo.push({
 						'totalDeposits': groupedPoolTokenInfo[5],
 						'userBalance':  balance,
-						'amountScaled':  amountScaled,
 						'unclaimedInterest': groupedPoolTokenInfo[4],
 						'claimedInterest': groupedPoolTokenInfo[3],
-						'reserveNormalizedIncome': groupedPoolTokenInfo[1],
-						'aTokenAddress': groupedPoolTokenInfo[2],
-						'liquidityIndex': groupedPoolTokenInfo[0],
 						'acceptedTokenString': tokenString,
 						'decimals': tokenMap[tokenString].decimals,
 						'depositAPY': tokenMap[tokenString] && tokenMap[tokenString].depositAPY,
 						'address': acceptedTokens[j],
-						'allowance': tokenMap[tokenString].allowance,
 					});
 					acceptedTokenStrings.push(tokenString);
 				}
-
-				poolInfo.push({
+				const addr = poolTracker[i]
+				poolInfo[poolTracker[i]] = {
 								receiver: receiver,
 								name: name,
 								about: about,
@@ -291,7 +287,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 								address: poolTracker[i],
 								acceptedTokens: acceptedTokenStrings,
 								acceptedTokenInfo: acceptedTokenInfo,
-				});
+				};
 			}
 		}
 		return poolInfo;
@@ -356,11 +352,9 @@ import { isNativeToken } from "./ancillaryFunctions";
 			PoolTracker.abi,
 			poolTrackerAddress,
 		);
-		console.log("searchAddr", searchAddr);
 
 		if(!web3.utils.isAddress(searchAddr)){
 			searchAddr = await PoolTrackerInstance.methods.getAddressFromName(searchAddr).call();
-			console.log("not address", searchAddr);
 		}
 
 		if(searchAddr !== '0x0000000000000000000000000000000000000000'){
@@ -369,14 +363,15 @@ import { isNativeToken } from "./ancillaryFunctions";
 				const depositBalancePools = await getDepositorAddress(activeAccount, poolTrackerAddress, web3Type);
 				const userBalancePools = depositBalancePools.balances;
 				const resultPool = await getPoolInfo([searchAddr], tokenMap, userBalancePools, {}, web3Type);
-				return resultPool
+				console.log("result pool", resultPool);
+				return resultPool[searchAddr]
 			}
 			else{
-				alert('Pool not found, double check address or name');
+				//alert('Pool not found, double check address or name');
 			}
 		}
 		else{
-			alert('Pool not found, double check address or name');
+			//alert('Pool not found, double check address or name');
 		}
 		return []
 	}

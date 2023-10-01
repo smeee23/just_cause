@@ -17,8 +17,33 @@ class SearchModal extends Component {
 			isValidInput: 'valid',
       		amount: 0,
           pending: false,
+          dotCount: 1,
+          maxDots: 3,
+          header: "Find a Pool by Address or Name"
 		}
+    this.timeout = null;
 	}
+
+  componentDidMount() {
+    this.animateDots();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!this.state.pending && this.timeout) {
+      clearTimeout(this.timeout);
+      this.setState({ dotCount: 1 });
+    }
+  }
+
+  animateDots = () => {
+    if (this.state.pending) {
+      this.timeout = setTimeout(() => {
+        this.setState(prevState => ({
+          dotCount: (prevState.dotCount % this.state.maxDots) + 1
+        }), this.animateDots);
+      }, 500); // Change the time interval if needed
+    }
+  }
 
   checkValues = () => {
 	return false;
@@ -30,17 +55,27 @@ class SearchModal extends Component {
       pending: true
     });
     let results = await searchPools(this.props.poolTrackerAddress, this.props.activeAccount, this.props.tokenMap, searchTerm, this.props.connect);
-    this.props.updateSearchInfo(results);
+    console.log("search results", results)
+    if(Object.keys(results).length > 0){
+      this.props.updateSearchInfo(results);
+    }
+    else{
+      this.setState({
+        pending: false,
+        header: "Pool Not Found Try Again"
+      });
+
+    }
   }
 
-  getModalBody = (poolInfo) => {
+  getModalBody = () => {
     if(!this.state.pending && !this.props.linkAddress){
 
       return (
           <TextField ref="searchTerm" label="Name or Address" placeholder="Enter Name or Address"/>
       );
     }
-    return <p>Searching...</p>
+    return <p>Searching{'.'.repeat(this.state.dotCount)}</p>;
   }
 
   render() {
@@ -51,7 +86,7 @@ class SearchModal extends Component {
 		return (
       <Fragment>
         <ModalHeader>
-          <h2 className="mb0">Find a Pool by Address or Name</h2>
+          <h2 className="mb0">{this.state.header}</h2>
         </ModalHeader>
         <ModalCtas>
           <div style={{fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>

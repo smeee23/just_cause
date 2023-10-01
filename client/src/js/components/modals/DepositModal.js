@@ -51,7 +51,6 @@ class DepositModal extends Component {
 				const web3 = await getWeb3(this.props.connect);
 				const tokenAddress = this.props.depositAmount.tokenAddress;
 				const poolAddress = this.props.depositAmount.poolAddress;
-				const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
 				const tokenString = this.props.depositAmount.tokenString;
 				const isETH = isNativeToken(this.props.networkId, tokenString);
 				const activeAccount = this.props.activeAccount;
@@ -66,7 +65,7 @@ class DepositModal extends Component {
 				let allowance;
 				let parameter = {};
 				if(!isETH){
-					allowance = await getAllowance(erc20Instance, this.props.poolTrackerAddress, activeAccount)
+					allowance = await getAllowance(tokenAddress, this.props.poolTrackerAddress, activeAccount, this.props.connect)
 
 					parameter = {
 						from: activeAccount,
@@ -108,7 +107,7 @@ class DepositModal extends Component {
 							let pending = [...this.props.pendingTxList];
 							pending.push(info);
 							await this.props.updatePendingTxList(pending);
-							localStorage.setItem("pendingTxList", JSON.stringify(pending));
+							sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 							await this.props.updatePendingTx(info);
 							txInfo.txHash = transactionHash;
 
@@ -123,27 +122,27 @@ class DepositModal extends Component {
 					let newDepositInfo;
 					if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
 						newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
-						newDepositInfo = addNewPoolInfo([...this.props.userDepositPoolInfo], newInfo);
+						newDepositInfo = addNewPoolInfo({...this.props.userDepositPoolInfo}, newInfo);
 					}
 					else{
 						console.log("POOL NOT FOUND IN DEPOSITS, ADDING POOL");
 						newDepositInfo = await addPoolToPoolInfo(poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, this.props.userDepositPoolInfo, this.props.connect);
 					}
 					await this.props.updateUserDepositPoolInfo(newDepositInfo);
-					localStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
+					sessionStorage.setItem("userDepositPoolInfo", JSON.stringify(newDepositInfo));
 
 					if(checkPoolInPoolInfo(poolAddress, this.props.ownerPoolInfo)){
 						newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
-						const newOwnerInfo = addNewPoolInfo([...this.props.ownerPoolInfo], newInfo);
+						const newOwnerInfo = addNewPoolInfo({...this.props.ownerPoolInfo}, newInfo);
 						await this.props.updateOwnerPoolInfo(newOwnerInfo);
-						localStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+						sessionStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
 					}
 
 					if(checkPoolInPoolInfo(poolAddress, this.props.verifiedPoolInfo)){
 						newInfo = newInfo ? newInfo : await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
-						const newVerifiedInfo = addNewPoolInfo([...this.props.verifiedPoolInfo], newInfo);
+						const newVerifiedInfo = addNewPoolInfo({...this.props.verifiedPoolInfo}, newInfo);
 						await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
-						localStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
+						sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 					}
 				}
 			}

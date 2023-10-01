@@ -24,13 +24,14 @@ import { updatePendingTxList } from "./actions/pendingTxList";
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
-import { getTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
+import { getTokenMap, optimismMainetTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
 
 import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress } from './func/contractInteractions.js';
 
 import {getPriceFromCoinGecko} from './func/priceFeeds.js'
-import {precise, delay, checkLocationForAppDeploy, filterOutVerifieds, encryptString, decryptString} from './func/ancillaryFunctions';
+import {precise, delay, getVerifiedPoolInfoAws, filterOutVerifieds, encryptString, decryptString} from './func/ancillaryFunctions';
 import connectWallet from "./func/connectWallet";
+import { getDataFromS3 } from "./func/awsS3";
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { optimism } from 'wagmi/chains'
 
@@ -89,39 +90,48 @@ class App extends Component {
 		try {
 			console.log("isMobile", this.props.isMobile)
 			window.addEventListener('resize', this.props.detectMobile);
-				//if("inApp" === checkLocationForAppDeploy() || "inSearch" === checkLocationForAppDeploy() ){
-					//if(web3Modal.cachedProvider || "inSearch" === checkLocationForAppDeploy() ){
-						/*const verifiedPoolInfo = localStorage.getItem("verifiedPoolInfo");
-						if(verifiedPoolInfo){
-							await this.props.updateVerifiedPoolInfo(JSON.parse(verifiedPoolInfo));
-							console.log("verifiedPoolInfo from storage", JSON.parse(verifiedPoolInfo));
-						}
-						const ownerPoolInfo = localStorage.getItem("ownerPoolInfo");
-						if(ownerPoolInfo){
-							await this.props.updateOwnerPoolInfo(JSON.parse(ownerPoolInfo));
-							console.log("ownerPoolInfo from storage", JSON.parse(ownerPoolInfo));
-						}
-						const userDepositPoolInfo = localStorage.getItem("userDepositPoolInfo");
-						if(userDepositPoolInfo){
-							await this.props.updateUserDepositPoolInfo(JSON.parse(userDepositPoolInfo));
-							console.log("userDepositPoolInfo from storage", JSON.parse(userDepositPoolInfo));
-						}*/
 
+			const activeAccount = sessionStorage.getItem('activeAccount');
+			if(activeAccount){
+				this.props.updateActiveAccount(JSON.parse(activeAccount));
+			}
 
-						//if (this.props.activeAccount){
+			const connector = sessionStorage.getItem('connectionType');
+			if(connector){
+				this.props.updateConnect(JSON.parse(connector));
+			}
 
-						//}
-					//}
-				//}
-
-				const activeAccount = sessionStorage.getItem('activeAccount');
-				if(activeAccount){
-					this.props.updateActiveAccount(JSON.parse(activeAccount));
+			let verifiedPoolInfo;
+			if(activeAccount){
+				verifiedPoolInfo = sessionStorage.getItem("verifiedPoolInfo");
+				if(verifiedPoolInfo){
+					await this.props.updateVerifiedPoolInfo(JSON.parse(verifiedPoolInfo));
+					console.log("verifiedPoolInfo from storage", JSON.parse(verifiedPoolInfo));
 				}
-				const connector = sessionStorage.getItem('connectionType');
-				if(connector){
-					this.props.updateConnect(JSON.parse(connector));
+				const ownerPoolInfo = sessionStorage.getItem("ownerPoolInfo");
+				if(ownerPoolInfo){
+					await this.props.updateOwnerPoolInfo(JSON.parse(ownerPoolInfo));
+					console.log("ownerPoolInfo from storage", JSON.parse(ownerPoolInfo));
 				}
+				const userDepositPoolInfo = sessionStorage.getItem("userDepositPoolInfo");
+				if(userDepositPoolInfo){
+					await this.props.updateUserDepositPoolInfo(JSON.parse(userDepositPoolInfo));
+					console.log("userDepositPoolInfo from storage", JSON.parse(userDepositPoolInfo));
+				}
+			}
+
+			let tokenMapCache = sessionStorage.getItem("tokenMap");
+			if(tokenMapCache){
+				await this.setTokenMapInitialState(JSON.parse(tokenMapCache))
+			}
+			else{
+				await this.setTokenMapInitialState(optimismMainetTokenMap)
+			}
+
+			if(!verifiedPoolInfo){
+				const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, JSON.parse(activeAccount));
+				await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
+			}
 		}
 
 		catch (error) {
@@ -143,11 +153,11 @@ class App extends Component {
 	componentDidUpdate = async(prevProps) => {
         if (this.props.connect !== prevProps.connect) {
             // account prop has changed, perform your logic
-			const pendingTxList = localStorage.getItem("pendingTxList");
+			const pendingTxList = sessionStorage.getItem("pendingTxList");
 			if(pendingTxList){
 				const truePending = await checkTransactions(JSON.parse(pendingTxList), this.props.connect);
 				this.props.updatePendingTxList(truePending);
-				localStorage.setItem("pendingTxList", JSON.stringify(truePending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(truePending));
 			}
 			if(this.props.activeAccount){
 				await this.getAccounts();
@@ -186,22 +196,18 @@ class App extends Component {
 
 		this.setPoolTrackAddress(this.poolTrackerAddress);
 
-
-		const tokenMap = getTokenMap(this.networkId);
-		let tokenMapCache = localStorage.getItem("tokenMap");
+		let tokenMapCache = sessionStorage.getItem("tokenMap");
 		if(tokenMapCache){
-			tokenMapCache =JSON.parse(tokenMapCache);
-			if(JSON.stringify(Object.keys(tokenMap)) === JSON.stringify(Object.keys(tokenMapCache))){
-				await this.props.updateTokenMap(tokenMapCache);
-				console.log("tokenMap from storage", tokenMapCache);
-			}
-			else{
-				console.log("tokenMap mismatch")
-				localStorage.clear();
-				window.location.reload(false);
-			}
+			await this.setTokenMapFinalState(JSON.parse(tokenMapCache));
 		}
-		await this.setTokenMapState(tokenMap);
+		else{
+			await this.setTokenMapFinalState(optimismMainetTokenMap);
+		}
+
+		const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, this.props.activeAccount);
+		//console.log("pools in App", verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo, this.props.tokenMap)
+		await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
+
 		await this.setPoolStateAll(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
 		this.setAavePoolAddress(aaveAddressesProvider);
@@ -249,12 +255,12 @@ class App extends Component {
 					}
 				});
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
 				await delay(3000);
 				pending = (pending).filter(e => !(e.txHash === event.transactionHash));
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 			})
 			.on('changed', changed => console.log("EVENT changed", changed))
 			.on('error', err => console.log("EVENT err", err))
@@ -270,12 +276,12 @@ class App extends Component {
 					}
 				});
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
 				await delay(3000);
 				pending = (pending).filter(e => !(e.txHash === event.transactionHash));
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 			})
 			.on('changed', changed => console.log("EVENT changed", changed))
 			.on('error', err => console.log("EVENT err", err))
@@ -291,12 +297,12 @@ class App extends Component {
 					}
 				});
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
 				await delay(3000);
 				pending = (pending).filter(e => !(e.txHash === event.transactionHash));
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 			})
 			.on('changed', changed => console.log("EVENT changed", changed))
 			.on('error', err => console.log("EVENT err", err))
@@ -312,12 +318,12 @@ class App extends Component {
 					}
 				});
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
 				await delay(3000);
 				pending = (pending).filter(e => !(e.txHash === event.transactionHash));
 				await this.props.updatePendingTxList(pending);
-				localStorage.setItem("pendingTxList", JSON.stringify(pending));
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 			})
 			.on('changed', changed => console.log("EVENT changed", changed))
 			.on('error', err => console.log("EVENT err", err))
@@ -329,15 +335,14 @@ class App extends Component {
 		this.networkId = await this.web3.eth.net.getId();
 		console.log("networkId", this.networkId);
 		if(!deployedNetworks.includes(this.networkId)){
-			this.props.updateAlert("switch_network");
+			const msg = "switch_network";
+			this.props.updateAlert({msg});
 			try {
 				await window.ethereum.request({
 					method: 'wallet_switchEthereumChain',
 					params: [{ chainId: "0xA" }],
 				});
 			} catch (err) {
-				// This error code indicates that the chain has not been added to MetaMask
-				//this.props.updateAlert("switch_network");
 				alert("Optimism Network not found");
 			}
 			window.location.reload(false);
@@ -364,41 +369,78 @@ class App extends Component {
 		await this.props.updatePoolTrackerAddress(poolTrackerAddress);
 	}
 
+	setPoolsFromAws = async(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo) => {
+		if(Object.keys(verifiedPoolInfo).length > 0){
+			await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
+			await this.props.updateVerifiedPoolAddrs(Object.keys(verifiedPoolInfo));
+		}
+		if(Object.keys(contributorPoolInfo).length > 0){
+			await this.props.updateUserDepositPoolInfo(contributorPoolInfo);
+			await this.props.updateUserDepositPoolAddrs(Object.keys(contributorPoolInfo));
+		}
+		if(Object.keys(receiverPoolInfo).length > 0){
+			await this.props.updateOwnerPoolInfo(receiverPoolInfo);
+			await this.props.updateOwnerPoolAddrs(Object.keys(receiverPoolInfo));
+		}
+	}
+
 	setActiveAccountState = async(activeAccount) => {
 		await this.props.updateActiveAccount(activeAccount);
 	}
-	setTokenMapState = async(tokenMap) => {
+	setTokenMapInitialState = async(tokenMap) => {
 		let acceptedTokens = Object.keys(tokenMap);
 		const geckoPriceData = await getPriceFromCoinGecko(this.networkId);
+		const claimedInterest = JSON.parse(await getDataFromS3("claimedInterest_OP"));
+		const totalDeposit = JSON.parse(await getDataFromS3("totalDeposit_OP"));
+
+		for(let i = 0; i < acceptedTokens.length; i++){
+			const key = acceptedTokens[i];
+			const address =  tokenMap[key] && tokenMap[key].address;
+
+			if(!tokenMap[key]['priceUSD']){
+				const apiKey = tokenMap[key] && tokenMap[key].apiKey;
+				if(geckoPriceData){
+					tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
+				}
+				else{
+					tokenMap[key]['priceUSD'] = 0;
+				}
+			}
+
+			const tvl = totalDeposit[address] ? totalDeposit[address] : 0//need to pull from aws
+			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
+
+			const totalDonated = claimedInterest[address] ? claimedInterest[address] : 0
+			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
+
+		}
+		await this.props.updateTokenMap(tokenMap);
+		sessionStorage.setItem("tokenMap", JSON.stringify(tokenMap));
+		console.log("tokenMap initial", tokenMap, geckoPriceData);
+	}
+
+	setTokenMapFinalState = async(tokenMap) => {
+		let acceptedTokens = Object.keys(tokenMap);
 
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
 
 			const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId), this.props.connect);
-			const erc20Instance = await new this.web3.eth.Contract(ERC20Instance.abi, address);
-			const allowance = await getAllowance(erc20Instance, this.poolTrackerAddress, this.props.activeAccount);
 
 			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
 			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
-			const apiKey = tokenMap[key] && tokenMap[key].apiKey;
-			if(geckoPriceData){
-				tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
-			}
-			else{
-				tokenMap[key]['priceUSD'] = 0;
-			}
 
 			const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
 			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
 
 			const totalDonated = await this.PoolTrackerInstance.methods.getTotalDonated(address).call();
 			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
-
+			tokenMap[key]['allowance'] = await getAllowance(address, this.poolTrackerAddress, this.props.activeAccount, this.props.connect)
 		}
 		await this.props.updateTokenMap(tokenMap);
-		localStorage.setItem("tokenMap", JSON.stringify(tokenMap));
-		console.log("tokenMap", tokenMap);
+		sessionStorage.setItem("tokenMap", JSON.stringify(tokenMap));
+		console.log("tokenMap final", tokenMap);
 	}
 
 	calculateAPY = (liquidityRate) => {
@@ -424,23 +466,21 @@ class App extends Component {
 		let verifiedPoolInfo;
 		verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools, {}, this.props.connect);
 		await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
-		localStorage.setItem("verifiedPoolInfo", JSON.stringify(verifiedPoolInfo));
+		sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(verifiedPoolInfo));
 
 		let ownerPoolInfo;
 		ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools, this.props.verifiedPoolInfo, this.props.connect);
 		await this.props.updateUserDepositPoolAddrs(userDepositPools);
+		await this.props.updateOwnerPoolAddrs(ownerPools);
 		await this.props.updateOwnerPoolInfo(ownerPoolInfo);
-		localStorage.setItem("ownerPoolInfo", JSON.stringify(ownerPoolInfo));
+		sessionStorage.setItem("ownerPoolInfo", JSON.stringify(ownerPoolInfo));
 
 		let userDepositPoolInfo;
 		let knownPools = ownerPoolInfo;
-		for(const key in this.props.verifiedPoolInfo){
-			knownPools[("v_"+key)] = this.props.verifiedPoolInfo[key];
-		}
 
 		userDepositPoolInfo = await getPoolInfo(userDepositPools, getTokenMap(this.networkId),  userBalancePools, knownPools, this.props.connect);
 		await this.props.updateUserDepositPoolInfo(userDepositPoolInfo);
-		localStorage.setItem("userDepositPoolInfo", JSON.stringify(userDepositPoolInfo));
+		sessionStorage.setItem("userDepositPoolInfo", JSON.stringify(userDepositPoolInfo));
 	}
 
 	render() {

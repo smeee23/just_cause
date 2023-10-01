@@ -23,7 +23,6 @@ function Profile({ updateActiveAccount, updateConnect }) {
         sessionStorage.setItem('activeAccount', JSON.stringify(address));
         sessionStorage.setItem('connectionType', JSON.stringify(connector.name));
 
-        console.log("Effect is running!", address, connector);
       }
       return () => {
         isMounted = false;
@@ -31,7 +30,6 @@ function Profile({ updateActiveAccount, updateConnect }) {
     }, [address, connector, updateActiveAccount, updateConnect]);
 
     if (isConnected && connector) {
-      console.log("connected", connector.name, address)
       return (
         <div>
           <div>{ address }</div>

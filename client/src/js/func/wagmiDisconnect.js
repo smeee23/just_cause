@@ -8,8 +8,8 @@ function Disconnect({ updateActiveAccount }) {
     const { disconnect } = useDisconnect()
 
     const handleDisconnect = async() => {
-        localStorage.setItem("ownerPoolInfo", "");
-        localStorage.setItem("userDepositPoolInfo", "");
+        sessionStorage.setItem("ownerPoolInfo", "");
+        sessionStorage.setItem("userDepositPoolInfo", "");
         sessionStorage.clear();
         await disconnect();
         //await updateActiveAccount("Connect");

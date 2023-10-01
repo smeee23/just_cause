@@ -13,6 +13,7 @@ $baseclass: 'textfield';
     padding: 0;
     margin: 0;
     opacity: 0;
+    caret-color: $brand-black;
   }
 
   &__box {

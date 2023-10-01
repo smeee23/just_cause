@@ -389,7 +389,6 @@ class App extends Component {
 	}
 	setTokenMapInitialState = async(tokenMap) => {
 		let acceptedTokens = Object.keys(tokenMap);
-		const geckoPriceData = await getPriceFromCoinGecko(this.networkId);
 		const claimedInterest = JSON.parse(await getDataFromS3("claimedInterest_OP"));
 		const totalDeposit = JSON.parse(await getDataFromS3("totalDeposit_OP"));
 
@@ -398,6 +397,7 @@ class App extends Component {
 			const address =  tokenMap[key] && tokenMap[key].address;
 
 			if(!tokenMap[key]['priceUSD']){
+				const geckoPriceData = await getPriceFromCoinGecko(this.networkId);
 				const apiKey = tokenMap[key] && tokenMap[key].apiKey;
 				if(geckoPriceData){
 					tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
@@ -416,7 +416,6 @@ class App extends Component {
 		}
 		await this.props.updateTokenMap(tokenMap);
 		sessionStorage.setItem("tokenMap", JSON.stringify(tokenMap));
-		console.log("tokenMap initial", tokenMap, geckoPriceData);
 	}
 
 	setTokenMapFinalState = async(tokenMap) => {

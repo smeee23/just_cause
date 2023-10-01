@@ -407,7 +407,7 @@ class Dashboard extends Component {
 		return (
 			<Fragment>
 				<article>
-					<section  className="page-section page-section--center horizontal-padding bw0" style={{paddingBottom:"0px", minHeight: "400px"}}>
+					<section  className="page-section page-section--center horizontal-padding bw0" style={{paddingBottom:"0px", minHeight: "200px"}}>
 						<div style={{display:"flex", flexDirection: "column", alignItems:"center", justifyContent:"center"}}>
 							<div style={{height: '50px', display:"flex", marginTop: "40px"}}>
 								{optionButtons}

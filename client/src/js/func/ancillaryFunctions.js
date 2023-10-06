@@ -217,8 +217,7 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
 
     userBalance += precise(item.userBalance, item.decimals) * priceUSD;
 
-    const totalInterest = Number(item.unclaimedInterest) + Number(item.claimedInterest);
-    interestEarned += precise(totalInterest, item.decimals) * priceUSD;
+    interestEarned += precise(item.claimedInterest, item.decimals) * priceUSD;
 
     totalBalance += precise(item.totalDeposits, item.decimals) * priceUSD;
   }
@@ -469,6 +468,7 @@ export const buildAwsPools = async(tokenMap, poolList) => {
         e["acceptedTokenString"] = tokenString;
         acceptedTokenStrings.push(tokenString);
       })
+      poolData["acceptedTokenStrings"] = acceptedTokenStrings;
       return poolData;
     });
 
@@ -480,10 +480,28 @@ export const buildAwsPools = async(tokenMap, poolList) => {
   }
 }
 
+export const getSearchPoolInfoAws = async(tokenMap, poolAddr) => {
+  let poolInfo = {};
+  try{
+    const secFromWrite = await getLastWrite();
+    if(secFromWrite < 1800){
+      const pools = [poolAddr]
+      const allPoolData = await buildAwsPools(tokenMap, pools);
+      allPoolData.forEach(data => {
+        poolInfo[data.address] = data;
+      });
+    }
+  }
+  catch (error){
+    console.error(error);
+  }
+  return poolInfo[poolAddr];
+}
+
 export const getLastWrite = async() => {
   const last_write = await getDataFromS3("last_write_OP");
   const curr_time = Math.floor(Date.now() / 1000);
-  console.log("last_write", last_write, curr_time, (curr_time - last_write));
+  //console.log("last_write", last_write, curr_time, (curr_time - last_write));
   return curr_time - last_write;
 }
 

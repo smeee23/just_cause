@@ -35,7 +35,6 @@ class Header extends Component {
     if(!["/howitworks", "/"].includes(this.props.location.pathname)){
       const loc = window.location.href;
       if(loc.includes("search") && index === 1){
-        console.log("search", loc);
         i = 1;
       }
       else if (loc.includes("dashboard") && index === 0){

@@ -20,6 +20,7 @@ import { updateUserDepositPoolInfo } from "../actions/userDepositPoolInfo"
 import { updateSearchInfo } from "../actions/searchInfo";
 import { updateAlert } from "../actions/alert";
 import { getExternalPoolInfo } from '../func/contractInteractions';
+import { getSearchPoolInfoAws } from "../func/ancillaryFunctions";
 import PendingTxList from "../components/PendingTxList";
 
 class Search extends Component {
@@ -29,12 +30,30 @@ class Search extends Component {
 
 		this.state = {
 			openModal: false,
-			linkAddress: '',
 		}
 	}
 
 	componentDidMount = async () => {
 		window.scrollTo(0,0);
+		if(window.location.href.includes('?address=') && !this.state.linkAddress){
+			let addr = window.location.href;
+			addr = addr.substring(addr.length - 42);
+			await this.setState({linkAddress: addr});
+			if(this.props.tokenMap){
+				this.fetchDataBasedOnUrl();
+			}
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		if (this.props.tokenMap && (prevProps.tokenMap !== this.props.tokenMap)) {
+			this.fetchDataBasedOnUrl();
+		}
+	}
+
+	fetchDataBasedOnUrl = async() => {
+		const poolInfo = await getSearchPoolInfoAws(this.props.tokenMap, this.state.linkAddress)
+		await this.setState({ awsPoolInfo: poolInfo });
 	}
 
 	getTxResultModal = () => {
@@ -87,6 +106,12 @@ class Search extends Component {
 				return modal;
 			}
 		}
+		else{
+			if(this.state.awsPoolInfo){
+				const searchResults = this.createCardInfo(this.state.awsPoolInfo)
+				return searchResults;
+			}
+		}
 	}
 
 	openModal = () => {
@@ -137,16 +162,6 @@ class Search extends Component {
 
 	render() {
 		const linkAddress  = this.props.match.params.address;
-		if(!this.state.linkAddress){
-			if(linkAddress){
-				this.setState({linkAddress});
-			}
-			else if(window.location.href.includes('?address=') && !this.state.linkAddress){
-				let addr = window.location.href;
-				addr = addr.substring(addr.length - 42);
-				this.setState({linkAddress: addr});
-			}
-		}
 
 		return (
 			<Fragment>

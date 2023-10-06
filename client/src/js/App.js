@@ -88,7 +88,6 @@ class App extends Component {
 	}
 	componentDidMount = async() => {
 		try {
-			console.log("isMobile", this.props.isMobile)
 			window.addEventListener('resize', this.props.detectMobile);
 
 			const activeAccount = sessionStorage.getItem('activeAccount');

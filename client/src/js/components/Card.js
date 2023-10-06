@@ -125,14 +125,14 @@ class Card extends Component {
 	}
 	displayDeposit = (poolAddress, tokenAddress, isEth, tokenString, title) => {
 		if(isEth){
-			if(this.props.isMobile) return  <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+			if(this.props.isMobile) return  <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 			return  <div title={this.getDepositDesc(title)}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		}
 		if(this.props.tokenMap[tokenString]['allowance'] === "0"){
 			if(this.props.isMobile) return <div title={"required before deposit"}><ButtonSmall logo={displayLogo(tokenString)} text={"Approve "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 			return <div title={"required before deposit"}><Button logo={displayLogo(tokenString)} text={"Approve "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 		}
-		if(this.props.isMobile) return <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+		if(this.props.isMobile) return <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		return <div title={this.getDepositDesc(title)}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 	}
 

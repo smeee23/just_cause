@@ -119,20 +119,20 @@ class Card extends Component {
 
 	displayClaim = (item, address, title) => {
 		if(item.unclaimedInterest > 500){
-			if(this.props.isMobile) return <div title={"harvest donations for "+title}><ButtonSmall logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
-			return <div title={"harvest donations for "+title}><Button logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
+			if(this.props.isMobile) return <div title={"harvest donations"}><ButtonSmall logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
+			return <div title={"harvest donations for"}><Button logo={displayLogo(item.acceptedTokenString)} text={"Harvest Donations"} /*disabled={isDisabled}*/ callback={async() => await this.claim(address, item.address, item.unclaimedInterest)}/></div>
 		}
 	}
 	displayDeposit = (poolAddress, tokenAddress, isEth, tokenString, title) => {
 		if(isEth){
-			if(this.props.isMobile) return  <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+			if(this.props.isMobile) return  <div title={"earn donations"}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 			return  <div title={this.getDepositDesc(title)}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		}
 		if(this.props.tokenMap[tokenString]['allowance'] === "0"){
 			if(this.props.isMobile) return <div title={"required before deposit"}><ButtonSmall logo={displayLogo(tokenString)} text={"Approve "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 			return <div title={"required before deposit"}><Button logo={displayLogo(tokenString)} text={"Approve "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.approve(tokenAddress, tokenString, poolAddress)}/></div>
 		}
-		if(this.props.isMobile) return <div title={"earn donations for "+title}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
+		if(this.props.isMobile) return <div title={"earn donations"}><ButtonSmall logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 		return <div title={this.getDepositDesc(title)}><Button logo={displayLogo(tokenString)} text={"Deposit "+tokenString} disabled={this.props.activeAccount === "Connect"} callback={async() => await this.deposit(poolAddress, tokenAddress)}/></div>
 	}
 

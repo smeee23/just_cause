@@ -36,6 +36,7 @@ class PendingTx extends Component {
     getPendingTx = (txInfo) => {
 		if(txInfo && this.state.open){
             let cn = txInfo.status === "pending" ? "tx tx__pending" : "tx tx__completed";
+            const url = this.props.networkId === 10 ? "https://optimistic.etherscan.io/tx/" : this.props.networkId === 131 ? "https://polygonscan.com/tx/" : "";
             return (
                 <div className={cn} >
                     <div style={{display: "flex", flexDirection: "wrap"}}>
@@ -45,7 +46,7 @@ class PendingTx extends Component {
                         </div>
                     </div>
                     <h2 style={{fontSize: 12,  marginBottom: "2px", marginLeft: "4px", marginRight: "4px"}}>{txInfo.type} {'=>'} {txInfo.poolName}</h2>
-                    <a title="view on block explorer" style={{color: "black"}} href={"https://polygonscan.com/tx/"+txInfo.txHash+"/"} target="_blank" rel="noopener noreferrer">
+                    <a title="view on block explorer" style={{color: "black"}} href={url+txInfo.txHash+"/"} target="_blank" rel="noopener noreferrer">
                         <h2 style={{fontSize: 12,  marginBottom: "2px", color:"black", marginLeft: "4px", marginRight: "4px"}}>HASH {this.showSlice(txInfo.txHash)}</h2>
                     </a>
                 </div>
@@ -68,6 +69,7 @@ const mapStateToProps = state => ({
     activeAccount: state.activeAccount,
     tokenMap: state.tokenMap,
     pendingTxList: state.pendingTxList,
+    networkId: state.networkId, 
 })
 
 export default connect(mapStateToProps)(PendingTx)

@@ -332,7 +332,6 @@ class App extends Component {
 	getAccounts = async() => {
 		this.web3 = await this.connectToWeb3();
 		this.networkId = await this.web3.eth.net.getId();
-		console.log("networkId", this.networkId);
 		if(!deployedNetworks.includes(this.networkId)){
 			const msg = "switch_network";
 			this.props.updateAlert({msg});

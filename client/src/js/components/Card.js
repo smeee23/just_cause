@@ -624,8 +624,8 @@ class Card extends Component {
 		return(
 			<Fragment>
 				{interestEarned === "" ? "" : <p title="USD value of all harvested and unharvested donations (approx.)" className="mb0">{"Donated "+ interestEarned}</p>}
-				{userBalance === "" ? "" : <p title="USD value of your deposited tokens (approx.)" className="mb0">{"Balance " + userBalance}</p>}
 				{totalBalance === "" ? "" : <p title="USD value of all pool tokens (approx.)" className="mb0">{"Pool "+ totalBalance}</p>}
+				{userBalance === "" ? "" : <p title="USD value of your deposited tokens (approx.)" className="mb0">{"Balance " + userBalance}</p>}
 			</Fragment>
 		);
 	}

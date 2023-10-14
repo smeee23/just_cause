@@ -328,6 +328,10 @@ $baseclass: 'card';
       padding-left: (1 * $rem-base);
     }
 
+    .#{$baseclass}__about-box {
+      max-height: 125px;
+    }
+
     .#{$baseclass}__pool-pic {
       max-width: 125px;
     }

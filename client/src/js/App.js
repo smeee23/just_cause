@@ -28,7 +28,7 @@ import { getTokenMap, optimismMainetTokenMap, getAaveAddressProvider, deployedNe
 
 import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress } from './func/contractInteractions.js';
 
-import {getPriceFromCoinGecko} from './func/priceFeeds.js'
+import { getPriceFromCoinCap } from './func/priceFeeds.js'
 import {precise, delay, getVerifiedPoolInfoAws, filterOutVerifieds, encryptString, decryptString} from './func/ancillaryFunctions';
 import connectWallet from "./func/connectWallet";
 import { getDataFromS3 } from "./func/awsS3";
@@ -395,10 +395,10 @@ class App extends Component {
 			const address =  tokenMap[key] && tokenMap[key].address;
 
 			if(!tokenMap[key]['priceUSD']){
-				const geckoPriceData = await getPriceFromCoinGecko(this.networkId);
+				const coinCapPriceData = await getPriceFromCoinCap();
 				const apiKey = tokenMap[key] && tokenMap[key].apiKey;
-				if(geckoPriceData){
-					tokenMap[key]['priceUSD'] = geckoPriceData[apiKey] && geckoPriceData[apiKey].usd;
+				if(coinCapPriceData[apiKey]){
+					tokenMap[key]['priceUSD'] = coinCapPriceData[apiKey];
 				}
 				else{
 					tokenMap[key]['priceUSD'] = 0;
@@ -412,6 +412,7 @@ class App extends Component {
 			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
 
 		}
+		console.log(tokenMap)
 		await this.props.updateTokenMap(tokenMap);
 		sessionStorage.setItem("tokenMap", JSON.stringify(tokenMap));
 	}

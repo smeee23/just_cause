@@ -29,3 +29,26 @@ export const getPriceFromCoinGecko = async(networkId) => {
     return data;
 }
 
+export const getPriceFromCoinCap = async() => {
+    let data = {};
+    try{
+        const url1 = "https://api.coincap.io/v2/rates/bitcoin";
+        const url2 = "https://api.coincap.io/v2/rates/ethereum";
+        const response1 = await axios.get(url1);
+
+        const response2 = await axios.get(url2);
+
+        data = {
+            "dai": 1.00,
+            "usd-coin": 1.00,
+            "tether": 1.00,
+            "bitcoin": Number(response1.data.data.rateUsd),
+            "ethereum": Number(response2.data.data.rateUsd)
+        }
+    }
+    catch (error) {
+        console.error(error);
+    }
+    return data;
+}
+

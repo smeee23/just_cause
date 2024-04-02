@@ -4,20 +4,33 @@ import { ButtonSmall } from '../components/Button';
 import { connect } from "react-redux"
 import { updateActiveAccount } from "../actions/activeAccount"
 import { updateConnect } from "../actions/connect"
+import { optimism } from 'wagmi/chains'
 
 function Profile({ updateActiveAccount, updateConnect }) {
     const { address, connector, isConnected } = useAccount()
-    const { connect, connectors, error, isLoading, pendingConnector } = useConnect()
+    const { connect, connectors, error, isLoading, pendingConnector } = useConnect({
+      onSettled(data, error) {
+        console.log('Connect Settled', { data, error });
+        console.log(data.account, data.connector.name);
+        updateActiveAccount(data.account);
+        updateConnect(data.connector.name);
+        sessionStorage.setItem('activeAccount', JSON.stringify(data.account));
+        sessionStorage.setItem('connectionType', JSON.stringify(data.connector.name));
+      },
+
+    })
     const [isMounted, setIsMounted] = useState(true);
 
     useEffect(() => {
       let isMounted = true;
       if (!address || !connector) {
+        console.log("useEffect return undefied")
         return; // Exit early if address or connector is not available yet
       }
 
       if(isMounted){
         updateActiveAccount(address);
+        console.log("connector", connector);
         updateConnect(connector.name);
 
         sessionStorage.setItem('activeAccount', JSON.stringify(address));

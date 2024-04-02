@@ -4,20 +4,24 @@ import { Button } from "../components/Button";
 import { connect } from "react-redux"
 import { updateActiveAccount } from "../actions/activeAccount"
 
-function Disconnect({ updateActiveAccount }) {
-    const { disconnect } = useDisconnect()
+function Disconnect({ updateActiveAccount, logo }) {
+    const { disconnect } = useDisconnect({
+        onSettled(data, error) {
+          console.log('Disconnect Settled', { data, error })
+          window.location.reload(false);
+        },
+      });
 
     const handleDisconnect = async() => {
         sessionStorage.setItem("ownerPoolInfo", "");
         sessionStorage.setItem("userDepositPoolInfo", "");
-        sessionStorage.clear();
+        sessionStorage.setItem("pendingTxList", "");
+        sessionStorage.setItem("connectionType", "");
+        sessionStorage.setItem("activeAccount", "");
         await disconnect();
-        //await updateActiveAccount("Connect");
-        console.log("disconnect hit")
-        window.location.reload(false);
     }
     return (
-        <Button isLogo="close" callback={handleDisconnect}/>
+        <Button isLogo={logo} callback={handleDisconnect}/>
     )
 }
 

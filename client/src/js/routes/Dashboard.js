@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 
 import Card from '../components/Card';
 import { Modal, LargeModal } from "../components/Modal";
-import ConnectModal from "../components/Modal"
 import { Button, ButtonSmall } from '../components/Button';
 import PendingTxModal from "../components/modals/PendingTxModal";
 import AlertModal from "../components/modals/AlertModal";
@@ -13,7 +12,6 @@ import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import NewPoolModal from "../components/modals/NewPoolModal";
 import PendingTxList from "../components/PendingTxList";
-import ConnectPendingModal from "../components/modals/ConnectPendingModal";
 
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
@@ -101,13 +99,6 @@ class Dashboard extends Component {
 	getDeployTxModal = () => {
 		if(this.props.deployTxResult){
 			let modal = <Modal isOpen={true}><DeployTxModal txDetails={this.props.deployTxResult}/></Modal>;
-			return modal;
-		}
-	}
-
-	getConnectModal = () => {
-		if(this.props.activeAccount === "Pending"){
-			let modal = <ConnectModal isOpen={true}><ConnectPendingModal/></ConnectModal>;
 			return modal;
 		}
 	}
@@ -421,7 +412,6 @@ class Dashboard extends Component {
 						</div>
 					</section>
 					<section className="page-section_no_vert_padding horizontal-padding bw0">
-						{this.getConnectModal()}
 						{this.getPendingTxModal()}
 						{this.getTxResultModal()}
 						{this.getDeployTxModal()}

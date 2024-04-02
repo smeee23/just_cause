@@ -5,6 +5,7 @@ import TextField from '../TextField'
 import { Button, ButtonSmall } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
+import { ethers } from "ethers";
 import JCPool from "../../../contracts/JustCausePool.json";
 
 import { updateDepositAmount } from  "../../actions/depositAmount";
@@ -36,22 +37,30 @@ class UpdateAboutModal extends Component {
 		}
 	}
 
+  getNetworkTag = () => {
+	if(!this.props.networkId) return "";
+	return this.props.networkId === 10 ? "_OP" : this.props.networkId === 42161 ? "_ARB" : "";
+  }
+
   updateAboutOnChain = async(poolName, aboutText, poolAddress) => {
 	let result;
 	let txInfo;
 	try{
 		const aboutHash = sha256Hash(aboutText);
-		const metaUri = 'https://justcausepools.s3.amazonaws.com/'+poolName+"__meta";
+		const metaUri = 'https://justcausepools.s3.amazonaws.com/'+poolName+"__meta"+this.getNetworkTag();
 
 		const web3 = await getWeb3(this.props.connect);
 		const activeAccount = this.props.activeAccount;
 
-		const gasPrice = (await web3.eth.getGasPrice()).toString();
+		const infuraRpc = "https://optimism-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
+		const provider = new ethers.providers.JsonRpcProvider(infuraRpc);
+		const maxPriorityFeePerGas = ((await provider.getFeeData()).maxPriorityFeePerGas).toString();
 
 		const parameter = {
 			from: activeAccount,
 			gas: web3.utils.toHex(1200000),
-			gasPrice: web3.utils.toHex(gasPrice)
+			//gasPrice: web3.utils.toHex(gasPrice)
+			maxPriorityFeePerGas: web3.utils.toHex(maxPriorityFeePerGas)
 		};
 
 		let JCPoolInstance = new web3.eth.Contract(
@@ -79,8 +88,8 @@ class UpdateAboutModal extends Component {
 
 		txInfo.status = 'success';
 
-		await uploadToS3(aboutText, poolName, "__text");
-		await uploadNftMetaData(poolName, aboutText);
+		await uploadToS3(aboutText, poolAddress, "__text");
+		await uploadNftMetaData(poolName, aboutText, this.getNetworkTag(), poolAddress);
 
 		const newAbout = await getDirectAboutOnly(poolAddress, this.props.connect);
 
@@ -101,6 +110,19 @@ class UpdateAboutModal extends Component {
 				sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 			}
 		}
+
+		let pending = [...this.props.pendingTxList];
+		pending.forEach((e, i) =>{
+			if(e.txHash === txInfo.transactionHash){
+				e.status = "complete"
+			}
+		});
+		await this.props.updatePendingTxList(pending);
+		sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+		pending = (pending).filter(e => !(e.txInfo === txInfo.transactionHash));
+		await this.props.updatePendingTxList(pending);
+		sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
 	}
 	catch (error) {

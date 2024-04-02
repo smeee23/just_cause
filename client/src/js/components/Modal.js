@@ -29,12 +29,6 @@ class ModalHeaderCenter extends Component {
       <div className="modal__header--center">
         <Fragment>
             { this.props.children }
-            <div style={{display: "flex", flexDirection: "wrap", gap: "3px"}}>
-            <a style={{ textDecoration: "none"}} title="New to Optimism? Follow link to learn more" href="https://www.optimism.io/" target="_blank" rel="noopener noreferrer">
-              <OptimismLogo size="21"/>
-              <OptimismBrand/>
-            </a>
-            </div>
         </Fragment>
       </div>
 		);

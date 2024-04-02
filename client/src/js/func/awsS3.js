@@ -16,21 +16,8 @@ const myBucket = new AWS.S3({
     region: REGION,
 })
 
-const uploadObject = (params) => {
-    return new Promise((resolve, reject) => {
-      myBucket.putObject(params, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-          console.log(data);
-        }
-      });
-    });
-  };
-
-export const uploadToS3 = async (file, poolName, type) => {
-        const key = poolName+type;
+export const uploadToS3 = async (file, id, type, networkTag) => {
+        const key = id+type+networkTag;
         const params = {
             Body: file,
             Bucket: S3_BUCKET,
@@ -52,9 +39,9 @@ export const uploadToS3 = async (file, poolName, type) => {
         });
 }
 
-export const getAboutFromS3 = async(poolName) => {
+export const getAboutFromS3 = async(poolAddr) => {
     try {
-      const key = poolName+"__text";
+      const key = poolAddr+"__text";
       const params = {
         Bucket: S3_BUCKET,
         Key: key
@@ -64,7 +51,7 @@ export const getAboutFromS3 = async(poolName) => {
 
       return data.Body.toString('utf-8');
     } catch (e) {
-      return `Description for: ${poolName} is temporarily unavailable`
+      return `Description for: ${poolAddr} is temporarily unavailable`
     }
   }
 
@@ -84,17 +71,17 @@ export const getAboutFromS3 = async(poolName) => {
     }
   }
 
-export const uploadNftMetaData = async(poolName, about) => {
+export const uploadNftMetaData = async(poolName, about, networkTag, poolAddr) => {
     let uri = {
         "name": poolName,
         "description": about,
-        "image": "https://justcausepools.s3.amazonaws.com/"+poolName+"__pic",
+        "image": "https://justcausepools.s3.amazonaws.com/"+poolAddr+"__pic",
     }
 
     const uriString = JSON.stringify(uri);
     const uint8Array = new TextEncoder().encode(uriString); // Convert string to Uint8Array
 
-    await uploadToS3(uint8Array.buffer, poolName, "__meta");
+    await uploadToS3(uint8Array.buffer, poolName, "__meta", networkTag);
     const metaHash = sha256Hash(uint8Array.buffer);
     return metaHash;
 }

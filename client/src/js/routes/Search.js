@@ -11,8 +11,6 @@ import PendingTxModal from "../components/modals/PendingTxModal";
 import TxResultModal from "../components/modals/TxResultModal";
 import DeployTxModal from "../components/modals/DeployTxModal";
 import SearchModal from "../components/modals/SearchModal";
-import ConnectModal from "../components/Modal"
-import ConnectPendingModal from "../components/modals/ConnectPendingModal";
 
 import { updateVerifiedPoolInfo } from "../actions/verifiedPoolInfo"
 import { updateOwnerPoolInfo } from "../actions/ownerPoolInfo"
@@ -52,7 +50,7 @@ class Search extends Component {
 	}
 
 	fetchDataBasedOnUrl = async() => {
-		const poolInfo = await getSearchPoolInfoAws(this.props.tokenMap, this.state.linkAddress)
+		const poolInfo = await getSearchPoolInfoAws(this.props.tokenMap, this.state.linkAddress, this.props.networkId)
 		await this.setState({ awsPoolInfo: poolInfo });
 	}
 
@@ -80,13 +78,6 @@ class Search extends Component {
 			console.log("TESTING", this.props.alert)
 			//let modal = <Modal isOpen={true}><AlertModal info={this.props.alert}/></Modal>;
 			//return modal;
-		}
-	}
-
-	getConnectModal = () => {
-		if(this.props.activeAccount === "Pending"){
-			let modal = <ConnectModal isOpen={true}><ConnectPendingModal/></ConnectModal>;
-			return modal;
 		}
 	}
 
@@ -180,7 +171,6 @@ class Search extends Component {
 						{this.getSearchModal()}
 						{this.getAlertModal()}
 						{this.getSearchResults()}
-						{this.getConnectModal()}
 					</section>
 				</article>
 				<PendingTxList/>

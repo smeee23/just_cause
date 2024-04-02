@@ -4,6 +4,7 @@ import { ModalHeader, ModalCtas } from "../Modal";
 import { Button } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
+import { ethers } from "ethers";
 import PoolTracker from "../../../contracts/PoolTracker.json";
 
 import { updatePendingTx } from "../../actions/pendingTx";
@@ -28,13 +29,17 @@ class ClaimModal extends Component {
 				const tokenString = this.props.claim.tokenString;
 				const isETH = isNativeToken(this.props.networkId, tokenString);
 				const activeAccount = this.props.activeAccount;
-				const gasPrice = (await web3.eth.getGasPrice()).toString();
+
+				const infuraRpc = "https://optimism-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
+				const provider = new ethers.providers.JsonRpcProvider(infuraRpc);
+				const maxPriorityFeePerGas = ((await provider.getFeeData()).maxPriorityFeePerGas).toString();
+
                 this.props.updateClaim('');
 
 				const parameter = {
                     from: activeAccount,
                     gas: web3.utils.toHex(1500000),
-                    gasPrice: web3.utils.toHex(gasPrice)
+					maxPriorityFeePerGas: web3.utils.toHex(maxPriorityFeePerGas)
                 };
 
                 let PoolTrackerInstance = new web3.eth.Contract(
@@ -65,13 +70,14 @@ class ClaimModal extends Component {
 
 						await this.props.updatePendingTx(info);
 						txInfo.txHash = transactionHash;
+						console.log("pending_3", pending, this.props.pendingTxList);
 					}
 					else{
 						txInfo = "";
 					}
                 });
                 txInfo.success = true;
-
+				console.log("we made it!")
 				let newInfo;
 				if(checkPoolInPoolInfo(poolAddress, this.props.userDepositPoolInfo)){
 					newInfo = await getDirectFromPoolInfo(poolAddress, this.props.tokenMap, this.props.activeAccount, tokenAddress, this.props.connect);
@@ -93,6 +99,19 @@ class ClaimModal extends Component {
 					await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
 					sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 				}
+
+				let pending = [...this.props.pendingTxList];
+				pending.forEach((e, i) =>{
+					if(e.txHash === txInfo.transactionHash){
+						e.status = "complete"
+					}
+				});
+				await this.props.updatePendingTxList(pending);
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+				pending = (pending).filter(e => !(e.txInfo === txInfo.transactionHash));
+				await this.props.updatePendingTxList(pending);
+				sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 
 			}
 			catch (error) {

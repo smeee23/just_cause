@@ -7,6 +7,7 @@ import PoolAddressesProvider from "../../contracts/IPoolAddressesProvider.json";
 import Pool from "../../contracts/IPool.json";
 import { getAboutFromS3 } from "./awsS3";
 import { isNativeToken } from "./ancillaryFunctions";
+import { getPoolTrackerAddress } from "./tokenMaps";
 
 	export const getAavePoolAddress = async(poolAddressesProviderAddress, web3Type) => {
 		const web3 = await getWeb3(web3Type)
@@ -127,7 +128,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 		const aboutHash = await JCPoolInstance.methods.getAbout().call();
 		const metaHash = await JCPoolInstance.methods.getMetaUri().call();
 		const groupedPoolInfo = await JCPoolInstance.methods.getPoolInfo().call();
-		let about = await getAboutFromS3(groupedPoolInfo[6]);
+		let about = await getAboutFromS3(poolAddress);
 		if(groupedPoolInfo[6] === "Jiggity's Pool"){
 			console.log("about from contract", groupedPoolInfo);
 		}
@@ -173,7 +174,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 		const aboutHash = await JCPoolInstance.methods.getAbout().call();
 		const metaHash = await JCPoolInstance.methods.getMetaUri().call();
 		const groupedPoolInfo = await JCPoolInstance.methods.getPoolInfo().call();
-		let about = await getAboutFromS3(groupedPoolInfo[6]);
+		let about = await getAboutFromS3(poolAddress);
 		if(groupedPoolInfo[6] === "Jiggity's Pool"){
 			console.log("about from contract", groupedPoolInfo[6], about, metaHash);
 		}
@@ -217,14 +218,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 	}
 
 	export const getDirectAboutOnly = async(poolAddress, web3Type) => {
-		const web3 = await getWeb3(web3Type);
-		let JCPoolInstance = new web3.eth.Contract(
-			JCPool.abi,
-			poolAddress,
-		);
-
-		const name = await JCPoolInstance.methods.getName().call();
-		return await getAboutFromS3(name);
+		return await getAboutFromS3(poolAddress);
 	}
 
 	export const getPoolInfo = async(poolTracker, tokenMap, userBalancePools, knownPoolInfo, web3Type) => {
@@ -236,6 +230,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 			}
 		}
 
+		console.log("getPoolInfo 1")
 		let poolInfo = {};
 		for(let i=0; i < poolTracker.length; i++){
 			if(knownPoolInfo && knownAddrs.includes(poolTracker[i])){
@@ -253,18 +248,21 @@ import { isNativeToken } from "./ancillaryFunctions";
 				let acceptedTokens = groupedPoolInfo[0];
 				const receiver = groupedPoolInfo[1];
 				const isVerified = groupedPoolInfo[2];
-				let about = await getAboutFromS3(groupedPoolInfo[6]);
+				let about = await getAboutFromS3(poolTracker[i]);
 				const picHash =  groupedPoolInfo[4];
 				const name = groupedPoolInfo[6];
 
 				let acceptedTokenStrings = [];
 				let acceptedTokenInfo = [];
 
+				console.log("getPoolInfo 2", acceptedTokens, tokenMap, JCPoolInstance)
+
 				for(let j = 0; j < acceptedTokens.length; j++){
 					const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === acceptedTokens[j]);
 					let balances = userBalancePools[poolTracker[i]+acceptedTokens[j]];
 					const balance = (balances) ? balances[0] : '0';
 					const groupedPoolTokenInfo = await JCPoolInstance.methods.getPoolTokenInfo(acceptedTokens[j]).call();
+					console.log("getPoolInfo 3")
 					acceptedTokenInfo.push({
 						'totalDeposits': groupedPoolTokenInfo[5],
 						'userBalance':  balance,
@@ -378,6 +376,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 
 	export const getDepositorAddress = async(activeAccount, poolTrackerAddress, web3Type) => {
 		const web3 = await getWeb3(web3Type);
+		console.log("getDepositorAddress 1")
 		let userDepositPools = [];
 		let userBalancePools = {};
 
@@ -387,7 +386,7 @@ import { isNativeToken } from "./ancillaryFunctions";
 		);
 		//const ERCAddr = await PoolTrackerInstance.methods.getDepositorERC721Address().call();
 		const depositList = await PoolTrackerInstance.methods.getContributions(activeAccount).call();
-
+		console.log("getDepositorAddress 2", depositList)
 		for(let i = 0; i < depositList.length; i++){
 			const JCPoolInstance = new web3.eth.Contract(
 				JCPool.abi,
@@ -402,11 +401,12 @@ import { isNativeToken } from "./ancillaryFunctions";
 			);
 
 			let tokenIds = await ERCInstance.methods.getUserTokens(activeAccount).call();
+			console.log("getDepositorAddress 3", ercAddr, tokenIds, ERCInstance)
 			for(let j = 0; j < tokenIds.length; j++){
 				const tokenId = tokenIds[j].toString();
 				if(tokenId !== "0"){
 					const depositInfo = await ERCInstance.methods.getDepositInfo(tokenId).call();
-
+					console.log("getDepositorAddress 4", depositInfo, tokenId)
 					userDepositPools.push(depositList[i]);
 					userBalancePools[depositList[i]+depositInfo.asset] = [depositInfo.balance, depositInfo.amountScaled, depositInfo.timeStamp, depositList[i], depositInfo.asset];
 				}
@@ -418,9 +418,10 @@ import { isNativeToken } from "./ancillaryFunctions";
 
 	export const getVerifiedPools = async(networkId, web3Type) => {
 		const web3 = await getWeb3(web3Type);
+		const address = getPoolTrackerAddress(networkId);
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
-			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,
+			address,
 		);
 
 		const verifiedPools = await PoolTrackerInstance.methods.getVerifiedPools().call();
@@ -429,9 +430,10 @@ import { isNativeToken } from "./ancillaryFunctions";
 
 	export const getUserOwned = async(activeAccount, networkId, web3Type) => {
 		const web3 = await getWeb3(web3Type);
+		const address = getPoolTrackerAddress(networkId);
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
-			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,
+			address,
 		);
 
 		const ownerPools = await PoolTrackerInstance.methods.getUserOwned(activeAccount).call();
@@ -440,9 +442,10 @@ import { isNativeToken } from "./ancillaryFunctions";
 
 	export const getUserDeposits = async(activeAccount, networkId, web3Type) => {
 		const web3 = await getWeb3(web3Type);
+		const address = getPoolTrackerAddress(networkId);
 		const PoolTrackerInstance = new web3.eth.Contract(
 			PoolTracker.abi,
-			PoolTracker.networks[networkId] && PoolTracker.networks[networkId].address,
+			address,
 		);
 
 		let userDepositPools = await PoolTrackerInstance.methods.getUserDeposits(activeAccount).call();

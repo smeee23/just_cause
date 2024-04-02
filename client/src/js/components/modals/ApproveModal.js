@@ -4,6 +4,7 @@ import { ModalHeader, ModalCtas } from "../Modal";
 import { Button } from '../Button'
 import TextLink from "../TextLink";
 import getWeb3 from "../../../getWeb3NotOnLoad";
+import { ethers } from "ethers";
 import ERC20Instance from "../../../contracts/IERC20.json";
 
 import { updatePendingTx } from "../../actions/pendingTx";
@@ -27,14 +28,18 @@ class ApproveModal extends Component {
 				const tokenString = this.props.approve.tokenString;
 
 				const activeAccount = this.props.activeAccount;
-				const gasPrice = (await web3.eth.getGasPrice()).toString();
+
+				const infuraRpc = "https://optimism-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
+				const provider = new ethers.providers.JsonRpcProvider(infuraRpc);
+				const maxPriorityFeePerGas = ((await provider.getFeeData()).maxPriorityFeePerGas).toString();
+
                 this.props.updateApprove('');
 
 				const erc20Instance = await new web3.eth.Contract(ERC20Instance.abi, tokenAddress);
                 const parameter = {
                     from: activeAccount ,
                     gas: web3.utils.toHex(1500000),
-                    gasPrice: web3.utils.toHex(gasPrice)
+					maxPriorityFeePerGas: web3.utils.toHex(maxPriorityFeePerGas),
                     };
 
                 const amount = '10000000000000000000000000000000';

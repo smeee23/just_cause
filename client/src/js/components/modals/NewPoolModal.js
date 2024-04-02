@@ -5,6 +5,7 @@ import TextField from '../TextField'
 import { Button, ButtonSmall } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
+import { ethers } from "ethers";
 import PoolTracker from "../../../contracts/PoolTracker.json";
 
 import { updateDepositAmount } from  "../../actions/depositAmount";
@@ -34,15 +35,21 @@ class NewPoolModal extends Component {
 			about: "",
 			tokens: "",
 			inputError: "",
+			selectedFile: null
 		}
 	}
+
+  getNetworkTag = () => {
+	if(!this.props.networkId) return "";
+	return this.props.networkId === 10 ? "_OP" : this.props.networkId === 42161 ? "_ARB" : "";
+  }
 
   deployOnChain = async(poolName, receiver, aboutText, acceptedTokens) => {
     let result;
 	let txInfo;
 	try{
 		const aboutHash = await sha256Hash(aboutText);
-		const metaUri = 'https://justcausepools.s3.amazonaws.com/'+poolName+"__meta";
+		const metaUri = 'https://justcausepools.s3.amazonaws.com/'+poolName+"__meta"+this.getNetworkTag();
 
 		this.props.updateDeployInfo('');
 		const web3 = await getWeb3(this.props.connect);
@@ -52,12 +59,15 @@ class NewPoolModal extends Component {
 			tokenAddrs.push(this.props.tokenMap[acceptedTokens[i]].address);
 		}
 
-		const gasPrice = (await web3.eth.getGasPrice()).toString();
+		const infuraRpc = "https://optimism-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
+		const provider = new ethers.providers.JsonRpcProvider(infuraRpc);
+		const maxPriorityFeePerGas = ((await provider.getFeeData()).maxPriorityFeePerGas).toString();
 
 		const parameter = {
 			from: activeAccount,
 			gas: web3.utils.toHex(1200000),
-			gasPrice: web3.utils.toHex(gasPrice)
+			//gasPrice: web3.utils.toHex(gasPrice)
+			maxPriorityFeePerGas: web3.utils.toHex(maxPriorityFeePerGas)
 		};
 
 		let PoolTrackerInstance = new web3.eth.Contract(
@@ -85,12 +95,27 @@ class NewPoolModal extends Component {
 		txInfo.poolAddress = result.events.AddPool.returnValues.pool;
 		txInfo.status = 'success';
 
-		await uploadToS3(aboutText, poolName, "__text");
-		await uploadNftMetaData(poolName, aboutText);
+		await uploadToS3(aboutText, txInfo.poolAddress, "__text");
+		await this.uploadPicToS3(txInfo.poolAddress);
+		await uploadNftMetaData(poolName, aboutText, this.getNetworkTag(), txInfo.poolAddress);
 
 		const newOwnerInfo = await addPoolToPoolInfo(txInfo.poolAddress, this.props.activeAccount, this.props.poolTrackerAddress, this.props.tokenMap, {...this.props.ownerPoolInfo}, this.props.connect);
 		await this.props.updateOwnerPoolInfo(newOwnerInfo);
 		sessionStorage.setItem("ownerPoolInfo", JSON.stringify(newOwnerInfo));
+
+		let pending = [...this.props.pendingTxList];
+		pending.forEach((e, i) =>{
+			if(e.txHash === txInfo.transactionHash){
+				e.status = "complete"
+			}
+		});
+		await this.props.updatePendingTxList(pending);
+		sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+		pending = (pending).filter(e => !(e.txInfo === txInfo.transactionHash));
+		await this.props.updatePendingTxList(pending);
+		sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
+
 	}
 	catch (error) {
 		console.error(error);
@@ -123,25 +148,29 @@ class NewPoolModal extends Component {
 	  await this.deployOnChain(this.state.poolName, this.state.receiver, this.state.about, this.state.acceptedTokens);
   }
 
-  uploadPicToS3 = async() => {
+  fileSelected = () => {
+    const photo = document.getElementById("photo");
+    const selectedFile = photo.files[0];
+    this.setState({ selectedFile });
+  }
+
+  uploadPicToS3 = async(poolAddr) => {
 	const reader = new FileReader();
     reader.onloadend = async() => {
         const buf = reader.result;
-		await uploadToS3(buf, this.state.poolName, "__pic");
+		await uploadToS3(buf, poolAddr, "__pic");
 		const picHash = await sha256Hash(buf);
 		this.setState({
-			fileUploadHash: picHash
+			fileUploadHash: picHash,
+			selectedFile: null
 		});
     }
-    const photo = document.getElementById("photo");
-    reader.readAsArrayBuffer(photo.files[0]); // Read Provided File
+    reader.readAsArrayBuffer(this.state.selectedFile);
   }
 
   fileUploadButton = () => {
 	document.getElementById('photo').click();
-	document.getElementById('photo').onchange = () =>{
-		this.uploadPicToS3();
-	}
+	document.getElementById('photo').onchange = this.fileSelected();
   }
 
   isPhotoUploaded = () => {

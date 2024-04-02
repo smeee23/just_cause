@@ -3,6 +3,8 @@ import { connect } from "react-redux"
 import Web3 from "web3";
 import { withRouter } from 'react-router-dom';
 
+import ConnectPendingModal from "./modals/ConnectPendingModal";
+import ConnectModal from "./Modal"
 import Logo from "./Logo";
 import { Button, ButtonSmall } from "./Button";
 import TextLink from "./TextLink";
@@ -11,9 +13,14 @@ import Takeover from "./Takeover";
 
 import { updateActiveAccount } from "../actions/activeAccount"
 import { updateConnect } from "../actions/connect"
-import { displayTVL, getConnection, redirectWindowBlockExplorer } from "../func/ancillaryFunctions"
+import { updateNetworkId } from "../actions/networkId"
+
+import { displayTVL, redirectWindowBlockExplorer } from "../func/ancillaryFunctions"
 import Profile from "../func/wagmiDisplay"
 import Disconnect from "../func/wagmiDisconnect"
+import SwitchNetwork from "../func/wagmiNetworkSwitch"
+import ArbitrumLogo from "./cryptoLogos/ArbitrumLogo";
+import OptimismLogo from "./cryptoLogos/OptimismLogo";
 
 class Header extends Component {
 
@@ -25,10 +32,19 @@ class Header extends Component {
     if(loc.includes("dashboard")) index = 0;
     if(loc.includes("search")) index = 1;
 
+    console.log("networkId header", this.props.networkId)
     this.state = {
       index: this.getNavIndex(index),
+      chainIndex: this.props.networkId ? this.props.networkId : null,
     }
 	}
+
+  componentDidUpdate = async(prevProps) => {
+    if (this.props.networkId !== prevProps.networkId) {
+      const chainIndex = this.props.networkId === 10 ? 0 : 1;
+      this.setState({ chainIndex })
+    }
+  }
 
   getNavIndex = (index) => {
     let i;
@@ -44,6 +60,30 @@ class Header extends Component {
     return i;
   }
 
+  clickArb = async() => {
+    this.setState({
+      chainIndex: 1,
+    })
+    await this.setNetworkId(42161);
+  }
+
+  clickOp = async() => {
+    this.setState({
+      chainIndex: 0,
+    })
+    await this.setNetworkId(10);
+  }
+
+  setNetworkId = async(networkId) => {
+    sessionStorage.setItem("ownerPoolInfo", "");
+    sessionStorage.setItem("userDepositPoolInfo", "");
+    sessionStorage.setItem("verifiedPoolInfo", "");
+    sessionStorage.setItem("pendingTxList", "");
+		await this.props.updateNetworkId(networkId);
+		sessionStorage.setItem("networkId", networkId);
+    window.location.reload(false);
+	}
+
   resetNavDash = ()=> {
     this.setState({
       index: 0,
@@ -55,22 +95,6 @@ class Header extends Component {
       index: 1,
     })
   }
-
-  connectToWeb3 = async() => {
-		let provider;
-		try {
-			// Will open the MetaMask UI
-			// You should disable this button while the request is pending!
-
-			//provider =
-			//addresses = await provider.request({ method: 'eth_requestAccounts' });
-		}
-		catch (error) {
-			console.error(error);
-		}
-		//return {addresses, provider};
-    return provider;
-	}
 
 	connectButtonHit = async() => {
     if(this.props.activeAccount === "Connect"){
@@ -148,7 +172,6 @@ class Header extends Component {
               <h2 title="USD value deposited (approx.)" className="mb0 horizontal-padding-sm" style={{fontSize:11, paddingRight: "0px"}}>{  displayTVL('tvl', 'Deposited', this.props.tokenMap, 3) }</h2>
             </div>
             <div className="app-bar__connect" >
-              <h2 title="connected" className="mb0" style={{fontSize:11, color: "green"}}> {getConnection(this.props.tokenMap, this.props.networkId, this.props.activeAccount)} </h2>
               <div >
                 {this.getConnectButton()}
               </div>
@@ -166,26 +189,71 @@ class Header extends Component {
     return <ButtonSmall forceDisplay="true" text={"Lauch App"} icon={"poolShape5"}/>;
   }
 
+
+  getChainButtons = () => {
+    if(this.state.chainIndex === 0){
+      if(["Connect", "Pending"].includes(this.props.activeAccount)){
+        return(
+          <div title={"switch to Arbitrum"}>
+            <Button
+              isLogo="arb"
+              logoSize={17}
+              callback={async() => await this.clickArb()}
+            />
+          </div>
+        );
+      }
+      return(
+        <SwitchNetwork newNetworkId={42161}/>
+      );
+    }
+    else if(this.state.chainIndex === 1){
+      if(["Connect", "Pending"].includes(this.props.activeAccount)){
+        return (
+          <div title={"switch to Optimism"}>
+            <Button
+              isLogo="op"
+              disabled={this.state.chainIndex === 0 ? "true" : ""}
+              logoSize={17}
+              callback={async() => await this.clickOp()}
+            />
+          </div>
+        );
+      }
+      return(
+        <SwitchNetwork newNetworkId={10}/>
+      );
+    }
+  }
   getAccountButtons = () => {
     if(["Connect", "Pending"].includes(this.props.activeAccount)){
       return(
-        <div title={"connect to web3"}>
-          <ButtonSmall text={this.displayAddress(this.props.activeAccount)} icon={"wallet"} callback={this.connectButtonHit}/>
+        <div style={{display: "flex", flexDirection: "wrap", gap: "2px"}}>
+          {this.getChainButtons()}
+          <div title={"connect to web3"}>
+            <ButtonSmall text={this.displayAddress(this.props.activeAccount)} logo={this.getChainLogo()} icon={"wallet"} callback={this.connectButtonHit}/>
+          </div>
         </div>
       );
     }
     else{
       return(
         <div style={{display: "flex", flexDirection: "wrap", gap: "2px"}}>
+          {this.getChainButtons()}
           <div title={"view address on block explorer"} >
-            <ButtonSmall text={this.displayAddress(this.props.activeAccount)} logo={getConnection(this.props.networkId, this.props.activeAccount)} icon={this.props.connect} callback={this.connectButtonHit}/>
+            <ButtonSmall text={this.displayAddress(this.props.activeAccount)} logo={this.getChainLogo()} icon={this.props.connect} callback={this.connectButtonHit}/>
           </div>
           <div title={"disconnect"} style={{marginTop: "-5px"}}>
-            <Disconnect/>
+            <Disconnect logo="close"/>
           </div>
         </div>
       );
     }
+  }
+
+  getChainLogo = () => {
+    if (this.state.chainIndex === 0) return <OptimismLogo size="20"/>;
+    else if (this.state.chainIndex  === 1) return <ArbitrumLogo size="20"/>;
   }
 
   getConnectButton = () => {
@@ -214,6 +282,13 @@ class Header extends Component {
     return "disconnect";
   }
 
+  getConnectModal = () => {
+		if(this.props.activeAccount === "Pending"){
+			let modal = <ConnectModal isOpen={true}><ConnectPendingModal chainIndex={this.state.chainIndex}/></ConnectModal>;
+			return modal;
+		}
+	}
+
 	render() {
     const { isMobile } = this.props;
 
@@ -232,6 +307,7 @@ class Header extends Component {
                 {this.getConnectButton()}
             </div>
         </nav>
+        {this.getConnectModal()}
       </header>
 		);
 	}
@@ -248,6 +324,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
 	updateActiveAccount: (s) => dispatch(updateActiveAccount(s)),
   updateConnect: (bool) => dispatch(updateConnect(bool)),
+  updateNetworkId: (int) => dispatch(updateNetworkId(int)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header))

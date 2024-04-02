@@ -15,12 +15,12 @@ export const getPriceFromMessari = async(apiKey) => {
     return priceUSD;
 }
 
-export const getPriceFromCoinGecko = async(networkId) => {
+export const getPriceFromCoinGecko = async() => {
     let data;
     try{
         const url = "https://api.coingecko.com/api/v3/simple/price?ids=aave,dai,tether,usd-coin,ethereum,bitcoin,chainlink,matic-network,defipulse-index&vs_currencies=usd";
         const response = await axios.get(url);
-        //console.log('coingecko prices:', response.data);
+        console.log('coingecko prices called:', response.data);
         data = response.data;
     }
     catch (error) {

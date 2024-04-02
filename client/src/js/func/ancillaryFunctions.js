@@ -73,6 +73,7 @@ export const getBlockExplorerUrl = (label, networkId) => {
   if(networkId === 80001) urlBase = 'https://mumbai.polygonscan.com';
   else if (networkId === 137) urlBase = 'https://polygonscan.com';
   else if (networkId === 10) urlBase = 'https://optimistic.etherscan.io';
+  else if(networkId === 42161) urlBase = 'https://arbiscan.io'
   return urlBase + label;
 }
 export const redirectWindowBlockExplorer = (hash, label, networkId) => {
@@ -229,16 +230,8 @@ export const getHeaderValuesInUSD = (acceptedTokenInfo, tokenMap) => {
   return {userBalance, interestEarned, totalBalance}
 }
 
-export const getConnection = (networkId, activeAccount) => {
-  if(activeAccount){
-    if(networkId === 80001) return 'TEST';
-    else if (networkId === 137) return <MaticLogo/>;
-    else if (networkId === 10) return <OptimismLogo size="20"/>;
-  }
-}
-
 export const isNativeToken = (networkId, tokenString) => {
-  const isETH = (tokenString === 'ETH' && networkId === 10) || (tokenString === 'MATIC' && [10, 80001].includes(networkId)) ? true : false;
+  const isETH = (tokenString === 'ETH' && [10, 42161].includes(networkId)) || (tokenString === 'MATIC' && [137, 80001].includes(networkId)) ? true : false;
   return isETH;
 }
 
@@ -249,13 +242,13 @@ export const displayTVL = (id, label, tokenMap, cutOff) => {
     let acceptedTokens = Object.keys(tokenMap);
     for(let i = 0; i < acceptedTokens.length; i++){
       const key = acceptedTokens[i];
-
-      const priceUSD = tokenMap[key] && tokenMap[key].priceUSD;
-      const tokenAmount = tokenMap[key][id];
-      if(tokenAmount && priceUSD){
-        total += tokenAmount * priceUSD;
+      if(key != "networkId"){
+        const priceUSD = tokenMap[key] && tokenMap[key].priceUSD;
+        const tokenAmount = tokenMap[key][id];
+        if(tokenAmount && priceUSD){
+          total += tokenAmount * priceUSD;
+        }
       }
-
     }
     const s = formatDollars(total);
     if(s === "<$0.01") return label +  " $0"
@@ -460,10 +453,10 @@ export const buildAwsPools = async(tokenMap, poolList) => {
         poolData["address"] = poolData["pool"];
         delete poolData["pool"];
       }
-      poolData["about"] = await getAboutFromS3(poolData["name"])
+      poolData["about"] = await getAboutFromS3(poolData["address"])
       let acceptedTokenStrings = [];
       poolData["acceptedTokenInfo"].forEach(async(e) => {
-        const tokenString = Object.keys(tokenMap).find(key => tokenMap[key].address === e["address"]);
+        const tokenString = Object.keys(tokenMap).find(key => (tokenMap[key].address === e["address"]));
         e["decimals"] = tokenMap[tokenString].decimals;
         e["acceptedTokenString"] = tokenString;
         acceptedTokenStrings.push(tokenString);
@@ -480,13 +473,13 @@ export const buildAwsPools = async(tokenMap, poolList) => {
   }
 }
 
-export const getSearchPoolInfoAws = async(tokenMap, poolAddr) => {
+export const getSearchPoolInfoAws = async(tokenMap, poolAddr, networkTag) => {
   let poolInfo = {};
   try{
     const secFromWrite = await getLastWrite();
     if(secFromWrite < 1800){
       const pools = [poolAddr]
-      const allPoolData = await buildAwsPools(tokenMap, pools);
+      const allPoolData = await buildAwsPools(tokenMap, pools, networkTag);
       allPoolData.forEach(data => {
         poolInfo[data.address] = data;
       });

@@ -6,6 +6,8 @@ import { Button } from '../Button'
 import { ButtonExtraSmall } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
+import { ethers } from "ethers";
+
 import PoolTracker from "../../../contracts/PoolTracker.json";
 import ERC20Instance from "../../../contracts/IERC20.json";
 
@@ -61,7 +63,10 @@ class DepositModal extends Component {
 				//const amountInBase_test = getAmountBase(amount, this.props.tokenMap[tokenString].decimals);//web3.utils.toWei(amount, 'ether');
 				//const amountInBase = web3.utils.toWei(String(amount), "ether");
 				const amountInBase = getTokenBaseAmount(amount, this.props.tokenMap[tokenString].decimals);
-				const gasPrice = (await web3.eth.getGasPrice()).toString();
+
+				const infuraRpc = "https://optimism-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
+				const provider = new ethers.providers.JsonRpcProvider(infuraRpc);
+				const maxPriorityFeePerGas = ((await provider.getFeeData()).maxPriorityFeePerGas).toString();
 				let allowance;
 				let parameter = {};
 				if(!isETH){
@@ -70,7 +75,7 @@ class DepositModal extends Component {
 					parameter = {
 						from: activeAccount,
 						gas: web3.utils.toHex(1500000),
-						gasPrice: web3.utils.toHex(gasPrice)
+						maxPriorityFeePerGas: web3.utils.toHex(maxPriorityFeePerGas)
 					};
 				}
 
@@ -78,7 +83,7 @@ class DepositModal extends Component {
 					parameter = {
 						from: activeAccount,
 						gas: web3.utils.toHex(1500000),
-						gasPrice: web3.utils.toHex(gasPrice),
+						maxPriorityFeePerGas: web3.utils.toHex(maxPriorityFeePerGas),
 						value: amountInBase
 					};
 				}
@@ -144,7 +149,20 @@ class DepositModal extends Component {
 						await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
 						sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
 					}
-				}
+
+					let pending = [...this.props.pendingTxList];
+					pending.forEach((e, i) =>{
+						if(e.txHash === txInfo.transactionHash){
+							e.status = "complete"
+						}
+					});
+					await this.props.updatePendingTxList(pending);
+					sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+					pending = (pending).filter(e => !(e.txInfo === txInfo.transactionHash));
+					await this.props.updatePendingTxList(pending);
+					sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
+					}
 			}
 			catch (error) {
 				console.error(error);

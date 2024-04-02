@@ -24,7 +24,7 @@ import { updatePendingTxList } from "./actions/pendingTxList";
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
-import { getTokenMap, optimismMainetTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
+import { getTokenMap, optimismTokenMap, arbitrumTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
 
 import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress } from './func/contractInteractions.js';
 
@@ -33,26 +33,22 @@ import {precise, delay, getVerifiedPoolInfoAws, filterOutVerifieds, encryptStrin
 import connectWallet from "./func/connectWallet";
 import { getDataFromS3 } from "./func/awsS3";
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { optimism } from 'wagmi/chains'
-
-import { EthereumProvider } from '@walletconnect/ethereum-provider'
+import { optimism, arbitrum } from 'wagmi/chains'
 
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 
-import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
-const chainName = [optimism]
 const projectId = '121c52ec6852ab6b453b3fbf45945d49'
 
 // Configure chains & providers with the Alchemy provider.
   // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
   const { chains, publicClient, webSocketPublicClient } = configureChains(
-	[optimism],
-	[infuraProvider({ apiKey: 'c6e0956c0fb4432aac74aaa7dfb7687e' }), publicProvider()],
+	[optimism, arbitrum],
+	[infuraProvider({ apiKey: process.env.REACT_APP_INFURA_KEY }), publicProvider()],
   )
 
   // Set up wagmi config
@@ -92,16 +88,27 @@ class App extends Component {
 
 			const activeAccount = sessionStorage.getItem('activeAccount');
 			if(activeAccount){
-				this.props.updateActiveAccount(JSON.parse(activeAccount));
+				await this.props.updateActiveAccount(JSON.parse(activeAccount));
 			}
 
 			const connector = sessionStorage.getItem('connectionType');
 			if(connector){
-				this.props.updateConnect(JSON.parse(connector));
+				await this.props.updateConnect(JSON.parse(connector));
+			}
+
+			const networkId = sessionStorage.getItem('networkId');
+			if(networkId){
+				await this.props.updateNetworkId(parseInt(networkId));
+				this.networkId = parseInt(networkId);
+			}
+			else{
+				await this.props.updateNetworkId(10);
+				console.log("no networkId stored chainID set to Optimism");
+				this.networkId = 10;
 			}
 
 			let verifiedPoolInfo;
-			if(activeAccount){
+			/*if(activeAccount){
 				verifiedPoolInfo = sessionStorage.getItem("verifiedPoolInfo");
 				if(verifiedPoolInfo){
 					await this.props.updateVerifiedPoolInfo(JSON.parse(verifiedPoolInfo));
@@ -117,54 +124,57 @@ class App extends Component {
 					await this.props.updateUserDepositPoolInfo(JSON.parse(userDepositPoolInfo));
 					console.log("userDepositPoolInfo from storage", JSON.parse(userDepositPoolInfo));
 				}
-			}
+			}*/
 
 			let tokenMapCache = sessionStorage.getItem("tokenMap");
-			if(tokenMapCache){
+			if(tokenMapCache && JSON.parse(tokenMapCache).networkId == this.networkId){
 				await this.setTokenMapInitialState(JSON.parse(tokenMapCache))
 			}
 			else{
-				await this.setTokenMapInitialState(optimismMainetTokenMap)
+				if(this.networkId == 10){
+					await this.setTokenMapInitialState(optimismTokenMap);
+				}
+				else if(this.networkId == 42161){
+					await this.setTokenMapInitialState(arbitrumTokenMap);
+				}
 			}
 
-			if(!verifiedPoolInfo){
-				const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, JSON.parse(activeAccount));
+			console.log("tempTokenMap",this.props.tokenMap)
+			if(!verifiedPoolInfo && this.networkId == 10){
+				const newTokenMap = Object.fromEntries(
+					Object.entries(this.props.tokenMap).filter(([key]) => key !== "networkId")
+				  );
+				const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(newTokenMap, this.props.activeAccount);
 				await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
 			}
 		}
 
 		catch (error) {
-			// Catch any errors for any of the above operations.
-			if(!this.props.networkId){
-				alert(
-					`Failed to load metamask wallet, no network detected`,
-				);
-			}
-			else{
-				alert(
-					`Failed to load web3, accounts, or contract. Check console for details. If not connected to site please select the Connect Button`,
+			alert(
+				`There was an error loading the page`,
 			);
-			}
 			console.error(error);
 		}
 	}
 
 	componentDidUpdate = async(prevProps) => {
-        if (this.props.connect !== prevProps.connect) {
+        if (this.props.connect && this.props.connect !== prevProps.connect) {
+			console.log("update connect", this.props)
             // account prop has changed, perform your logic
-			const pendingTxList = sessionStorage.getItem("pendingTxList");
-			if(pendingTxList){
-				const truePending = await checkTransactions(JSON.parse(pendingTxList), this.props.connect);
-				this.props.updatePendingTxList(truePending);
-				sessionStorage.setItem("pendingTxList", JSON.stringify(truePending));
-			}
-			if(this.props.activeAccount){
-				await this.getAccounts();
-				await this.setUpConnection();
-				await this.setPoolStates();
-				this.subscribeToInfura();
-			}
+			await this.setUpConnection();
         }
+
+		if(this.props.networkId !== prevProps.networkId){
+			if(prevProps.networkId){
+				console.log("networkId chainged", prevProps.networkId, this.props.networkId);
+				this.networkId = this.props.networkId;
+				await this.setPoolStates();
+				if(this.props.connect !== "WalletConnect" && this.props.connect !== "Coinbase Wallet") this.subscribeToInfura();
+			}
+			else{
+				console.log("test");
+			}
+		}
     }
 
 	componentWillUnmount() {
@@ -182,30 +192,48 @@ class App extends Component {
 	}
 
 	setUpConnection = async() => {
-		this.setActiveAccountState(this.props.activeAccount);
+		const pendingTxList = sessionStorage.getItem("pendingTxList");
+		if(pendingTxList){
+			const truePending = await checkTransactions(JSON.parse(pendingTxList), this.props.connect);
+			this.props.updatePendingTxList(truePending);
+			sessionStorage.setItem("pendingTxList", JSON.stringify(truePending));
+		}
+		if(this.props.activeAccount){
+			await this.getAccounts();
+			await this.setAccounts();
+			await this.setPoolStates();
+			if(this.props.connect !== "WalletConnect" && this.props.connect !== "Coinbase Wallet") this.subscribeToInfura();
+		}
+	}
 
+	setAccounts = async() => {
+		this.setActiveAccountState(this.props.activeAccount);
 	}
 
 	setPoolStates = async() => {
-		this.poolTrackerAddress = getPoolTrackerAddress(this.networkId);
+		this.poolTrackerAddress = getPoolTrackerAddress(this.props.networkId);
 		this.PoolTrackerInstance = new this.web3.eth.Contract(
 			PoolTracker.abi,
 			this.poolTrackerAddress,
 		);
 
+		console.log("poolTracker Addr", this.poolTrackerAddress)
+
 		this.setPoolTrackAddress(this.poolTrackerAddress);
 
 		let tokenMapCache = sessionStorage.getItem("tokenMap");
-		if(tokenMapCache){
-			await this.setTokenMapFinalState(JSON.parse(tokenMapCache));
+		if(tokenMapCache && JSON.parse(tokenMapCache).networkId === this.networkId){
+			await this.setTokenMapInitialState(JSON.parse(tokenMapCache))
+			console.log("tokenMap match", JSON.parse(tokenMapCache))
 		}
 		else{
-			await this.setTokenMapFinalState(optimismMainetTokenMap);
+			if(this.networkId === 10) await this.setTokenMapInitialState(optimismTokenMap);
+			else if(this.networkId === 42161) await this.setTokenMapInitialState(arbitrumTokenMap);
 		}
 
-		const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, this.props.activeAccount);
+		//const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, this.props.activeAccount);
 		//console.log("pools in App", verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo, this.props.tokenMap)
-		await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
+		//await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
 
 		await this.setPoolStateAll(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
@@ -332,6 +360,7 @@ class App extends Component {
 	getAccounts = async() => {
 		this.web3 = await this.connectToWeb3();
 		this.networkId = await this.web3.eth.net.getId();
+		console.log("networkId", this.networkId)
 		if(!deployedNetworks.includes(this.networkId)){
 			const msg = "switch_network";
 			this.props.updateAlert({msg});
@@ -340,12 +369,13 @@ class App extends Component {
 					method: 'wallet_switchEthereumChain',
 					params: [{ chainId: "0xA" }],
 				});
+				this.props.updateAlert("");
+				this.networkId = 10
 			} catch (err) {
 				alert("Optimism Network not found");
 			}
-			window.location.reload(false);
 		}
-		this.setNetworkId(this.networkId);
+		await this.setNetworkId(this.networkId);
 	}
 
 	getAaveData = async() => {
@@ -361,6 +391,7 @@ class App extends Component {
 
 	setNetworkId = async(networkId) => {
 		await this.props.updateNetworkId(networkId);
+		sessionStorage.setItem("networkId", networkId);
 	}
 
 	setPoolTrackAddress = async(poolTrackerAddress) => {
@@ -390,9 +421,21 @@ class App extends Component {
 		const claimedInterest = JSON.parse(await getDataFromS3("claimedInterest_OP"));
 		const totalDeposit = JSON.parse(await getDataFromS3("totalDeposit_OP"));
 
+		let prices = sessionStorage.getItem('prices');
+		if(prices){
+			prices = JSON.parse(prices);
+		}
+		else{
+			prices = await getPriceFromCoinCap();
+			if(prices){
+				sessionStorage.setItem('prices', JSON.stringify(prices));
+			}
+		}
+
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
-			const address =  tokenMap[key] && tokenMap[key].address;
+				if(key != "networkId"){
+					const address =  tokenMap[key] && tokenMap[key].address;
 
 			if(!tokenMap[key]['priceUSD']){
 				const coinCapPriceData = await getPriceFromCoinCap();
@@ -405,16 +448,17 @@ class App extends Component {
 				}
 			}
 
-			const tvl = totalDeposit[address] ? totalDeposit[address] : 0//need to pull from aws
-			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
+					const tvl = totalDeposit[address] ? totalDeposit[address] : 0//need to pull from aws
+					tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
 
-			const totalDonated = claimedInterest[address] ? claimedInterest[address] : 0
-			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
-
+					const totalDonated = claimedInterest[address] ? claimedInterest[address] : 0
+					tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
+				}
 		}
 		console.log(tokenMap)
 		await this.props.updateTokenMap(tokenMap);
 		sessionStorage.setItem("tokenMap", JSON.stringify(tokenMap));
+		console.log("after initial", tokenMap)
 	}
 
 	setTokenMapFinalState = async(tokenMap) => {
@@ -422,19 +466,21 @@ class App extends Component {
 
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
-			const address =  tokenMap[key] && tokenMap[key].address;
+			if(key != "networkId"){
+				const address =  tokenMap[key] && tokenMap[key].address;
 
-			const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId), this.props.connect);
+				const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId), this.props.connect);
 
-			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
-			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
+				tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
+				tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
 
-			const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
-			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
+				const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
+				tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
 
-			const totalDonated = await this.PoolTrackerInstance.methods.getTotalDonated(address).call();
-			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
-			tokenMap[key]['allowance'] = await getAllowance(address, this.poolTrackerAddress, this.props.activeAccount, this.props.connect)
+				const totalDonated = await this.PoolTrackerInstance.methods.getTotalDonated(address).call();
+				tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
+				tokenMap[key]['allowance'] = await getAllowance(address, this.poolTrackerAddress, this.props.activeAccount, this.props.connect)
+			}
 		}
 		await this.props.updateTokenMap(tokenMap);
 		sessionStorage.setItem("tokenMap", JSON.stringify(tokenMap));
@@ -456,16 +502,19 @@ class App extends Component {
 
 	setPoolStateAll = async(activeAccount) => {
 		const verifiedPools = filterOutVerifieds(await this.PoolTrackerInstance.methods.getVerifiedPools().call());
+		console.log("setPoolStateAll 1");
 		const ownerPools = await this.getOwnerAddress(activeAccount);
-		const depositBalancePools = await getDepositorAddress(activeAccount, this.PoolTrackerInstance.options.address, this.props.connect);
+		console.log("setPoolStateAll 2", this.poolTrackerAddress, this.PoolTrackerInstance.options.address);
+		const depositBalancePools = await getDepositorAddress(activeAccount, this.poolTrackerAddress, this.props.connect);
 		const userDepositPools = depositBalancePools.depositPools;
 		const userBalancePools = depositBalancePools.balances;
 
+		console.log("setPoolStateAll 3");
 		let verifiedPoolInfo;
 		verifiedPoolInfo = await getPoolInfo(verifiedPools, getTokenMap(this.networkId), userBalancePools, {}, this.props.connect);
 		await this.props.updateVerifiedPoolInfo(verifiedPoolInfo);
 		sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(verifiedPoolInfo));
-
+		console.log("setPoolStateAll 4");
 		let ownerPoolInfo;
 		ownerPoolInfo = await getPoolInfo(ownerPools, getTokenMap(this.networkId), userBalancePools, this.props.verifiedPoolInfo, this.props.connect);
 		await this.props.updateUserDepositPoolAddrs(userDepositPools);

@@ -18,9 +18,16 @@ const chainChanged = (chainId) => {
   sessionStorage.setItem("userDepositPoolInfo", "");
   sessionStorage.setItem("verifiedPoolInfo", "");
   sessionStorage.setItem("pendingTxList", "");
-  sessionStorage.setItem("connectionType", "");
-  sessionStorage.setItem("activeAccount", "");
-  window.location.reload(false);
+  //sessionStorage.setItem("connectionType", "");
+  //sessionStorage.setItem("activeAccount", "");
+}
+
+const chainChangedNoReload = (chainId) => {
+  console.log("chainid changed", chainId);
+  sessionStorage.setItem("ownerPoolInfo", "");
+  sessionStorage.setItem("userDepositPoolInfo", "");
+  sessionStorage.setItem("verifiedPoolInfo", "");
+  sessionStorage.setItem("pendingTxList", "");
 }
 
 const connectEvent = (info) => {
@@ -28,7 +35,6 @@ const connectEvent = (info) => {
   sessionStorage.setItem("ownerPoolInfo", "");
   sessionStorage.setItem("userDepositPoolInfo", "");
   sessionStorage.setItem("pendingTxList", "");
-  window.location.reload(false);
 }
 
 const disconnect = (error) => {
@@ -90,7 +96,7 @@ const connectWallet = async(connectionType) => {
       console.error("MetaMask not detected");
     }
   }
-  else if(connectionType == "Coinbase Wallet"){
+  else if(connectionType === "Coinbase Wallet"){
     const coinbaseWallet = new CoinbaseWalletSDK({
       appName: "JustCause"
     })
@@ -99,26 +105,34 @@ const connectWallet = async(connectionType) => {
     web3 = new Web3(provider);
 
      // Subscribe to provider connection
-     const connectSub = provider.on("connect", (info) => {
+    /*const connectSub = provider.on("connect", (info) => {
       connectEvent(info);
     });
     unsubscribers.push(connectSub.unsubscribe);
+
+    const chainChangedSub = provider.on("chainChanged", (chainId) => {
+      chainChangedNoReload(chainId);
+    });
+    unsubscribers.push(chainChangedSub.unsubscribe);
 
     // Subscribe to provider disconnection
     const disconnectSub = provider.on("disconnect", async(error) => {
       coinbaseWallet.disconnect();
       disconnect(error);
     });
-    unsubscribers.push(disconnectSub.unsubscribe);
+    unsubscribers.push(disconnectSub.unsubscribe);*/
 
     unsubscribers = [...unsubscribers];
   }
-  else if(connectionType == "WalletConnect"){
+  else if(connectionType === "WalletConnect"){
     const provider = await EthereumProvider.init({
       projectId: projectId, // required
-      chains: [10], // required
+      chains: [42161, 10], // required
+      //optionalChains: [42161],
+      events: ["chainChanged", "accountsChanged", "message", "disconnect", "connect"],
       rpcMap: {
         10: infuraRpc,
+        42161: infuraRpc,
       }
     })
 
@@ -129,6 +143,7 @@ const connectWallet = async(connectionType) => {
 
     // Subscribe to chainId change
     const chainChangedSub = provider.on("chainChanged", (chainId) => {
+      console.log("chain changed clicked")
       chainChanged(chainId);
     });
     unsubscribers.push(chainChangedSub.unsubscribe);

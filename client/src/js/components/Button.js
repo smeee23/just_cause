@@ -22,6 +22,8 @@ import RefreshPending from "./logos/RefreshPending";
 import CoinbaseWalletLogo from "./cryptoLogos/CoinbaseWalletLogo";
 import MetaMaskLogo from "./cryptoLogos/MetaMaskLogo";
 import WalletConnectLogo from "./cryptoLogos/WalletConnectLogo";
+import OptimismLogo from "./cryptoLogos/OptimismLogo";
+import ArbitrumLogo from "./cryptoLogos/ArbitrumLogo";
 
 class ButtonExtraSmall extends Component {
 
@@ -75,7 +77,7 @@ class ButtonSmall extends Component {
     if(this.props.icon === "Coinbase Wallet") return <CoinbaseWalletLogo/>
     if(this.props.icon === "MetaMask") return <MetaMaskLogo/>
     if(this.props.icon === "WalletConnect") return <WalletConnectLogo/>
-    return <Icon name={this.props.icon} size={this.props.lg ? 64 : 32}/>
+    return <Icon name={this.props.icon} size={this.props.lg ? 32 : 22}/>
   }
 
   displayLine = (tweet) => {
@@ -129,7 +131,7 @@ class Button extends Component {
     }
   }
 	render() {
-		const { isLogo, text, icon, href, callback, disabled, lg, logo, info} = this.props;
+		const { isLogo, logoSize, text, icon, href, callback, disabled, lg, logo, info} = this.props;
 
     const classnames = classNames({
       "button": true,
@@ -199,6 +201,12 @@ class Button extends Component {
           ) : null }
           { isLogo === "refresh_pending" ? (
               <RefreshPending/>
+          ) : null }
+          { isLogo === "op" ? (
+              <OptimismLogo size={logoSize ? logoSize : 22}/>
+          ) : null }
+          { isLogo === "arb" ? (
+              <ArbitrumLogo size={logoSize ? logoSize : 24}/>
           ) : null }
         </div>
         {this.displayLine(isLogo)}

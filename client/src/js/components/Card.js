@@ -176,7 +176,12 @@ class Card extends Component {
 	notifyLoad = () => {
 		//console.log('image Loaded')
 	}
-	getPoolImage = (poolName) => {
+
+	getNetworkTag = () => {
+		return this.props.isVerified ? "" : this.props.networkId === 10 ? "_OP" : this.props.networkId === 42161 ? "_ARB" : "";
+	}
+
+	getPoolImage = (poolAddr) => {
 
 		let image;
 
@@ -185,8 +190,8 @@ class Card extends Component {
 			event.target.src = "https://justcausepools.s3.amazonaws.com/jc_logo.png";
 		  };
 
-
-		const picUrl = "https://justcausepools.s3.amazonaws.com/"+poolName+"__pic";
+		//const picUrl = "https://justcausepools.s3.amazonaws.com/"+poolName+"__pic"+this.getNetworkTag();
+		const picUrl = "https://justcausepools.s3.amazonaws.com/"+poolAddr+"__pic";
 		image = <img alt="" className="card__pool-pic" onError={handleImageError} src={picUrl} onLoad={this.notifyLoad()}/>;
 		return image;
 	}
@@ -211,7 +216,7 @@ class Card extends Component {
 
 	getVerifiedLinks = (isVerified, poolName) => {
 		if(!poolName) return;
-		if(isVerified && this.props.networkId === 10){
+		if(isVerified){
 			const name = poolName.replace(/\s+/g, '');
 			const keys = Object.keys(verifiedPoolMap)
 			if(keys.includes(name)){
@@ -309,7 +314,7 @@ class Card extends Component {
 					</div>
 					</div>
 					<div className="card__body__column__two">
-						{this.getPoolImage(title)}
+						{this.getPoolImage(address)}
 					</div>
 				</div>
 				<div className="card__body__column__eight">

@@ -5,6 +5,7 @@ import TextField from '../TextField'
 import { Button, ButtonExtraSmall } from '../Button'
 
 import getWeb3 from "../../../getWeb3NotOnLoad";
+import { ethers } from "ethers";
 import PoolTracker from "../../../contracts/PoolTracker.json";
 
 import { updatePendingTx } from "../../actions/pendingTx";
@@ -55,12 +56,17 @@ class WithdrawModal extends Component {
             const amount = this.props.withdrawAmount.amount;
             this.props.updateWithdrawAmount('');
             const amountInBase = getTokenBaseAmount(amount, this.props.tokenMap[tokenString].decimals);
-            const gasPrice = (await web3.eth.getGasPrice()).toString();
+
+            const infuraRpc = "https://optimism-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
+            const provider = new ethers.providers.JsonRpcProvider(infuraRpc);
+            const maxPriorityFeePerGas = ((await provider.getFeeData()).maxPriorityFeePerGas).toString();
+
 
             const parameter = {
                 from: activeAccount,
                 gas: web3.utils.toHex(1500000),
-                gasPrice: web3.utils.toHex(gasPrice)
+                //gasPrice: web3.utils.toHex(gasPrice)
+                maxPriorityFeePerGas: web3.utils.toHex(maxPriorityFeePerGas)
             };
 
             let PoolTrackerInstance = new web3.eth.Contract(
@@ -103,6 +109,19 @@ class WithdrawModal extends Component {
               await this.props.updateVerifiedPoolInfo(newVerifiedInfo);
               sessionStorage.setItem("verifiedPoolInfo", JSON.stringify(newVerifiedInfo));
             }
+
+            let pending = [...this.props.pendingTxList];
+            pending.forEach((e, i) =>{
+              if(e.txHash === txInfo.transactionHash){
+                e.status = "complete"
+              }
+            });
+            await this.props.updatePendingTxList(pending);
+            sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
+
+            pending = (pending).filter(e => !(e.txInfo === txInfo.transactionHash));
+            await this.props.updatePendingTxList(pending);
+            sessionStorage.setItem("pendingTxList", JSON.stringify(pending));
 		}
     catch (error) {
       console.error(error);

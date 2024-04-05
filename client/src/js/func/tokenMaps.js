@@ -22,7 +22,8 @@ const polygonMainetTokenMap = {
     LINK: {address:'0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39', decimals: 18, apiKey: "chainlink"},
 }
 
-export const optimismMainetTokenMap = {
+export const optimismTokenMap = {
+    networkId: 10,
     DAI: {address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', decimals: 18, apiKey: "dai"},
     USDC: {address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',decimals: 6, apiKey: "usd-coin"},
     USDT: {address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',decimals: 6, apiKey: "tether"},
@@ -30,10 +31,21 @@ export const optimismMainetTokenMap = {
     ETH: {address: '0x4200000000000000000000000000000000000006', decimals: 18, apiKey: "ethereum"},
 }
 
+export const arbitrumTokenMap = {
+    networkId: 42161,
+    DAI: {address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', decimals: 18, apiKey: "dai"},
+    USDC: {address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',decimals: 6, apiKey: "usd-coin"},
+    USDT: {address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',decimals: 6, apiKey: "tether"},
+    WBTC: {address: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',decimals: 8, apiKey: "bitcoin"},
+    ETH: {address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1', decimals: 18, apiKey: "ethereum"},
+}
+
 const aavePoolAddressesProviderPolygonMumbaiV3Address = '0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6';
 const aavePoolAddressesProviderPolygonMainnetAddress = '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb';
 const aavePoolAddressesProviderOptimismMainnetAddress = '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb';
+const aavePoolAddressesArbitrumAddress = "0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb";
 
+const poolTrackerArbitrumAddress = "0xE3Fe15b4baDcd7eC41f255B189aD2E121DDC6823";
 const poolTrackerOptimismAddress = "0x9ff20439a4F5e315A48E5714d0f989f18DE77684";
 const poolTrackerPolygonAddress = "0x6C819199Be8Ed043BfbBBDeD5CB39a66413fbFd1";
 const poolTrackerPolygonMumbaiAddress = "0x0d18DA5180eB259660bd1693927Fc582308c6900";
@@ -44,7 +56,9 @@ export const getTokenMap = (networkId) =>{
 
     if(networkId === 137) return polygonMainetTokenMap;
 
-    if(networkId === 10) return optimismMainetTokenMap;
+    if(networkId === 10) return optimismTokenMap;
+
+    if(networkId === 42161) return arbitrumTokenMap;
 }
 
 export const getAaveAddressProvider = (networkId) => {
@@ -53,6 +67,8 @@ export const getAaveAddressProvider = (networkId) => {
     if(networkId === 137) return aavePoolAddressesProviderPolygonMainnetAddress;
 
     if(networkId === 10) return aavePoolAddressesProviderOptimismMainnetAddress;
+
+    if(networkId === 42161) return aavePoolAddressesArbitrumAddress;
 }
 
 export const getPoolTrackerAddress = (networkId) => {
@@ -61,6 +77,8 @@ export const getPoolTrackerAddress = (networkId) => {
     if(networkId === 137) return poolTrackerPolygonAddress;
 
     if(networkId === 10) return poolTrackerOptimismAddress;
+
+    if(networkId === 42161) return poolTrackerArbitrumAddress;
 }
 
-export const deployedNetworks = [ 80001, 137, 10 ]; //mumbai, polygon, optimism
+export const deployedNetworks = [ 80001, 137, 10, 42161 ]; //mumbai, polygon, optimism, arbitrum

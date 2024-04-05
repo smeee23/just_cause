@@ -24,7 +24,7 @@ import { updatePendingTxList } from "./actions/pendingTxList";
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
-import { getTokenMap, optimismMainetTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
+import { getTokenMap, optimismTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
 
 import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress } from './func/contractInteractions.js';
 
@@ -124,7 +124,7 @@ class App extends Component {
 				await this.setTokenMapInitialState(JSON.parse(tokenMapCache))
 			}
 			else{
-				await this.setTokenMapInitialState(optimismMainetTokenMap)
+				await this.setTokenMapInitialState(optimismTokenMap)
 			}
 
 			if(!verifiedPoolInfo){
@@ -200,7 +200,7 @@ class App extends Component {
 			await this.setTokenMapFinalState(JSON.parse(tokenMapCache));
 		}
 		else{
-			await this.setTokenMapFinalState(optimismMainetTokenMap);
+			await this.setTokenMapFinalState(optimismTokenMap);
 		}
 
 		const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, this.props.activeAccount);

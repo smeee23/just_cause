@@ -392,24 +392,26 @@ class App extends Component {
 
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
-			const address =  tokenMap[key] && tokenMap[key].address;
+			if(key != "networkId"){
+				const address =  tokenMap[key] && tokenMap[key].address;
 
-			if(!tokenMap[key]['priceUSD']){
-				const coinCapPriceData = await getPriceFromCoinCap();
-				const apiKey = tokenMap[key] && tokenMap[key].apiKey;
-				if(coinCapPriceData[apiKey]){
-					tokenMap[key]['priceUSD'] = coinCapPriceData[apiKey];
+				if(!tokenMap[key]['priceUSD']){
+					const coinCapPriceData = await getPriceFromCoinCap();
+					const apiKey = tokenMap[key] && tokenMap[key].apiKey;
+					if(coinCapPriceData[apiKey]){
+						tokenMap[key]['priceUSD'] = coinCapPriceData[apiKey];
+					}
+					else{
+						tokenMap[key]['priceUSD'] = 0;
+					}
 				}
-				else{
-					tokenMap[key]['priceUSD'] = 0;
-				}
+
+				const tvl = totalDeposit[address] ? totalDeposit[address] : 0//need to pull from aws
+				tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
+
+				const totalDonated = claimedInterest[address] ? claimedInterest[address] : 0
+				tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
 			}
-
-			const tvl = totalDeposit[address] ? totalDeposit[address] : 0//need to pull from aws
-			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
-
-			const totalDonated = claimedInterest[address] ? claimedInterest[address] : 0
-			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
 
 		}
 		console.log(tokenMap)

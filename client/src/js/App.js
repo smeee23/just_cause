@@ -24,7 +24,7 @@ import { updatePendingTxList } from "./actions/pendingTxList";
 
 import PoolTracker from "../contracts/PoolTracker.json";
 import ERC20Instance from "../contracts/IERC20.json";
-import { getTokenMap, optimismTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
+import { getTokenMap, arbitrumTokenMap, getAaveAddressProvider, deployedNetworks, getPoolTrackerAddress} from "./func/tokenMaps.js";
 
 import {getPoolInfo, checkTransactions, getDepositorAddress, getAllowance, getLiquidityIndexFromAave, getAavePoolAddress } from './func/contractInteractions.js';
 
@@ -124,12 +124,12 @@ class App extends Component {
 				await this.setTokenMapInitialState(JSON.parse(tokenMapCache))
 			}
 			else{
-				await this.setTokenMapInitialState(optimismTokenMap)
+				await this.setTokenMapInitialState(arbitrumTokenMap)
 			}
 
 			if(!verifiedPoolInfo){
-				const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, JSON.parse(activeAccount));
-				await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
+				const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = {}//await getVerifiedPoolInfoAws(this.props.tokenMap, JSON.parse(activeAccount));
+				//await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
 			}
 		}
 
@@ -162,7 +162,7 @@ class App extends Component {
 				await this.getAccounts();
 				await this.setUpConnection();
 				await this.setPoolStates();
-				this.subscribeToInfura();
+				//this.subscribeToInfura();
 			}
         }
     }
@@ -187,7 +187,9 @@ class App extends Component {
 	}
 
 	setPoolStates = async() => {
+
 		this.poolTrackerAddress = getPoolTrackerAddress(this.networkId);
+
 		this.PoolTrackerInstance = new this.web3.eth.Contract(
 			PoolTracker.abi,
 			this.poolTrackerAddress,
@@ -200,12 +202,12 @@ class App extends Component {
 			await this.setTokenMapFinalState(JSON.parse(tokenMapCache));
 		}
 		else{
-			await this.setTokenMapFinalState(optimismTokenMap);
+			await this.setTokenMapFinalState(arbitrumTokenMap);
 		}
 
-		const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, this.props.activeAccount);
+		const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = {}//await getVerifiedPoolInfoAws(this.props.tokenMap, this.props.activeAccount);
 		//console.log("pools in App", verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo, this.props.tokenMap)
-		await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
+		//await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
 
 		await this.setPoolStateAll(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
@@ -425,18 +427,19 @@ class App extends Component {
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
 			const address =  tokenMap[key] && tokenMap[key].address;
+			if(address){
+				const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId), this.props.connect);
 
-			const aaveTokenInfo = await getLiquidityIndexFromAave(address, getAaveAddressProvider(this.networkId), this.props.connect);
+				tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
+				tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
 
-			tokenMap[key]['depositAPY'] = this.calculateAPY(aaveTokenInfo.currentLiquidityRate).toPrecision(4);
-			tokenMap[key]['liquidityIndex'] = aaveTokenInfo.liquidityIndex;
+				const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
+				tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
 
-			const tvl = await this.PoolTrackerInstance.methods.getTVL(address).call();
-			tokenMap[key]['tvl'] = precise(tvl, tokenMap[key]['decimals']);
-
-			const totalDonated = await this.PoolTrackerInstance.methods.getTotalDonated(address).call();
-			tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
-			tokenMap[key]['allowance'] = await getAllowance(address, this.poolTrackerAddress, this.props.activeAccount, this.props.connect)
+				const totalDonated = await this.PoolTrackerInstance.methods.getTotalDonated(address).call();
+				tokenMap[key]['totalDonated'] = precise(totalDonated, tokenMap[key]['decimals']);
+				tokenMap[key]['allowance'] = await getAllowance(address, this.poolTrackerAddress, this.props.activeAccount, this.props.connect)
+			}
 		}
 		await this.props.updateTokenMap(tokenMap);
 		sessionStorage.setItem("tokenMap", JSON.stringify(tokenMap));

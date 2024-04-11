@@ -43,7 +43,7 @@ const disconnect = (error) => {
 
 const connectWallet = async(connectionType) => {
   let web3;
-  const infuraRpc = "https://optimism-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
+  const infuraRpc = "https://arbitrum-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
   const projectId = process.env.REACT_APP_WALLET_CONNECT_ID
 
   let unsubscribers = [];

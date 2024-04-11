@@ -3,8 +3,7 @@ import { connect } from "react-redux";
 import classNames from 'classnames'
 import { updateActiveAccount } from "../actions/activeAccount";
 
-import OptimismLogo from "./cryptoLogos/OptimismLogo";
-import OptimismBrand from "./cryptoLogos/OptimismBrand";
+import ArbitrumBrand from "./cryptoLogos/ArbitrumBrand";
 
 import Logo from "./Logo";
 
@@ -30,9 +29,8 @@ class ModalHeaderCenter extends Component {
         <Fragment>
             { this.props.children }
             <div style={{display: "flex", flexDirection: "wrap", gap: "3px"}}>
-            <a style={{ textDecoration: "none"}} title="New to Optimism? Follow link to learn more" href="https://www.optimism.io/" target="_blank" rel="noopener noreferrer">
-              <OptimismLogo size="21"/>
-              <OptimismBrand/>
+            <a style={{ textDecoration: "none"}} title="New to Arbitrum? Follow link to learn more" href="https://www.arbitrum.io/" target="_blank" rel="noopener noreferrer">
+              <ArbitrumBrand/>
             </a>
             </div>
         </Fragment>

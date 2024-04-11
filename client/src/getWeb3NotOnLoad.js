@@ -4,7 +4,7 @@ import Web3 from "web3";
 
 const getWeb3 = async(connectionType) => {
 	let web3;
-	const infuraRpc = "https://optimism-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
+	const infuraRpc = "https://arbitrum-mainnet.infura.io/v3/"+process.env.REACT_APP_INFURA_KEY;
 	if(connectionType === "MetaMask") {
 	  if (typeof window.ethereum !== 'undefined') {
 		const provider = window.ethereum;

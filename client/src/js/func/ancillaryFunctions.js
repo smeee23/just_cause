@@ -11,6 +11,7 @@ import WEthLogo from "../components/cryptoLogos/WEthLogo";
 import LinkLogo from "../components/cryptoLogos/LinkLogo";
 import DpiLogo from "../components/cryptoLogos/DpiLogo";
 import OptimismLogo from "../components/cryptoLogos/OptimismLogo";
+import ArbitrumLogo from "../components/cryptoLogos/ArbitrumLogo"
 
 import DaiLogoLg from "../components/cryptoLogos/DaiLogoLg";
 import WbtcLogoLg from "../components/cryptoLogos/WbtcLogoLg";
@@ -73,6 +74,7 @@ export const getBlockExplorerUrl = (label, networkId) => {
   if(networkId === 80001) urlBase = 'https://mumbai.polygonscan.com';
   else if (networkId === 137) urlBase = 'https://polygonscan.com';
   else if (networkId === 10) urlBase = 'https://optimistic.etherscan.io';
+  else if (networkId === 42161) urlBase = 'https://arbiscan.io/';
   return urlBase + label;
 }
 export const redirectWindowBlockExplorer = (hash, label, networkId) => {
@@ -234,6 +236,7 @@ export const getConnection = (networkId, activeAccount) => {
     if(networkId === 80001) return 'TEST';
     else if (networkId === 137) return <MaticLogo/>;
     else if (networkId === 10) return <OptimismLogo size="20"/>;
+    else if (networkId === 42161) return <ArbitrumLogo size="20"/>;
   }
 }
 
@@ -455,7 +458,7 @@ export const displayLogoLg = (acceptedTokenString) => {
 export const buildAwsPools = async(tokenMap, poolList) => {
   try{
     const poolPromises = poolList.map(async e => {
-      const poolData = JSON.parse(await getDataFromS3(e+"_pool_OP"));
+      const poolData = JSON.parse(await getDataFromS3(e+"_pool_AR"));
       if (poolData.hasOwnProperty("pool")) {
         poolData["address"] = poolData["pool"];
         delete poolData["pool"];
@@ -499,7 +502,7 @@ export const getSearchPoolInfoAws = async(tokenMap, poolAddr) => {
 }
 
 export const getLastWrite = async() => {
-  const last_write = await getDataFromS3("last_write_OP");
+  const last_write = await getDataFromS3("last_write_AR");
   const curr_time = Math.floor(Date.now() / 1000);
   //console.log("last_write", last_write, curr_time, (curr_time - last_write));
   return curr_time - last_write;
@@ -512,7 +515,7 @@ export const getVerifiedPoolInfoAws = async(tokenMap, activeAccount) => {
   try{
     const secFromWrite = await getLastWrite();
     if(secFromWrite < 1800){
-      const data = await getDataFromS3("verified_OP");
+      const data = await getDataFromS3("verified_AR");
       const verifiedPools = data.length > 0 ? JSON.parse(data) : [];
       if(verifiedPools.length > 0){
         const allVerifiedPoolData = await buildAwsPools(tokenMap, verifiedPools);
@@ -523,10 +526,10 @@ export const getVerifiedPoolInfoAws = async(tokenMap, activeAccount) => {
 
       let contributorData;
       if(activeAccount && !["Connect", "Pending"].includes(activeAccount)){
-        let data = await getDataFromS3(activeAccount+"__con_OP");
+        let data = await getDataFromS3(activeAccount+"__con_AR");
         contributorData = JSON.parse(data);
         const contributorPools = data.length > 0 ? Object.keys(contributorData) : [];
-        data = await getDataFromS3(activeAccount+"__rec_OP");
+        data = await getDataFromS3(activeAccount+"__rec_AR");
         const receiverPools = data.length > 0 ? JSON.parse(data) : [];
 
         if(contributorPools.length > 0){

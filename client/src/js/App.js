@@ -33,7 +33,7 @@ import {precise, delay, getVerifiedPoolInfoAws, filterOutVerifieds, encryptStrin
 import connectWallet from "./func/connectWallet";
 import { getDataFromS3 } from "./func/awsS3";
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { optimism } from 'wagmi/chains'
+import { arbitrum } from 'wagmi/chains'
 
 import { EthereumProvider } from '@walletconnect/ethereum-provider'
 
@@ -45,13 +45,13 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
-const chainName = [optimism]
+const chainName = [arbitrum]
 const projectId = '121c52ec6852ab6b453b3fbf45945d49'
 
 // Configure chains & providers with the Alchemy provider.
   // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
   const { chains, publicClient, webSocketPublicClient } = configureChains(
-	[optimism],
+	[arbitrum],
 	[infuraProvider({ apiKey: 'c6e0956c0fb4432aac74aaa7dfb7687e' }), publicProvider()],
   )
 
@@ -128,8 +128,10 @@ class App extends Component {
 			}
 
 			if(!verifiedPoolInfo){
-				const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = {}//await getVerifiedPoolInfoAws(this.props.tokenMap, JSON.parse(activeAccount));
-				//await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
+				const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, JSON.parse(activeAccount));
+				console.log("pools in App", verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo, this.props.tokenMap)
+
+				await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
 			}
 		}
 
@@ -162,7 +164,7 @@ class App extends Component {
 				await this.getAccounts();
 				await this.setUpConnection();
 				await this.setPoolStates();
-				//this.subscribeToInfura();
+				this.subscribeToInfura();
 			}
         }
     }
@@ -205,9 +207,8 @@ class App extends Component {
 			await this.setTokenMapFinalState(arbitrumTokenMap);
 		}
 
-		const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = {}//await getVerifiedPoolInfoAws(this.props.tokenMap, this.props.activeAccount);
-		//console.log("pools in App", verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo, this.props.tokenMap)
-		//await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
+		const {verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo} = await getVerifiedPoolInfoAws(this.props.tokenMap, this.props.activeAccount);
+		await this.setPoolsFromAws(verifiedPoolInfo, contributorPoolInfo, receiverPoolInfo);
 
 		await this.setPoolStateAll(this.props.activeAccount);
 		const aaveAddressesProvider = getAaveAddressProvider(this.networkId);
@@ -389,8 +390,8 @@ class App extends Component {
 	}
 	setTokenMapInitialState = async(tokenMap) => {
 		let acceptedTokens = Object.keys(tokenMap);
-		const claimedInterest = JSON.parse(await getDataFromS3("claimedInterest_OP"));
-		const totalDeposit = JSON.parse(await getDataFromS3("totalDeposit_OP"));
+		const claimedInterest = JSON.parse(await getDataFromS3("claimedInterest_AR"));
+		const totalDeposit = JSON.parse(await getDataFromS3("totalDeposit_AR"));
 
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];

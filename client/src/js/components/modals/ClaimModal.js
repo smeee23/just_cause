@@ -114,8 +114,7 @@ class ClaimModal extends Component {
 	return(
 		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
 			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Calls made to the claim function will harvest donations already earned and send the amount to the receiver of {contractInfo[6]}.</p>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Anyone can call this function and send already donated funds to {contractInfo[6]}.</p>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">0.8% of the donation amount is reserved as a protocol fee.</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Anyone can call this function and release donated funds to {contractInfo[6]}.</p>
 			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">{displayLogo(txInfo.tokenString)} {txInfo.tokenString}: {numberWithCommas(precise(txInfo.unclaimedInterest, decimals)) +"  (" +getFormatUSD(precise(txInfo.unclaimedInterest, decimals), priceUSD)+")"}</p>
 		</div>
 	)

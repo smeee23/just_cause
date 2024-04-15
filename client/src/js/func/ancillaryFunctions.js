@@ -241,7 +241,7 @@ export const getConnection = (networkId, activeAccount) => {
 }
 
 export const isNativeToken = (networkId, tokenString) => {
-  const isETH = (tokenString === 'ETH' && networkId === 10) || (tokenString === 'MATIC' && [10, 80001].includes(networkId)) ? true : false;
+  const isETH = (tokenString === 'ETH' && [10, 42161].includes(networkId)) || (tokenString === 'MATIC' && [137, 80001].includes(networkId)) ? true : false;
   return isETH;
 }
 

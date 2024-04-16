@@ -41,8 +41,6 @@ import {getPriceFromCoinGecko} from './priceFeeds.js'
 
 import { getDataFromS3, getAboutFromS3 } from "./awsS3";
 
-//const { createHash } = require('crypto');
-
 export const linkedInShare = (purl, ptitle, poolAddress, psummary) => {
   let url = 'http://www.linkedin.com/shareArticle?mini=true';
   url += '&url=' + encodeURIComponent(purl)+poolAddress;
@@ -179,6 +177,7 @@ export const delay = (delayInms) => {
 }
 
 export const numberWithCommas = (amount) => {
+  if(typeof amount != "string") return;
   const parts = amount.split('.');
     let integerPart = parts[0];
     const decimalPart = parts[1] || '00'; // If no decimal part, default to '00'

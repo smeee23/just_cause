@@ -178,8 +178,22 @@ export const delay = (delayInms) => {
   });
 }
 
-export const numberWithCommas = (x) => {
-  return x.toString()
+export const numberWithCommas = (amount) => {
+  const parts = amount.split('.');
+    let integerPart = parts[0];
+    const decimalPart = parts[1] || '00'; // If no decimal part, default to '00'
+
+    // Insert commas for thousands separator in the integer part
+    let formattedIntegerPart = '';
+    while (integerPart.length > 3) {
+        formattedIntegerPart = ',' + integerPart.slice(-3) + formattedIntegerPart;
+        integerPart = integerPart.slice(0, -3);
+    }
+    formattedIntegerPart = integerPart + formattedIntegerPart;
+
+    // Combine integer part, decimal point, and decimal part
+    const formattedAmount = '$' + formattedIntegerPart + '.' + decimalPart;
+    return formattedAmount;
 }
 
 export const digitsWithMaxTenLength = (x) => {
@@ -195,7 +209,7 @@ export const formatDollars = (x) => {
   }
   x = x.toFixed(2);
   let commas = numberWithCommas(x);
-  x = isNaN(x) ? "" : ('$' + commas);
+  x = isNaN(x) ? "" : (commas);
   return x;
 }
 

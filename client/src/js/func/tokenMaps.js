@@ -81,4 +81,4 @@ export const getPoolTrackerAddress = (networkId) => {
     if(networkId === 42161) return poolTrackerArbitrumAddress;
 }
 
-export const deployedNetworks = [ 80001, 137, 10, 42161 ]; //mumbai, polygon, optimism, arbitrum
+export const deployedNetworks = [ 42161 ]; //mumbai, polygon, optimism, arbitrum

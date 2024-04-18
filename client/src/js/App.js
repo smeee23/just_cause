@@ -341,7 +341,7 @@ class App extends Component {
 			try {
 				await window.ethereum.request({
 					method: 'wallet_switchEthereumChain',
-					params: [{ chainId: "0xA" }],
+					params: [{ chainId: "0xa4b1" }],
 				});
 			} catch (err) {
 				alert("Optimism Network not found");
@@ -395,7 +395,7 @@ class App extends Component {
 
 		for(let i = 0; i < acceptedTokens.length; i++){
 			const key = acceptedTokens[i];
-			if(key != "networkId"){
+			if(key !== "networkId"){
 				const address =  tokenMap[key] && tokenMap[key].address;
 
 				if(!tokenMap[key]['priceUSD']){

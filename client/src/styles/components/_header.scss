@@ -8,7 +8,7 @@ $baseclass: 'app-bar';
   display: flex;
   align-items: center;
 
-  height: 170px;
+  height: 100px;
 
   background: linear-gradient(180deg, $brand-white 75%, transparent);
 
@@ -32,6 +32,7 @@ $baseclass: 'app-bar';
 
     a {
       text-decoration: none;
+      background: transparent;
     }
 
     > * {
@@ -64,6 +65,7 @@ $baseclass: 'app-bar';
 
     a {
       text-decoration: none;
+      background: transparent;
     }
 
     > * {
@@ -101,7 +103,7 @@ $baseclass: 'app-bar';
     .#{$baseclass}__items__right {
       display: none;
     }
-    height: 170px;
+    height: 130px;
 
     .#{$baseclass}__logo {
       position: absolute;

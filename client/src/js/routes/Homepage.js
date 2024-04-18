@@ -43,7 +43,7 @@ class Homepage extends Component {
 										<h1 style={{marginBottom: "5px", marginLeft: "0px"}} >JustCause</h1>
 										<h2 style={{marginBottom: "5px", fontSize:17, marginRight: "auto"}} >defi crowdfunding</h2>
 										<div style={{marginBottom: "5px", display:"flex", flexDirection: "wrap", alignItems:"left", justifyContent:"left"}}>
-											<a title="source code" href="https://github.com/smeee23/just_cause" target="_blank" rel="noopener noreferrer"><Button isLogo="github"/></a>
+											<a title="source code" href="https://github.com/smeee23/justcause_contracts" target="_blank" rel="noopener noreferrer"><Button isLogo="github"/></a>
 											<a title="Twitter" style={{marginLeft: "20px"}} href="https://twitter.com/JustCauseDev" target="_blank" rel="noopener noreferrer"><Button isLogo="tweet"/></a>
 											{/*<a title="Discord" style={{marginLeft: "20px"}} href="https://docs.justcause.finance/" target="_blank"><Button isLogo="discord"/></a>*/}
 											<div title="share JustCause" style={{marginLeft: "20px"}}>

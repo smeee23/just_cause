@@ -14,7 +14,7 @@ import { updateUserDepositPoolInfo } from "../../actions/userDepositPoolInfo";
 import { updateVerifiedPoolInfo } from "../../actions/verifiedPoolInfo";
 import { updateOwnerPoolInfo } from "../../actions/ownerPoolInfo";
 
-import {delay, displayLogo, getFormatUSD, numberWithCommas, precise, checkPoolInPoolInfo, addNewPoolInfo, isNativeToken} from '../../func/ancillaryFunctions';
+import {delay, displayLogo, getFormatUSD, precise, checkPoolInPoolInfo, addNewPoolInfo, isNativeToken} from '../../func/ancillaryFunctions';
 import { getContractInfo, getDirectFromPoolInfo,  } from '../../func/contractInteractions';
 class ClaimModal extends Component {
 
@@ -115,7 +115,7 @@ class ClaimModal extends Component {
 		<div style={{maxWidth: "300px", fontSize: 9, display:"flex", flexDirection: "column", alignItems:"left", justifyContent:"left"}}>
 			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Calls made to the claim function will harvest donations already earned and send the amount to the receiver of {contractInfo[6]}.</p>
 			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">Anyone can call this function and release donated funds to {contractInfo[6]}.</p>
-			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">{displayLogo(txInfo.tokenString)} {txInfo.tokenString}: {numberWithCommas(precise(txInfo.unclaimedInterest, decimals)) +"  (" +getFormatUSD(precise(txInfo.unclaimedInterest, decimals), priceUSD)+")"}</p>
+			<p style={{marginLeft:"2%", marginRight:"0%"}} className="mr">{displayLogo(txInfo.tokenString)} {txInfo.tokenString}: {precise(txInfo.unclaimedInterest, decimals) +"  (" +getFormatUSD(precise(txInfo.unclaimedInterest, decimals), priceUSD)+")"}</p>
 		</div>
 	)
 

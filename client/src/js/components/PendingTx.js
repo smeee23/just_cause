@@ -27,7 +27,7 @@ class PendingTx extends Component {
 	}
     getHeader = (status) => {
         if(status === 'pending'){
-            return <h2 style={{fontSize: 16,  marginBottom: "2px", marginTop: "2px", marginLeft: "4px", marginRight: "4px"}}>Pending Transaction</h2>
+            return <h2 style={{fontSize: 16,  marginBottom: "2px", marginTop: "2px", marginLeft: "4px", marginRight: "4px"}}>Transaction</h2>
         }
         else if(status === 'complete'){
             return <h2 style={{fontSize: 16,  marginBottom: "2px", marginTop: "2px", marginLeft: "4px", marginRight: "4px"}}>Processed Transaction</h2>
@@ -69,7 +69,7 @@ const mapStateToProps = state => ({
     activeAccount: state.activeAccount,
     tokenMap: state.tokenMap,
     pendingTxList: state.pendingTxList,
-    networkId: state.networkId, 
+    networkId: state.networkId,
 })
 
 export default connect(mapStateToProps)(PendingTx)

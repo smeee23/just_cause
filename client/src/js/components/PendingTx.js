@@ -36,7 +36,7 @@ class PendingTx extends Component {
     getPendingTx = (txInfo) => {
 		if(txInfo && this.state.open){
             let cn = txInfo.status === "pending" ? "tx tx__pending" : "tx tx__completed";
-            const url = this.props.networkId === 10 ? "https://optimistic.etherscan.io/tx/" : this.props.networkId === 131 ? "https://polygonscan.com/tx/" : "";
+            const url = this.props.networkId === 10 ? "https://optimistic.etherscan.io/tx/" : this.props.networkId === 131 ? "https://polygonscan.com/tx/" : "https://arbiscan.io/tx/";
             return (
                 <div className={cn} >
                     <div style={{display: "flex", flexDirection: "wrap"}}>
